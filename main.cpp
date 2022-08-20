@@ -2,50 +2,17 @@
 #include <iostream>
 #include <SDL2/SDL_image.h>
 #include <thread>
-#include "Walk.h"
+#include "components/Walk.h"
 
 using namespace std;
 #define SCREEN_WIDTH 1200
 #define SCREEN_HEIGHT 800
-
-void applySpeed(SDL_Rect &rect, int x, int y, int speed, int cycle) {
-    if (speed == 0)
-        return;
-    if (speed < 3 && cycle % (3 - speed) != 0) {
-        return;
-    }
-    int appliedSpeed = speed < 4 ? 1 : speed - 1;
-    rect.x = rect.x + (x * appliedSpeed);
-    rect.y = rect.y + (y * appliedSpeed);
-};
-
-void animate(SDL_Rect &rect, int x, int y, int speed, int cycle) {
-    int totalFrames = 7;
-    int delayPerFrame = 12 / speed;
-    if (x != 0 || y != 0) {
-        if(y > 0)
-            rect.y = rect.h * 0;
-        else if(y < 0)
-            rect.y = rect.h * 1;
-        else if(x < 0)
-            rect.y = rect.h * 2;
-        else if(x > 0)
-            rect.y = rect.h * 3;
-
-        int frame = ((cycle / delayPerFrame) % totalFrames) + 1;
-        rect.x = frame * rect.w;
-    }
-    else if (rect.x != 0)
-        rect.x = 0;
-}
 
 int main(int argc, char* args[]) {
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
 
     SDL_Window* window = NULL;
-    int a,b;
-    Walk w = Walk(a, b);
 
     window = SDL_CreateWindow(
                 "Timmy's Big Test",
@@ -63,6 +30,7 @@ int main(int argc, char* args[]) {
     SDL_Event input;
     SDL_Rect destRect = { SCREEN_WIDTH / 2, 0, 64, 64 };
     SDL_Rect sourceRect = { 0, 0, 32, 32 };
+    Walk w = Walk(destRect, sourceRect);
 
     int x = 0;
     int y = 0;
@@ -122,19 +90,19 @@ int main(int argc, char* args[]) {
                 }
             }
         }
-        applySpeed(destRect,x,y,speed,cycle);
-        animate(sourceRect,x,y,speed,cycle);
+        w.applySpeed(x,y,speed,cycle);
+        w.animate(x,y,speed,cycle);
 
         SDL_SetRenderDrawColor(renderer, 50, 255, 100, 255);
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, testTexture, &sourceRect, &destRect);
         SDL_RenderPresent(renderer);
 
+        cycle = cycle < INT_MAX ? cycle + 1 : 0;
+        
         Uint64 end = SDL_GetPerformanceCounter();
         float elapsedMS = (end - start) / (float)SDL_GetPerformanceFrequency() * 1000.0f;
         SDL_Delay(floor(16.666f - elapsedMS));
-
-        cycle = cycle < INT_MAX ? cycle + 1 : 0;
     }
     SDL_DestroyRenderer(renderer);
     SDL_DestroyTexture(testTexture);
