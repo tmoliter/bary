@@ -1,4 +1,5 @@
 #include <../include/SDL2/SDL.h>
+#include "../input.h"
 
 /* Things can be rendered */
 class Thing {
@@ -15,7 +16,8 @@ class Thing {
         void incTick() {tick++;};
         virtual void premeat() = 0;
         virtual void meat() = 0;
+        virtual void meat(KeyPresses keysDown) = 0;
         virtual void render() = 0;
         
-        virtual void destroy() = 0;
+        virtual void destroy() {SDL_DestroyTexture(texture);};
 };

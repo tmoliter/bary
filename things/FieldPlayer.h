@@ -6,7 +6,8 @@ class FieldPlayer : public Thing {
         FieldPlayer(int x, int y, SDL_Renderer* renderer) : Thing(x,y,renderer) {};
         void init();
         void premeat() {};
-        void meat();
+        void meat() {};
+        void meat(KeyPresses keysDown);
         void render();
         void destroy();
     private:

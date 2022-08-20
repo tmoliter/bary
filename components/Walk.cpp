@@ -4,18 +4,18 @@
 
 using namespace std;
 
-void Walk::applySpeed(int x, int y, int speed, int tick) {
+void Walk::move(int x, int y, int tick) {
     if (speed == 0)
         return;
     if (speed < 3 && tick % (3 - speed) != 0) {
         return;
     }
-    int appliedSpeed = speed < 4 ? 1 : speed - 1;
+    int appliedSpeed = speed < 4 ? 1 : speed;
     renderRect.x = renderRect.x + (x * appliedSpeed);
     renderRect.y = renderRect.y + (y * appliedSpeed);
 };
 
-void Walk::animate(int x, int y, int speed, int tick) {
+void Walk::animate(int x, int y, int tick) {
     int totalFrames = 7;
     int delayPerFrame = 12 / speed;
     if (x != 0 || y != 0) {
@@ -33,4 +33,12 @@ void Walk::animate(int x, int y, int speed, int tick) {
     }
     else if (sourceRect.x != 0)
         sourceRect.x = 0;
+}
+
+void Walk::changeSpeed(bool decrease) {
+    if (decrease && speed > 0) {
+        speed -= 1;
+        return;
+    }
+    speed +=1;
 }
