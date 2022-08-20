@@ -1,12 +1,25 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <SDL2/SDL_image.h>
-#include <thread>
-#include "components/Walk.h"
+// #include "components/Walk.h"
+#include "things/FieldPlayer.h"
+
 
 using namespace std;
 #define SCREEN_WIDTH 1200
 #define SCREEN_HEIGHT 800
+
+struct KeyPresses {
+    bool up = false;
+    bool down = false;
+    bool left = false;
+    bool right = false;
+    bool ok = false;
+    bool cancel = false;
+    bool menu1 = false;
+    bool menu2 = false;
+    bool start = false;
+};
 
 int main(int argc, char* args[]) {
     SDL_Init(SDL_INIT_VIDEO);
@@ -22,6 +35,7 @@ int main(int argc, char* args[]) {
                 );
 
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
+    cout << renderer << endl << endl;
 
     SDL_Surface* temp = IMG_Load("./assets/sheets/SDL_TestSS.png");
     SDL_Texture* testTexture = SDL_CreateTextureFromSurface(renderer, temp);
@@ -29,8 +43,11 @@ int main(int argc, char* args[]) {
     
     SDL_Event input;
     SDL_Rect destRect = { SCREEN_WIDTH / 2, 0, 64, 64 };
+
     SDL_Rect sourceRect = { 0, 0, 32, 32 };
     Walk w = Walk(destRect, sourceRect);
+    FieldPlayer t = FieldPlayer(1,2, renderer);
+    t.init();
 
     int x = 0;
     int y = 0;
@@ -41,6 +58,8 @@ int main(int argc, char* args[]) {
     bool quit = false;
     while (!quit){
         Uint64 start = SDL_GetPerformanceCounter();
+        // KeyPresses keysDown;
+        // cout << keysDown.left;
         while (SDL_PollEvent(&input)){
             if (input.type == SDL_QUIT){
                 quit = true;
@@ -96,6 +115,7 @@ int main(int argc, char* args[]) {
         SDL_SetRenderDrawColor(renderer, 50, 255, 100, 255);
         SDL_RenderClear(renderer);
         SDL_RenderCopy(renderer, testTexture, &sourceRect, &destRect);
+        t.render();
         SDL_RenderPresent(renderer);
 
         cycle = cycle < INT_MAX ? cycle + 1 : 0;

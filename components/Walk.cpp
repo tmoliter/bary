@@ -4,10 +4,10 @@
 
 using namespace std;
 
-void Walk::applySpeed(int x, int y, int speed, int cycle) {
+void Walk::applySpeed(int x, int y, int speed, int tick) {
     if (speed == 0)
         return;
-    if (speed < 3 && cycle % (3 - speed) != 0) {
+    if (speed < 3 && tick % (3 - speed) != 0) {
         return;
     }
     int appliedSpeed = speed < 4 ? 1 : speed - 1;
@@ -15,7 +15,7 @@ void Walk::applySpeed(int x, int y, int speed, int cycle) {
     renderRect.y = renderRect.y + (y * appliedSpeed);
 };
 
-void Walk::animate(int x, int y, int speed, int cycle) {
+void Walk::animate(int x, int y, int speed, int tick) {
     int totalFrames = 7;
     int delayPerFrame = 12 / speed;
     if (x != 0 || y != 0) {
@@ -28,7 +28,7 @@ void Walk::animate(int x, int y, int speed, int cycle) {
         else if(x > 0)
             sourceRect.y = sourceRect.h * 3;
 
-        int frame = ((cycle / delayPerFrame) % totalFrames) + 1;
+        int frame = ((tick / delayPerFrame) % totalFrames) + 1;
         sourceRect.x = frame * sourceRect.w;
     }
     else if (sourceRect.x != 0)
