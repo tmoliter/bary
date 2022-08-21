@@ -29,6 +29,7 @@ int main(int argc, char* args[]) {
     int playerX = 700, playerY = 700, cameraX, cameraY;
     Background background = Background(&cameraX, &cameraY, playerX, playerY, renderer); 
     FieldPlayer player = FieldPlayer(playerX, playerY, &cameraX, &cameraY, renderer);
+    player.divideSheet(9,4);
 
     int frameCount = 0;
     Input in;
@@ -36,9 +37,8 @@ int main(int argc, char* args[]) {
     while (true){
         t.startFrame();
         KeyPresses keysDown = in.getInput();
-
-        SDL_SetRenderDrawColor(renderer, 50, 255, 100, 255);
-        SDL_RenderClear(renderer);
+        if (keysDown.quit)
+            break;
 
         player.incTick();
         player.meat(keysDown);
@@ -47,12 +47,9 @@ int main(int argc, char* args[]) {
         background.render();
         player.render();
 
-
         SDL_RenderPresent(renderer);
 
         t.endFrameAndWait(frameCount);
-        if (keysDown.quit)
-            break;
     }
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
