@@ -1,5 +1,6 @@
 #include "./Background.h"
 #include <iostream>
+// #include "globals.h"
 
 void Background::setPosition() {
     int half_width =  screen_width / scale / 2;
@@ -21,6 +22,14 @@ void Background::setPosition() {
 
     *cameraX = sourceRect.x;
     *cameraY = sourceRect.y;
+
+    /* THIS IS A COOL 3D ANGLE SHIFT TO PLAY WITH LATER */
+    // if (frameCount < 300)
+    // {
+    //     sourceRect.h += 1;
+    //     if(frameCount % 5 == 0)
+    //         sourceRect.w -= 1;
+    // }
 }
 
 void Background::render() {
