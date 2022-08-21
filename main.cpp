@@ -8,6 +8,7 @@
 using namespace std;
 #define SCREEN_WIDTH 1200
 #define SCREEN_HEIGHT 800
+#define SCALE 2
 
 int main(int argc, char* args[]) {
     SDL_Init(SDL_INIT_VIDEO);
@@ -22,8 +23,8 @@ int main(int argc, char* args[]) {
                 );
 
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
-    FieldPlayer player = FieldPlayer(50, 50, SCREEN_WIDTH, SCREEN_HEIGHT, renderer);
-    Background background = Background(SCREEN_WIDTH, SCREEN_HEIGHT, renderer);
+    FieldPlayer player = FieldPlayer(700, 700, SCREEN_WIDTH, SCREEN_HEIGHT, SCALE, renderer);
+    Background background = Background(SCREEN_WIDTH, SCREEN_HEIGHT, SCALE, renderer);
 
     int frameCount = 0;
     Input in;
