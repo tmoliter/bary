@@ -5,6 +5,7 @@
 #include "Background.h"
 #include "FpsTimer.h"
 #include "globals.h"
+#include <vector>
 
 using namespace std;
 
@@ -23,9 +24,11 @@ int main(int argc, char* args[]) {
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
 
     int playerX = 700, playerY = 700, cameraX, cameraY;
-    Background background = Background(&cameraX, &cameraY, playerX, playerY, renderer); 
-    FieldPlayer player = FieldPlayer(playerX, playerY, &cameraX, &cameraY, renderer);
+    Background background = Background(&cameraX, &cameraY, playerX, playerY, renderer);
+    vector <Thing*>things;
+    FieldPlayer player = FieldPlayer(playerX, playerY, &cameraX, &cameraY, renderer, "./assets/sheets/SDL_TestSS.png");
     player.divideSheet(9,4);
+    things.push_back(&player);
 
     Input in;
     FpsTimer t;
@@ -35,12 +38,17 @@ int main(int argc, char* args[]) {
         if (keysDown.quit)
             break;
 
-        player.incTick();
-        player.meat(keysDown);
+        for (auto thing : things){
+            thing->incTick();
+            thing->meat(keysDown);
+        }
 
         background.setPosition();
         background.render();
-        player.render();
+
+        for (auto thing : things){
+            thing->render();
+        }
 
         SDL_RenderPresent(renderer);
 
