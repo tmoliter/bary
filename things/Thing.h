@@ -1,5 +1,5 @@
 #include <../include/SDL2/SDL.h>
-#include "../input.h"
+#include "../Input.h"
 
 /* Things can be rendered */
 class Thing {

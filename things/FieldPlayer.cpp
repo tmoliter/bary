@@ -13,8 +13,8 @@ void FieldPlayer::init() {
     texture = SDL_CreateTextureFromSurface(renderer, temp);
     SDL_FreeSurface(temp);
     walk = new Walk(renderRect, sourceRect);
-
 };
+
 void FieldPlayer::meat(KeyPresses keysDown) {
     int xV = 0, yV = 0;
     if (keysDown.left)
@@ -31,11 +31,17 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     if (keysDown.cancel)
         walk->changeSpeed(true);
 
-
     walk->move(xV,yV,tick);
     walk->animate(xV,yV,tick);
 };
+
 void FieldPlayer::render() {
     SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
-}
+};
+
 void FieldPlayer::destroy() { Thing::destroy(); delete walk; delete this;};
+
+void FieldPlayer::getPosition(int &outerX, int &outerY) {
+    outerX = x;
+    outerY = y;
+}

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <SDL2/SDL_image.h>
 #include "things/FieldPlayer.h"
-#include "fpsTimer.h"
+#include "FpsTimer.h"
 
 using namespace std;
 #define SCREEN_WIDTH 1200
@@ -26,7 +26,8 @@ int main(int argc, char* args[]) {
 
     int frameCount = 0;
     Input in;
-    fpsTimer t;
+    FpsTimer t;
+    int playerX, playerY;
     while (true){
         t.startFrame();
         KeyPresses keysDown = in.getInput();
@@ -34,8 +35,15 @@ int main(int argc, char* args[]) {
         SDL_SetRenderDrawColor(renderer, 50, 255, 100, 255);
         SDL_RenderClear(renderer);
 
+        // Called once for culling
+        player.getPosition(playerX,playerY);
+
         player.incTick();
         player.meat(keysDown);
+
+        // Called again before second rendering
+        player.getPosition(playerX,playerY);
+
         player.render();
 
 
