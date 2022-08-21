@@ -26,6 +26,8 @@ class Thing {
         virtual void meat() = 0;
         virtual void meat(KeyPresses keysDown) = 0;
         virtual void render() {
+            renderRect.x = x - *cameraX;
+            renderRect.y = y - *cameraY;
             SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
         };
         virtual void destroy() {SDL_DestroyTexture(texture);};
