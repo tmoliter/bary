@@ -1,10 +1,10 @@
 #include "./Background.h"
 #include <iostream>
-// #include "globals.h"
+#include "globals.h"
 
 void Background::setPosition() {
-    int half_width =  screen_width / scale / 2;
-    int half_height = screen_height / scale / 2;
+    int half_width =  SCREEN_WIDTH / SCALE / 2;
+    int half_height = SCREEN_HEIGHT / SCALE / 2;
 
     if (focusX < half_width)
         sourceRect.x = 0;

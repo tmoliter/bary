@@ -8,7 +8,7 @@
 
 class Background {
     private:
-        int width, height, screen_width, screen_height, scale;
+        int width, height;
         int *cameraX, *cameraY, &focusX, &focusY;
         SDL_Rect renderRect, sourceRect;
         SDL_Texture* texture;
@@ -19,15 +19,12 @@ class Background {
         cameraY(cY),
         focusX(fX),
         focusY(fY),
-        renderer(renderer), 
-        screen_width(SCREEN_WIDTH),
-        screen_height(SCREEN_HEIGHT),
-        scale(SCALE) {
+        renderer(renderer) {
             SDL_Surface* temp = IMG_Load("./assets/backgrounds/burg.png");
             texture = SDL_CreateTextureFromSurface(renderer, temp);
             SDL_FreeSurface(temp);
             SDL_QueryTexture(texture, NULL, NULL, &width, &height);
-            sourceRect = { 0 , 0, SCREEN_WIDTH / scale, SCREEN_HEIGHT / scale };
+            sourceRect = { 0 , 0, SCREEN_WIDTH / SCALE, SCREEN_HEIGHT / SCALE };
             renderRect = { 0 , 0, SCREEN_WIDTH, SCREEN_HEIGHT };
         }
         void setPosition();
