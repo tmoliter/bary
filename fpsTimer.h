@@ -1,3 +1,6 @@
+#ifndef FPS_TIMER_H
+#define FPS_TIMER_H
+
 #include <SDL2/SDL.h>
 
 class FpsTimer {
@@ -19,3 +22,5 @@ void FpsTimer::endFrameAndWait(int &frameCount) {
     float elapsedMS = (end - start) / (float)SDL_GetPerformanceFrequency() * 1000.0f;
     SDL_Delay(floor(16.666f - elapsedMS));
 }
+
+#endif

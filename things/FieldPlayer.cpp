@@ -20,17 +20,8 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     if (keysDown.cancel)
         walk->changeSpeed(true);
 
-    walk->move(xV,yV,x, y,tick);
+    walk->move(xV,yV,x,y,tick);
     walk->animate(xV,yV,tick);
 };
 
-void FieldPlayer::render() {
-    SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
-};
-
 void FieldPlayer::destroy() { Thing::destroy(); delete walk; delete this;};
-
-void FieldPlayer::getPosition(int &outerX, int &outerY) {
-    outerX = x;
-    outerY = y;
-}

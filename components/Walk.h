@@ -1,3 +1,6 @@
+#ifndef WALK_H
+#define WALK_H
+
 #include <../include/SDL2/SDL.h>
 
 class Walk {
@@ -11,3 +14,5 @@ class Walk {
         void animate(int x, int y, int tick);
         void changeSpeed(bool decrease);
 };
+
+#endif

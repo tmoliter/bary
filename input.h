@@ -1,3 +1,6 @@
+#ifndef INPUT_H
+#define INPUT_H
+
 struct KeyPresses {
     bool up = false;
     bool down = false;
@@ -18,3 +21,5 @@ class Input {
         KeyPresses& getInput();
         Input() {KeyPresses keysDown;}
 };
+
+#endif

@@ -4,11 +4,9 @@
 #include "things/FieldPlayer.h"
 #include "Background.h"
 #include "FpsTimer.h"
+#include "globals.h"
 
 using namespace std;
-#define SCREEN_WIDTH 1200
-#define SCREEN_HEIGHT 800
-#define SCALE 2
 
 int main(int argc, char* args[]) {
     SDL_Init(SDL_INIT_VIDEO);
@@ -23,38 +21,30 @@ int main(int argc, char* args[]) {
                 );
 
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
-    FieldPlayer player = FieldPlayer(700, 700, SCREEN_WIDTH, SCREEN_HEIGHT, SCALE, renderer);
-    Background background = Background(SCREEN_WIDTH, SCREEN_HEIGHT, SCALE, renderer);
 
-    int frameCount = 0;
+    int playerX = 700, playerY = 700, cameraX, cameraY;
+    Background background = Background(&cameraX, &cameraY, playerX, playerY, renderer); 
+    FieldPlayer player = FieldPlayer(playerX, playerY, &cameraX, &cameraY, renderer);
+    player.divideSheet(9,4);
+
     Input in;
     FpsTimer t;
-    int playerX, playerY;
     while (true){
         t.startFrame();
         KeyPresses keysDown = in.getInput();
-
-        SDL_SetRenderDrawColor(renderer, 50, 255, 100, 255);
-        SDL_RenderClear(renderer);
-
-        // Called once for culling
-        player.getPosition(playerX,playerY);
+        if (keysDown.quit)
+            break;
 
         player.incTick();
         player.meat(keysDown);
 
-        // Called again before second rendering
-        player.getPosition(playerX,playerY);
-
-        background.render(playerX, playerY);
+        background.setPosition();
+        background.render();
         player.render();
-
 
         SDL_RenderPresent(renderer);
 
         t.endFrameAndWait(frameCount);
-        if (keysDown.quit)
-            break;
     }
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
