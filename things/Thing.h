@@ -4,7 +4,7 @@
 #include <iostream>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
-#include "../constants.h"
+#include "../globals.h"
 
 /* Things can be rendered */
 class Thing {

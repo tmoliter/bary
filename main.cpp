@@ -4,7 +4,7 @@
 #include "things/FieldPlayer.h"
 #include "Background.h"
 #include "FpsTimer.h"
-#include "constants.h"
+#include "globals.h"
 
 using namespace std;
 
@@ -27,7 +27,6 @@ int main(int argc, char* args[]) {
     FieldPlayer player = FieldPlayer(playerX, playerY, &cameraX, &cameraY, renderer);
     player.divideSheet(9,4);
 
-    int frameCount = 0;
     Input in;
     FpsTimer t;
     while (true){
