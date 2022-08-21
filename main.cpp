@@ -31,12 +31,13 @@ int main(int argc, char* args[]) {
         t.startFrame();
         KeyPresses keysDown = in.getInput();
 
+        SDL_SetRenderDrawColor(renderer, 50, 255, 100, 255);
+        SDL_RenderClear(renderer);
+
         player.incTick();
         player.meat(keysDown);
         player.render();
 
-        SDL_SetRenderDrawColor(renderer, 50, 255, 100, 255);
-        SDL_RenderClear(renderer);
 
         SDL_RenderPresent(renderer);
 
