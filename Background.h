@@ -4,10 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
-
-#define SCREEN_WIDTH 1200
-#define SCREEN_HEIGHT 800
-#define SCALE 1
+#include "constants.h"
 
 class Background {
     private:

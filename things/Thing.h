@@ -4,10 +4,7 @@
 #include <iostream>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
-
-#define SCREEN_WIDTH 1200
-#define SCREEN_HEIGHT 800
-#define SCALE 1
+#include "../constants.h"
 
 /* Things can be rendered */
 class Thing {
@@ -46,8 +43,8 @@ class Thing {
         void divideSheet(int columns, int rows) { 
             width = width / columns; 
             height = height / rows; 
-            renderRect.w = width;
-            renderRect.h = height;
+            renderRect.w = width * SCALE;
+            renderRect.h = height * SCALE;
             sourceRect = { 0, 0, width, height };
         }
         

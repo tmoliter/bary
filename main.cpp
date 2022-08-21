@@ -4,12 +4,9 @@
 #include "things/FieldPlayer.h"
 #include "Background.h"
 #include "FpsTimer.h"
+#include "constants.h"
 
 using namespace std;
-
-#define SCREEN_WIDTH 1200
-#define SCREEN_HEIGHT 800
-#define SCALE 1
 
 int main(int argc, char* args[]) {
     SDL_Init(SDL_INIT_VIDEO);
