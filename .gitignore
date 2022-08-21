@@ -34,3 +34,5 @@ play
 
 # VSCode
 .vscode
+
+.DS_Store

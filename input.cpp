@@ -1,5 +1,5 @@
 #include <SDL2/SDL_image.h>
-#include "./input.h"
+#include "./Input.h"
 #include <iostream>
 
 KeyPresses& Input::getInput () {
