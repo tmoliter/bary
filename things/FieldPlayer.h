@@ -1,3 +1,6 @@
+#ifndef FIELD_PLAYER_H
+#define FIELD_PLAYER_H
+
 #include "Thing.h"
 #include "../components/Walk.h"
 #include <iostream>
@@ -19,3 +22,4 @@ class FieldPlayer : public Thing {
         void meat(KeyPresses keysDown);
         void destroy();
 };
+#endif

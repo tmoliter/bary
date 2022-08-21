@@ -11,7 +11,6 @@ using namespace std;
 #define SCREEN_HEIGHT 800
 #define SCALE 1
 
-
 int main(int argc, char* args[]) {
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);

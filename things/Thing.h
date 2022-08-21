@@ -1,3 +1,5 @@
+#ifndef THING_H
+#define THING_H
 #include "../Input.h"
 #include <iostream>
 #include <SDL2/SDL_image.h>
@@ -56,9 +58,9 @@ class Thing {
         virtual void render() {
             renderRect.x = (x - *cameraX - (width / 2)) * SCALE;
             renderRect.y = (y - *cameraY - height) * SCALE;
-            std::cout << x << " : " << *cameraX << " : " << renderRect.x << " : " << width << std::endl << std::endl;
-
             SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
         };
         virtual void destroy() {SDL_DestroyTexture(texture);};
 };
+
+#endif
