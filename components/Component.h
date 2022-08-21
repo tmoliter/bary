@@ -1,3 +1,5 @@
+
+// MAYBE WE DONT NEED THIS
 class Component {
     public:
         virtual void init();
