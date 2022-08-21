@@ -39,27 +39,31 @@ int main(int argc, char* args[]) {
 
     Input in;
     FpsTimer t;
+    ProfileData p;
     while (true){
         t.startFrame();
         KeyPresses keysDown = in.getInput();
+        t.timeSinceStart(&p.a);
         if (keysDown.quit)
             break;
-
         for (auto thing : things){
             thing->incTick();
             thing->meat(keysDown);
         }
+        t.timeSinceStart(&p.b);
 
         background.setPosition();
         background.render();
+        t.timeSinceStart(&p.c);
 
         for (auto thing : things){
             thing->render();
         }
+        t.timeSinceStart(&p.d);
 
         SDL_RenderPresent(renderer);
 
-        t.endFrameAndWait(frameCount);
+        t.endFrameAndWait(frameCount, p);
     }
     for (auto thing : things){
         thing->destroy();
