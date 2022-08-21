@@ -2,6 +2,7 @@
 #include <iostream>
 #include <SDL2/SDL_image.h>
 #include "things/FieldPlayer.h"
+#include "Background.h"
 #include "FpsTimer.h"
 
 using namespace std;
@@ -21,8 +22,8 @@ int main(int argc, char* args[]) {
                 );
 
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
-    FieldPlayer player = FieldPlayer(1,2, renderer);
-    player.init();
+    FieldPlayer player = FieldPlayer(50, 50, SCREEN_WIDTH, SCREEN_HEIGHT, renderer);
+    Background background = Background(SCREEN_WIDTH, SCREEN_HEIGHT, renderer);
 
     int frameCount = 0;
     Input in;
@@ -44,6 +45,7 @@ int main(int argc, char* args[]) {
         // Called again before second rendering
         player.getPosition(playerX,playerY);
 
+        background.render(playerX, playerY);
         player.render();
 
 

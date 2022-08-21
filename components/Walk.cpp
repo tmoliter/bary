@@ -4,15 +4,15 @@
 
 using namespace std;
 
-void Walk::move(int x, int y, int tick) {
+void Walk::move(int xV, int yV, int &x, int &y, int tick){
     if (speed == 0)
         return;
     if (speed < 3 && tick % (3 - speed) != 0) {
         return;
     }
     int appliedSpeed = speed < 4 ? 1 : speed;
-    renderRect.x = renderRect.x + (x * appliedSpeed);
-    renderRect.y = renderRect.y + (y * appliedSpeed);
+    x = x + (xV * appliedSpeed);
+    y = y + (yV * appliedSpeed);
 };
 
 void Walk::animate(int x, int y, int tick) {
