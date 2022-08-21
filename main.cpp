@@ -9,6 +9,11 @@
 
 using namespace std;
 
+struct {
+    int x = 300;
+    int y = 400;
+} genrlLoc;
+
 int main(int argc, char* args[]) {
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
@@ -26,9 +31,11 @@ int main(int argc, char* args[]) {
     int playerX = 700, playerY = 700, cameraX, cameraY;
     Background background = Background(&cameraX, &cameraY, playerX, playerY, renderer);
     vector <Thing*>things;
-    FieldPlayer player = FieldPlayer(playerX, playerY, &cameraX, &cameraY, renderer, "./assets/sheets/SDL_TestSS.png");
-    player.divideSheet(9,4);
-    things.push_back(&player);
+    FieldPlayer *player = new FieldPlayer(playerX, playerY, &cameraX, &cameraY, renderer, "./assets/sheets/SDL_TestSS.png");
+    player->divideSheet(9,4);
+    things.push_back(player);
+    Thing *genrl = new Thing(genrlLoc.x,genrlLoc.y,&cameraX, &cameraY, renderer, "./assets/BurgGenrlL.png");
+    things.push_back(genrl);
 
     Input in;
     FpsTimer t;
@@ -53,6 +60,9 @@ int main(int argc, char* args[]) {
         SDL_RenderPresent(renderer);
 
         t.endFrameAndWait(frameCount);
+    }
+    for (auto thing : things){
+        thing->destroy();
     }
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

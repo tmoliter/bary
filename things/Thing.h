@@ -55,7 +55,7 @@ class Thing {
             renderRect.y = (y - *cameraY - height) * SCALE;
             SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
         };
-        virtual void destroy() {SDL_DestroyTexture(texture);};
+        virtual void destroy() {SDL_DestroyTexture(texture); delete this;};
 };
 
 #endif
