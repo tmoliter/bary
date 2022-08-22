@@ -11,8 +11,9 @@ class FieldPlayer : public Thing {
     private:
         Walk* walk;
     public:
-        FieldPlayer(int &x, int &y, int *cX, int *cY, SDL_Renderer* renderer, const char *path) : 
+        FieldPlayer(int x, int y, int *cX, int *cY, SDL_Renderer* renderer, const char *path) : 
         Thing(x, y, cX, cY, renderer, path) {
+            Thing::divideSheet(9, 4);
             walk = new Walk(x,y, sourceRect);
         };
 

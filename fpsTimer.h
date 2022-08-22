@@ -18,7 +18,8 @@ class FpsTimer {
     public:
         FpsTimer() : start(0) {};
         void startFrame();
-        void timeSinceStart(float *time);
+        void timeElapsed(float *time);
+        void timeElapsed(float *time, float last);
         void endFrameAndWait(int &frameCount);
         void endFrameAndWait(int &frameCount, ProfileData &profileData);
 };
@@ -27,7 +28,7 @@ void FpsTimer::startFrame() {
     start = SDL_GetPerformanceCounter();
 }
 
-void FpsTimer::timeSinceStart(float *time) {
+void FpsTimer::timeElapsed(float *time) {
     Uint64 now = SDL_GetPerformanceCounter();
     *time = (now - start) / (float)SDL_GetPerformanceFrequency() * 1000.0f;
 }

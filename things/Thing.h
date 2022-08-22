@@ -11,13 +11,13 @@ class Thing {
     protected:
         int *cameraX, *cameraY;
     public:
-        int &x, &y, tick, width, height;
+        int x, y, tick, width, height;
         SDL_Renderer* renderer;
 
         SDL_Rect sourceRect, renderRect;
         SDL_Texture* texture;
 
-        Thing(int &x, int &y, int *cX, int *cY, SDL_Renderer* renderer, const char *path) : 
+        Thing(int x, int y, int *cX, int *cY, SDL_Renderer* renderer, const char *path) : 
         x(x), 
         y(y),
         cameraX(cX),
