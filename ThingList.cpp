@@ -29,3 +29,7 @@ void ThingList::DestroyThings() {
         thing->destroy();
     }
 }
+
+void ThingList::DestroyThing() {
+    // https://cplusplus.com/reference/algorithm/find/
+}

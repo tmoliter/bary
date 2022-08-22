@@ -48,9 +48,11 @@ class Thing {
         }
         
         void incTick() {tick++;};
-        // virtual void meat() {};
+        
+        virtual void meat() {};
         /* insane stress test */
-        virtual void meat() { int tmp = rand() % 20; y = tmp % 2 == 0 ? y + tmp : y -tmp; };
+        // virtual void meat() { int tmp = rand() % 20; y = tmp % 2 == 0 ? y + tmp : y -tmp; };
+
         virtual void meat(KeyPresses keysDown) {};
         virtual void render() {
             renderRect.x = (x - *cameraX - (width / 2)) * SCALE;

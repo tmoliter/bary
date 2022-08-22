@@ -15,6 +15,7 @@ class ThingList {
         void MeatThings(KeyPresses keysDown);
         void RenderThings();
         void DestroyThings();
+        void DestroyThing();
 };
 
 

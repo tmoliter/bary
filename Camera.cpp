@@ -1,11 +1,11 @@
-#include "./Background.h"
+#include "./Camera.h"
 #include <iostream>
 #include "globals.h"
 
-void Background::setPosition() {
+void Camera::setPosition() {
     if (focusX == 0 || focusY == 0) {
-        cameraX = 0;
-        cameraY = 0;
+        x = 0;
+        y = 0;
     }
     int half_width =  SCREEN_WIDTH / SCALE / 2;
     int half_height = SCREEN_HEIGHT / SCALE / 2;
@@ -24,8 +24,8 @@ void Background::setPosition() {
     else
         sourceRect.y = *focusY - half_height;
 
-    cameraX = sourceRect.x;
-    cameraY = sourceRect.y;
+    x = sourceRect.x;
+    y = sourceRect.y;
 
     /* THIS IS A COOL 3D ANGLE SHIFT TO PLAY WITH LATER */
     // if (frameCount < 300)
@@ -36,14 +36,14 @@ void Background::setPosition() {
     // }
 }
 
-void Background::setFocus(int *x, int *y) {
-    focusX = x;
-    focusY = y;
+void Camera::setFocus(int *fX, int *fY) {
+    focusX = fX;
+    focusY = fY;
 }
 
 
-void Background::render() {
+void Camera::render() {
     SDL_SetRenderDrawColor(renderer, 50, 255, 100, 255);
     SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
+    SDL_RenderCopy(renderer, bgTexture, &sourceRect, &renderRect);
 }

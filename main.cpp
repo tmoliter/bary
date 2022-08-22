@@ -2,7 +2,7 @@
 #include <iostream>
 #include <SDL2/SDL_image.h>
 #include "things/FieldPlayer.h"
-#include "Background.h"
+#include "Camera.h"
 #include "FpsTimer.h"
 #include "ThingList.h"
 #include "globals.h"
@@ -27,21 +27,19 @@ int main(int argc, char* args[]) {
 
     ThingList things;
 
-    Background background = Background(NULL, NULL, renderer);
-
-    FieldPlayer *player = new FieldPlayer(700, 700, &background.cameraX, &background.cameraY, renderer, "./assets/sheets/SDL_TestSS.png");
+    Camera camera = Camera(NULL, NULL, renderer);
+    FieldPlayer *player = new FieldPlayer(700, 700, &camera.x, &camera.y, renderer, "./assets/sheets/SDL_TestSS.png");
+    Thing *genrl = new Thing(500, 500, &camera.x, &camera.y, renderer, "./assets/BurgGenrlL.png");
     things.AddThing(player);
+    things.AddThing(genrl);
+    camera.setFocus(&player->x, &player->y);
+
 
     /* insane stress test */
-    for (int i = 0; i < 20000; i++) {
-        Thing *genrl = new Thing(rand() % 1000 + 100, rand() % 1000 + 100, &background.cameraX, &background.cameraY, renderer, "./assets/BurgGenrlL.png");
-        things.AddThing(genrl);
-    }
-    // Thing *genrl = new Thing(500,500,&background.cameraX, &background.cameraY, renderer, "./assets/BurgGenrlL.png");
-    // things.AddThing(genrl);
-
-    background.setFocus(&player->x, &player->y);
-
+    // for (int i = 0; i < 20000; i++) {
+    //     Thing *genrl = new Thing(rand() % 1000 + 100, rand() % 1000 + 100, &camera.x, &camera.y, renderer, "./assets/BurgGenrlL.png");
+    //     things.AddThing(genrl);
+    // }
 
     Input in;
     FpsTimer t;
@@ -56,8 +54,8 @@ int main(int argc, char* args[]) {
         things.MeatThings(keysDown);
         t.timeElapsed(&p.b);
 
-        background.setPosition();
-        background.render();
+        camera.setPosition();
+        camera.render();
         t.timeElapsed(&p.c);
 
         things.RenderThings();
