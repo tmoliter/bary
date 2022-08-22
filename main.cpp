@@ -27,19 +27,21 @@ int main(int argc, char* args[]) {
 
     ThingList things;
 
-    int cameraX, cameraY;
-    FieldPlayer *player = new FieldPlayer(700, 700, &cameraX, &cameraY, renderer, "./assets/sheets/SDL_TestSS.png");
+    Background background = Background(NULL, NULL, renderer);
+
+    FieldPlayer *player = new FieldPlayer(700, 700, &background.cameraX, &background.cameraY, renderer, "./assets/sheets/SDL_TestSS.png");
     things.AddThing(player);
 
     /* insane stress test */
     for (int i = 0; i < 20000; i++) {
-        Thing *genrl = new Thing(rand() % 1000 + 100, rand() % 1000 + 100, &cameraX, &cameraY, renderer, "./assets/BurgGenrlL.png");
+        Thing *genrl = new Thing(rand() % 1000 + 100, rand() % 1000 + 100, &background.cameraX, &background.cameraY, renderer, "./assets/BurgGenrlL.png");
         things.AddThing(genrl);
     }
-    // Thing *genrl = new Thing(500,500,&cameraX, &cameraY, renderer, "./assets/BurgGenrlL.png");
+    // Thing *genrl = new Thing(500,500,&background.cameraX, &background.cameraY, renderer, "./assets/BurgGenrlL.png");
     // things.AddThing(genrl);
 
-    Background background = Background(&cameraX, &cameraY, player->x, player->y, renderer);
+    background.setFocus(&player->x, &player->y);
+
 
     Input in;
     FpsTimer t;

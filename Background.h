@@ -9,14 +9,15 @@
 class Background {
     private:
         int width, height;
-        int *cameraX, *cameraY, &focusX, &focusY;
+        int *focusX, *focusY;
         SDL_Rect renderRect, sourceRect;
         SDL_Texture* texture;
         SDL_Renderer* renderer;
     public:
-        Background(int *cX, int *cY, int &fX, int &fY, SDL_Renderer* renderer) : 
-        cameraX(cX),
-        cameraY(cY),
+        int cameraX, cameraY;
+        Background(int *fX, int *fY, SDL_Renderer* renderer) : 
+        cameraX(0),
+        cameraY(0),
         focusX(fX),
         focusY(fY),
         renderer(renderer) {
@@ -28,6 +29,7 @@ class Background {
             renderRect = { 0 , 0, SCREEN_WIDTH, SCREEN_HEIGHT };
         }
         void setPosition();
+        void setFocus(int *x, int *y);
         void render();
 };
 
