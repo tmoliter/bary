@@ -4,6 +4,7 @@
 #include "things/FieldPlayer.h"
 #include "Background.h"
 #include "FpsTimer.h"
+#include "ThingList.h"
 #include "globals.h"
 #include <vector>
 
@@ -30,44 +31,38 @@ int main(int argc, char* args[]) {
 
     int playerX = 700, playerY = 700, cameraX, cameraY;
     Background background = Background(&cameraX, &cameraY, playerX, playerY, renderer);
-    vector <Thing*>things;
+    ThingList things;
     FieldPlayer *player = new FieldPlayer(playerX, playerY, &cameraX, &cameraY, renderer, "./assets/sheets/SDL_TestSS.png");
     player->divideSheet(9,4);
-    things.push_back(player);
+    things.AddThing(player);
     Thing *genrl = new Thing(genrlLoc.x,genrlLoc.y,&cameraX, &cameraY, renderer, "./assets/BurgGenrlL.png");
-    things.push_back(genrl);
+    things.AddThing(genrl);
 
     Input in;
     FpsTimer t;
-    ProfileData p;
+    // ProfileData p;
     while (true){
         t.startFrame();
-        KeyPresses keysDown = in.getInput();
-        t.timeSinceStart(&p.a);
+        KeyPresses keysDown = in.getInput();  
+        // t.timeSinceStart(&p.a);
+
         if (keysDown.quit)
             break;
-        for (auto thing : things){
-            thing->incTick();
-            thing->meat(keysDown);
-        }
-        t.timeSinceStart(&p.b);
+        things.MeatThings(keysDown);
+        // t.timeSinceStart(&p.b);
 
         background.setPosition();
         background.render();
-        t.timeSinceStart(&p.c);
+        // t.timeSinceStart(&p.c);
 
-        for (auto thing : things){
-            thing->render();
-        }
-        t.timeSinceStart(&p.d);
+        things.RenderThings();
+        // t.timeSinceStart(&p.d);
 
         SDL_RenderPresent(renderer);
 
-        t.endFrameAndWait(frameCount, p);
+        t.endFrameAndWait(frameCount);
     }
-    for (auto thing : things){
-        thing->destroy();
-    }
+    things.DestroyThings();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     IMG_Quit();
