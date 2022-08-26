@@ -27,13 +27,28 @@ int main(int argc, char* args[]) {
 
     ThingList things;
 
-    Camera camera = Camera(NULL, NULL, renderer);
-    FieldPlayer *player = new FieldPlayer(700, 700, &camera.x, &camera.y, renderer, "./assets/sheets/SDL_TestSS.png");
-    Thing *genrl = new Thing(500, 500, &camera.x, &camera.y, renderer, "./assets/BurgGenrlL.png");
-    things.AddThing(player);
-    things.AddThing(genrl);
-    camera.setFocus(&player->x, &player->y);
+    Camera *camera = new Camera(NULL, NULL, renderer);
 
+    ThingData genrlData;
+    genrlData.id = 1;
+    genrlData.x = 700;
+    genrlData.y = 700;
+    genrlData.path = "./assets/BurgGenrlL.png";
+    Thing *genrl = new Thing(genrlData);
+    genrl->init(&camera->x, &camera->y, renderer);
+    things.AddThing(genrl);
+
+    FieldPlayerData playerData;
+    playerData.id = 0;
+    playerData.x = 700;
+    playerData.y = 700;
+    playerData.name = "Zinnia";
+    playerData.path = "./assets/sheets/SDL_TestSS.png";
+    FieldPlayer *player = new FieldPlayer(playerData);
+    player->init(&camera->x, &camera->y, renderer);
+    things.AddThing(player);
+
+    camera->setFocus(&player->x, &player->y);
 
     /* insane stress test */
     // for (int i = 0; i < 20000; i++) {
@@ -54,8 +69,8 @@ int main(int argc, char* args[]) {
         things.MeatThings(keysDown);
         t.timeElapsed(&p.b);
 
-        camera.setPosition();
-        camera.render();
+        camera->setPosition();
+        camera->render();
         t.timeElapsed(&p.c);
 
         things.RenderThings();
@@ -64,11 +79,12 @@ int main(int argc, char* args[]) {
         SDL_RenderPresent(renderer);
 
         t.timeElapsed(&p.e);
-        t.endFrameAndWait(frameCount, p);
+        t.endFrameAndWait(frameCount);
     }
-    things.DestroyThings();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    things.DestroyThings();
+    delete camera;
     IMG_Quit();
     SDL_Quit();
     return 0;

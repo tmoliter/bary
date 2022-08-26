@@ -1,0 +1,4 @@
+!T,1,500,600,./assets/BurgGenrlL.png
+!T,2,750,1000,./assets/BurgGenrlL.png
+!T,3,600,500,./assets/BurgGenrlL.png
+!T,4,800,900,./assets/BurgGenrlL.png
