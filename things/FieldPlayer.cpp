@@ -35,7 +35,11 @@ void FieldPlayer::destroy() {
     Thing::destroy(); 
     };
 
-int FieldPlayer::write_thing_datum(ifstream &mapData, ThingData &newTD) {
+int FieldPlayer::write_thing_datum(ifstream &mapData, FieldPlayerData &newTD) {
     Thing::write_thing_datum(mapData, newTD);
+
+    // FOR OTHER TYPES OF THINGS WE WILL PARSE MORE HERE TO POPULATE THING DATA
+    // THAT WILL BE ASSIGNED TO LOCAL VARIABLES IN CONSTRUCTOR AND THEN
+    // USED TO CREATE OTHER COMPONENTS DURING init()
     return 1;
 }
