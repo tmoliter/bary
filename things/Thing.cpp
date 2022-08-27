@@ -1,5 +1,4 @@
 #include "./things/Thing.h"
-#include <fstream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
@@ -72,8 +71,6 @@ int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
                 case (4):
                     newTD.path = strdup(value.c_str());
                     value.clear();
-                    return 1;
-                case (5):
                     return 1;
                 default:
                     return 0;

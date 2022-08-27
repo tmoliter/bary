@@ -13,9 +13,16 @@ void parse_map(ThingList &thingList, Camera *c) {
     ifstream mapData;
     mapData.open("./maps/map.txt");
 
-    // while (mapData.get(current)) {
-    //  do background stuff
-    // }
+    // GET FOCUS FIRST
+
+    ThingData focusTD;
+    parse_entity(mapData, focusTD);
+    Thing *focus = new Thing(focusTD);
+    thingList.addThing(focus);
+
+    Camera::parse_camera(mapData, c);
+    c->init(&focus->x, &focus->y);
+
     while (mapData.get() == '\n') {
         ThingData newTD;
         char next;

@@ -28,7 +28,8 @@ int main(int argc, char* args[]) {
 
     ThingList things;
 
-    Camera *camera = new Camera(renderer, "./assets/backgrounds/burg.png");
+    // Camera *camera = new Camera(renderer, "./assets/backgrounds/burg.png");
+    Camera *camera = new Camera(renderer);
     parse_map(things, camera);
 
     FieldPlayerData playerData;
@@ -42,7 +43,7 @@ int main(int argc, char* args[]) {
     player->init(&camera->x, &camera->y, renderer);
     things.addThing(player);
 
-    camera->init(&player->x, &player->y);
+    // camera->init(&player->x, &player->y);
 
     /* insane stress test */
     // for (int i = 0; i < 20000; i++) {

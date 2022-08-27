@@ -4,7 +4,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
+#include <fstream>
 #include "globals.h"
+
+using namespace std;
 
 class Camera {
     private:
@@ -17,16 +20,15 @@ class Camera {
         int width, height;
         SDL_Renderer* renderer;
         int x, y;
-        Camera(SDL_Renderer* r, const char *p) : 
+        Camera(SDL_Renderer* r) : 
         x(0),
         y(0),
         renderer(r),
-        path(p),
         initialized(false) {};
         void init(int *fX, int *fY);
         void setPosition();
-        void setFocus(int *fX, int *fY);
         void render();
+        static int parse_camera(ifstream &mapData, Camera *c);
 };
 
 #endif
