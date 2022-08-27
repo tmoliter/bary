@@ -4,6 +4,12 @@
 
 using namespace std;
 
+void FieldPlayer::init(int *cX, int *cY, SDL_Renderer* renderer) {
+    Thing::init(cX,cY,renderer);
+    Thing::divideSheet(9, 4);
+    walk = new Walk(x,y, sourceRect);
+};
+
 void FieldPlayer::meat(KeyPresses keysDown) {
     int xV = 0, yV = 0;
     if (keysDown.left)
@@ -24,4 +30,16 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     walk->animate(xV,yV,tick);
 };
 
-void FieldPlayer::destroy() { Thing::destroy(); delete walk; delete this;};
+void FieldPlayer::destroy() { 
+    delete walk; 
+    Thing::destroy(); 
+    };
+
+int FieldPlayer::write_thing_datum(ifstream &mapData, FieldPlayerData &newTD) {
+    Thing::write_thing_datum(mapData, newTD);
+
+    // FOR OTHER TYPES OF THINGS WE WILL PARSE MORE HERE TO POPULATE THING DATA
+    // THAT WILL BE ASSIGNED TO LOCAL VARIABLES IN CONSTRUCTOR AND THEN
+    // USED TO CREATE OTHER COMPONENTS DURING init()
+    return 1;
+}

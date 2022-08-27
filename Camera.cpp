@@ -2,6 +2,8 @@
 #include <iostream>
 #include "globals.h"
 
+using namespace std;
+
 void Camera::setPosition() {
     if (focusX == 0 || focusY == 0) {
         x = 0;
@@ -36,14 +38,37 @@ void Camera::setPosition() {
     // }
 }
 
-void Camera::setFocus(int *fX, int *fY) {
+void Camera::init(int *fX, int *fY) {
     focusX = fX;
     focusY = fY;
+    SDL_Surface* temp = IMG_Load(path);
+    bgTexture = SDL_CreateTextureFromSurface(renderer, temp);
+    SDL_FreeSurface(temp);
+    SDL_QueryTexture(bgTexture, NULL, NULL, &width, &height);
+    sourceRect = { 0 , 0, SCREEN_WIDTH / SCALE, SCREEN_HEIGHT / SCALE };
+    renderRect = { 0 , 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+    initialized = true;
 }
 
-
 void Camera::render() {
+    if (!initialized)
+        return;
     SDL_SetRenderDrawColor(renderer, 50, 255, 100, 255);
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, bgTexture, &sourceRect, &renderRect);
 }
+
+int Camera::parse_camera(ifstream &mapData, Camera *c) {
+    char current;
+    string value = "";
+    mapData.get();
+    while (mapData.get(current)) {
+        if(current == '\n') {
+            c->path = strdup(value.c_str());
+            return 1;
+        }
+        value.push_back(current);
+    }
+    return 1;
+}
+

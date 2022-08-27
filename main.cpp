@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "FpsTimer.h"
 #include "ThingList.h"
+#include "MapParser.h"
 #include "globals.h"
 #include <vector>
 #include <algorithm>
@@ -26,24 +27,13 @@ int main(int argc, char* args[]) {
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
 
     ThingList things;
-
-    Camera camera = Camera(NULL, NULL, renderer);
-    FieldPlayer *player = new FieldPlayer(700, 700, &camera.x, &camera.y, renderer, "./assets/sheets/SDL_TestSS.png");
-    Thing *genrl = new Thing(500, 500, &camera.x, &camera.y, renderer, "./assets/BurgGenrlL.png");
-    things.AddThing(player);
-    things.AddThing(genrl);
-    camera.setFocus(&player->x, &player->y);
-
-
-    /* insane stress test */
-    // for (int i = 0; i < 20000; i++) {
-    //     Thing *genrl = new Thing(rand() % 1000 + 100, rand() % 1000 + 100, &camera.x, &camera.y, renderer, "./assets/BurgGenrlL.png");
-    //     things.AddThing(genrl);
-    // }
+    Camera *camera = new Camera(renderer);
+    parse_map(things, camera);
 
     Input in;
     FpsTimer t;
     ProfileData p;
+
     while (true){
         t.startFrame();
         KeyPresses keysDown = in.getInput();  
@@ -51,24 +41,26 @@ int main(int argc, char* args[]) {
 
         if (keysDown.quit)
             break;
-        things.MeatThings(keysDown);
+        things.meatThings(keysDown);
         t.timeElapsed(&p.b);
 
-        camera.setPosition();
-        camera.render();
+        camera->setPosition();
+        camera->render();
+
         t.timeElapsed(&p.c);
 
-        things.RenderThings();
+        things.renderThings();
         t.timeElapsed(&p.d);
 
         SDL_RenderPresent(renderer);
 
         t.timeElapsed(&p.e);
-        t.endFrameAndWait(frameCount, p);
+        t.endFrameAndWait(frameCount);
     }
-    things.DestroyThings();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    things.destroyThings();
+    delete camera;
     IMG_Quit();
     SDL_Quit();
     return 0;

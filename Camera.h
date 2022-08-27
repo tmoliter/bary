@@ -4,33 +4,31 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
+#include <fstream>
 #include "globals.h"
+
+using namespace std;
 
 class Camera {
     private:
-        int width, height;
         int *focusX, *focusY;
         SDL_Rect renderRect, sourceRect;
         SDL_Texture* bgTexture;
-        SDL_Renderer* renderer;
     public:
+        const char *path;
+        bool initialized;
+        int width, height;
+        SDL_Renderer* renderer;
         int x, y;
-        Camera(int *fX, int *fY, SDL_Renderer* renderer) : 
+        Camera(SDL_Renderer* r) : 
         x(0),
         y(0),
-        focusX(fX),
-        focusY(fY),
-        renderer(renderer) {
-            SDL_Surface* temp = IMG_Load("./assets/backgrounds/burg.png");
-            bgTexture = SDL_CreateTextureFromSurface(renderer, temp);
-            SDL_FreeSurface(temp);
-            SDL_QueryTexture(bgTexture, NULL, NULL, &width, &height);
-            sourceRect = { 0 , 0, SCREEN_WIDTH / SCALE, SCREEN_HEIGHT / SCALE };
-            renderRect = { 0 , 0, SCREEN_WIDTH, SCREEN_HEIGHT };
-        }
+        renderer(r),
+        initialized(false) {};
+        void init(int *fX, int *fY);
         void setPosition();
-        void setFocus(int *fX, int *fY);
         void render();
+        static int parse_camera(ifstream &mapData, Camera *c);
 };
 
 #endif

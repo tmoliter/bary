@@ -5,20 +5,22 @@
 #include "../components/Walk.h"
 #include <iostream>
 
-
+struct FieldPlayerData : ThingData {
+    string name;
+};
 
 class FieldPlayer : public Thing {
     private:
         Walk* walk;
+        string name;
     public:
-        FieldPlayer(int x, int y, int *cX, int *cY, SDL_Renderer* renderer, const char *path) : 
-        Thing(x, y, cX, cY, renderer, path) {
-            Thing::divideSheet(9, 4);
-            walk = new Walk(x,y, sourceRect);
-        };
+        FieldPlayer(FieldPlayerData fpD) : Thing(fpD), name(fpD.name) {};
 
+        void init(int *cX, int *cY, SDL_Renderer* renderer);
         void meat() {};
         void meat(KeyPresses keysDown);
         void destroy();
+
+        static int write_thing_datum(ifstream &mapData, FieldPlayerData &newTD);
 };
 #endif
