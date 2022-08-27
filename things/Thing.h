@@ -21,6 +21,7 @@ class Thing {
         int *cameraX, *cameraY;
 
     public:
+        bool initialized;
         const char *path;
         int id, x, y, tick, width, height;
         SDL_Renderer* renderer;
@@ -35,7 +36,8 @@ class Thing {
         path(td.path),
         width(0),
         height(0),
-        tick(0) {}
+        tick(0),
+        initialized(false) {}
 
         virtual void init (int *cX, int *cY, SDL_Renderer* renderer);
         

@@ -12,22 +12,18 @@ class Camera {
         SDL_Rect renderRect, sourceRect;
         SDL_Texture* bgTexture;
     public:
+        const char *path;
+        bool initialized;
         int width, height;
         SDL_Renderer* renderer;
         int x, y;
-        Camera(int *fX, int *fY, SDL_Renderer* renderer) : 
+        Camera(SDL_Renderer* r, const char *p) : 
         x(0),
         y(0),
-        focusX(fX),
-        focusY(fY),
-        renderer(renderer) {
-            SDL_Surface* temp = IMG_Load("./assets/backgrounds/burg.png");
-            bgTexture = SDL_CreateTextureFromSurface(renderer, temp);
-            SDL_FreeSurface(temp);
-            SDL_QueryTexture(bgTexture, NULL, NULL, &width, &height);
-            sourceRect = { 0 , 0, SCREEN_WIDTH / SCALE, SCREEN_HEIGHT / SCALE };
-            renderRect = { 0 , 0, SCREEN_WIDTH, SCREEN_HEIGHT };
-        }
+        renderer(r),
+        path(p),
+        initialized(false) {};
+        void init(int *fX, int *fY);
         void setPosition();
         void setFocus(int *fX, int *fY);
         void render();

@@ -36,6 +36,17 @@ void Camera::setPosition() {
     // }
 }
 
+void Camera::init(int *fX, int *fY) {
+    focusX = fX;
+    focusY = fY;
+    SDL_Surface* temp = IMG_Load(path);
+    bgTexture = SDL_CreateTextureFromSurface(renderer, temp);
+    SDL_FreeSurface(temp);
+    SDL_QueryTexture(bgTexture, NULL, NULL, &width, &height);
+    sourceRect = { 0 , 0, SCREEN_WIDTH / SCALE, SCREEN_HEIGHT / SCALE };
+    renderRect = { 0 , 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+}
+
 void Camera::setFocus(int *fX, int *fY) {
     focusX = fX;
     focusY = fY;

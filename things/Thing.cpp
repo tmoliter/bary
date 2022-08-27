@@ -14,6 +14,9 @@ using namespace std;
     }
 
 void Thing::render() {
+        if (!initialized)
+            return;
+            
         renderRect.x = (x - *cameraX - (width / 2)) * SCALE;
         renderRect.y = (y - *cameraY - height) * SCALE;
         SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
@@ -34,6 +37,7 @@ void Thing::init(int *cX, int *cY, SDL_Renderer* r)  {
                 height * SCALE 
             };
             sourceRect = { 0, 0, width, height };
+            initialized = true;
         };
 
 void Thing::incTick() {tick++;};
