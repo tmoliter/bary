@@ -65,7 +65,6 @@ int Camera::parse_camera(ifstream &mapData, Camera *c) {
     while (mapData.get(current)) {
         if(current == '\n') {
             c->path = strdup(value.c_str());
-            cout << value << endl;
             return 1;
         }
         value.push_back(current);

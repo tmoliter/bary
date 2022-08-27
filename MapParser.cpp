@@ -2,36 +2,46 @@
 
 using namespace std;
 
-void parse_entity(ifstream &mapData, ThingData &newTD) {
-    if(mapData.get() == 'T') {
+Thing *parse_thing(ifstream &mapData, ThingList &thingList) {
+    char next;
+    mapData.get(next);
+    if(next == 'T') {
+        ThingData newTD;
         Thing::write_thing_datum(mapData, newTD);
-        return;
+        thingList.addThing(new Thing(newTD));
+        return thingList.lastThing();
     }
+    if(next == 'P') {
+        FieldPlayerData newTD;
+        FieldPlayer::write_thing_datum(mapData, newTD);
+        thingList.addThing(new FieldPlayer(newTD));
+        return thingList.lastThing();
+    }
+    return NULL;
 }
+
+// void parse_component(ifstream &mapData, ThingList &thingList) {
+
+// }
 
 void parse_map(ThingList &thingList, Camera *c) {
     ifstream mapData;
     mapData.open("./maps/map.txt");
 
-    // GET FOCUS FIRST
-
-    ThingData focusTD;
-    parse_entity(mapData, focusTD);
-    Thing *focus = new Thing(focusTD);
-    thingList.addThing(focus);
+    Thing *focus = parse_thing(mapData, thingList);
 
     Camera::parse_camera(mapData, c);
+
     c->init(&focus->x, &focus->y);
 
-    while (mapData.get() == '\n') {
-        ThingData newTD;
-        char next;
-        do {
-            parse_entity(mapData, newTD);
-            next = mapData.peek();
-        } while (next != '\n' && next != EOF);
-        thingList.addThing(new Thing(newTD));
-    }
+    do {
+        parse_thing(mapData, thingList);
+        // if(mapData.peek() == ',') {
+        //     while(mapData.get() == ',') {
+        //         parse_component(mapData,thingList);
+        //     }
+        // }
+    } while (mapData.get() == '\n');
     thingList.initThings(&c->x,&c->y,c->renderer);
     mapData.close();
 }

@@ -12,6 +12,7 @@ class ThingList {
     public:
         ThingList() {};
         void addThing(Thing *thing);
+        Thing *lastThing();
         void initThings(int *cX, int *cY, SDL_Renderer* r);
         void meatThings(KeyPresses keysDown);
         void renderThings();

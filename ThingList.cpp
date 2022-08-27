@@ -10,12 +10,15 @@ void ThingList::addThing(Thing *thing) {
     things.push_back(thing);
 }
 
+Thing *ThingList::lastThing() {
+    return things[things.size() - 1];
+};
+
 void ThingList::initThings(int *cX, int *cY, SDL_Renderer* r) {
     for (auto thing : things){
         thing->init(cX,cY,r);
     }
 }
-
 
 void ThingList::meatThings(KeyPresses keysDown) {
     for (auto thing : things){
@@ -24,7 +27,6 @@ void ThingList::meatThings(KeyPresses keysDown) {
         thing->meat();
     }
 }
-
 void ThingList::renderThings() {
     std::sort(things.begin(), things.end(), compareThing);
     for (auto thing : things){

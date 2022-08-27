@@ -34,3 +34,8 @@ void FieldPlayer::destroy() {
     delete walk; 
     Thing::destroy(); 
     };
+
+int FieldPlayer::write_thing_datum(ifstream &mapData, ThingData &newTD) {
+    Thing::write_thing_datum(mapData, newTD);
+    return 1;
+}

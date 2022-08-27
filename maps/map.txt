@@ -1,4 +1,4 @@
-T,3,650,500,./assets/BurgGenrlL.png,
+P,3,650,500,./assets/sheets/SDL_TestSS.png,
 ./assets/backgrounds/burg.png
 T,1,500,600,./assets/BurgGenrlL.png,
 T,2,750,1000,./assets/BurgGenrlL.png,
