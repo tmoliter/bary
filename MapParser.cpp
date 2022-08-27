@@ -9,7 +9,7 @@ void parse_entity(ifstream &mapData, ThingData &newTD) {
     }
 }
 
-void parse_map(ThingList &thingList,int *cX, int *cY, SDL_Renderer* r) {
+void parse_map(ThingList &thingList, Camera *c) {
     ifstream mapData;
     mapData.open("./maps/map.txt");
 
@@ -25,6 +25,6 @@ void parse_map(ThingList &thingList,int *cX, int *cY, SDL_Renderer* r) {
         } while (next != '\n' && next != EOF);
         thingList.addThing(new Thing(newTD));
     }
-    thingList.initThings(cX,cY,r);
+    thingList.initThings(&c->x,&c->y,c->renderer);
     mapData.close();
 }

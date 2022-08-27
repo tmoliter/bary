@@ -29,7 +29,7 @@ int main(int argc, char* args[]) {
     ThingList things;
 
     Camera *camera = new Camera(NULL, NULL, renderer);
-    parse_map(things, &camera->x, &camera->y, renderer);
+    parse_map(things, camera);
 
     FieldPlayerData playerData;
     playerData.id = 0;

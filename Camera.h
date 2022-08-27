@@ -8,12 +8,12 @@
 
 class Camera {
     private:
-        int width, height;
         int *focusX, *focusY;
         SDL_Rect renderRect, sourceRect;
         SDL_Texture* bgTexture;
-        SDL_Renderer* renderer;
     public:
+        int width, height;
+        SDL_Renderer* renderer;
         int x, y;
         Camera(int *fX, int *fY, SDL_Renderer* renderer) : 
         x(0),
