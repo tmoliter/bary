@@ -19,9 +19,9 @@ struct ThingData {
 class Thing {
     protected:
         int *cameraX, *cameraY;
-        const char *path;
 
     public:
+        const char *path;
         int id, x, y, tick, width, height;
         SDL_Renderer* renderer;
 
@@ -51,7 +51,7 @@ class Thing {
         virtual void render();
         virtual void destroy();
 
-        static int write_thing_datum(ifstream &mapData, Thing *newThing);
+        static int write_thing_datum(ifstream &mapData, ThingData &newTD);
 };
 
 #endif

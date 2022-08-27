@@ -11,11 +11,12 @@ class ThingList {
         
     public:
         ThingList() {};
-        void AddThing(Thing *thing);
-        void MeatThings(KeyPresses keysDown);
-        void RenderThings();
-        void DestroyThings();
-        void DestroyThing();
+        void addThing(Thing *thing);
+        void initThings(int *cX, int *cY, SDL_Renderer* r);
+        void meatThings(KeyPresses keysDown);
+        void renderThings();
+        void destroyThings();
+        void destroyThing();
 };
 
 

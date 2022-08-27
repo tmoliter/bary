@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "FpsTimer.h"
 #include "ThingList.h"
+#include "MapParser.h"
 #include "globals.h"
 #include <vector>
 #include <algorithm>
@@ -28,15 +29,7 @@ int main(int argc, char* args[]) {
     ThingList things;
 
     Camera *camera = new Camera(NULL, NULL, renderer);
-
-    ThingData genrlData;
-    genrlData.id = 1;
-    genrlData.x = 700;
-    genrlData.y = 700;
-    genrlData.path = "./assets/BurgGenrlL.png";
-    Thing *genrl = new Thing(genrlData);
-    genrl->init(&camera->x, &camera->y, renderer);
-    things.AddThing(genrl);
+    parse_map(things, &camera->x, &camera->y, renderer);
 
     FieldPlayerData playerData;
     playerData.id = 0;
@@ -44,16 +37,17 @@ int main(int argc, char* args[]) {
     playerData.y = 700;
     playerData.name = "Zinnia";
     playerData.path = "./assets/sheets/SDL_TestSS.png";
+
     FieldPlayer *player = new FieldPlayer(playerData);
     player->init(&camera->x, &camera->y, renderer);
-    things.AddThing(player);
+    things.addThing(player);
 
     camera->setFocus(&player->x, &player->y);
 
     /* insane stress test */
     // for (int i = 0; i < 20000; i++) {
     //     Thing *genrl = new Thing(rand() % 1000 + 100, rand() % 1000 + 100, &camera.x, &camera.y, renderer, "./assets/BurgGenrlL.png");
-    //     things.AddThing(genrl);
+    //     things.addThing(genrl);
     // }
 
     Input in;
@@ -66,14 +60,14 @@ int main(int argc, char* args[]) {
 
         if (keysDown.quit)
             break;
-        things.MeatThings(keysDown);
+        things.meatThings(keysDown);
         t.timeElapsed(&p.b);
 
         camera->setPosition();
         camera->render();
         t.timeElapsed(&p.c);
 
-        things.RenderThings();
+        things.renderThings();
         t.timeElapsed(&p.d);
 
         SDL_RenderPresent(renderer);
@@ -83,7 +77,7 @@ int main(int argc, char* args[]) {
     }
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-    things.DestroyThings();
+    things.destroyThings();
     delete camera;
     IMG_Quit();
     SDL_Quit();

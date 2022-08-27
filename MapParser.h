@@ -9,9 +9,9 @@
 
 using namespace std;
 
-void parse_entity(ifstream &mapData, Thing *newThing);
+void parse_entity(ifstream &mapData, ThingData &newTD);
 
-void parse_map(ThingList &thingList);
+void parse_map(ThingList &thingList,int *cX, int *cY, SDL_Renderer* r);
 
 class MapParser {
 

@@ -40,17 +40,11 @@ void Thing::incTick() {tick++;};
 
 void Thing::destroy() {SDL_DestroyTexture(texture); delete this;};
 
-int Thing::write_thing_datum(ifstream &mapData, Thing *newThing) {
-    ThingData td;
+int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
     int index = 0;
     string value = "";
     char current;
-    while(mapData.peek() != EOF) {
-        if (mapData.peek() == '\n') {
-            newThing = new Thing(td);
-            return 1;
-        }
-        mapData.get(current);
+    while(mapData.get(current)) {
         if (current == ',') {
             switch(index) {
                 case (0):
@@ -58,31 +52,31 @@ int Thing::write_thing_datum(ifstream &mapData, Thing *newThing) {
                     break;
                 case (1):
                     index++;
-                    td.id = std::stoi(value);
+                    newTD.id = std::stoi(value);
+                    value.clear();
                     break;
                 case (2):
                     index++;
-                    td.x = std::stoi(value);
+                    newTD.x = std::stoi(value);
+                    value.clear();
                     break;
                 case (3):
                     index++;
-                    td.y = std::stoi(value);
+                    newTD.y = std::stoi(value);
+                    value.clear();
                     break;
                 case (4):
-                    index++;
-                    td.path = value.c_str();
-                    break;
+                    newTD.path = strdup(value.c_str());
+                    value.clear();
+                    return 1;
                 case (5):
-                    newThing = new Thing(td);
                     return 1;
                 default:
                     return 0;
-                    break;
             }
             continue;
         }
         value.push_back(current);
     }
-    newThing = new Thing(td);
     return 1;
 }
