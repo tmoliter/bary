@@ -7,14 +7,19 @@
 
 using namespace std;
 
+struct SpriteData {
+    int layer;
+    int xOffset;
+    int yOffset;
+    const char* path;
+};
+
 class Sprite {
-    private:
-        
     public:
-        Sprite(int &x, int &y, int tI, const char *p);
+        Sprite(int &x, int &y, int &tI, SpriteData sd);
         ~Sprite();
         bool active;
-        int id, thingId, &x, &y, width, height, *cameraX, *cameraY;
+        int id, &thingId, &x, &y, layer, yOffset, xOffset, width, height, *cameraX, *cameraY;
         const char *path;
         SDL_Renderer* renderer;
         SDL_Rect sourceRect, renderRect;
@@ -27,6 +32,7 @@ class Sprite {
         inline static map<int, Sprite*> sprites;
         static void renderSprites();
 
+        static int write_sprite_datum(ifstream &mapData, SpriteData &newSD);
 };
 
 #endif

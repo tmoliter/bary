@@ -5,6 +5,7 @@
 using namespace std;
 
 FieldPlayer::FieldPlayer(FieldPlayerData fpD) : Thing(fpD), name(fpD.name) {
+    sprite = new Sprite(x,y,id,fpD.spriteData);
     sprite->divideSheet(9, 4);
     walk = new Walk(x,y, sprite->sourceRect);
 };
@@ -30,14 +31,14 @@ void FieldPlayer::meat(KeyPresses keysDown) {
 };
 
 FieldPlayer::~FieldPlayer() { 
+    delete sprite;
     delete walk;
 };
 
 int FieldPlayer::write_thing_datum(ifstream &mapData, FieldPlayerData &newTD) {
     Thing::write_thing_datum(mapData, newTD);
-
-    // FOR OTHER TYPES OF THINGS WE WILL PARSE MORE HERE TO POPULATE THING DATA
-    // THAT WILL BE ASSIGNED TO LOCAL VARIABLES IN CONSTRUCTOR AND THEN
-    // USED TO CREATE OTHER COMPONENTS DURING init()
+    SpriteData newSD;
+    Sprite::write_sprite_datum(mapData,newSD);
+    newTD.spriteData = newSD;
     return 1;
 }

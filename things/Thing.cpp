@@ -8,18 +8,10 @@ using namespace std;
 Thing::Thing(ThingData td) : 
     x(td.x), 
     y(td.y),
-    path(td.path),
-    width(0),
-    height(0),
     tick(0) {
         id = currentID++;
         Thing::things[id] = this;
-        sprite = new Sprite(x,y,id,path);
     }
-
-Thing::~Thing() {
-    delete sprite;
-}
 
 void Thing::incTick() {tick++;};
 
@@ -45,10 +37,6 @@ int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
                 case (2):
                     index++;
                     newTD.y = std::stoi(value);
-                    value.clear();
-                    break;
-                case (3):
-                    newTD.path = strdup(value.c_str());
                     value.clear();
                     return 1;
                 default:
@@ -78,5 +66,5 @@ void Thing::destroyThings() {
 }
 
 void Thing::destroyThing() {
-    // https://cplusplus.com/reference/algorithm/find/
+    // Destroy by ID
 }

@@ -4,7 +4,15 @@
 
 using namespace std;
 
-Sprite::Sprite (int &x, int &y, int tI, const char *p) : x(x), y(y), path(p), active(false) {
+Sprite::Sprite (int &x, int &y, int &tI, SpriteData sd) : 
+x(x), 
+y(y), 
+thingId(tI), 
+layer(sd.layer),
+xOffset(sd.xOffset),
+yOffset(sd.yOffset),
+path(sd.path),
+active(false) {
     id = currentID++;
     Sprite::sprites[id] = this;
     renderer = Camera::c->renderer;
@@ -61,4 +69,40 @@ void Sprite::renderSprites() {
     for (auto sprite : spriteList){
         sprite->render();
     }
+}
+
+int Sprite::write_sprite_datum(ifstream &mapData, SpriteData &newSD){
+    int index = 0;
+    string value = "";
+    char current;
+    while(mapData.get(current)) {
+        if (current == ',') {
+            switch(index) {
+                case (0):
+                    index++;
+                    newSD.layer = std::stoi(value);
+                    value.clear();
+                    break;
+                case (1):
+                    index++;
+                    newSD.xOffset = std::stoi(value);
+                    value.clear();
+                    break;
+                case (2):
+                    index++;
+                    newSD.yOffset = std::stoi(value);
+                    value.clear();
+                    break;
+                case (3):
+                    newSD.path = strdup(value.c_str());
+                    value.clear();
+                    return 1;
+                default:
+                    return 0;
+            }
+            continue;
+        }
+        value.push_back(current);
+    }
+    return 1;
 }
