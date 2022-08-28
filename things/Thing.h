@@ -22,11 +22,9 @@ class Thing {
         int *cameraX, *cameraY;
 
     public:
-        int id, x, y, tick;
+        int id, x, y;
 
         Thing(ThingData td);
-        
-        void incTick();
         
         virtual void meat() {};
         /* insane stress test */

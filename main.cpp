@@ -53,7 +53,6 @@ int main(int argc, char* args[]) {
         t.timeElapsed(&p.e);
 
         SDL_RenderPresent(renderer);
-        t.endFrameAndWait(frameCount);
     }
     Thing::destroyThings();
     SDL_DestroyRenderer(renderer);

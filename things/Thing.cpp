@@ -7,13 +7,10 @@ using namespace std;
 
 Thing::Thing(ThingData td) : 
     x(td.x), 
-    y(td.y),
-    tick(0) {
+    y(td.y) {
         id = currentID++;
         Thing::things[id] = this;
     }
-
-void Thing::incTick() {tick++;};
 
 // STATIC
 
@@ -51,7 +48,6 @@ int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
 
 void Thing::meatThings(KeyPresses keysDown) {
     for (auto const& [id, thing] : Thing::things){
-        thing->incTick();
         thing->meat(keysDown);
         thing->meat();
     }
