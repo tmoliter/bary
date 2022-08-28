@@ -51,9 +51,11 @@ int main(int argc, char* args[]) {
         Thing::renderThings();
         t.timeElapsed(&p.d);
 
-        t.endFrameAndWait(frameCount, p);
+        t.endFrameAndWait(frameCount);
         t.timeElapsed(&p.e);
+
         SDL_RenderPresent(renderer);
+        t.endFrameAndWait(frameCount, p);
     }
     Thing::destroyThings();
     SDL_DestroyRenderer(renderer);
