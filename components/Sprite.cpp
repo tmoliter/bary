@@ -27,7 +27,6 @@ Sprite::Sprite (int &x, int &y, int tI, const char *p) : x(x), y(y), path(p), ac
 Sprite::~Sprite() {
     SDL_DestroyTexture(texture);
     sprites.erase(id);
-    delete this;
 }
 
 void Sprite::divideSheet(int columns, int rows) { 

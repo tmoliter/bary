@@ -38,7 +38,6 @@ class Thing {
         // virtual void meat() { int tmp = rand() % 20; y = tmp % 2 == 0 ? y + tmp : y -tmp; };
 
         virtual void meat(KeyPresses keysDown) {};
-        virtual void destroyInLoop(map<int, Thing*>::iterator &itr);
 
         static int write_thing_datum(ifstream &mapData, ThingData &newTD);
         static int currentID;

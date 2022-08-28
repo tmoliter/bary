@@ -23,11 +23,6 @@ Thing::~Thing() {
 
 void Thing::incTick() {tick++;};
 
-void Thing::destroyInLoop(map<int, Thing*>::iterator &itr) {
-    itr = Thing::things.erase(itr);
-    delete this;
-};
-
 // STATIC
 
 int Thing::currentID = 0;
@@ -77,7 +72,8 @@ void Thing::meatThings(KeyPresses keysDown) {
 void Thing::destroyThings() {
    map<int, Thing*>::iterator itr = Thing::things.begin();
    while (itr != Thing::things.end()) {
-        itr->second->destroyInLoop(itr);
+        delete itr->second;
+        itr = Thing::things.erase(itr);
    }
 }
 
