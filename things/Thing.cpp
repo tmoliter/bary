@@ -1,5 +1,6 @@
 #include "./things/Thing.h"
 #include <SDL2/SDL.h>
+#include <algorithm>
 #include <SDL2/SDL_image.h>
 
 using namespace std;
@@ -45,7 +46,6 @@ void Thing::init()  {
 void Thing::render() {
     if (!initialized)
         return;
-        
     renderRect.x = (x - *cameraX - (width / 2)) * SCALE;
     renderRect.y = (y - *cameraY - height) * SCALE;
     SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
@@ -53,7 +53,11 @@ void Thing::render() {
 
 void Thing::incTick() {tick++;};
 
-void Thing::destroy() {SDL_DestroyTexture(texture); Thing::things.erase(id); delete this;};
+void Thing::destroy(map<int, Thing*>::iterator &itr) {
+    SDL_DestroyTexture(texture); 
+    itr = Thing::things.erase(itr);
+    delete this;
+};
 
 // STATIC
 
@@ -91,4 +95,36 @@ int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
         value.push_back(current);
     }
     return 1;
+}
+
+void Thing::initThings() {
+    for (auto const& [id, thing] : Thing::things){
+        thing->init();
+    }
+}
+
+void Thing::meatThings(KeyPresses keysDown) {
+    for (auto const& [id, thing] : Thing::things){
+        thing->incTick();
+        thing->meat(keysDown);
+        thing->meat();
+    }
+}
+
+void Thing::renderThings() {
+    // sort(Thing::things&, compareThing);
+    for (auto const& [id, thing] : Thing::things){
+        thing->render();
+    }
+}
+
+void Thing::destroyThings() {
+   map<int, Thing*>::iterator itr = Thing::things.begin();
+   while (itr != Thing::things.end()) {
+        itr->second->destroy(itr);
+   }
+}
+
+void Thing::destroyThing() {
+    // https://cplusplus.com/reference/algorithm/find/
 }

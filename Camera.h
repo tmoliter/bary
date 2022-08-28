@@ -15,25 +15,17 @@ class Camera {
         SDL_Rect renderRect, sourceRect;
         SDL_Texture* bgTexture;
     public:
-        Camera() : 
+        Camera(SDL_Renderer* r) : 
         x(0),
         y(0),
+        renderer(r),
         initialized(false) {
-            window = SDL_CreateWindow(
-                        "Timmy's Big Test",
-                        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                        SCREEN_WIDTH, SCREEN_HEIGHT,
-                        SDL_WINDOW_SHOWN
-                        );
-
-            renderer = SDL_CreateRenderer(window, -1, 0);
             c = this;
         };
         const char *path;
         bool initialized;
         int width, height;
         SDL_Renderer* renderer;
-        SDL_Window* window;
         int x, y;
         void init(int *fX, int *fY);
         void setPosition();

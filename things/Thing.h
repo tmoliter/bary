@@ -45,11 +45,17 @@ class Thing {
 
         virtual void meat(KeyPresses keysDown) {};
         virtual void render();
-        virtual void destroy();
+        virtual void destroy(map<int, Thing*>::iterator &itr);
 
         static int write_thing_datum(ifstream &mapData, ThingData &newTD);
         static int currentID;
         inline static map<int, Thing*> things;
+
+        static void initThings();
+        static void meatThings(KeyPresses keysDown);
+        static void renderThings();
+        static void destroyThings();
+        static void destroyThing();
 };
 
 #endif

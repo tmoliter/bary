@@ -4,7 +4,6 @@
 #include "things/FieldPlayer.h"
 #include "Camera.h"
 #include "FpsTimer.h"
-#include "ThingList.h"
 #include "MapParser.h"
 #include "globals.h"
 #include <vector>
@@ -16,22 +15,32 @@ int main(int argc, char* args[]) {
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
 
-    new Camera();
+    SDL_Window* window = NULL;
+    window = SDL_CreateWindow(
+                "Timmy's Big Test",
+                SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                SCREEN_WIDTH, SCREEN_HEIGHT,
+                SDL_WINDOW_SHOWN
+                );
 
-    ThingList things;
-    parse_map(things);
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
+    new Camera(renderer);
+
+    parse_map();
+
 
     Input in;
     FpsTimer t;
     ProfileData p;
+
     while (true){
-        t.startFrame();
+    t.startFrame();
         KeyPresses keysDown = in.getInput();  
         t.timeElapsed(&p.a);
 
         if (keysDown.quit)
             break;
-        things.meatThings(keysDown);
+        Thing::meatThings(keysDown);
         t.timeElapsed(&p.b);
 
         Camera::c->setPosition();
@@ -39,18 +48,20 @@ int main(int argc, char* args[]) {
 
         t.timeElapsed(&p.c);
 
-        things.renderThings();
+        Thing::renderThings();
         t.timeElapsed(&p.d);
 
-        SDL_RenderPresent(Camera::c->renderer);
+        SDL_RenderPresent(renderer);
 
         t.timeElapsed(&p.e);
         t.endFrameAndWait(frameCount);
     }
-    SDL_DestroyRenderer(Camera::c->renderer);
-    SDL_DestroyWindow(Camera::c->window);
-    things.destroyThings();
+    Thing::destroyThings();
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+
     delete Camera::c;
+
     IMG_Quit();
     SDL_Quit();
     return 0;

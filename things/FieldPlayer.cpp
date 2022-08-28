@@ -30,10 +30,10 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     walk->animate(xV,yV,tick);
 };
 
-void FieldPlayer::destroy() { 
-    delete walk; 
-    Thing::destroy(); 
-    };
+void FieldPlayer::destroy(map<int, Thing*>::iterator &itr) { 
+    delete walk;
+    Thing::destroy(itr);
+};
 
 int FieldPlayer::write_thing_datum(ifstream &mapData, FieldPlayerData &newTD) {
     Thing::write_thing_datum(mapData, newTD);

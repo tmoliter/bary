@@ -19,7 +19,7 @@ class FieldPlayer : public Thing {
         void init();
         void meat() {};
         void meat(KeyPresses keysDown);
-        void destroy();
+        void destroy(map<int, Thing*>::iterator &itr);
 
         static int write_thing_datum(ifstream &mapData, FieldPlayerData &newTD);
 };
