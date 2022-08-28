@@ -15,20 +15,23 @@ class Camera {
         SDL_Rect renderRect, sourceRect;
         SDL_Texture* bgTexture;
     public:
+        Camera(SDL_Renderer* r) : 
+        x(0),
+        y(0),
+        renderer(r),
+        initialized(false) {
+            c = this;
+        };
         const char *path;
         bool initialized;
         int width, height;
         SDL_Renderer* renderer;
         int x, y;
-        Camera(SDL_Renderer* r) : 
-        x(0),
-        y(0),
-        renderer(r),
-        initialized(false) {};
         void init(int *fX, int *fY);
         void setPosition();
         void render();
-        static int parse_camera(ifstream &mapData, Camera *c);
+        static int parse_camera(ifstream &mapData);
+        inline static Camera *c;
 };
 
 #endif

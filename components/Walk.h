@@ -3,6 +3,7 @@
 
 #include <../include/SDL2/SDL.h>
 
+
 class Walk {
     private:
         SDL_Rect &sourceRect;

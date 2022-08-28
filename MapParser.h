@@ -6,14 +6,11 @@
 #include <typeinfo>
 #include "./things/Thing.h"
 #include "./things/FieldPlayer.h"
-#include "./ThingList.h"
 #include "./Camera.h"
 
 using namespace std;
 
-Thing *parse_thing(ifstream &mapData, ThingData &newTD);
-void parse_component(ifstream &mapData, ThingData &newTD);
-
-void parse_map(ThingList &thingList, Camera *c);
+Thing *parse_thing(ifstream &mapData);
+void parse_map();
 
 #endif

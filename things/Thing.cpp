@@ -1,47 +1,31 @@
 #include "./things/Thing.h"
 #include <SDL2/SDL.h>
+#include <algorithm>
 #include <SDL2/SDL_image.h>
 
 using namespace std;
 
- void Thing::divideSheet(int columns, int rows) { 
-        width = width / columns; 
-        height = height / rows; 
-        renderRect.w = width * SCALE;
-        renderRect.h = height * SCALE;
-        sourceRect = { 0, 0, width, height };
+Thing::Thing(ThingData td) : 
+    x(td.x), 
+    y(td.y),
+    path(td.path),
+    width(0),
+    height(0),
+    tick(0) {
+        id = currentID++;
+        Thing::things[id] = this;
+        sprite = new Sprite(x,y,id,path);
     }
 
-void Thing::render() {
-        if (!initialized)
-            return;
-            
-        renderRect.x = (x - *cameraX - (width / 2)) * SCALE;
-        renderRect.y = (y - *cameraY - height) * SCALE;
-        SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
-    };
-
-void Thing::init(int *cX, int *cY, SDL_Renderer* r)  {
-            renderer = r;
-            cameraX = cX;
-            cameraY = cY;
-            SDL_Surface* temp = IMG_Load(path);
-            texture = SDL_CreateTextureFromSurface(renderer, temp);
-            SDL_FreeSurface(temp);
-            SDL_QueryTexture(texture, NULL, NULL, &width, &height);
-            renderRect = {
-                -1000,
-                -1000,
-                width * SCALE, 
-                height * SCALE 
-            };
-            sourceRect = { 0, 0, width, height };
-            initialized = true;
-        };
+Thing::~Thing() {
+    delete sprite;
+}
 
 void Thing::incTick() {tick++;};
 
-void Thing::destroy() {SDL_DestroyTexture(texture); delete this;};
+// STATIC
+
+int Thing::currentID = 0;
 
 int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
     int index = 0;
@@ -55,20 +39,15 @@ int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
                     break;
                 case (1):
                     index++;
-                    newTD.id = std::stoi(value);
+                    newTD.x = std::stoi(value);
                     value.clear();
                     break;
                 case (2):
                     index++;
-                    newTD.x = std::stoi(value);
-                    value.clear();
-                    break;
-                case (3):
-                    index++;
                     newTD.y = std::stoi(value);
                     value.clear();
                     break;
-                case (4):
+                case (3):
                     newTD.path = strdup(value.c_str());
                     value.clear();
                     return 1;
@@ -80,4 +59,24 @@ int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
         value.push_back(current);
     }
     return 1;
+}
+
+void Thing::meatThings(KeyPresses keysDown) {
+    for (auto const& [id, thing] : Thing::things){
+        thing->incTick();
+        thing->meat(keysDown);
+        thing->meat();
+    }
+}
+
+void Thing::destroyThings() {
+   map<int, Thing*>::iterator itr = Thing::things.begin();
+   while (itr != Thing::things.end()) {
+        delete itr->second;
+        itr = Thing::things.erase(itr);
+   }
+}
+
+void Thing::destroyThing() {
+    // https://cplusplus.com/reference/algorithm/find/
 }
