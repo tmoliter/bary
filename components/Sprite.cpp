@@ -48,8 +48,8 @@ void Sprite::divideSheet(int columns, int rows) {
 void Sprite::render() {
     if (!active)
         return;
-    renderRect.x = (x - *cameraX - (width / 2)) * SCALE;
-    renderRect.y = (y - *cameraY - height) * SCALE;
+    renderRect.x = ((x + xOffset) - *cameraX - (width / 2)) * SCALE;
+    renderRect.y = ((y + yOffset) - *cameraY - height) * SCALE;
     SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
 };
 
@@ -58,7 +58,9 @@ void Sprite::render() {
 int Sprite::currentID = 0;
 
 bool _comparePosition (Sprite* a, Sprite* b) {
-    return a->y < b->y;
+    if (a->layer == b->layer)
+        return a->y < b->y;
+    return a->layer < b->layer;
 }
 void Sprite::renderSprites() {
     vector<Sprite*> spriteList;

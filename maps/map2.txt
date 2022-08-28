@@ -1,2 +1,3 @@
-P,1000,500,1,2,3,./assets/sheets/SDL_TestSS.png,
+P,1000,500,2,2,3,./assets/sheets/SDL_TestSS.png,
 ./assets/backgrounds/burg.png,
+B,500,500,1,10,40,./assets/BurgGenrlL.png,3,30,-50,./assets/BurgGenrlL.png,

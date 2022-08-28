@@ -4,9 +4,13 @@
 #include "Thing.h"
 #include "../components/Walk.h"
 #include <iostream>
+#include <vector>
+
+using namespace std;
 
 struct BuildingData : ThingData {
     string name;
+    vector<SpriteData> spriteDataVector;
 };
 
 class Building : public Thing {
@@ -16,7 +20,7 @@ class Building : public Thing {
         Building(BuildingData fpD);
         ~Building();
 
-        void meat(KeyPresses keysDown);
+        vector<Sprite*> sprites;
 
         static int write_thing_datum(ifstream &mapData, BuildingData &newTD);
 };

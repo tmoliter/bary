@@ -15,6 +15,11 @@ Thing *parse_thing(ifstream &mapData) {
         FieldPlayer::write_thing_datum(mapData, newTD);
         return new FieldPlayer(newTD);
     }
+    if(next == 'B') {
+        BuildingData newTD;
+        Building::write_thing_datum(mapData, newTD);
+        return new Building(newTD);
+    }
     return NULL;
 }
 
