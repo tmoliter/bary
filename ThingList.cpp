@@ -14,9 +14,9 @@ Thing *ThingList::lastThing() {
     return things[things.size() - 1];
 };
 
-void ThingList::initThings(int *cX, int *cY, SDL_Renderer* r) {
+void ThingList::initThings() {
     for (auto thing : things){
-        thing->init(cX,cY,r);
+        thing->init();
     }
 }
 

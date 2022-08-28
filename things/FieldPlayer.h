@@ -16,7 +16,7 @@ class FieldPlayer : public Thing {
     public:
         FieldPlayer(FieldPlayerData fpD) : Thing(fpD), name(fpD.name) {};
 
-        void init(int *cX, int *cY, SDL_Renderer* renderer);
+        void init();
         void meat() {};
         void meat(KeyPresses keysDown);
         void destroy();

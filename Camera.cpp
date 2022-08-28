@@ -58,13 +58,13 @@ void Camera::render() {
     SDL_RenderCopy(renderer, bgTexture, &sourceRect, &renderRect);
 }
 
-int Camera::parse_camera(ifstream &mapData, Camera *c) {
+int Camera::parse_camera(ifstream &mapData) {
     char current;
     string value = "";
     mapData.get();
     while (mapData.get(current)) {
         if(current == '\n') {
-            c->path = strdup(value.c_str());
+            Camera::c->path = strdup(value.c_str());
             return 1;
         }
         value.push_back(current);

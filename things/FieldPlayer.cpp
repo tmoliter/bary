@@ -4,8 +4,8 @@
 
 using namespace std;
 
-void FieldPlayer::init(int *cX, int *cY, SDL_Renderer* renderer) {
-    Thing::init(cX,cY,renderer);
+void FieldPlayer::init() {
+    Thing::init();
     Thing::divideSheet(9, 4);
     walk = new Walk(x,y, sourceRect);
 };

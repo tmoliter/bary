@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 #include <fstream>
 #include "../globals.h"
+#include "../Camera.h"
 
 using namespace std;
 
@@ -40,7 +41,7 @@ class Thing {
         tick(0),
         initialized(false) {}
 
-        virtual void init (int *cX, int *cY, SDL_Renderer* renderer);
+        virtual void init ();
         
         void divideSheet(int columns, int rows);
         

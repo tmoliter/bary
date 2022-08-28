@@ -13,12 +13,11 @@ class ThingList {
         ThingList() {};
         void addThing(Thing *thing);
         Thing *lastThing();
-        void initThings(int *cX, int *cY, SDL_Renderer* r);
+        void initThings();
         void meatThings(KeyPresses keysDown);
         void renderThings();
         void destroyThings();
         void destroyThing();
 };
-
 
 #endif

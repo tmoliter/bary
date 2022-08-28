@@ -12,19 +12,10 @@ using namespace std;
         sourceRect = { 0, 0, width, height };
     }
 
-void Thing::render() {
-        if (!initialized)
-            return;
-            
-        renderRect.x = (x - *cameraX - (width / 2)) * SCALE;
-        renderRect.y = (y - *cameraY - height) * SCALE;
-        SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
-    };
-
-void Thing::init(int *cX, int *cY, SDL_Renderer* r)  {
-            renderer = r;
-            cameraX = cX;
-            cameraY = cY;
+void Thing::init()  {
+            renderer = Camera::c->renderer;
+            cameraX = &Camera::c->x;
+            cameraY = &Camera::c->y;
             SDL_Surface* temp = IMG_Load(path);
             texture = SDL_CreateTextureFromSurface(renderer, temp);
             SDL_FreeSurface(temp);
@@ -38,6 +29,15 @@ void Thing::init(int *cX, int *cY, SDL_Renderer* r)  {
             sourceRect = { 0, 0, width, height };
             initialized = true;
         };
+
+void Thing::render() {
+        if (!initialized)
+            return;
+            
+        renderRect.x = (x - *cameraX - (width / 2)) * SCALE;
+        renderRect.y = (y - *cameraY - height) * SCALE;
+        SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
+    };
 
 void Thing::incTick() {tick++;};
 

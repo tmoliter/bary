@@ -16,24 +16,14 @@ int main(int argc, char* args[]) {
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
 
-    SDL_Window* window = NULL;
-    window = SDL_CreateWindow(
-                "Timmy's Big Test",
-                SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                SCREEN_WIDTH, SCREEN_HEIGHT,
-                SDL_WINDOW_SHOWN
-                );
-
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
+    new Camera();
 
     ThingList things;
-    Camera *camera = new Camera(renderer);
-    parse_map(things, camera);
+    parse_map(things);
 
     Input in;
     FpsTimer t;
     ProfileData p;
-
     while (true){
         t.startFrame();
         KeyPresses keysDown = in.getInput();  
@@ -44,23 +34,23 @@ int main(int argc, char* args[]) {
         things.meatThings(keysDown);
         t.timeElapsed(&p.b);
 
-        camera->setPosition();
-        camera->render();
+        Camera::c->setPosition();
+        Camera::c->render();
 
         t.timeElapsed(&p.c);
 
         things.renderThings();
         t.timeElapsed(&p.d);
 
-        SDL_RenderPresent(renderer);
+        SDL_RenderPresent(Camera::c->renderer);
 
         t.timeElapsed(&p.e);
         t.endFrameAndWait(frameCount);
     }
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(Camera::c->renderer);
+    SDL_DestroyWindow(Camera::c->window);
     things.destroyThings();
-    delete camera;
+    delete Camera::c;
     IMG_Quit();
     SDL_Quit();
     return 0;
