@@ -14,7 +14,7 @@ using namespace std;
 int main(int argc, char* args[]) {
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
-
+    SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
     SDL_Window* window = NULL;
     window = SDL_CreateWindow(
                 "Timmy's Big Test",
@@ -51,10 +51,9 @@ int main(int argc, char* args[]) {
         Thing::renderThings();
         t.timeElapsed(&p.d);
 
-        SDL_RenderPresent(renderer);
-
+        t.endFrameAndWait(frameCount, p);
         t.timeElapsed(&p.e);
-        t.endFrameAndWait(frameCount);
+        SDL_RenderPresent(renderer);
     }
     Thing::destroyThings();
     SDL_DestroyRenderer(renderer);
