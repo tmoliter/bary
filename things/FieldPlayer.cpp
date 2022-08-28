@@ -4,10 +4,9 @@
 
 using namespace std;
 
-void FieldPlayer::init() {
-    Thing::init();
-    Thing::divideSheet(9, 4);
-    walk = new Walk(x,y, sourceRect);
+FieldPlayer::FieldPlayer(FieldPlayerData fpD) : Thing(fpD), name(fpD.name) {
+    sprite->divideSheet(9, 4);
+    walk = new Walk(x,y, sprite->sourceRect);
 };
 
 void FieldPlayer::meat(KeyPresses keysDown) {
@@ -30,9 +29,8 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     walk->animate(xV,yV,tick);
 };
 
-void FieldPlayer::destroy(map<int, Thing*>::iterator &itr) { 
+FieldPlayer::~FieldPlayer() { 
     delete walk;
-    Thing::destroy(itr);
 };
 
 int FieldPlayer::write_thing_datum(ifstream &mapData, FieldPlayerData &newTD) {

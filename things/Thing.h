@@ -8,6 +8,7 @@
 #include <fstream>
 #include "../globals.h"
 #include "../Camera.h"
+#include "Sprite.h"
 
 using namespace std;
 
@@ -17,25 +18,18 @@ struct ThingData {
     const char *path;
 };
 
-/* Things can be rendered */
 class Thing {
     protected:
         int *cameraX, *cameraY;
 
     public:
-        bool initialized;
         const char *path;
         int id, x, y, tick, width, height;
-        SDL_Renderer* renderer;
 
-        SDL_Rect sourceRect, renderRect;
-        SDL_Texture* texture;
+        Sprite *sprite;
 
         Thing(ThingData td);
-
-        virtual void init ();
-        
-        void divideSheet(int columns, int rows);
+        ~Thing();
         
         void incTick();
         
@@ -44,16 +38,13 @@ class Thing {
         // virtual void meat() { int tmp = rand() % 20; y = tmp % 2 == 0 ? y + tmp : y -tmp; };
 
         virtual void meat(KeyPresses keysDown) {};
-        virtual void render();
-        virtual void destroy(map<int, Thing*>::iterator &itr);
+        virtual void destroyInLoop(map<int, Thing*>::iterator &itr);
 
         static int write_thing_datum(ifstream &mapData, ThingData &newTD);
         static int currentID;
         inline static map<int, Thing*> things;
 
-        static void initThings();
         static void meatThings(KeyPresses keysDown);
-        static void renderThings();
         static void destroyThings();
         static void destroyThing();
 };

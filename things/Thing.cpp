@@ -11,50 +11,19 @@ Thing::Thing(ThingData td) :
     path(td.path),
     width(0),
     height(0),
-    tick(0),
-    initialized(false) {
+    tick(0) {
         id = currentID++;
         Thing::things[id] = this;
+        sprite = new Sprite(x,y,id,path);
     }
 
-void Thing::divideSheet(int columns, int rows) { 
-    width = width / columns; 
-    height = height / rows; 
-    renderRect.w = width * SCALE;
-    renderRect.h = height * SCALE;
-    sourceRect = { 0, 0, width, height };
+Thing::~Thing() {
+    delete sprite;
 }
-
-void Thing::init()  {
-    renderer = Camera::c->renderer;
-    cameraX = &Camera::c->x;
-    cameraY = &Camera::c->y;
-    SDL_Surface* temp = IMG_Load(path);
-    texture = SDL_CreateTextureFromSurface(renderer, temp);
-    SDL_FreeSurface(temp);
-    SDL_QueryTexture(texture, NULL, NULL, &width, &height);
-    renderRect = {
-        -1000,
-        -1000,
-        width * SCALE, 
-        height * SCALE 
-    };
-    sourceRect = { 0, 0, width, height };
-    initialized = true;
-};
-
-void Thing::render() {
-    if (!initialized)
-        return;
-    renderRect.x = (x - *cameraX - (width / 2)) * SCALE;
-    renderRect.y = (y - *cameraY - height) * SCALE;
-    SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
-};
 
 void Thing::incTick() {tick++;};
 
-void Thing::destroy(map<int, Thing*>::iterator &itr) {
-    SDL_DestroyTexture(texture); 
+void Thing::destroyInLoop(map<int, Thing*>::iterator &itr) {
     itr = Thing::things.erase(itr);
     delete this;
 };
@@ -97,12 +66,6 @@ int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
     return 1;
 }
 
-void Thing::initThings() {
-    for (auto const& [id, thing] : Thing::things){
-        thing->init();
-    }
-}
-
 void Thing::meatThings(KeyPresses keysDown) {
     for (auto const& [id, thing] : Thing::things){
         thing->incTick();
@@ -111,17 +74,10 @@ void Thing::meatThings(KeyPresses keysDown) {
     }
 }
 
-void Thing::renderThings() {
-    // sort(Thing::things&, compareThing);
-    for (auto const& [id, thing] : Thing::things){
-        thing->render();
-    }
-}
-
 void Thing::destroyThings() {
    map<int, Thing*>::iterator itr = Thing::things.begin();
    while (itr != Thing::things.end()) {
-        itr->second->destroy(itr);
+        itr->second->destroyInLoop(itr);
    }
 }
 

@@ -14,12 +14,10 @@ class FieldPlayer : public Thing {
         Walk* walk;
         string name;
     public:
-        FieldPlayer(FieldPlayerData fpD) : Thing(fpD), name(fpD.name) {};
+        FieldPlayer(FieldPlayerData fpD);
+        ~FieldPlayer();
 
-        void init();
-        void meat() {};
         void meat(KeyPresses keysDown);
-        void destroy(map<int, Thing*>::iterator &itr);
 
         static int write_thing_datum(ifstream &mapData, FieldPlayerData &newTD);
 };

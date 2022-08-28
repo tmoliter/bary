@@ -1,7 +1,6 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <SDL2/SDL_image.h>
-#include "things/FieldPlayer.h"
 #include "Camera.h"
 #include "FpsTimer.h"
 #include "MapParser.h"
@@ -48,7 +47,7 @@ int main(int argc, char* args[]) {
 
         t.timeElapsed(&p.c);
 
-        Thing::renderThings();
+        Sprite::renderSprites();
         t.timeElapsed(&p.d);
 
         t.endFrameAndWait(frameCount);

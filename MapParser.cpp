@@ -28,6 +28,5 @@ void parse_map() {
     do {
         parse_thing(mapData);
     } while (mapData.get() == '\n');
-    Thing::initThings();
     mapData.close();
 }
