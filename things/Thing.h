@@ -2,6 +2,7 @@
 #define THING_H
 #include "../Input.h"
 #include <iostream>
+#include <map>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 #include <fstream>
@@ -11,7 +12,6 @@
 using namespace std;
 
 struct ThingData {
-    int id;
     int x;
     int y;
     const char *path;
@@ -31,15 +31,7 @@ class Thing {
         SDL_Rect sourceRect, renderRect;
         SDL_Texture* texture;
 
-        Thing(ThingData td) : 
-        id(td.id),
-        x(td.x), 
-        y(td.y),
-        path(td.path),
-        width(0),
-        height(0),
-        tick(0),
-        initialized(false) {}
+        Thing(ThingData td);
 
         virtual void init ();
         
@@ -56,6 +48,8 @@ class Thing {
         virtual void destroy();
 
         static int write_thing_datum(ifstream &mapData, ThingData &newTD);
+        static int currentID;
+        inline static map<int, Thing*> things;
 };
 
 #endif

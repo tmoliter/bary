@@ -4,44 +4,60 @@
 
 using namespace std;
 
- void Thing::divideSheet(int columns, int rows) { 
-        width = width / columns; 
-        height = height / rows; 
-        renderRect.w = width * SCALE;
-        renderRect.h = height * SCALE;
-        sourceRect = { 0, 0, width, height };
+Thing::Thing(ThingData td) : 
+    x(td.x), 
+    y(td.y),
+    path(td.path),
+    width(0),
+    height(0),
+    tick(0),
+    initialized(false) {
+        id = currentID++;
+        Thing::things[id] = this;
     }
 
+void Thing::divideSheet(int columns, int rows) { 
+    width = width / columns; 
+    height = height / rows; 
+    renderRect.w = width * SCALE;
+    renderRect.h = height * SCALE;
+    sourceRect = { 0, 0, width, height };
+}
+
 void Thing::init()  {
-            renderer = Camera::c->renderer;
-            cameraX = &Camera::c->x;
-            cameraY = &Camera::c->y;
-            SDL_Surface* temp = IMG_Load(path);
-            texture = SDL_CreateTextureFromSurface(renderer, temp);
-            SDL_FreeSurface(temp);
-            SDL_QueryTexture(texture, NULL, NULL, &width, &height);
-            renderRect = {
-                -1000,
-                -1000,
-                width * SCALE, 
-                height * SCALE 
-            };
-            sourceRect = { 0, 0, width, height };
-            initialized = true;
-        };
+    renderer = Camera::c->renderer;
+    cameraX = &Camera::c->x;
+    cameraY = &Camera::c->y;
+    SDL_Surface* temp = IMG_Load(path);
+    texture = SDL_CreateTextureFromSurface(renderer, temp);
+    SDL_FreeSurface(temp);
+    SDL_QueryTexture(texture, NULL, NULL, &width, &height);
+    renderRect = {
+        -1000,
+        -1000,
+        width * SCALE, 
+        height * SCALE 
+    };
+    sourceRect = { 0, 0, width, height };
+    initialized = true;
+};
 
 void Thing::render() {
-        if (!initialized)
-            return;
-            
-        renderRect.x = (x - *cameraX - (width / 2)) * SCALE;
-        renderRect.y = (y - *cameraY - height) * SCALE;
-        SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
-    };
+    if (!initialized)
+        return;
+        
+    renderRect.x = (x - *cameraX - (width / 2)) * SCALE;
+    renderRect.y = (y - *cameraY - height) * SCALE;
+    SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
+};
 
 void Thing::incTick() {tick++;};
 
-void Thing::destroy() {SDL_DestroyTexture(texture); delete this;};
+void Thing::destroy() {SDL_DestroyTexture(texture); Thing::things.erase(id); delete this;};
+
+// STATIC
+
+int Thing::currentID = 0;
 
 int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
     int index = 0;
@@ -55,20 +71,15 @@ int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
                     break;
                 case (1):
                     index++;
-                    newTD.id = std::stoi(value);
+                    newTD.x = std::stoi(value);
                     value.clear();
                     break;
                 case (2):
                     index++;
-                    newTD.x = std::stoi(value);
-                    value.clear();
-                    break;
-                case (3):
-                    index++;
                     newTD.y = std::stoi(value);
                     value.clear();
                     break;
-                case (4):
+                case (3):
                     newTD.path = strdup(value.c_str());
                     value.clear();
                     return 1;
