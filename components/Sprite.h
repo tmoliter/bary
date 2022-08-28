@@ -1,6 +1,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 #include <map>
+#include <string>
 #include <../include/SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "Camera.h"
@@ -11,7 +12,7 @@ struct SpriteData {
     int layer;
     int xOffset;
     int yOffset;
-    const char* path;
+    SDL_Texture *texture;
 };
 
 class Sprite {
@@ -20,7 +21,6 @@ class Sprite {
         ~Sprite();
         bool active;
         int id, &thingId, &x, &y, layer, yOffset, xOffset, width, height, *cameraX, *cameraY;
-        const char *path;
         SDL_Renderer* renderer;
         SDL_Rect sourceRect, renderRect;
         SDL_Texture* texture;
@@ -30,6 +30,7 @@ class Sprite {
 
         static int currentID;
         inline static map<int, Sprite*> sprites;
+        inline static map<string, SDL_Texture*> textures;
         static void renderSprites();
 
         static int write_sprite_datum(ifstream &mapData, SpriteData &newSD);

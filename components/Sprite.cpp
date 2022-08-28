@@ -11,16 +11,13 @@ thingId(tI),
 layer(sd.layer),
 xOffset(sd.xOffset),
 yOffset(sd.yOffset),
-path(sd.path),
+texture(sd.texture),
 active(false) {
     id = currentID++;
     Sprite::sprites[id] = this;
     renderer = Camera::c->renderer;
     cameraX = &Camera::c->x;
     cameraY = &Camera::c->y;
-    SDL_Surface* temp = IMG_Load(path);
-    texture = SDL_CreateTextureFromSurface(renderer, temp);
-    SDL_FreeSurface(temp);
     SDL_QueryTexture(texture, NULL, NULL, &width, &height);
     renderRect = {
         -1000,
@@ -96,7 +93,12 @@ int Sprite::write_sprite_datum(ifstream &mapData, SpriteData &newSD){
                     value.clear();
                     break;
                 case (3):
-                    newSD.path = strdup(value.c_str());
+                    if(!textures.count(value)) {
+                        SDL_Surface* temp = IMG_Load(value.c_str());
+                        textures[value] = SDL_CreateTextureFromSurface(Camera::c->renderer, temp);
+                        SDL_FreeSurface(temp);
+                    }
+                    newSD.texture = textures[value];
                     value.clear();
                     return 1;
                 default:
