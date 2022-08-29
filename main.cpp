@@ -25,8 +25,7 @@ int main(int argc, char* args[]) {
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
     new Camera(renderer);
 
-    parse_map();
-
+    parse_map("./maps/map2.txt");
 
     Input in;
     FpsTimer t;
@@ -54,7 +53,6 @@ int main(int argc, char* args[]) {
         t.timeElapsed(&p.e);
 
         SDL_RenderPresent(renderer);
-        t.endFrameAndWait(frameCount);
     }
     Thing::destroyThings();
     SDL_DestroyRenderer(renderer);

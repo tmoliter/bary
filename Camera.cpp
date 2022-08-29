@@ -63,7 +63,7 @@ int Camera::parse_camera(ifstream &mapData) {
     string value = "";
     mapData.get();
     while (mapData.get(current)) {
-        if(current == '\n') {
+        if(current == ',') {
             Camera::c->path = strdup(value.c_str());
             return 1;
         }

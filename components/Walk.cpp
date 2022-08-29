@@ -1,13 +1,14 @@
+#include "globals.h"
 #include "Walk.h"
 #include <SDL2/SDL.h>
 #include <iostream>
 
 using namespace std;
 
-void Walk::move(int xD, int yD, int &x, int &y, int tick){
+void Walk::move(int xD, int yD, int &x, int &y){
     if (speed == 0)
         return;
-    if (speed < 3 && tick % (3 - speed) != 0) {
+    if (speed < 3 && frameCount % (3 - speed) != 0) {
         return;
     }
     int appliedSpeed = speed < 4 ? 1 : speed;
@@ -15,7 +16,7 @@ void Walk::move(int xD, int yD, int &x, int &y, int tick){
     y = y + (yD * appliedSpeed);
 };
 
-void Walk::animate(int xD, int yD, int tick) {
+void Walk::animate(int xD, int yD) {
     int totalFrames = 7;
     int delayPerFrame = 12 / speed;
     if (xD != 0 || yD != 0) {
@@ -28,7 +29,7 @@ void Walk::animate(int xD, int yD, int tick) {
         else if(xD > 0)
             sourceRect.y = sourceRect.h * 3;
 
-        int frame = ((tick / delayPerFrame) % totalFrames) + 1;
+        int frame = ((frameCount / delayPerFrame) % totalFrames) + 1;
         sourceRect.x = frame * sourceRect.w;
     }
     else if (sourceRect.x != 0)

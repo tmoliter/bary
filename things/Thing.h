@@ -15,7 +15,6 @@ using namespace std;
 struct ThingData {
     int x;
     int y;
-    const char *path;
 };
 
 class Thing {
@@ -23,15 +22,9 @@ class Thing {
         int *cameraX, *cameraY;
 
     public:
-        const char *path;
-        int id, x, y, tick, width, height;
-
-        Sprite *sprite;
+        int id, x, y;
 
         Thing(ThingData td);
-        ~Thing();
-        
-        void incTick();
         
         virtual void meat() {};
         /* insane stress test */

@@ -7,6 +7,7 @@
 
 struct FieldPlayerData : ThingData {
     string name;
+    SpriteData spriteData;
 };
 
 class FieldPlayer : public Thing {
@@ -16,6 +17,8 @@ class FieldPlayer : public Thing {
     public:
         FieldPlayer(FieldPlayerData fpD);
         ~FieldPlayer();
+
+        Sprite *sprite;
 
         void meat(KeyPresses keysDown);
 

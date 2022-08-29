@@ -7,21 +7,10 @@ using namespace std;
 
 Thing::Thing(ThingData td) : 
     x(td.x), 
-    y(td.y),
-    path(td.path),
-    width(0),
-    height(0),
-    tick(0) {
+    y(td.y) {
         id = currentID++;
         Thing::things[id] = this;
-        sprite = new Sprite(x,y,id,path);
     }
-
-Thing::~Thing() {
-    delete sprite;
-}
-
-void Thing::incTick() {tick++;};
 
 // STATIC
 
@@ -46,10 +35,6 @@ int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
                     index++;
                     newTD.y = std::stoi(value);
                     value.clear();
-                    break;
-                case (3):
-                    newTD.path = strdup(value.c_str());
-                    value.clear();
                     return 1;
                 default:
                     return 0;
@@ -63,7 +48,6 @@ int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
 
 void Thing::meatThings(KeyPresses keysDown) {
     for (auto const& [id, thing] : Thing::things){
-        thing->incTick();
         thing->meat(keysDown);
         thing->meat();
     }
@@ -78,5 +62,5 @@ void Thing::destroyThings() {
 }
 
 void Thing::destroyThing() {
-    // https://cplusplus.com/reference/algorithm/find/
+    // Destroy by ID
 }

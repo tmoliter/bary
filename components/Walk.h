@@ -11,8 +11,8 @@ class Walk {
         
     public:
         Walk(int &x, int &y, SDL_Rect &sourceRect) : sourceRect(sourceRect), speed(2) {};
-        void move(int xV, int yV, int &x, int &y, int tick);
-        void animate(int x, int y, int tick);
+        void move(int xV, int yV, int &x, int &y);
+        void animate(int x, int y);
         void changeSpeed(bool decrease);
 };
 

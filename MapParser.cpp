@@ -15,18 +15,22 @@ Thing *parse_thing(ifstream &mapData) {
         FieldPlayer::write_thing_datum(mapData, newTD);
         return new FieldPlayer(newTD);
     }
+    if(next == 'B') {
+        BuildingData newTD;
+        Building::write_thing_datum(mapData, newTD);
+        return new Building(newTD);
+    }
     return NULL;
 }
 
-void parse_map() {
+void parse_map(const char *mapPath) {
     ifstream mapData;
-    mapData.open("./maps/map.txt");
-
+    mapData.open(mapPath);
     Thing* focus = parse_thing(mapData);
     Camera::parse_camera(mapData);
     Camera::c->init(&focus->x, &focus->y);
-    do {
+    while (mapData.get() == '\n') {
         parse_thing(mapData);
-    } while (mapData.get() == '\n');
+    };
     mapData.close();
 }
