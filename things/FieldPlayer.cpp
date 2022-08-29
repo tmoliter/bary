@@ -33,7 +33,6 @@ void FieldPlayer::meat(KeyPresses keysDown) {
         sprite->layer--;
     if (keysDown.menu2)
         sprite->layer++;
-    cout << x - (sprite->x / 2) << " : " << y - sprite->height << endl;
 };
 
 FieldPlayer::~FieldPlayer() { 
