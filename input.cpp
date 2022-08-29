@@ -7,6 +7,8 @@ KeyPresses& Input::getInput () {
     keysDown.cancel = false;
     keysDown.start = false;
     keysDown.ok = false;
+    keysDown.menu1 = false;
+    keysDown.menu2 = false;
     while (SDL_PollEvent(&input)){
         if (input.type == SDL_QUIT){
             keysDown.quit = true;
@@ -36,6 +38,14 @@ KeyPresses& Input::getInput () {
                 case SDLK_DOWN:
                     if (input.key.repeat == 0)
                         keysDown.cancel = true;
+                    break;
+                case SDLK_k:
+                    if (input.key.repeat == 0)
+                        keysDown.menu1 = true;
+                    break;
+                case SDLK_j:
+                    if (input.key.repeat == 0)
+                        keysDown.menu2 = true;
                     break;
             }
         }

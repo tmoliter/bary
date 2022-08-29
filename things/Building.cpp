@@ -18,10 +18,16 @@ Building::~Building() {
 
 int Building::write_thing_datum(ifstream &mapData, BuildingData &newTD) {
     Thing::write_thing_datum(mapData, newTD);
-    while(mapData.peek() != '\n' && mapData.peek() != EOF) {
+    char next = mapData.peek();
+    while(next != '\n' && next != EOF) {
+        if(next == 'S'){
+            mapData.get();
+            mapData.get(next);
+        }
         SpriteData newSD;
         Sprite::write_sprite_datum(mapData,newSD);
         newTD.spriteDataVector.push_back(newSD);
+        next = mapData.peek();
     }
 
     return 1;

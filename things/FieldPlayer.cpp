@@ -28,6 +28,12 @@ void FieldPlayer::meat(KeyPresses keysDown) {
 
     walk->move(xV,yV,x,y);
     walk->animate(xV,yV);
+
+    if (keysDown.menu1 && sprite->layer > 0)
+        sprite->layer--;
+    if (keysDown.menu2)
+        sprite->layer++;
+    cout << x - (sprite->x / 2) << " : " << y - sprite->height << endl;
 };
 
 FieldPlayer::~FieldPlayer() { 
