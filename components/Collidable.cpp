@@ -1,32 +1,71 @@
-// #include <iostream>
-// #include <functional>
-// using namespace std::placeholders;
+#include <vector>
+#include <iostream>
+#include "Collidable.h"
 
-// template<typename out_t, typename in_t, typename in_2>
-// struct Collider {
-//     using F = std::function<out_t(in_t, in_2)>;
-//     F callback;
-//     Collider(F cb) : callback(cb) {}
-// };
+using namespace std;
 
-// // MAYBE THIS IS ALL STUPID. INTERACTABLE/OBSTRUCTION/EVENT OWNS SOME VECTORS THAT GET CHECKED WHEN APPROPRIATE
+Collidable::Collidable (int &x, int &y, int &tI, CollidableData cd) : 
+x(x), 
+y(y), 
+thingId(tI),
+layer(cd.layer),
+rays(cd.rays),
+active(true) {}
 
-// class C{
-// public:
-//     Collider<int,int, int> collider;
-//     int a = 2;
-//     int b = 3;
-    
-//     char colliderCallback(int in, int in_2) { 
-//         return (in * a * b) - in_2; 
-//     }
-//     C() : collider(std::bind(&C::colliderCallback, this, _1, _2)) { 
-//         collider = new Collider(std::bind(&C::colliderCallback, this, _1, _2))
-//     }     
-// };
+Collidable::~Collidable() {
+    for (auto r : rays) {
+        delete r;
+    }
+}
+
+bool Collidable::isColliding(Ray &incoming) {
+    for (auto r : rays) {
+        if (raysCollide(incoming, *r)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// STATIC
+
+void _write_rays (ifstream &mapData, CollidableData &newCD) {
+    char next = mapData.peek();
+    while(next != '\n' && next != EOF) {
+        if(next == 'R'){
+            mapData.get();
+            mapData.get(next);
+        }
+        Ray newRay;
+        Ray::write_ray_datum(mapData,newRay);
+        newCD.rays.push_back(&newRay);
+        next = mapData.peek();
+    }
+} 
 
 
-// int main() {
-//     C *x = new C();
-//     return x->colliderCallback(5,10);
-// }
+int Collidable::write_collidable_datum(ifstream &mapData, CollidableData &newCD){
+    int index = 0;
+    string value = "";
+    char current;
+    while(mapData.get(current)) {
+        if (current == ',') {
+            switch(index) {
+                case (0):
+                    cout << value << endl;
+                    newCD.layer = std::stoi(value);
+                    value.clear();
+                    index++;
+                    break;
+                case (1):
+                    _write_rays(mapData, newCD);
+                    return 1;
+                default:
+                    return 0;
+            }
+            continue;
+        }
+        value.push_back(current);
+    }
+    return 1;
+}

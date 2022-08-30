@@ -12,8 +12,8 @@ Building::Building(BuildingData bD) : Thing(bD), name(bD.name) {
 
 Building::~Building() { 
     for (auto s : sprites) {
-            delete s;
-        }
+        delete s;
+    }
 };
 
 int Building::write_building_datum(ifstream &mapData, BuildingData &newTD) {

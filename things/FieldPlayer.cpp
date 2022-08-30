@@ -10,6 +10,11 @@ FieldPlayer::FieldPlayer(FieldPlayerData fpD) : Thing(fpD), name(fpD.name) {
     walk = new Walk(x,y, sprite->sourceRect);
 };
 
+FieldPlayer::~FieldPlayer() { 
+    delete sprite;
+    delete walk;
+};
+
 void FieldPlayer::meat(KeyPresses keysDown) {
     int xV = 0, yV = 0;
     if (keysDown.left)
@@ -35,11 +40,6 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     walk->move(xV,yV,x,y);
     walk->animate(xV,yV);
 
-};
-
-FieldPlayer::~FieldPlayer() { 
-    delete sprite;
-    delete walk;
 };
 
 int FieldPlayer::write_player_datum(ifstream &mapData, FieldPlayerData &newTD) {
