@@ -29,7 +29,6 @@ int Ray::write_ray_datum(ifstream &mapData, Ray &newRay) {
                     cout << value << endl;
                     newRay.b.y = std::stoi(value);
                     value.clear();
-                    index++;
                     return 1;
                 default:
                     return 0;

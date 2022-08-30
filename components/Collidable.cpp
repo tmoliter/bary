@@ -49,7 +49,7 @@ int Collidable::write_collidable_datum(ifstream &mapData, CollidableData &newCD)
     string value = "";
     char current;
     while(mapData.get(current)) {
-        if (current == ',') {
+        if (current == ',' || current == ' ') {
             switch(index) {
                 case (0):
                     cout << value << endl;

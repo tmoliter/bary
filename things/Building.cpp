@@ -22,20 +22,24 @@ int Building::write_building_datum(ifstream &mapData, BuildingData &newTD) {
     while(next != '\n' && next != EOF) {
         if(next == 'S'){
             mapData.get();
-            mapData.get(next);
+            mapData.get();
             SpriteData newSD;
             Sprite::write_sprite_datum(mapData,newSD);
             newTD.spriteDataVector.push_back(newSD);
             next = mapData.peek();
+            continue;
         }
         if(next == 'O'){
             mapData.get();
-            mapData.get(next);
+            mapData.get();
             CollidableData newCD;
             Collidable::write_collidable_datum(mapData,newCD);
             newTD.obstructionData = newCD;
             next = mapData.peek();
+            continue;
         }
+        cout << next << endl;
+        return 0;
     }
 
     return 1;

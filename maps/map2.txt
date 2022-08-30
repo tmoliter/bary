@@ -6,4 +6,9 @@ B,500,500,S
 2,|324,97,|143,|38,./assets/sheets/Burg/SailorShack.png,S
 0,33,33,182,324,57,291,70,./assets/sheets/Burg/SailorShack.png,S
 2,|58,57,291,|175,|./assets/sheets/Burg/SailorShack.png,S
-2,|25,21,291,58,62,41,./assets/sheets/Burg/SailorShack.png,
+2,|25,21,291,58,62,41,./assets/sheets/Burg/SailorShack.png,O
+0,R
+0,0>0,300,0,R
+0,300>300,300,R
+300,300>300,0,R
+300,0>0,300,
