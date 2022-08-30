@@ -7,8 +7,10 @@ KeyPresses& Input::getInput () {
     keysDown.cancel = false;
     keysDown.start = false;
     keysDown.ok = false;
-    keysDown.menu1 = false;
-    keysDown.menu2 = false;
+    keysDown.debug_up = false;
+    keysDown.debug_down = false;
+    keysDown.debug_left = false;
+    keysDown.debug_right = false;
     while (SDL_PollEvent(&input)){
         if (input.type == SDL_QUIT){
             keysDown.quit = true;
@@ -33,19 +35,19 @@ KeyPresses& Input::getInput () {
                     break;
                 case SDLK_UP:
                     if (input.key.repeat == 0)
-                        keysDown.ok = true;
+                        keysDown.debug_up = true;
                     break;
                 case SDLK_DOWN:
                     if (input.key.repeat == 0)
-                        keysDown.cancel = true;
+                        keysDown.debug_down = true;
                     break;
-                case SDLK_k:
+                case SDLK_LEFT:
                     if (input.key.repeat == 0)
-                        keysDown.menu1 = true;
+                        keysDown.debug_left = true;
                     break;
-                case SDLK_j:
+                case SDLK_RIGHT:
                     if (input.key.repeat == 0)
-                        keysDown.menu2 = true;
+                        keysDown.debug_right = true;
                     break;
             }
         }

@@ -21,18 +21,20 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     if (keysDown.down)
         yV += 1;
 
-    if (keysDown.ok)
+    /* DEBUG MODE CONTROLS */
+    if (keysDown.debug_left && sprite->layer > 0)
+        sprite->layer--;
+    if (keysDown.debug_right)
+        sprite->layer++;
+    if (keysDown.debug_up)
         walk->changeSpeed(false);
-    if (keysDown.cancel)
+    if (keysDown.debug_down)
         walk->changeSpeed(true);
+    /* END DEBUG MODE CONTROLS */
 
     walk->move(xV,yV,x,y);
     walk->animate(xV,yV);
 
-    if (keysDown.menu1 && sprite->layer > 0)
-        sprite->layer--;
-    if (keysDown.menu2)
-        sprite->layer++;
 };
 
 FieldPlayer::~FieldPlayer() { 
