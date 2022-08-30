@@ -19,26 +19,18 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     int xV = 0, yV = 0;
     int rayX = x + 16;
     int rayY = y + 32;
-    if (keysDown.left) {
-        Ray ray = Ray(rayX, rayY, rayX - 8, rayY);
-        if (!Obstruction::checkForObstructions(ray))
-            xV -= 1;
-        }
-    if (keysDown.right) {
-        Ray ray = Ray(rayX, rayY, rayX + 8, rayY);
-        if (!Obstruction::checkForObstructions(ray))
-            xV += 1;
-        }
-    if (keysDown.up) {
-        Ray ray = Ray(rayX, rayY, rayX, rayY - 8);
-        if (!Obstruction::checkForObstructions(ray))
-            yV -= 1;
-    }
-    if (keysDown.down) {
-        Ray ray = Ray(rayX, rayY, rayX, rayY + 8);
-        if (!Obstruction::checkForObstructions(ray))
-            yV += 1;
-        }
+    DirectionMap dM;
+    vector<Ray> rv;
+    if (keysDown.up) 
+        dM.up = true;
+    if (keysDown.down)
+        dM.down = true;
+    if (keysDown.left)
+        dM.left = true;
+    if (keysDown.right)
+        dM.right = true;
+
+    walk->move(dM);
 
     /* DEBUG MODE CONTROLS */
     if (keysDown.debug_left && sprite->layer > 0)
@@ -50,10 +42,6 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     if (keysDown.debug_down)
         walk->changeSpeed(true);
     /* END DEBUG MODE CONTROLS */
-
-    walk->move(xV,yV,x,y);
-    walk->animate(xV,yV);
-
 };
 
 int FieldPlayer::write_player_datum(ifstream &mapData, FieldPlayerData &newTD) {

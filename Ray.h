@@ -6,6 +6,35 @@
 
 using namespace std;
 
+enum Direction {
+    up,
+    down,
+    left,
+    right,
+    none
+};
+
+struct DirectionMap {
+    bool up = false;
+    bool down = false;
+    bool left = false;
+    bool right = false;
+    DirectionMap () : up(false), down(false), left(false), right(false) {};
+};
+
+inline Direction directionFromMap(DirectionMap dM) {
+    if (dM.up) 
+        return Direction::up;
+    if (dM.down) 
+        return Direction::down;
+    if (dM.left) 
+        return Direction::left;
+    if (dM.right) 
+        return Direction::right;
+    return Direction::none;
+}
+
+
 struct Point {
     int x;
     int y;
