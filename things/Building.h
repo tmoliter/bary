@@ -12,6 +12,7 @@ using namespace std;
 struct BuildingData : ThingData {
     string name;
     vector<SpriteData> spriteDataVector;
+    CollidableData obstructionData;
 };
 
 class Building : public Thing {
@@ -22,7 +23,7 @@ class Building : public Thing {
         ~Building();
 
         vector<Sprite*> sprites;
-        // Obstruction obstruction;
+        Obstruction obstruction;
 
         static int write_building_datum(ifstream &mapData, BuildingData &newTD);
 };

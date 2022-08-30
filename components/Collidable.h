@@ -1,6 +1,5 @@
 #ifndef COLLIDABLE_H
 #define COLLIDABLE_H
-#include <map>
 #include "Ray.h"
 #include <vector>
 #include <string>
