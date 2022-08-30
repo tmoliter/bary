@@ -5,32 +5,51 @@
 
 using namespace std;
 
+void Walk::padSide(DirectionMap dM) {
+    Ray ray;
+    int xCenter = x + (sourceRect.w / 2);
+    int yBottom = y + sourceRect.h;
+    if (dM.up || dM.down){
+        ray = Ray(xCenter, yBottom, xCenter - 8, yBottom);
+        if(Obstruction::checkForObstructions(ray)) 
+            x += 1;
+        ray = Ray(xCenter, yBottom, xCenter + 8, yBottom);
+        if(Obstruction::checkForObstructions(ray)) 
+            x -= 1;
+    }
+    if(dM.left || dM.right) {
+        ray = Ray(xCenter, yBottom, xCenter, yBottom - 8);
+        if(Obstruction::checkForObstructions(ray)) 
+            y += 1;
+        ray = Ray(xCenter, yBottom, xCenter, yBottom + 8);
+        if(Obstruction::checkForObstructions(ray)) 
+            y -= 1;
+    }
+};
+
+
 bool Walk::checkCollision(Direction d) {
-    vector<Ray> rays;
+    Ray ray;
+    int xCenter = x + (sourceRect.w / 2);
+    int yBottom = y + sourceRect.h;
     switch(d){
         case (Direction::up):
-            rays.push_back(Ray(x + 8, y + sourceRect.h, x + 8, y + 24));
-            rays.push_back(Ray(x + 24, y + sourceRect.h, x + 24, y + 24));
+            ray = Ray(xCenter, yBottom, xCenter, yBottom - 8);
             break;
         case (Direction::down):
-            rays.push_back(Ray(x + 8, y + sourceRect.h, x + 8, y + 40));
-            rays.push_back(Ray(x + 24, y + sourceRect.h, x + 24, y + 40));
+            ray = Ray(xCenter, yBottom, xCenter, yBottom + 8);
             break;
         case (Direction::left):
-            rays.push_back(Ray(x + 16, y + 40, x + 8, y + 40));
-            rays.push_back(Ray(x + 16, y + 24, x + 8, y + 24));
+            ray = Ray(xCenter, yBottom, xCenter - 8, yBottom);
             break;
         case (Direction::right):
-            rays.push_back(Ray(x + 16, y + 40, x + 24, y + 40));
-            rays.push_back(Ray(x + 16, y + 24, x + 24, y + 24));
+            ray = Ray(xCenter, yBottom, xCenter + 8, yBottom);
             break;
         default:
-            break;
+            return false;
     }
-    for (auto r : rays) {
-        if (Obstruction::checkForObstructions(r))
-            return true;
-    }
+    if (Obstruction::checkForObstructions(ray))
+        return true;
     return false;
 };
 
@@ -92,6 +111,7 @@ void Walk::move(DirectionMap dM){
     }
 
     int appliedSpeed = speed < 4 ? 1 : speed;
+    padSide(dM);
     if (dM.up) {
         if (checkCollision(Direction::up)) 
             dM.up = false;
