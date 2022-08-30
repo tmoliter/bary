@@ -17,18 +17,28 @@ FieldPlayer::~FieldPlayer() {
 
 void FieldPlayer::meat(KeyPresses keysDown) {
     int xV = 0, yV = 0;
-    if (keysDown.left)
-        xV -= 1;
-    if (keysDown.right)
-        xV += 1;
+    int rayX = x + 16;
+    int rayY = y + 32;
+    if (keysDown.left) {
+        Ray ray = Ray(rayX, rayY, rayX - 8, rayY);
+        if (!Obstruction::checkForObstructions(ray))
+            xV -= 1;
+        }
+    if (keysDown.right) {
+        Ray ray = Ray(rayX, rayY, rayX + 8, rayY);
+        if (!Obstruction::checkForObstructions(ray))
+            xV += 1;
+        }
     if (keysDown.up) {
-        int rayX = x + 16;
-        Ray ray = Ray(rayX, y + 32, rayX, y + 24);
+        Ray ray = Ray(rayX, rayY, rayX, rayY - 8);
         if (!Obstruction::checkForObstructions(ray))
             yV -= 1;
     }
-    if (keysDown.down)
-        yV += 1;
+    if (keysDown.down) {
+        Ray ray = Ray(rayX, rayY, rayX, rayY + 8);
+        if (!Obstruction::checkForObstructions(ray))
+            yV += 1;
+        }
 
     /* DEBUG MODE CONTROLS */
     if (keysDown.debug_left && sprite->layer > 0)
