@@ -1,6 +1,6 @@
-P,1000,500,0,*./assets/sheets/SDL_TestSS.png,
-./assets/backgrounds/burg.png,
-B,585,786,S
+P,500,500,0,*./assets/sheets/SDL_TestSS.png,
+./assets/backgrounds/tg.png,
+B,500,500,S
 0,|291,117,|||135,./assets/sheets/Burg/SailorShack.png,S
 1,|308,26,|117,7,38,./assets/sheets/Burg/SailorShack.png,S
 2,|324,97,|143,|38,./assets/sheets/Burg/SailorShack.png,S

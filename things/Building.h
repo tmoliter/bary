@@ -22,7 +22,7 @@ class Building : public Thing {
 
         vector<Sprite*> sprites;
 
-        static int write_thing_datum(ifstream &mapData, BuildingData &newTD);
+        static int write_building_datum(ifstream &mapData, BuildingData &newTD);
 };
 
 #endif

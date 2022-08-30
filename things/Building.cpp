@@ -16,7 +16,7 @@ Building::~Building() {
         }
 };
 
-int Building::write_thing_datum(ifstream &mapData, BuildingData &newTD) {
+int Building::write_building_datum(ifstream &mapData, BuildingData &newTD) {
     Thing::write_thing_datum(mapData, newTD);
     char next = mapData.peek();
     while(next != '\n' && next != EOF) {

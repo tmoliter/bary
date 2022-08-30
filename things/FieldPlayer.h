@@ -22,6 +22,6 @@ class FieldPlayer : public Thing {
 
         void meat(KeyPresses keysDown);
 
-        static int write_thing_datum(ifstream &mapData, FieldPlayerData &newTD);
+        static int write_player_datum(ifstream &mapData, FieldPlayerData &newTD);
 };
 #endif

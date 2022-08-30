@@ -42,7 +42,7 @@ FieldPlayer::~FieldPlayer() {
     delete walk;
 };
 
-int FieldPlayer::write_thing_datum(ifstream &mapData, FieldPlayerData &newTD) {
+int FieldPlayer::write_player_datum(ifstream &mapData, FieldPlayerData &newTD) {
     Thing::write_thing_datum(mapData, newTD);
     SpriteData newSD;
     Sprite::write_sprite_datum(mapData,newSD);
