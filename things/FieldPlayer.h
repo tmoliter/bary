@@ -2,7 +2,9 @@
 #define FIELD_PLAYER_H
 
 #include "Thing.h"
+#include "../Ray.h"
 #include "../components/Walk.h"
+#include "../components/Obstruction.h"
 #include <iostream>
 
 struct FieldPlayerData : ThingData {

@@ -46,7 +46,7 @@ bool isCounterClockwise (Point A, Point B, Point C) {
 
 bool raysCollide(Ray &ray1, Ray &ray2) {
     return (
-        isCounterClockwise(ray1.a,ray1.b,ray2.a) != isCounterClockwise(ray1.a,ray1.b,ray2.b) &&
-        isCounterClockwise(ray2.a,ray2.b,ray1.a) != isCounterClockwise(ray2.a,ray2.b,ray1.b)
+        isCounterClockwise(ray1.a,ray1.b,ray2.a)  != isCounterClockwise(ray1.a,ray1.b,ray2.b) &&
+        isCounterClockwise(ray2.a,ray2.b,ray1.a)!= isCounterClockwise(ray2.a,ray2.b,ray1.b)
     );
 };

@@ -21,8 +21,12 @@ void FieldPlayer::meat(KeyPresses keysDown) {
         xV -= 1;
     if (keysDown.right)
         xV += 1;
-    if (keysDown.up)
-        yV -= 1;
+    if (keysDown.up) {
+        int rayX = x + 16;
+        Ray ray = Ray(rayX, y + 32, rayX, y + 24);
+        if (!Obstruction::checkForObstructions(ray))
+            yV -= 1;
+    }
     if (keysDown.down)
         yV += 1;
 

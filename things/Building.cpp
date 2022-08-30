@@ -38,7 +38,6 @@ int Building::write_building_datum(ifstream &mapData, BuildingData &newTD) {
             next = mapData.peek();
             continue;
         }
-        cout << next << endl;
         return 0;
     }
 

@@ -16,8 +16,9 @@ int Obstruction::currentID = 0;
 
 bool Obstruction::checkForObstructions(Ray &incoming) {
     for (auto const& [id, o] : Obstruction::obstructions){
-        if(o->isColliding(incoming))
+        if(o->isColliding(incoming)) {
             return true;
+        }
     }
     return false;
 }
