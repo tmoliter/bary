@@ -24,11 +24,6 @@ class Collidable {
 
         bool isColliding(Ray &incoming);
 
-        // Push this down into three subtypes
-        static int currentID;
-        inline static map<int, Collidable*> collidables;
-        int id;
-
         static int write_collidable_datum(ifstream &mapData, CollidableData &newCD);
 };
 

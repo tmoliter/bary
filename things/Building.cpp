@@ -23,11 +23,11 @@ int Building::write_building_datum(ifstream &mapData, BuildingData &newTD) {
         if(next == 'S'){
             mapData.get();
             mapData.get(next);
+            SpriteData newSD;
+            Sprite::write_sprite_datum(mapData,newSD);
+            newTD.spriteDataVector.push_back(newSD);
+            next = mapData.peek();
         }
-        SpriteData newSD;
-        Sprite::write_sprite_datum(mapData,newSD);
-        newTD.spriteDataVector.push_back(newSD);
-        next = mapData.peek();
     }
 
     return 1;
