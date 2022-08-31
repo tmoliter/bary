@@ -11,7 +11,7 @@ class Obstruction : public Collidable {
 
         static int currentID;
         inline static map<int, Obstruction*> obstructions;
-        static bool checkForObstructions(Ray &incoming);
+        static bool checkForObstructions(Ray &incoming, int layer);
 };
 
 #endif

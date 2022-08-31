@@ -14,9 +14,9 @@ Obstruction::~Obstruction() {
 
 int Obstruction::currentID = 0;
 
-bool Obstruction::checkForObstructions(Ray &incoming) {
+bool Obstruction::checkForObstructions(Ray &incoming, int layer) {
     for (auto const& [id, o] : Obstruction::obstructions){
-        if(o->isColliding(incoming)) {
+        if(o->isColliding(incoming, layer)) {
             return true;
         }
     }

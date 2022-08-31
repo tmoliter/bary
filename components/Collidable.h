@@ -21,7 +21,7 @@ class Collidable {
 
         vector<Ray*> rays;
 
-        bool isColliding(Ray &incoming);
+        bool isColliding(Ray &incoming, int incomingLayer);
 
         static int write_collidable_datum(ifstream &mapData, CollidableData &newCD);
 };

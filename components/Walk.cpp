@@ -11,18 +11,18 @@ void Walk::padSide(DirectionMap dM) {
     int yBottom = y + sourceRect.h;
     if (dM.up || dM.down){
         ray = Ray(xCenter, yBottom, xCenter - 8, yBottom);
-        if(Obstruction::checkForObstructions(ray)) 
+        if(Obstruction::checkForObstructions(ray, layer)) 
             x += 1;
         ray = Ray(xCenter, yBottom, xCenter + 8, yBottom);
-        if(Obstruction::checkForObstructions(ray)) 
+        if(Obstruction::checkForObstructions(ray, layer)) 
             x -= 1;
     }
     if(dM.left || dM.right) {
         ray = Ray(xCenter, yBottom, xCenter, yBottom - 8);
-        if(Obstruction::checkForObstructions(ray)) 
+        if(Obstruction::checkForObstructions(ray, layer)) 
             y += 1;
         ray = Ray(xCenter, yBottom, xCenter, yBottom + 8);
-        if(Obstruction::checkForObstructions(ray)) 
+        if(Obstruction::checkForObstructions(ray, layer)) 
             y -= 1;
     }
 };
@@ -48,7 +48,7 @@ bool Walk::checkCollision(Direction d) {
         default:
             return false;
     }
-    if (Obstruction::checkForObstructions(ray))
+    if (Obstruction::checkForObstructions(ray, layer))
         return true;
     return false;
 };
@@ -120,7 +120,7 @@ void Walk::move(DirectionMap dM){
     }
     if (dM.down) {
         if (checkCollision(Direction::down)) 
-            dM.up = false;
+            dM.down = false;
         else
             y = y + appliedSpeed;
     }

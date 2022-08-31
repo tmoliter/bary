@@ -18,7 +18,9 @@ Collidable::~Collidable() {
     }
 }
 
-bool Collidable::isColliding(Ray &incoming) {
+bool Collidable::isColliding(Ray &incoming, int incomingLayer) {
+    if (incomingLayer != layer)
+        return false;
     for (auto r : rays) {
         Ray ray = Ray(x + r->a.x, y + r->a.y, x + r->b.x, y + r->b.y);
         if (raysCollide(incoming, ray)) {
@@ -32,17 +34,16 @@ bool Collidable::isColliding(Ray &incoming) {
 
 void _write_rays (ifstream &mapData, CollidableData &newCD) {
     char next = mapData.peek();
-    while(next != '\n' && next != EOF) {
-        if(next == 'R'){
+    while(next == 'R') {
             mapData.get();
             mapData.get(next);
-        }
-        Ray *newRay = new Ray();
-        Ray::write_ray_datum(mapData,*newRay);
-        newCD.rays.push_back(newRay);
-        next = mapData.peek();
+            Ray *newRay = new Ray();
+            Ray::write_ray_datum(mapData,*newRay);
+            newCD.rays.push_back(newRay);
+            next = mapData.peek();
+            cout << endl;
     }
-} 
+}
 
 
 int Collidable::write_collidable_datum(ifstream &mapData, CollidableData &newCD){
@@ -53,10 +54,13 @@ int Collidable::write_collidable_datum(ifstream &mapData, CollidableData &newCD)
             cout << value << endl;
             newCD.layer = std::stoi(value);
             value.clear();
+            if (!(mapData.peek() == 'R'))
+                break;
             _write_rays(mapData, newCD);
+            cout << endl;
             return 1;
         }
         value.push_back(current);
     }
-    return 1;
+    return 0;
 }

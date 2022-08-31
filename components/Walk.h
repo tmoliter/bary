@@ -12,8 +12,8 @@ class Walk {
         int speed;
         
     public:
-        int &x, &y;
-        Walk(int &x, int &y, SDL_Rect &sourceRect) : sourceRect(sourceRect), speed(2), x(x), y(y) {};
+        int &x, &y, &layer;
+        Walk(int &x, int &y, int &layer, SDL_Rect &sourceRect) : sourceRect(sourceRect), speed(2), x(x), y(y), layer(layer) {};
         void padSide(DirectionMap dM);
         bool checkCollision(Direction d);
         void animate(Direction d);

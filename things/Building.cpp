@@ -4,15 +4,21 @@
 
 using namespace std;
 
-Building::Building(BuildingData bD) : Thing(bD), name(bD.name), obstruction(x,y,id,bD.obstructionData) {
+Building::Building(BuildingData bD) : Thing(bD), name(bD.name) {
     for (auto sd : bD.spriteDataVector) {
         sprites.push_back(new Sprite(x,y,id,sd));
+    }
+    for (auto bd : bD.obstructionData) {
+        obstructions.push_back(new Obstruction(x,y,id,bd));
     }
 };
 
 Building::~Building() {
     for (auto s : sprites) {
         delete s;
+    }
+    for (auto o : obstructions) {
+        delete o;
     }
 };
 
@@ -34,7 +40,7 @@ int Building::write_building_datum(ifstream &mapData, BuildingData &newTD) {
             mapData.get();
             CollidableData newCD;
             Collidable::write_collidable_datum(mapData,newCD);
-            newTD.obstructionData = newCD;
+            newTD.obstructionData.push_back(newCD);
             next = mapData.peek();
             continue;
         }
