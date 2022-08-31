@@ -1,8 +1,10 @@
 #ifndef WALK_H
 #define WALK_H
 
+#include <vector>
 #include <../include/SDL2/SDL.h>
-
+#include "../Ray.h"
+#include "./Obstruction.h"
 
 class Walk {
     private:
@@ -10,9 +12,13 @@ class Walk {
         int speed;
         
     public:
-        Walk(int &x, int &y, SDL_Rect &sourceRect) : sourceRect(sourceRect), speed(2) {};
-        void move(int xV, int yV, int &x, int &y);
-        void animate(int x, int y);
+        int &x, &y, &layer;
+        Walk(int &x, int &y, int &layer, SDL_Rect &sourceRect) : sourceRect(sourceRect), speed(2), x(x), y(y), layer(layer) {};
+        void padSide(DirectionMap dM);
+        bool checkCollision(Direction d);
+        void animate(Direction d);
+        void face(Direction d);
+        void move(DirectionMap dM);
         void changeSpeed(bool decrease);
 };
 

@@ -12,6 +12,10 @@ struct KeyPresses {
     bool menu2 = false;
     bool start = false;
     bool quit = false;
+    bool debug_up = false;
+    bool debug_down = false;
+    bool debug_left = false;
+    bool debug_right = false;
 };
 
 class Input {

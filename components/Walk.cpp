@@ -5,36 +5,139 @@
 
 using namespace std;
 
-void Walk::move(int xD, int yD, int &x, int &y){
-    if (speed == 0)
-        return;
-    if (speed < 3 && frameCount % (3 - speed) != 0) {
-        return;
+void Walk::padSide(DirectionMap dM) {
+    Ray ray;
+    int xCenter = x + (sourceRect.w / 2);
+    int yBottom = y + sourceRect.h;
+    if (dM.up || dM.down){
+        ray = Ray(xCenter, yBottom, xCenter - 8, yBottom);
+        if(Obstruction::checkForObstructions(ray, layer)) 
+            x += 1;
+        ray = Ray(xCenter, yBottom, xCenter + 8, yBottom);
+        if(Obstruction::checkForObstructions(ray, layer)) 
+            x -= 1;
     }
-    int appliedSpeed = speed < 4 ? 1 : speed;
-    x = x + (xD * appliedSpeed);
-    y = y + (yD * appliedSpeed);
+    if(dM.left || dM.right) {
+        ray = Ray(xCenter, yBottom, xCenter, yBottom - 8);
+        if(Obstruction::checkForObstructions(ray, layer)) 
+            y += 1;
+        ray = Ray(xCenter, yBottom, xCenter, yBottom + 8);
+        if(Obstruction::checkForObstructions(ray, layer)) 
+            y -= 1;
+    }
 };
 
-void Walk::animate(int xD, int yD) {
+
+bool Walk::checkCollision(Direction d) {
+    Ray ray;
+    int xCenter = x + (sourceRect.w / 2);
+    int yBottom = y + sourceRect.h;
+    switch(d){
+        case (Direction::up):
+            ray = Ray(xCenter, yBottom, xCenter, yBottom - 8);
+            break;
+        case (Direction::down):
+            ray = Ray(xCenter, yBottom, xCenter, yBottom + 8);
+            break;
+        case (Direction::left):
+            ray = Ray(xCenter, yBottom, xCenter - 8, yBottom);
+            break;
+        case (Direction::right):
+            ray = Ray(xCenter, yBottom, xCenter + 8, yBottom);
+            break;
+        default:
+            return false;
+    }
+    if (Obstruction::checkForObstructions(ray, layer))
+        return true;
+    return false;
+};
+
+void Walk::animate(Direction d) {
     int totalFrames = 7;
     int delayPerFrame = 12 / speed;
-    if (xD != 0 || yD != 0) {
-        if(yD > 0)
+    switch (d) {
+        case (Direction::down):
             sourceRect.y = sourceRect.h * 0;
-        else if(yD < 0)
+            break;
+        case (Direction::up):
             sourceRect.y = sourceRect.h * 1;
-        else if(xD < 0)
+            break;
+        case (Direction::left):
             sourceRect.y = sourceRect.h * 2;
-        else if(xD > 0)
+            break;
+        case (Direction::right):
             sourceRect.y = sourceRect.h * 3;
-
-        int frame = ((frameCount / delayPerFrame) % totalFrames) + 1;
-        sourceRect.x = frame * sourceRect.w;
+            break;
+        case (Direction::none):
+            sourceRect.x = 0;
+            return;
+        default:
+            break;
     }
-    else if (sourceRect.x != 0)
-        sourceRect.x = 0;
+    int frame = ((frameCount / delayPerFrame) % totalFrames) + 1;
+    sourceRect.x = frame * sourceRect.w;
 }
+
+void Walk::face(Direction d) {
+    switch (d) {
+        case (Direction::down):
+            sourceRect.y = sourceRect.h * 0;
+            break;
+        case (Direction::up):
+            sourceRect.y = sourceRect.h * 1;
+            break;
+        case (Direction::left):
+            sourceRect.y = sourceRect.h * 2;
+            break;
+        case (Direction::right):
+            sourceRect.y = sourceRect.h * 3;
+            break;
+        default:
+            break;
+    };
+}
+
+void Walk::move(DirectionMap dM){
+    Direction d = directionFromMap(dM);
+    face(d);
+    if (speed == 0) {
+        sourceRect.x = 0;
+        return;
+    }
+    if (speed < 3 && frameCount % (3 - speed) != 0) {
+        animate(d);
+        return;
+    }
+
+    int appliedSpeed = speed < 4 ? 1 : speed;
+    padSide(dM);
+    if (dM.up) {
+        if (checkCollision(Direction::up)) 
+            dM.up = false;
+        else
+            y = y - appliedSpeed;
+    }
+    if (dM.down) {
+        if (checkCollision(Direction::down)) 
+            dM.down = false;
+        else
+            y = y + appliedSpeed;
+    }
+    if (dM.left) {
+        if (checkCollision(Direction::left)) 
+            dM.left = false;
+        else
+            x = x - appliedSpeed;
+    }
+    if (dM.right) {
+        if (checkCollision(Direction::right)) 
+            dM.right = false;
+        else
+            x = x + appliedSpeed;
+    }
+    animate(directionFromMap(dM));
+};
 
 void Walk::changeSpeed(bool decrease) {
     if (decrease && speed > 0) {

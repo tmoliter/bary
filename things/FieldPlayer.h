@@ -2,7 +2,9 @@
 #define FIELD_PLAYER_H
 
 #include "Thing.h"
+#include "../Ray.h"
 #include "../components/Walk.h"
+#include "../components/Obstruction.h"
 #include <iostream>
 
 struct FieldPlayerData : ThingData {
@@ -22,6 +24,6 @@ class FieldPlayer : public Thing {
 
         void meat(KeyPresses keysDown);
 
-        static int write_thing_datum(ifstream &mapData, FieldPlayerData &newTD);
+        static int write_player_datum(ifstream &mapData, FieldPlayerData &newTD);
 };
 #endif

@@ -12,12 +12,12 @@ Thing *parse_thing(ifstream &mapData) {
     }
     if(next == 'P') {
         FieldPlayerData newTD;
-        FieldPlayer::write_thing_datum(mapData, newTD);
+        FieldPlayer::write_player_datum(mapData, newTD);
         return new FieldPlayer(newTD);
     }
     if(next == 'B') {
         BuildingData newTD;
-        Building::write_thing_datum(mapData, newTD);
+        Building::write_building_datum(mapData, newTD);
         return new Building(newTD);
     }
     return NULL;
