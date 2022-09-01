@@ -16,7 +16,7 @@ int main(int argc, char* args[]) {
     SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
     SDL_Window* window = NULL;
     window = SDL_CreateWindow(
-                "Timmy's Big Test",
+                "Bary",
                 SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                 SCREEN_WIDTH, SCREEN_HEIGHT,
                 SDL_WINDOW_SHOWN
@@ -25,7 +25,8 @@ int main(int argc, char* args[]) {
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
     new Camera(renderer);
 
-    parse_map("./maps/map2.txt");
+    string total(string(BASE_PATH) + "maps/map2.txt");
+    parse_map(total.c_str());
 
     Input in;
     FpsTimer t;

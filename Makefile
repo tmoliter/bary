@@ -1,2 +1,2 @@
-timtest:
-	g++ -o play -I . -I ./components *.cpp components/*.cpp things/*.cpp  -I include -L lib -l SDL2-2.0.0 -lSDL2_image -std=c++17
+bary:
+	g++ -o bary -I . -I ./components *.cpp components/*.cpp things/*.cpp  -I include -L lib -l SDL2-2.0.0 -lSDL2_image -std=c++17

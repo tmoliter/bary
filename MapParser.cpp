@@ -6,16 +6,19 @@ Thing *parse_thing(ifstream &mapData) {
     char next;
     mapData.get(next);
     if(next == 'T') {
+        cout << next << endl;
         ThingData newTD;
         Thing::write_thing_datum(mapData, newTD);
         return new Thing(newTD);
     }
     if(next == 'P') {
+        cout << next << endl;
         FieldPlayerData newTD;
         FieldPlayer::write_player_datum(mapData, newTD);
         return new FieldPlayer(newTD);
     }
     if(next == 'B') {
+        cout << next << endl;
         BuildingData newTD;
         Building::write_building_datum(mapData, newTD);
         return new Building(newTD);
