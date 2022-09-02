@@ -9,6 +9,7 @@
 #include "../globals.h"
 #include "../Camera.h"
 #include "Sprite.h"
+#include <vector>
 
 using namespace std;
 
@@ -25,6 +26,7 @@ class Thing {
         int id, x, y;
 
         Thing(ThingData td);
+        virtual ~Thing();
         
         virtual void meat() {};
         /* insane stress test */
@@ -35,10 +37,12 @@ class Thing {
         static int write_thing_datum(ifstream &mapData, ThingData &newTD);
         static int currentID;
         inline static map<int, Thing*> things;
+        inline static vector<int> thingsToDestroy;
 
         static void meatThings(KeyPresses keysDown);
         static void destroyThings();
-        static void destroyThing();
+        static void destroyThing(int id);
+        static void destroyAllThings();
 };
 
 #endif

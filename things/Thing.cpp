@@ -12,6 +12,10 @@ Thing::Thing(ThingData td) :
         Thing::things[id] = this;
     }
 
+Thing::~Thing() {
+    things.erase(id);
+}
+
 // STATIC
 
 int Thing::currentID = 0;
@@ -54,6 +58,14 @@ void Thing::meatThings(KeyPresses keysDown) {
 }
 
 void Thing::destroyThings() {
+    for (auto killMe : thingsToDestroy) {
+        Thing* thing = Thing::things[killMe];
+        delete thing;
+    }
+    thingsToDestroy.clear();
+}
+
+void Thing::destroyAllThings() {
    map<int, Thing*>::iterator itr = Thing::things.begin();
    while (itr != Thing::things.end()) {
         delete itr->second;
@@ -61,6 +73,6 @@ void Thing::destroyThings() {
    }
 }
 
-void Thing::destroyThing() {
-    // Destroy by ID
+void Thing::destroyThing(int id) {
+    thingsToDestroy.push_back(id);
 }

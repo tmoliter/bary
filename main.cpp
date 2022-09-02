@@ -23,6 +23,8 @@ int main(int argc, char* args[]) {
                 );
 
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_ADD);
+
     new Camera(renderer);
 
     string total(string(BASE_PATH) + "maps/map2.txt");
@@ -48,12 +50,16 @@ int main(int argc, char* args[]) {
         t.timeElapsed(&p.c);
 
         Sprite::renderSprites();
+        SDL_SetRenderDrawColor(renderer,150,0,150,128);
+        SDL_RenderFillRect(renderer, FULL_SCREEN);
+        
         t.timeElapsed(&p.d);
 
         t.endFrameAndWait(frameCount);
         t.timeElapsed(&p.e);
 
         SDL_RenderPresent(renderer);
+        Thing::destroyThings();
     }
     Thing::destroyThings();
     SDL_DestroyRenderer(renderer);
