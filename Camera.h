@@ -16,18 +16,16 @@ class Camera {
         SDL_Texture* bgTexture;
     public:
         Thing* focus;
-        Camera(SDL_Renderer* r) : 
-        x(0),
-        y(0),
-        renderer(r),
-        initialized(false) {
-            c = this;
-        };
         const char *path;
         bool initialized;
         int width, height;
         SDL_Renderer* renderer;
-        int x, y;
+
+        Camera(SDL_Renderer* r) : 
+        renderer(r),
+        initialized(false) {
+            c = this;
+        };
         void init(Thing *f);
         void setPosition();
         void render();

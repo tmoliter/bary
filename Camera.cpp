@@ -9,7 +9,6 @@ using namespace std;
 void Camera::setPosition() {
     int half_width =  SCREEN_WIDTH / SCALE / 2;
     int half_height = SCREEN_HEIGHT / SCALE / 2;
-
     Point fp = focus->getCenter();
 
     if (fp.x < half_width)
@@ -25,9 +24,6 @@ void Camera::setPosition() {
         sourceRect.y = height - (half_height * 2);
     else
         sourceRect.y = fp.y - half_height;
-
-    x = sourceRect.x;
-    y = sourceRect.y;
 
     /* THIS IS A COOL 3D ANGLE SHIFT TO PLAY WITH LATER */
     // if (frameCount < 300)
@@ -65,7 +61,7 @@ void Camera::render() {
         return;
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, bgTexture, &sourceRect, &renderRect);
-    Sprite::renderSprites(renderer, Point(x,y));
+    Sprite::renderSprites(renderer, Point(sourceRect.x,sourceRect.y));
 
     /* TEST STUFF */
     // SDL_SetRenderDrawColor(renderer,150,0,150,128);

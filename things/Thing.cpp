@@ -18,7 +18,7 @@ Thing::Thing(ThingData td) :
 Thing::Thing(Point p) : 
     position(p.x,p.y),
     height(0), 
-    width(0), 
+    width(0),
     name("name") {
         cout <<" WTF: " << height << endl;
         // We should use the name as an id and guarantee uniqueness somehow
