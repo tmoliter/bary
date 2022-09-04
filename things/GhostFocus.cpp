@@ -34,6 +34,10 @@ void GhostFocus::meat() {
 void GhostFocus::pan() {
     Point tp = target->getCenter();
 
+    if (tp.x < position.x + 3 && tp.x > position.x - 3)
+        position.x = tp.x;
+    if (tp.y < position.y + 3 && tp.y > position.y - 3)
+        position.y = tp.y;
     if (position.x == tp.x && position.y == tp.y) {
         destroy();
         return;
@@ -43,13 +47,13 @@ void GhostFocus::pan() {
     int yDiff = tp.y - position.y;
 
     if(xDiff > 0)
-        position.x = position.x + ((xDiff / 30) + 1);
+        position.x = position.x + ((xDiff / 30) + 3);
     else if (xDiff < 0)
-        position.x = position.x + ((xDiff / 30) - 1);
+        position.x = position.x + ((xDiff / 30) - 3);
     if(yDiff > 0)
-        position.y = position.y + ((yDiff / 30) + 1);
+        position.y = position.y + ((yDiff / 30) + 3);
     else if (yDiff < 0)
-        position.y = position.y + ((yDiff / 30) - 1);
+        position.y = position.y + ((yDiff / 30) - 3);
 }
 
 void GhostFocus::shake() {

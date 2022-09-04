@@ -10,18 +10,18 @@ void Walk::padSide(DirectionMap dM) {
     int xCenter = x + (sourceRect.w / 2);
     int yBottom = y + sourceRect.h;
     if (dM.up || dM.down){
-        ray = Ray(xCenter, yBottom, xCenter - 8, yBottom);
+        ray = Ray(xCenter, yBottom, xCenter - 7, yBottom);
         if(Obstruction::checkForObstructions(ray, layer)) 
             x += 1;
-        ray = Ray(xCenter, yBottom, xCenter + 8, yBottom);
+        ray = Ray(xCenter, yBottom, xCenter + 7, yBottom);
         if(Obstruction::checkForObstructions(ray, layer)) 
             x -= 1;
     }
     if(dM.left || dM.right) {
-        ray = Ray(xCenter, yBottom, xCenter, yBottom - 8);
+        ray = Ray(xCenter, yBottom, xCenter, yBottom - 7);
         if(Obstruction::checkForObstructions(ray, layer)) 
             y += 1;
-        ray = Ray(xCenter, yBottom, xCenter, yBottom + 8);
+        ray = Ray(xCenter, yBottom, xCenter, yBottom + 7);
         if(Obstruction::checkForObstructions(ray, layer)) 
             y -= 1;
     }
