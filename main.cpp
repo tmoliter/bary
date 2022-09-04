@@ -22,10 +22,8 @@ int main(int argc, char* args[]) {
                 SDL_WINDOW_SHOWN
                 );
 
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
+    renderer = SDL_CreateRenderer(window, -1, 0);
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_ADD);
-
-    new Camera(renderer);
 
     string total(string(BASE_PATH) + "maps/map2.txt");
     parse_map(total.c_str());
@@ -47,7 +45,6 @@ int main(int argc, char* args[]) {
         Camera::c->render();
         t.timeElapsed(&p.c);
 
-        Sprite::renderSprites();
         // SDL_SetRenderDrawColor(renderer,150,0,150,128);
         // SDL_RenderFillRect(renderer, FULL_SCREEN);
         t.timeElapsed(&p.d);

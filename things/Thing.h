@@ -7,9 +7,9 @@
 #include <SDL2/SDL.h>
 #include <fstream>
 #include "../globals.h"
-#include "../Camera.h"
 #include "Sprite.h"
 #include <vector>
+#include "../Ray.h"
 
 using namespace std;
 
@@ -20,16 +20,16 @@ struct ThingData {
 };
 
 class Thing {
-    protected:
-        int *cameraX, *cameraY;
-
     public:
-        int id, x, y, c2x, c2y;
+        int id, height, width;
+        Point position;
         string name;
 
         Thing(ThingData td);
         Thing(int x, int y);
         virtual ~Thing();
+
+        void getCenter(int &cX, int &cY);
         
         virtual void meat() {};
         /* insane stress test */

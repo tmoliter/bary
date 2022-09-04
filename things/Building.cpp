@@ -6,10 +6,17 @@ using namespace std;
 
 Building::Building(BuildingData bD) : Thing(bD) {
     for (auto sd : bD.spriteDataVector) {
-        sprites.push_back(new Sprite(x,y,id,sd));
+        int tmpWidth = sd.width + sd.xOffset;
+        if (tmpWidth > width)
+            width = tmpWidth;
+        int tmpHeight = sd.height + sd.yOffset;
+        if (tmpHeight > height)
+            height = tmpHeight;
+        cout << "BLD HEIGHT: " << height << endl;
+        sprites.push_back(new Sprite(position.x,position.y,id,sd));
     }
     for (auto bd : bD.obstructionData) {
-        obstructions.push_back(new Obstruction(x,y,id,bd));
+        obstructions.push_back(new Obstruction(position.x,position.y,id,bd));
     }
 };
 

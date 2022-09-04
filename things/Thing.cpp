@@ -6,25 +6,29 @@
 using namespace std;
 
 Thing::Thing(ThingData td) : 
-    x(td.x), 
-    y(td.y),
-    c2x(0),
-    c2y(0),
+    position(td.x, td.y),
+    height(0), 
+    width(0),
     name(td.name) {
+        // We should use the name as an id and guarantee uniqueness somehow
         id = currentID++;
         Thing::things[id] = this;
     }
 
 Thing::Thing(int x, int y) : 
-    x(x), 
-    y(y) {
+    position(x,y) {
         id = currentID++;
         Thing::things[id] = this;
 }
-   
+
 
 Thing::~Thing() {
     things.erase(id);
+}
+
+void Thing::getCenter(int &cX, int &cY) {
+    cX = position.x + (width / 2);
+    cY = position.y + (height / 2);
 }
 
 // STATIC

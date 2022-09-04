@@ -6,6 +6,7 @@
 #include "../components/Obstruction.h"
 #include <iostream>
 #include <vector>
+#include "globals.h"
 
 using namespace std;
 
@@ -14,11 +15,13 @@ enum EffectType {
     pan
 };
 
-class CameraEffect : public Thing {
+class GhostFocus : public Thing {
     public:
-        int *targetX, *targetY, start, duration;
+        int start, duration;
+        Thing* target;
+        Thing* focus;
         EffectType type;
-        CameraEffect(int fX, int fY, int targetId, EffectType t, int d);
+        GhostFocus(Thing *&focus, int targetId, EffectType t, int d);
 
         void shiftFocus() {};
         void destroy();

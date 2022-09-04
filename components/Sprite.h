@@ -4,7 +4,8 @@
 #include <string>
 #include <../include/SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include "Camera.h"
+#include "globals.h"
+#include "Ray.h"
 
 using namespace std;
 
@@ -17,7 +18,7 @@ struct SpriteData {
     int sourceY = 0;
     int width = 0;
     int height = 0;
-    SDL_Texture *texture;
+    string path;
 };
 
 class Sprite {
@@ -25,18 +26,17 @@ class Sprite {
         Sprite(int &x, int &y, int &tI, SpriteData sd);
         ~Sprite();
         bool active;
-        int id, &thingId, &x, &y, layer, renderOffset, yOffset, xOffset, width, height, *cameraX, *cameraY;
-        SDL_Renderer* renderer;
+        int id, &thingId, &x, &y, layer, renderOffset, yOffset, xOffset, width, height;
         SDL_Rect sourceRect, renderRect;
         SDL_Texture* texture;
 
         void divideSheet(int columns, int rows);
-        virtual void render();
+        virtual void render(SDL_Renderer *renderer, Point camPosition);
 
         static int currentID;
         inline static map<int, Sprite*> sprites;
         inline static map<string, SDL_Texture*> textures;
-        static void renderSprites();
+        static void renderSprites(SDL_Renderer *renderer, Point camPosition);
 
         static int write_sprite_datum(ifstream &mapData, SpriteData &newSD);
 };

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include "globals.h"
+#include "./things/Thing.h"
 
 using namespace std;
 
@@ -14,7 +15,7 @@ class Camera {
         SDL_Rect renderRect, sourceRect;
         SDL_Texture* bgTexture;
     public:
-        int *focusX, *focusY;
+        Thing* focus;
         Camera(SDL_Renderer* r) : 
         x(0),
         y(0),
@@ -27,11 +28,11 @@ class Camera {
         int width, height;
         SDL_Renderer* renderer;
         int x, y;
-        void init(int *fX, int *fY);
+        void init(Thing *f);
         void setPosition();
         void render();
         static int parse_camera(ifstream &mapData);
-        static void setFocus(int *fX, int *fY);
+        static void setFocus(Thing* f);
         inline static Camera *c;
 };
 
