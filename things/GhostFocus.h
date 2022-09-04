@@ -21,7 +21,7 @@ class GhostFocus : public Thing {
         Thing* target;
         Thing*& focus;
         EffectType type;
-        GhostFocus(Thing *&f, int targetId, EffectType t, int d);
+        GhostFocus(Thing *&f, string targetName, EffectType t, int d);
 
         void shiftFocus() {};
         void destroy();

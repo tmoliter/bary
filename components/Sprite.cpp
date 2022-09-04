@@ -4,10 +4,10 @@
 
 using namespace std;
 
-Sprite::Sprite (int &x, int &y, int &tI, SpriteData sd) : 
+Sprite::Sprite (int &x, int &y, string &tN, SpriteData sd) : 
 x(x), 
 y(y), 
-thingId(tI), 
+thingName(tN), 
 layer(sd.layer),
 renderOffset(sd.renderOffset),
 xOffset(sd.xOffset),

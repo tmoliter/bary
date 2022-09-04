@@ -4,16 +4,16 @@
 
 using namespace std;
 
-GhostFocus::GhostFocus(Thing *&f, int targetId, EffectType t, int d) : Thing(f->getCenter()), type(t), duration(d), focus(f) {
+GhostFocus::GhostFocus(Thing *&f, string targetName, EffectType t, int d) : Thing(f->getCenter()), type(t), duration(d), focus(f) {
     focus = this;
-    target = Thing::things[targetId];
+    target = Thing::things[targetName];
     cout << target->name << endl;
     start = frameCount;
 }
 
 void GhostFocus::destroy() {
     focus = target;
-    Thing::destroyThing(id);
+    Thing::destroyThing(name);
 }
 
 void GhostFocus::meat() {

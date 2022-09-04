@@ -5,7 +5,7 @@
 using namespace std;
 
 FieldPlayer::FieldPlayer(FieldPlayerData fpD) : Thing(fpD) {
-    sprite = new Sprite(position.x,position.y,id,fpD.spriteData);
+    sprite = new Sprite(position.x,position.y,name,fpD.spriteData);
     sprite->divideSheet(9, 4);
     walk = new Walk(position.x, position.y, sprite->layer, sprite->sourceRect);
 

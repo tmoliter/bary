@@ -23,10 +23,11 @@ struct SpriteData {
 
 class Sprite {
     public:
-        Sprite(int &x, int &y, int &tI, SpriteData sd);
+        Sprite(int &x, int &y, string &tN, SpriteData sd);
         ~Sprite();
         bool active;
-        int id, &thingId, &x, &y, layer, renderOffset, yOffset, xOffset, width, height;
+        int id, &x, &y, layer, renderOffset, yOffset, xOffset, width, height;
+        string &thingName;
         SDL_Rect sourceRect, renderRect;
         SDL_Texture* texture;
 

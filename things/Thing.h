@@ -10,6 +10,7 @@
 #include "Sprite.h"
 #include <vector>
 #include "../Ray.h"
+#include <string>
 
 using namespace std;
 
@@ -21,13 +22,15 @@ struct ThingData {
 
 class Thing {
     public:
-        int id, height, width;
+        int height, width;
         Point position;
         string name;
 
         Thing(ThingData td);
         Thing(Point p);
         virtual ~Thing();
+
+        void _save_name_and_write_to_map(string n);
 
         Point getCenter();
         
@@ -37,14 +40,14 @@ class Thing {
 
         virtual void meat(KeyPresses keysDown) {};
 
+        inline static map<string, Thing*> things;
+        inline static vector<string> thingsToDestroy;
+
         static int write_thing_datum(ifstream &mapData, ThingData &newTD);
-        static int currentID;
-        inline static map<int, Thing*> things;
-        inline static vector<int> thingsToDestroy;
 
         static void meatThings(KeyPresses keysDown);
         static void destroyThings();
-        static void destroyThing(int id);
+        static void destroyThing(string n);
         static void destroyAllThings();
 };
 

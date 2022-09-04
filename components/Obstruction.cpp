@@ -1,7 +1,7 @@
 #include "./Obstruction.h"
 
 
-Obstruction::Obstruction(int &x, int &y, int &tI, CollidableData cd) : Collidable(x,y,tI,cd) {
+Obstruction::Obstruction(int &x, int &y, string &tN, CollidableData cd) : Collidable(x,y,tN,cd) {
     id = currentID++;
     Obstruction::obstructions[id] = this;
 }

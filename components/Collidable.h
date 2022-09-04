@@ -14,10 +14,11 @@ struct CollidableData {
 
 class Collidable {
     public:
-        Collidable(int &x, int &y, int &tI, CollidableData cd);
+        Collidable(int &x, int &y, string &tN, CollidableData cd);
         ~Collidable();
         bool active;
-        int &thingId, &x, &y, layer;
+        int &x, &y, layer;
+        string &thingName;
 
         vector<Ray*> rays;
 

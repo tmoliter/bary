@@ -5,41 +5,43 @@
 
 using namespace std;
 
+void Thing::_save_name_and_write_to_map(string n) {
+    if(n == "") {
+        n = "AnonymousThing";
+    }
+    name = n;
+    int i = 2;
+    while(Thing::things.count(name)) {
+        name = n + to_string(i);
+        i++;
+    }
+    Thing::things[name] = this; 
+}
+
 Thing::Thing(ThingData td) : 
     position(td.x, td.y),
     height(0), 
-    width(0),
-    name(td.name) {
-        // We should use the name as an id and guarantee uniqueness somehow
-        id = currentID++;
-        Thing::things[id] = this;
+    width(0) {
+        _save_name_and_write_to_map(td.name);
     }
 
 Thing::Thing(Point p) : 
     position(p.x,p.y),
     height(0), 
-    width(0),
-    name("name") {
-        cout <<" WTF: " << height << endl;
-        // We should use the name as an id and guarantee uniqueness somehow
-        id = currentID++;
-        Thing::things[id] = this;
+    width(0) {
+        _save_name_and_write_to_map("");
+
 }
 
-
 Thing::~Thing() {
-    things.erase(id);
+    things.erase(name);
 }
 
 Point Thing::getCenter() {
-    // cout << "HEIGHT: " << height << endl;
-    // cout << "WIDTH: " << width << endl;
     return Point(position.x + (width / 2) , position.y + (height / 2));
 }
 
 // STATIC
-
-int Thing::currentID = 0;
 
 int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
     int index = 0;
@@ -92,13 +94,13 @@ void Thing::destroyThings() {
 }
 
 void Thing::destroyAllThings() {
-   map<int, Thing*>::iterator itr = Thing::things.begin();
+   map<string, Thing*>::iterator itr = Thing::things.begin();
    while (itr != Thing::things.end()) {
         delete itr->second;
         itr = Thing::things.erase(itr);
    }
 }
 
-void Thing::destroyThing(int id) {
-    thingsToDestroy.push_back(id);
+void Thing::destroyThing(string n) {
+    thingsToDestroy.push_back(n);
 }

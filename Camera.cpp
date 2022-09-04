@@ -50,10 +50,10 @@ void Camera::render() {
 
     /* TEST STUFF */
     if(frameCount == 300) {
-        new GhostFocus(focus,1,EffectType::pan, 500);
+        new GhostFocus(focus,"Sailor Shack",EffectType::pan, 500);
     }
     if(frameCount == 600) {
-        new GhostFocus(focus,0,EffectType::pan, 500);
+        new GhostFocus(focus,"Zinnia",EffectType::pan, 500);
     }
     /* END TEST STUFF */
 

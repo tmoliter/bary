@@ -14,10 +14,10 @@ Building::Building(BuildingData bD) : Thing(bD) {
             height = tmpHeight;
         cout << "BLD HEIGHT: " << height << endl;
         cout << "BLD WIDTH: " << height << endl;
-        sprites.push_back(new Sprite(position.x,position.y,id,sd));
+        sprites.push_back(new Sprite(position.x,position.y,name,sd));
     }
     for (auto bd : bD.obstructionData) {
-        obstructions.push_back(new Obstruction(position.x,position.y,id,bd));
+        obstructions.push_back(new Obstruction(position.x,position.y,name,bd));
     }
 };
 
