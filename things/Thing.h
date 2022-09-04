@@ -26,10 +26,10 @@ class Thing {
         string name;
 
         Thing(ThingData td);
-        Thing(int x, int y);
+        Thing(Point p);
         virtual ~Thing();
 
-        void getCenter(int &cX, int &cY);
+        Point getCenter();
         
         virtual void meat() {};
         /* insane stress test */

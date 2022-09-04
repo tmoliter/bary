@@ -4,7 +4,7 @@
 
 using namespace std;
 
-GhostFocus::GhostFocus(Thing *&f, int targetId, EffectType t, int d) : Thing(f->position.x, f->position.y), type(t), duration(d), focus(f) {
+GhostFocus::GhostFocus(Thing *&f, int targetId, EffectType t, int d) : Thing(f->getCenter()), type(t), duration(d), focus(f) {
     focus = this;
     target = Thing::things[targetId];
     cout << target->name << endl;
@@ -32,16 +32,15 @@ void GhostFocus::meat() {
 }
 
 void GhostFocus::pan() {
-    int tX = target->position.x;
-    int tY = target->position.y;
+    Point tp = target->getCenter();
 
-    if (position.x == tX && position.y == tY) {
+    if (position.x == tp.x && position.y == tp.y) {
         destroy();
         return;
     }
 
-    int xDiff = tX - position.x;
-    int yDiff = tY - position.y;
+    int xDiff = tp.x - position.x;
+    int yDiff = tp.y - position.y;
 
     if(xDiff > 0)
         position.x = position.x + ((xDiff / 30) + 1);

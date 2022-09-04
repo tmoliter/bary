@@ -15,8 +15,8 @@ Thing::Thing(ThingData td) :
         Thing::things[id] = this;
     }
 
-Thing::Thing(int x, int y) : 
-    position(x,y),
+Thing::Thing(Point p) : 
+    position(p.x,p.y),
     height(0), 
     width(0), 
     name("name") {
@@ -31,11 +31,10 @@ Thing::~Thing() {
     things.erase(id);
 }
 
-void Thing::getCenter(int &cX, int &cY) {
+Point Thing::getCenter() {
     // cout << "HEIGHT: " << height << endl;
     // cout << "WIDTH: " << width << endl;
-    cX = position.x + (width / 2);
-    cY = position.y + (height / 2);
+    return Point(position.x + (width / 2) , position.y + (height / 2));
 }
 
 // STATIC

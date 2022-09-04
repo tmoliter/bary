@@ -10,22 +10,21 @@ void Camera::setPosition() {
     int half_width =  SCREEN_WIDTH / SCALE / 2;
     int half_height = SCREEN_HEIGHT / SCALE / 2;
 
-    int fX,fY;
-    focus->getCenter(fX,fY);
+    Point fp = focus->getCenter();
 
-    if (fX < half_width)
+    if (fp.x < half_width)
         sourceRect.x = 0;
-    else if (fX > width - half_width)
+    else if (fp.x > width - half_width)
         sourceRect.x = width - (half_width* 2);
     else
-        sourceRect.x = fX - half_width;
+        sourceRect.x = fp.x - half_width;
 
-    if (fY < half_height)
+    if (fp.y < half_height)
         sourceRect.y = 0;
-    else if (fY > height - half_height)
+    else if (fp.y > height - half_height)
         sourceRect.y = height - (half_height * 2);
     else
-        sourceRect.y = fY - half_height;
+        sourceRect.y = fp.y - half_height;
 
     x = sourceRect.x;
     y = sourceRect.y;
@@ -60,13 +59,17 @@ void Camera::render() {
     if(frameCount == 600) {
         new GhostFocus(focus,0,EffectType::pan, 500);
     }
-    /* TEST STUFF */
+    /* END TEST STUFF */
+
     if (!initialized)
         return;
-    // SDL_SetRenderDrawColor(renderer, 50, 255, 100, 255);
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, bgTexture, &sourceRect, &renderRect);
     Sprite::renderSprites(renderer, Point(x,y));
+
+    /* TEST STUFF */
+    // SDL_SetRenderDrawColor(renderer,150,0,150,128);
+    // SDL_RenderFillRect(renderer, FULL_SCREEN);
 }
 
 void Camera::setFocus(Thing* f) {

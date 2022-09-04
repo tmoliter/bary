@@ -6,12 +6,12 @@ using namespace std;
 
 Building::Building(BuildingData bD) : Thing(bD) {
     for (auto sd : bD.spriteDataVector) {
-        // int tmpWidth = sd.width + sd.xOffset;
-        // if (tmpWidth > width)
-        //     width = tmpWidth;
-        // int tmpHeight = sd.height + sd.yOffset;
-        // if (tmpHeight > height)
-        //     height = tmpHeight;
+        int tmpWidth = sd.width + sd.xOffset;
+        if (tmpWidth > width)
+            width = tmpWidth;
+        int tmpHeight = sd.height + sd.yOffset;
+        if (tmpHeight > height)
+            height = tmpHeight;
         cout << "BLD HEIGHT: " << height << endl;
         cout << "BLD WIDTH: " << height << endl;
         sprites.push_back(new Sprite(position.x,position.y,id,sd));

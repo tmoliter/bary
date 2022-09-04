@@ -35,23 +35,11 @@ int main(int argc, char* args[]) {
     while (true){
     t.startFrame();
         KeyPresses keysDown = in.getInput();  
-        t.timeElapsed(&p.a);
-
         if (keysDown.quit)
             break;
         Thing::meatThings(keysDown);
-        t.timeElapsed(&p.b);
-
         Camera::c->render();
-        t.timeElapsed(&p.c);
-
-        // SDL_SetRenderDrawColor(renderer,150,0,150,128);
-        // SDL_RenderFillRect(renderer, FULL_SCREEN);
-        t.timeElapsed(&p.d);
-
         t.endFrameAndWait(frameCount);
-        t.timeElapsed(&p.e);
-
         SDL_RenderPresent(renderer);
         Thing::destroyThings();
     }
