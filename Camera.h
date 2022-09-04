@@ -11,10 +11,10 @@ using namespace std;
 
 class Camera {
     private:
-        int *focusX, *focusY;
         SDL_Rect renderRect, sourceRect;
         SDL_Texture* bgTexture;
     public:
+        int *focusX, *focusY;
         Camera(SDL_Renderer* r) : 
         x(0),
         y(0),
@@ -31,6 +31,7 @@ class Camera {
         void setPosition();
         void render();
         static int parse_camera(ifstream &mapData);
+        static void setFocus(int *fX, int *fY);
         inline static Camera *c;
 };
 

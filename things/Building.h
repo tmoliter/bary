@@ -10,14 +10,11 @@
 using namespace std;
 
 struct BuildingData : ThingData {
-    string name;
     vector<SpriteData> spriteDataVector;
     vector<CollidableData> obstructionData;
 };
 
 class Building : public Thing {
-    private:
-        string name;
     public:
         Building(BuildingData fpD);
         ~Building();

@@ -14,6 +14,7 @@
 using namespace std;
 
 struct ThingData {
+    string name;
     int x;
     int y;
 };
@@ -23,9 +24,11 @@ class Thing {
         int *cameraX, *cameraY;
 
     public:
-        int id, x, y;
+        int id, x, y, c2x, c2y;
+        string name;
 
         Thing(ThingData td);
+        Thing(int x, int y);
         virtual ~Thing();
         
         virtual void meat() {};

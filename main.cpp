@@ -44,15 +44,12 @@ int main(int argc, char* args[]) {
         Thing::meatThings(keysDown);
         t.timeElapsed(&p.b);
 
-        Camera::c->setPosition();
         Camera::c->render();
-
         t.timeElapsed(&p.c);
 
         Sprite::renderSprites();
-        SDL_SetRenderDrawColor(renderer,150,0,150,128);
-        SDL_RenderFillRect(renderer, FULL_SCREEN);
-        
+        // SDL_SetRenderDrawColor(renderer,150,0,150,128);
+        // SDL_RenderFillRect(renderer, FULL_SCREEN);
         t.timeElapsed(&p.d);
 
         t.endFrameAndWait(frameCount);

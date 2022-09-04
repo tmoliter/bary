@@ -4,10 +4,11 @@
 
 using namespace std;
 
-FieldPlayer::FieldPlayer(FieldPlayerData fpD) : Thing(fpD), name(fpD.name) {
+FieldPlayer::FieldPlayer(FieldPlayerData fpD) : Thing(fpD) {
     sprite = new Sprite(x,y,id,fpD.spriteData);
     sprite->divideSheet(9, 4);
     walk = new Walk(x, y, sprite->layer, sprite->sourceRect);
+    name = "Zinnia";
 };
 
 FieldPlayer::~FieldPlayer() { 

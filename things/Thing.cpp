@@ -7,10 +7,21 @@ using namespace std;
 
 Thing::Thing(ThingData td) : 
     x(td.x), 
-    y(td.y) {
+    y(td.y),
+    c2x(0),
+    c2y(0),
+    name(td.name) {
         id = currentID++;
         Thing::things[id] = this;
     }
+
+Thing::Thing(int x, int y) : 
+    x(x), 
+    y(y) {
+        id = currentID++;
+        Thing::things[id] = this;
+}
+   
 
 Thing::~Thing() {
     things.erase(id);
@@ -32,10 +43,15 @@ int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
                     break;
                 case (1):
                     index++;
-                    newTD.x = std::stoi(value);
+                    newTD.name = value;
                     value.clear();
                     break;
                 case (2):
+                    index++;
+                    newTD.x = std::stoi(value);
+                    value.clear();
+                    break;
+                case (3):
                     index++;
                     newTD.y = std::stoi(value);
                     value.clear();

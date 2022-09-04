@@ -8,7 +8,6 @@
 #include <iostream>
 
 struct FieldPlayerData : ThingData {
-    string name;
     SpriteData spriteData;
 };
 

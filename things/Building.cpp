@@ -4,7 +4,7 @@
 
 using namespace std;
 
-Building::Building(BuildingData bD) : Thing(bD), name(bD.name) {
+Building::Building(BuildingData bD) : Thing(bD) {
     for (auto sd : bD.spriteDataVector) {
         sprites.push_back(new Sprite(x,y,id,sd));
     }

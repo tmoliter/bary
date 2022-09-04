@@ -1,6 +1,8 @@
 #include "./Camera.h"
 #include <iostream>
 #include "globals.h"
+#include "./things/CameraEffect.h"
+
 
 using namespace std;
 
@@ -28,6 +30,7 @@ void Camera::setPosition() {
 
     x = sourceRect.x;
     y = sourceRect.y;
+    // cout << x << "/" << *focusX << " : " << y <<  "/" << *focusY <<  endl;
 
     /* THIS IS A COOL 3D ANGLE SHIFT TO PLAY WITH LATER */
     // if (frameCount < 300)
@@ -51,11 +54,23 @@ void Camera::init(int *fX, int *fY) {
 }
 
 void Camera::render() {
+    setPosition();
+    if(frameCount == 300) {
+        new CameraEffect(*focusX,*focusY,1,EffectType::pan, 500);
+    }
+    if(frameCount == 600) {
+        new CameraEffect(*focusX,*focusY,0,EffectType::pan, 500);
+    }
     if (!initialized)
         return;
-    SDL_SetRenderDrawColor(renderer, 50, 255, 100, 255);
+    // SDL_SetRenderDrawColor(renderer, 50, 255, 100, 255);
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, bgTexture, &sourceRect, &renderRect);
+}
+
+void Camera::setFocus(int *fX, int *fY) {
+    Camera::c->focusX = fX;
+    Camera::c->focusY = fY;
 }
 
 int Camera::parse_camera(ifstream &mapData) {
