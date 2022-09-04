@@ -16,7 +16,12 @@ Thing::Thing(ThingData td) :
     }
 
 Thing::Thing(int x, int y) : 
-    position(x,y) {
+    position(x,y),
+    height(0), 
+    width(0), 
+    name("name") {
+        cout <<" WTF: " << height << endl;
+        // We should use the name as an id and guarantee uniqueness somehow
         id = currentID++;
         Thing::things[id] = this;
 }
@@ -27,6 +32,8 @@ Thing::~Thing() {
 }
 
 void Thing::getCenter(int &cX, int &cY) {
+    // cout << "HEIGHT: " << height << endl;
+    // cout << "WIDTH: " << width << endl;
     cX = position.x + (width / 2);
     cY = position.y + (height / 2);
 }

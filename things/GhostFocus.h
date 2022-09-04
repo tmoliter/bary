@@ -19,9 +19,9 @@ class GhostFocus : public Thing {
     public:
         int start, duration;
         Thing* target;
-        Thing* focus;
+        Thing*& focus;
         EffectType type;
-        GhostFocus(Thing *&focus, int targetId, EffectType t, int d);
+        GhostFocus(Thing *&f, int targetId, EffectType t, int d);
 
         void shiftFocus() {};
         void destroy();
