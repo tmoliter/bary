@@ -6,6 +6,7 @@
 #include "../components/Walk.h"
 #include "../components/Obstruction.h"
 #include <iostream>
+#include "Camera.h"
 
 struct FieldPlayerData : ThingData {
     SpriteData spriteData;

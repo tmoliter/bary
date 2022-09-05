@@ -45,7 +45,14 @@ void FieldPlayer::meat(KeyPresses keysDown) {
         walk->changeSpeed(false);
     if (keysDown.debug_down)
         walk->changeSpeed(true);
-    /* END DEBUG MODE CONTROLS */
+
+    if (keysDown.debug_left && sprite->layer == 0) {
+        if (Camera::getFocusName() == "Zinnia")
+            Camera::panTo("Sailor Shack");
+        else
+            Camera::panTo("Zinnia");
+    }
+    /* END DEBUG MODE CONTROLS */        
 };
 
 int FieldPlayer::write_player_datum(ifstream &mapData, FieldPlayerData &newTD) {

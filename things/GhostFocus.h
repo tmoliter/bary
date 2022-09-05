@@ -10,18 +10,11 @@
 
 using namespace std;
 
-enum EffectType {
-    shake,
-    pan
-};
-
 class GhostFocus : public Thing {
     public:
-        int start, duration;
         Thing* target;
         Thing*& focus;
-        EffectType type;
-        GhostFocus(Thing *&f, string targetName, EffectType t, int d);
+        GhostFocus(Thing *&f, string targetName);
 
         void shiftFocus() {};
         void destroy();
@@ -29,9 +22,9 @@ class GhostFocus : public Thing {
         void meat();
 
         void pan();
-        void shake();
 
-        Sprite* overlay;
+        static GhostFocus *g;
+        static int create(Thing *&f, string targetName);
 };
 
 #endif

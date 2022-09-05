@@ -47,16 +47,6 @@ void Camera::init(Thing *f) {
 
 void Camera::render() {
     setPosition();
-
-    /* TEST STUFF */
-    if(frameCount == 300) {
-        new GhostFocus(focus,"Sailor Shack",EffectType::pan, 500);
-    }
-    if(frameCount == 600) {
-        new GhostFocus(focus,"Zinnia",EffectType::pan, 500);
-    }
-    /* END TEST STUFF */
-
     if (!initialized)
         return;
     SDL_RenderClear(renderer);
@@ -66,10 +56,6 @@ void Camera::render() {
     /* TEST STUFF */
     // SDL_SetRenderDrawColor(renderer,150,0,150,128);
     // SDL_RenderFillRect(renderer, FULL_SCREEN);
-}
-
-void Camera::setFocus(Thing* f) {
-    Camera::c->focus = f;
 }
 
 int Camera::parse_camera(ifstream &mapData) {
@@ -86,3 +72,10 @@ int Camera::parse_camera(ifstream &mapData) {
     return 1;
 }
 
+void Camera::panTo(string thingName) {
+    GhostFocus::create(c->focus, thingName);
+}
+
+string Camera::getFocusName() {
+    return c->focus->name;
+}

@@ -5,6 +5,7 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <fstream>
+#include <string>
 #include "globals.h"
 #include "./things/Thing.h"
 
@@ -29,9 +30,12 @@ class Camera {
         void init(Thing *f);
         void setPosition();
         void render();
-        static int parse_camera(ifstream &mapData);
-        static void setFocus(Thing* f);
+
         inline static Camera *c;
+
+        static int parse_camera(ifstream &mapData);
+        static void panTo(string thingName);
+        static string getFocusName();
 };
 
 #endif

@@ -12,8 +12,6 @@ Building::Building(BuildingData bD) : Thing(bD) {
         int tmpHeight = sd.height + sd.yOffset;
         if (tmpHeight > height)
             height = tmpHeight;
-        cout << "BLD HEIGHT: " << height << endl;
-        cout << "BLD WIDTH: " << height << endl;
         sprites.push_back(new Sprite(position.x,position.y,name,sd));
     }
     for (auto bd : bD.obstructionData) {

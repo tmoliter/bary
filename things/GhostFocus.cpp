@@ -4,31 +4,20 @@
 
 using namespace std;
 
-GhostFocus::GhostFocus(Thing *&f, string targetName, EffectType t, int d) : Thing(f->getCenter()), type(t), duration(d), focus(f) {
+GhostFocus::GhostFocus(Thing *&f, string targetName) : Thing(f->getCenter()), focus(f) {
+    g = this;
     focus = this;
     target = Thing::things[targetName];
-    cout << target->name << endl;
-    start = frameCount;
 }
 
 void GhostFocus::destroy() {
     focus = target;
+    GhostFocus::g = nullptr;
     Thing::destroyThing(name);
 }
 
 void GhostFocus::meat() {
-    if (frameCount - duration > start) {
-        destroy();
-        return;
-    }
-    switch(type) {
-        case(EffectType::shake):
-            shake();
-        case(EffectType::pan):
-            pan();
-        default:
-            break;
-    }
+    pan();
 }
 
 void GhostFocus::pan() {
@@ -58,17 +47,14 @@ void GhostFocus::pan() {
         position.y += ((yDiff / 30) - 3);
 }
 
-void GhostFocus::shake() {
-    // int xDiff = *targetX - x;
-    // int yDiff = *targetY - y;
+// STATIC
 
-    // if(xDiff > 0)
-    //     x = x + 3;
-    // else
-    //     x = x -3 ;
-    // if(yDiff > 0)
-    //     y = y + 3;
-    // else
-    //     y = y - 3;
+GhostFocus* GhostFocus::g = nullptr;
+
+int GhostFocus::create(Thing *&f, string targetName) {
+    if (!g) {
+        new GhostFocus(f, targetName);
+        return 1;
+    }
+    return 0;
 }
-
