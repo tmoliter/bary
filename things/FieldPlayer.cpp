@@ -53,10 +53,14 @@ void FieldPlayer::meat(KeyPresses keysDown) {
             Camera::panTo("Zinnia");
     }
 
-    if (keysDown.debug_plus)
-        Camera::fadeIn(5);
-    if (keysDown.debug_minus)
-        Camera::fadeOut(5);
+    if (keysDown.debug_0)
+        Camera::fadeIn(3);
+    if (keysDown.debug_9)
+        Camera::fadeOut(3);
+    if (keysDown.debug_8)
+        Camera::warpIn(3);
+    if (keysDown.debug_7)
+        Camera::warpOut(3);
     /* END DEBUG MODE CONTROLS */        
 };
 

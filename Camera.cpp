@@ -7,31 +7,24 @@
 using namespace std;
 
 void Camera::setPosition() {
-    int half_width =  SCREEN_WIDTH / SCALE / 2;
-    int half_height = SCREEN_HEIGHT / SCALE / 2;
+    setWarpLevel();
+    int half_width =  sourceRect.w / 2;
+    int half_height = sourceRect.h / 2;
     Point fp = focus->getCenter();
 
     if (fp.x < half_width)
         sourceRect.x = 0;
-    else if (fp.x > width - half_width)
-        sourceRect.x = width - (half_width* 2);
+    else if (fp.x > bgWidth - half_width)
+        sourceRect.x = bgWidth - (half_width* 2);
     else
         sourceRect.x = fp.x - half_width;
 
     if (fp.y < half_height)
         sourceRect.y = 0;
-    else if (fp.y > height - half_height)
-        sourceRect.y = height - (half_height * 2);
+    else if (fp.y > bgHeight - half_height)
+        sourceRect.y = bgHeight - (half_height * 2);
     else
         sourceRect.y = fp.y - half_height;
-
-    /* THIS IS A COOL 3D ANGLE SHIFT TO PLAY WITH LATER */
-    // if (frameCount < 300)
-    // {
-    //     sourceRect.h += 1;
-    //     if(frameCount % 5 == 0)
-    //         sourceRect.w -= 1;
-    // }
 }
 
 void Camera::init(Thing *f) {
@@ -39,10 +32,10 @@ void Camera::init(Thing *f) {
     SDL_Surface* temp = IMG_Load(path);
     bgTexture = SDL_CreateTextureFromSurface(renderer, temp);
     SDL_FreeSurface(temp);
-    SDL_QueryTexture(bgTexture, NULL, NULL, &width, &height);
-    sourceRect = { 0 , 0, SCREEN_WIDTH / SCALE, SCREEN_HEIGHT / SCALE };
+    SDL_QueryTexture(bgTexture, NULL, NULL, &bgWidth, &bgHeight);
+    sourceRect = { 0 , 0, scaledScreenWidth, scaledScreenHeight };
     renderRect = { 0 , 0, SCREEN_WIDTH, SCREEN_HEIGHT };
-    fadeStart = frameCount;
+    fadeStart = warpStart = frameCount;
     fadeStatus = FxStatus::unapplying;
     initialized = true;
 }
@@ -66,8 +59,7 @@ void Camera::handleFade() {
 
 void Camera::setOverlay() {
     int t = (frameCount - fadeStart) * fadeMultiplier;
-    if (t > 255)
-        t = 255;
+    utils::limit(t, 0, 255);
     int a = fadeStatus == FxStatus::unapplying ? 255 - t : t;
     SDL_SetRenderDrawColor(renderer,0,0,0,a);
     if (t < 255)
@@ -76,6 +68,32 @@ void Camera::setOverlay() {
         fadeStatus = FxStatus::unapplied;
     if(fadeStatus == FxStatus::applying)
         fadeStatus = FxStatus::applied;
+}
+
+void Camera::setWarpLevel() {
+    /* THIS IS A COOL 3D ANGLE SHIFT TO PLAY WITH LATER */
+    // if (frameCount < 300)
+    // {
+    //     sourceRect.h += 1;
+    //     if(frameCount % 5 == 0)
+    //         sourceRect.w -= 1;
+    // }
+    if(warpStatus == FxStatus::unapplied || warpStatus == FxStatus::applied)
+        return;
+    int t = (frameCount - warpStart) * warpMultiplier;
+    int newWidth = warpStatus == FxStatus::applying ? scaledScreenWidth - t : t;
+    int newHeight = warpStatus == FxStatus::applying ? scaledScreenHeight - t : t;
+    utils::limit(newWidth,1,scaledScreenWidth);
+    utils::limit(newHeight,1,scaledScreenHeight);
+    sourceRect.w = newWidth;
+    sourceRect.h = newHeight;
+    if (t < scaledScreenHeight || t < scaledScreenWidth) {
+        return;
+    }
+    if(warpStatus == FxStatus::unapplying)
+        warpStatus = FxStatus::unapplied;
+    if(warpStatus == FxStatus::applying)
+        warpStatus = FxStatus::applied;
 }
 
 // STATIC
@@ -114,6 +132,21 @@ void Camera::fadeOut(int m) {
     }
 }
 
+void Camera::warpIn(int m) {
+    if(c->warpStatus == FxStatus::unapplied) {
+        c->warpMultiplier = m;
+        c->warpStatus = FxStatus::applying;
+        c->warpStart = frameCount;
+    }
+}
+
+void Camera::warpOut(int m) {
+    if(c->warpStatus == FxStatus::applied) {
+        c->warpMultiplier = m;
+        c->warpStatus = FxStatus::unapplying;
+        c->warpStart = frameCount;
+    }
+}
 
 string Camera::getFocusName() {
     return c->focus->name;

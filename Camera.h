@@ -8,6 +8,7 @@
 #include <string>
 #include "globals.h"
 #include "./things/Thing.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -22,20 +23,27 @@ class Camera {
     private:
         SDL_Rect renderRect, sourceRect;
         SDL_Texture* bgTexture;
-        int fadeStart;
+        int fadeStart, warpStart;
     public:
         Thing* focus;
         SDL_Renderer* renderer;
-        FxStatus fadeStatus;
-        int width, height, fadeMultiplier;
+        FxStatus fadeStatus, warpStatus;
+        int 
+            bgWidth, bgHeight, 
+            scaledScreenWidth, scaledScreenHeight,  
+            fadeMultiplier, warpMultiplier;
         const char *path;
         bool initialized;
 
         Camera(SDL_Renderer* r) : 
         renderer(r),
         initialized(false),
+        warpStatus(unapplied),
         fadeStatus(applied),
-        fadeMultiplier(2) {
+        fadeMultiplier(2),
+        warpMultiplier(1),
+        scaledScreenWidth(SCREEN_WIDTH / SCALE),
+        scaledScreenHeight(SCREEN_HEIGHT / SCALE) {
             c = this;
         };
         void init(Thing *f);
@@ -43,8 +51,11 @@ class Camera {
         void setPosition();
         void render();
 
+
         void handleFade();
         void setOverlay();
+
+        void setWarpLevel();
 
         inline static Camera *c;
 
@@ -52,6 +63,8 @@ class Camera {
         static void panTo(string thingName);
         static void fadeIn(int m);
         static void fadeOut(int m);
+        static void warpIn(int m);
+        static void warpOut(int m);
         static string getFocusName();
 };
 
