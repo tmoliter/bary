@@ -32,6 +32,7 @@ class Thing {
         Thing(Point p);
         virtual ~Thing();
 
+        virtual void destroy();
         Point getCenter();
         
         virtual void meat() {};

@@ -13,7 +13,7 @@ GhostFocus::GhostFocus(Thing *&f, string targetName) : Thing(f->getCenter()), fo
 void GhostFocus::destroy() {
     focus = target;
     GhostFocus::g = nullptr;
-    Thing::destroyThing(name);
+    Thing::destroy();
 }
 
 void GhostFocus::meat() {

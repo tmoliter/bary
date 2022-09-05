@@ -27,11 +27,14 @@ Thing::Thing(Point p) :
     height(0), 
     width(0) {
         _save_name_and_write_to_map("AnonymousThing");
-
 }
 
 Thing::~Thing() {
     things.erase(name);
+}
+
+void Thing::destroy() {
+    Thing::destroyThing(name);
 }
 
 Point Thing::getCenter() {
