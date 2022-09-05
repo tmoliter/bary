@@ -43,7 +43,7 @@ void Camera::init(Thing *f) {
     sourceRect = { 0 , 0, SCREEN_WIDTH / SCALE, SCREEN_HEIGHT / SCALE };
     renderRect = { 0 , 0, SCREEN_WIDTH, SCREEN_HEIGHT };
     fadeStart = frameCount;
-    FxStatus = FxStatus::unapplying;
+    fadeStatus = FxStatus::unapplying;
     initialized = true;
 }
 
@@ -58,9 +58,9 @@ void Camera::render() {
 }
 
 void Camera::handleFade() {
-    if(FxStatus == FxStatus::unapplying || FxStatus == FxStatus::applying)
+    if(fadeStatus == FxStatus::unapplying || fadeStatus == FxStatus::applying)
         setOverlay();
-    if(FxStatus != FxStatus::unapplied)
+    if(fadeStatus != FxStatus::unapplied)
         SDL_RenderFillRect(renderer, FULL_SCREEN);
 };
 
@@ -68,15 +68,14 @@ void Camera::setOverlay() {
     int t = (frameCount - fadeStart) * fadeMultiplier;
     if (t > 255)
         t = 255;
-    int a = FxStatus == FxStatus::unapplying ? 255 - t : t;
-    cout << a << endl;
+    int a = fadeStatus == FxStatus::unapplying ? 255 - t : t;
     SDL_SetRenderDrawColor(renderer,0,0,0,a);
     if (t < 255)
         return;
-    if(FxStatus == FxStatus::unapplying)
-        FxStatus = FxStatus::unapplied;
-    if(FxStatus == FxStatus::applying)
-        FxStatus = FxStatus::applied;
+    if(fadeStatus == FxStatus::unapplying)
+        fadeStatus = FxStatus::unapplied;
+    if(fadeStatus == FxStatus::applying)
+        fadeStatus = FxStatus::applied;
 }
 
 // STATIC
@@ -100,17 +99,17 @@ void Camera::panTo(string thingName) {
 }
 
 void Camera::fadeIn(int m) {
-    if(c->FxStatus == FxStatus::unapplied) {
+    if(c->fadeStatus == FxStatus::unapplied) {
         c->fadeMultiplier = m;
-        c->FxStatus = FxStatus::applying;
+        c->fadeStatus = FxStatus::applying;
         c->fadeStart = frameCount;
     }
 }
 
 void Camera::fadeOut(int m) {
-    if(c->FxStatus == FxStatus::applied) {
+    if(c->fadeStatus == FxStatus::applied) {
         c->fadeMultiplier = m;
-        c->FxStatus = FxStatus::unapplying;
+        c->fadeStatus = FxStatus::unapplying;
         c->fadeStart = frameCount;
     }
 }

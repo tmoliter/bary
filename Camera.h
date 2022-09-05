@@ -26,7 +26,7 @@ class Camera {
     public:
         Thing* focus;
         SDL_Renderer* renderer;
-        FxStatus FxStatus;
+        FxStatus fadeStatus;
         int width, height, fadeMultiplier;
         const char *path;
         bool initialized;
@@ -34,12 +34,12 @@ class Camera {
         Camera(SDL_Renderer* r) : 
         renderer(r),
         initialized(false),
-        FxStatus(applied),
+        fadeStatus(applied),
         fadeMultiplier(2) {
             c = this;
         };
         void init(Thing *f);
-        
+
         void setPosition();
         void render();
 
