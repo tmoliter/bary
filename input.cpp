@@ -11,6 +11,9 @@ KeyPresses& Input::getInput () {
     keysDown.debug_down = false;
     keysDown.debug_left = false;
     keysDown.debug_right = false;
+    keysDown.debug_plus = false;
+    keysDown.debug_minus = false;
+    keysDown.debug_return = false;
     while (SDL_PollEvent(&input)){
         if (input.type == SDL_QUIT){
             keysDown.quit = true;
@@ -48,6 +51,18 @@ KeyPresses& Input::getInput () {
                 case SDLK_RIGHT:
                     if (input.key.repeat == 0)
                         keysDown.debug_right = true;
+                    break;
+                case SDLK_0:
+                    if (input.key.repeat == 0)
+                        keysDown.debug_plus = true;
+                    break;
+                case SDLK_9:
+                    if (input.key.repeat == 0)
+                        keysDown.debug_minus = true;
+                    break;
+                case SDLK_RETURN:
+                    if (input.key.repeat == 0)
+                        keysDown.debug_return = true;
                     break;
             }
         }

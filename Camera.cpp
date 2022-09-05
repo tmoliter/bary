@@ -42,6 +42,8 @@ void Camera::init(Thing *f) {
     SDL_QueryTexture(bgTexture, NULL, NULL, &width, &height);
     sourceRect = { 0 , 0, SCREEN_WIDTH / SCALE, SCREEN_HEIGHT / SCALE };
     renderRect = { 0 , 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+    fadeStart = frameCount;
+    fadeStatus = FadeStatus::unfading;
     initialized = true;
 }
 
@@ -52,11 +54,29 @@ void Camera::render() {
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, bgTexture, &sourceRect, &renderRect);
     Sprite::renderSprites(renderer, Point(sourceRect.x,sourceRect.y));
-
-    /* TEST STUFF */
-    // SDL_SetRenderDrawColor(renderer,150,0,150,128);
-    // SDL_RenderFillRect(renderer, FULL_SCREEN);
+    
+    if(fadeStatus == FadeStatus::unfading || fadeStatus == FadeStatus::fading)
+        setOverlay();
+    if(fadeStatus != FadeStatus::visible)
+        SDL_RenderFillRect(renderer, FULL_SCREEN);
 }
+
+void Camera::setOverlay() {
+    int t = (frameCount - fadeStart) * fadeMultiplier;
+    if (t > 255)
+        t = 255;
+    int a = fadeStatus == FadeStatus::unfading ? 255 - t : t;
+    cout << a << endl;
+    SDL_SetRenderDrawColor(renderer,0,0,0,a);
+    if (t < 255)
+        return;
+    if(fadeStatus == FadeStatus::unfading)
+        fadeStatus = FadeStatus::visible;
+    if(fadeStatus == FadeStatus::fading)
+        fadeStatus = FadeStatus::faded;
+}
+
+// STATIC
 
 int Camera::parse_camera(ifstream &mapData) {
     char current;
@@ -75,6 +95,23 @@ int Camera::parse_camera(ifstream &mapData) {
 void Camera::panTo(string thingName) {
     GhostFocus::create(c->focus, thingName);
 }
+
+void Camera::fadeIn(int m) {
+    if(c->fadeStatus == FadeStatus::visible) {
+        c->fadeMultiplier = m;
+        c->fadeStatus = FadeStatus::fading;
+        c->fadeStart = frameCount;
+    }
+}
+
+void Camera::fadeOut(int m) {
+    if(c->fadeStatus == FadeStatus::faded) {
+        c->fadeMultiplier = m;
+        c->fadeStatus = FadeStatus::unfading;
+        c->fadeStart = frameCount;
+    }
+}
+
 
 string Camera::getFocusName() {
     return c->focus->name;

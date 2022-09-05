@@ -11,30 +11,44 @@
 
 using namespace std;
 
+enum FadeStatus {
+    fading,
+    unfading,
+    faded,
+    visible
+};
+
 class Camera {
     private:
         SDL_Rect renderRect, sourceRect;
         SDL_Texture* bgTexture;
+        int fadeStart;
     public:
         Thing* focus;
+        SDL_Renderer* renderer;
+        FadeStatus fadeStatus;
+        int width, height, fadeMultiplier;
         const char *path;
         bool initialized;
-        int width, height;
-        SDL_Renderer* renderer;
 
         Camera(SDL_Renderer* r) : 
         renderer(r),
-        initialized(false) {
+        initialized(false),
+        fadeStatus(faded),
+        fadeMultiplier(2) {
             c = this;
         };
         void init(Thing *f);
         void setPosition();
         void render();
+        void setOverlay();
 
         inline static Camera *c;
 
         static int parse_camera(ifstream &mapData);
         static void panTo(string thingName);
+        static void fadeIn(int m);
+        static void fadeOut(int m);
         static string getFocusName();
 };
 

@@ -16,6 +16,9 @@ struct KeyPresses {
     bool debug_down = false;
     bool debug_left = false;
     bool debug_right = false;
+    bool debug_plus = false;
+    bool debug_minus = false;
+    bool debug_return = false;
 };
 
 class Input {
