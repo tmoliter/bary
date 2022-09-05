@@ -6,9 +6,6 @@
 using namespace std;
 
 void Thing::_save_name_and_write_to_map(string n) {
-    if(n == "") {
-        n = "AnonymousThing";
-    }
     name = n;
     int i = 2;
     while(Thing::things.count(name)) {
@@ -29,7 +26,7 @@ Thing::Thing(Point p) :
     position(p.x,p.y),
     height(0), 
     width(0) {
-        _save_name_and_write_to_map("");
+        _save_name_and_write_to_map("AnonymousThing");
 
 }
 
