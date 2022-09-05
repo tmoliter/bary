@@ -5,7 +5,7 @@
 
 class Obstruction : public Collidable {
     public:
-        Obstruction(int &x, int &y, int &tI, CollidableData cd);
+        Obstruction(int &x, int &y, string &tN, CollidableData cd);
         ~Obstruction();
         int id;
 

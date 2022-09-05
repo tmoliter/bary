@@ -30,8 +30,9 @@ void parse_map(const char *mapPath) {
     ifstream mapData;
     mapData.open(mapPath);
     Thing* focus = parse_thing(mapData);
+    new Camera(renderer);
     Camera::parse_camera(mapData);
-    Camera::c->init(&focus->x, &focus->y);
+    Camera::c->init(focus);
     while (mapData.get() == '\n') {
         parse_thing(mapData);
     };

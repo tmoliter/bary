@@ -1,33 +1,29 @@
 #include "./Camera.h"
 #include <iostream>
 #include "globals.h"
+#include "./things/GhostFocus.h"
+
 
 using namespace std;
 
 void Camera::setPosition() {
-    if (focusX == 0 || focusY == 0) {
-        x = 0;
-        y = 0;
-    }
     int half_width =  SCREEN_WIDTH / SCALE / 2;
     int half_height = SCREEN_HEIGHT / SCALE / 2;
+    Point fp = focus->getCenter();
 
-    if (*focusX < half_width)
+    if (fp.x < half_width)
         sourceRect.x = 0;
-    else if (*focusX > width - half_width)
+    else if (fp.x > width - half_width)
         sourceRect.x = width - (half_width* 2);
     else
-        sourceRect.x = *focusX - half_width;
+        sourceRect.x = fp.x - half_width;
 
-    if (*focusY < half_height)
+    if (fp.y < half_height)
         sourceRect.y = 0;
-    else if (*focusY > height - half_height)
+    else if (fp.y > height - half_height)
         sourceRect.y = height - (half_height * 2);
     else
-        sourceRect.y = *focusY - half_height;
-
-    x = sourceRect.x;
-    y = sourceRect.y;
+        sourceRect.y = fp.y - half_height;
 
     /* THIS IS A COOL 3D ANGLE SHIFT TO PLAY WITH LATER */
     // if (frameCount < 300)
@@ -38,9 +34,8 @@ void Camera::setPosition() {
     // }
 }
 
-void Camera::init(int *fX, int *fY) {
-    focusX = fX;
-    focusY = fY;
+void Camera::init(Thing *f) {
+    focus = f;
     SDL_Surface* temp = IMG_Load(path);
     bgTexture = SDL_CreateTextureFromSurface(renderer, temp);
     SDL_FreeSurface(temp);
@@ -51,11 +46,16 @@ void Camera::init(int *fX, int *fY) {
 }
 
 void Camera::render() {
+    setPosition();
     if (!initialized)
         return;
-    SDL_SetRenderDrawColor(renderer, 50, 255, 100, 255);
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, bgTexture, &sourceRect, &renderRect);
+    Sprite::renderSprites(renderer, Point(sourceRect.x,sourceRect.y));
+
+    /* TEST STUFF */
+    // SDL_SetRenderDrawColor(renderer,150,0,150,128);
+    // SDL_RenderFillRect(renderer, FULL_SCREEN);
 }
 
 int Camera::parse_camera(ifstream &mapData) {
@@ -72,3 +72,10 @@ int Camera::parse_camera(ifstream &mapData) {
     return 1;
 }
 
+void Camera::panTo(string thingName) {
+    GhostFocus::create(c->focus, thingName);
+}
+
+string Camera::getFocusName() {
+    return c->focus->name;
+}

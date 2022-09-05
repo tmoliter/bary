@@ -5,16 +5,43 @@
 
 using namespace std;
 
+void Thing::_save_name_and_write_to_map(string n) {
+    name = n;
+    int i = 2;
+    while(Thing::things.count(name)) {
+        name = n + to_string(i);
+        i++;
+    }
+    Thing::things[name] = this; 
+}
+
 Thing::Thing(ThingData td) : 
-    x(td.x), 
-    y(td.y) {
-        id = currentID++;
-        Thing::things[id] = this;
+    position(td.x, td.y),
+    height(0), 
+    width(0) {
+        _save_name_and_write_to_map(td.name);
     }
 
-// STATIC
+Thing::Thing(Point p) : 
+    position(p.x,p.y),
+    height(0), 
+    width(0) {
+        _save_name_and_write_to_map("AnonymousThing");
+}
 
-int Thing::currentID = 0;
+Thing::~Thing() {
+    things.erase(name);
+}
+
+void Thing::destroy() {
+    Thing::destroyThing(name);
+}
+
+Point Thing::getCenter() {
+    return Point(position.x + (width / 2) , position.y + (height / 2));
+}
+
+// STATIC
 
 int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
     int index = 0;
@@ -28,10 +55,15 @@ int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
                     break;
                 case (1):
                     index++;
-                    newTD.x = std::stoi(value);
+                    newTD.name = value;
                     value.clear();
                     break;
                 case (2):
+                    index++;
+                    newTD.x = std::stoi(value);
+                    value.clear();
+                    break;
+                case (3):
                     index++;
                     newTD.y = std::stoi(value);
                     value.clear();
@@ -54,13 +86,21 @@ void Thing::meatThings(KeyPresses keysDown) {
 }
 
 void Thing::destroyThings() {
-   map<int, Thing*>::iterator itr = Thing::things.begin();
+    for (auto killMe : thingsToDestroy) {
+        Thing* thing = Thing::things[killMe];
+        delete thing;
+    }
+    thingsToDestroy.clear();
+}
+
+void Thing::destroyAllThings() {
+   map<string, Thing*>::iterator itr = Thing::things.begin();
    while (itr != Thing::things.end()) {
         delete itr->second;
         itr = Thing::things.erase(itr);
    }
 }
 
-void Thing::destroyThing() {
-    // Destroy by ID
+void Thing::destroyThing(string n) {
+    thingsToDestroy.push_back(n);
 }

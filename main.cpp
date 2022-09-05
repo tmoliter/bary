@@ -22,8 +22,8 @@ int main(int argc, char* args[]) {
                 SDL_WINDOW_SHOWN
                 );
 
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
-    new Camera(renderer);
+    renderer = SDL_CreateRenderer(window, -1, 0);
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_ADD);
 
     string total(string(BASE_PATH) + "maps/map2.txt");
     parse_map(total.c_str());
@@ -35,25 +35,13 @@ int main(int argc, char* args[]) {
     while (true){
     t.startFrame();
         KeyPresses keysDown = in.getInput();  
-        t.timeElapsed(&p.a);
-
         if (keysDown.quit)
             break;
         Thing::meatThings(keysDown);
-        t.timeElapsed(&p.b);
-
-        Camera::c->setPosition();
         Camera::c->render();
-
-        t.timeElapsed(&p.c);
-
-        Sprite::renderSprites();
-        t.timeElapsed(&p.d);
-
         t.endFrameAndWait(frameCount);
-        t.timeElapsed(&p.e);
-
         SDL_RenderPresent(renderer);
+        Thing::destroyThings();
     }
     Thing::destroyThings();
     SDL_DestroyRenderer(renderer);

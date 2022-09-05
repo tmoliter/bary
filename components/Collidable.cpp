@@ -4,10 +4,10 @@
 
 using namespace std;
 
-Collidable::Collidable (int &x, int &y, int &tI, CollidableData cd) : 
+Collidable::Collidable (int &x, int &y, string &tN, CollidableData cd) : 
 x(x), 
 y(y), 
-thingId(tI),
+thingName(tN),
 layer(cd.layer),
 rays(cd.rays),
 active(true) {}

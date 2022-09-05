@@ -4,21 +4,23 @@
 
 using namespace std;
 
-Sprite::Sprite (int &x, int &y, int &tI, SpriteData sd) : 
+Sprite::Sprite (int &x, int &y, string &tN, SpriteData sd) : 
 x(x), 
 y(y), 
-thingId(tI), 
+thingName(tN), 
 layer(sd.layer),
 renderOffset(sd.renderOffset),
 xOffset(sd.xOffset),
 yOffset(sd.yOffset),
-texture(sd.texture),
 active(false) {
     id = currentID++;
     Sprite::sprites[id] = this;
-    renderer = Camera::c->renderer;
-    cameraX = &Camera::c->x;
-    cameraY = &Camera::c->y;
+    if(!textures.count(sd.path)) {
+        SDL_Surface* temp = IMG_Load(sd.path.c_str());
+        textures[sd.path] = SDL_CreateTextureFromSurface(renderer, temp);
+        SDL_FreeSurface(temp);
+    }
+    texture = textures[sd.path];
     SDL_QueryTexture(texture, NULL, NULL, &width, &height);
     if(sd.width > 0)
         width = sd.width;
@@ -47,11 +49,11 @@ void Sprite::divideSheet(int columns, int rows) {
     sourceRect = { 0, 0, width, height };
 }
 
-void Sprite::render() {
+void Sprite::render(SDL_Renderer *renderer, Point camPosition) {
     if (!active)
         return;
-    renderRect.x = ((x - *cameraX) + xOffset) * SCALE;
-    renderRect.y = ((y - *cameraY) + yOffset) * SCALE;
+    renderRect.x = ((x - camPosition.x) + xOffset) * SCALE;
+    renderRect.y = ((y - camPosition.y) + yOffset) * SCALE;
     SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
 };
 
@@ -67,14 +69,14 @@ bool _comparePosition (Sprite* a, Sprite* b) {
         );
     return a->layer < b->layer;
 }
-void Sprite::renderSprites() {
+void Sprite::renderSprites(SDL_Renderer *renderer, Point camPosition) {
     vector<Sprite*> spriteList;
     for (auto const& [id, sprite] : Sprite::sprites){
         spriteList.push_back(sprite);
     }
     sort(spriteList.begin(), spriteList.end(), _comparePosition);
     for (auto sprite : spriteList){
-        sprite->render();
+        sprite->render(renderer, camPosition);
     }
 }
 int Sprite::write_sprite_datum(ifstream &mapData, SpriteData &newSD){
@@ -144,12 +146,7 @@ int Sprite::write_sprite_datum(ifstream &mapData, SpriteData &newSD){
                     break;
                 case (8):
                     cout << value << endl << endl;
-                    if(!textures.count(value)) {
-                        SDL_Surface* temp = IMG_Load(value.c_str());
-                        textures[value] = SDL_CreateTextureFromSurface(Camera::c->renderer, temp);
-                        SDL_FreeSurface(temp);
-                    }
-                    newSD.texture = textures[value];
+                    newSD.path = value;
                     value.clear();
                     return 1;
                 default:
