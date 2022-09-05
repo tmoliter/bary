@@ -43,7 +43,7 @@ void Camera::init(Thing *f) {
     sourceRect = { 0 , 0, SCREEN_WIDTH / SCALE, SCREEN_HEIGHT / SCALE };
     renderRect = { 0 , 0, SCREEN_WIDTH, SCREEN_HEIGHT };
     fadeStart = frameCount;
-    fadeStatus = FadeStatus::unfading;
+    FxStatus = FxStatus::unapplying;
     initialized = true;
 }
 
@@ -54,26 +54,29 @@ void Camera::render() {
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, bgTexture, &sourceRect, &renderRect);
     Sprite::renderSprites(renderer, Point(sourceRect.x,sourceRect.y));
-    
-    if(fadeStatus == FadeStatus::unfading || fadeStatus == FadeStatus::fading)
-        setOverlay();
-    if(fadeStatus != FadeStatus::visible)
-        SDL_RenderFillRect(renderer, FULL_SCREEN);
+    handleFade();
 }
+
+void Camera::handleFade() {
+    if(FxStatus == FxStatus::unapplying || FxStatus == FxStatus::applying)
+        setOverlay();
+    if(FxStatus != FxStatus::unapplied)
+        SDL_RenderFillRect(renderer, FULL_SCREEN);
+};
 
 void Camera::setOverlay() {
     int t = (frameCount - fadeStart) * fadeMultiplier;
     if (t > 255)
         t = 255;
-    int a = fadeStatus == FadeStatus::unfading ? 255 - t : t;
+    int a = FxStatus == FxStatus::unapplying ? 255 - t : t;
     cout << a << endl;
     SDL_SetRenderDrawColor(renderer,0,0,0,a);
     if (t < 255)
         return;
-    if(fadeStatus == FadeStatus::unfading)
-        fadeStatus = FadeStatus::visible;
-    if(fadeStatus == FadeStatus::fading)
-        fadeStatus = FadeStatus::faded;
+    if(FxStatus == FxStatus::unapplying)
+        FxStatus = FxStatus::unapplied;
+    if(FxStatus == FxStatus::applying)
+        FxStatus = FxStatus::applied;
 }
 
 // STATIC
@@ -97,17 +100,17 @@ void Camera::panTo(string thingName) {
 }
 
 void Camera::fadeIn(int m) {
-    if(c->fadeStatus == FadeStatus::visible) {
+    if(c->FxStatus == FxStatus::unapplied) {
         c->fadeMultiplier = m;
-        c->fadeStatus = FadeStatus::fading;
+        c->FxStatus = FxStatus::applying;
         c->fadeStart = frameCount;
     }
 }
 
 void Camera::fadeOut(int m) {
-    if(c->fadeStatus == FadeStatus::faded) {
+    if(c->FxStatus == FxStatus::applied) {
         c->fadeMultiplier = m;
-        c->fadeStatus = FadeStatus::unfading;
+        c->FxStatus = FxStatus::unapplying;
         c->fadeStart = frameCount;
     }
 }

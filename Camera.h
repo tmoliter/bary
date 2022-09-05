@@ -11,11 +11,11 @@
 
 using namespace std;
 
-enum FadeStatus {
-    fading,
-    unfading,
-    faded,
-    visible
+enum FxStatus {
+    applying,
+    unapplying,
+    applied,
+    unapplied
 };
 
 class Camera {
@@ -26,7 +26,7 @@ class Camera {
     public:
         Thing* focus;
         SDL_Renderer* renderer;
-        FadeStatus fadeStatus;
+        FxStatus FxStatus;
         int width, height, fadeMultiplier;
         const char *path;
         bool initialized;
@@ -34,13 +34,16 @@ class Camera {
         Camera(SDL_Renderer* r) : 
         renderer(r),
         initialized(false),
-        fadeStatus(faded),
+        FxStatus(applied),
         fadeMultiplier(2) {
             c = this;
         };
         void init(Thing *f);
+        
         void setPosition();
         void render();
+
+        void handleFade();
         void setOverlay();
 
         inline static Camera *c;
