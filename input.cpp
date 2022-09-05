@@ -11,6 +11,17 @@ KeyPresses& Input::getInput () {
     keysDown.debug_down = false;
     keysDown.debug_left = false;
     keysDown.debug_right = false;
+    keysDown.debug_1 = false;
+    keysDown.debug_2 = false;
+    keysDown.debug_3 = false;
+    keysDown.debug_4 = false;
+    keysDown.debug_5 = false;
+    keysDown.debug_6 = false;
+    keysDown.debug_7 = false;
+    keysDown.debug_8 = false;
+    keysDown.debug_9 = false;
+    keysDown.debug_0 = false;
+    keysDown.debug_return = false;
     while (SDL_PollEvent(&input)){
         if (input.type == SDL_QUIT){
             keysDown.quit = true;
@@ -49,6 +60,52 @@ KeyPresses& Input::getInput () {
                     if (input.key.repeat == 0)
                         keysDown.debug_right = true;
                     break;
+                /* DEBUG */
+                case SDLK_1:
+                    if (input.key.repeat == 0)
+                        keysDown.debug_1 = true;
+                    break;
+                case SDLK_2:
+                    if (input.key.repeat == 0)
+                        keysDown.debug_2 = true;
+                    break;
+                case SDLK_3:
+                    if (input.key.repeat == 0)
+                        keysDown.debug_3 = true;
+                    break;
+                case SDLK_4:
+                    if (input.key.repeat == 0)
+                        keysDown.debug_4 = true;
+                    break;
+                case SDLK_5:
+                    if (input.key.repeat == 0)
+                        keysDown.debug_5 = true;
+                    break;
+                case SDLK_6:
+                    if (input.key.repeat == 0)
+                        keysDown.debug_6 = true;
+                    break;
+                case SDLK_7:
+                    if (input.key.repeat == 0)
+                        keysDown.debug_7 = true;
+                    break;
+                case SDLK_8:
+                    if (input.key.repeat == 0)
+                        keysDown.debug_8 = true;
+                    break;
+                case SDLK_9:
+                    if (input.key.repeat == 0)
+                        keysDown.debug_9 = true;
+                    break;
+                case SDLK_0:
+                    if (input.key.repeat == 0)
+                        keysDown.debug_0 = true;
+                    break;
+                case SDLK_RETURN:
+                    if (input.key.repeat == 0)
+                        keysDown.debug_return = true;
+                    break;
+                /* END DEBUG */
             }
         }
         if (input.type == SDL_KEYUP ){

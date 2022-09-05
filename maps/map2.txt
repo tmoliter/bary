@@ -1,4 +1,4 @@
-P,Zinnia,0,0,0,*./assets/sheets/SDL_TestSS.png,
+P,Zinnia,650,800,0,*./assets/sheets/SDL_TestSS.png,
 ./assets/backgrounds/tg.png,
 
 

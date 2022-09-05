@@ -23,7 +23,7 @@ int main(int argc, char* args[]) {
                 );
 
     renderer = SDL_CreateRenderer(window, -1, 0);
-    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_ADD);
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
     string total(string(BASE_PATH) + "maps/map2.txt");
     parse_map(total.c_str());
