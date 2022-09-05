@@ -21,6 +21,8 @@ struct ThingData {
 };
 
 class Thing {
+    protected:
+        void _save_name_and_write_to_map(string n);
     public:
         int height, width;
         Point position;
@@ -29,8 +31,6 @@ class Thing {
         Thing(ThingData td);
         Thing(Point p);
         virtual ~Thing();
-
-        void _save_name_and_write_to_map(string n);
 
         Point getCenter();
         
