@@ -28,6 +28,10 @@ KeyPresses& Input::getInput () {
         }
         if (input.type == SDL_KEYDOWN){
             switch( input.key.keysym.sym ){
+                case SDLK_q:
+                    if (input.key.repeat == 0)
+                        keysDown.quit = true;
+                    break;
                 case SDLK_a:
                     if (input.key.repeat == 0)
                         keysDown.left = true;
