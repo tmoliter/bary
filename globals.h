@@ -11,4 +11,6 @@ inline int frameCount = 0;
 inline SDL_Window* window;
 inline SDL_Renderer* renderer;
 
+inline constexpr bool fullscreen_mode = false;
+
 #endif
