@@ -16,6 +16,7 @@ class Phrase {
         Point &parent, offset;
         string text;
         queue<string> lines;
+        queue<string> hiddenLines;
 
         Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int pS, string t);
 
@@ -26,7 +27,7 @@ class Phrase {
         static SDL_Texture *font;
 
     private:
-        void renderLetter(int lineNumber, int position, int asciiValue);
+        void renderLetter(int lineNumber, int position, int asciiValue, int occlusion);
 };
 
 #endif
