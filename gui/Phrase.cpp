@@ -14,12 +14,9 @@ Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int pS, strin
     }
     letterLength = pixelWidth / 8;
     letterHeight = pixelHeight / 12;
-    int totalLetterLimit = letterLength * letterHeight;
-    if (t.length() > totalLetterLimit) {
-        text = t.substr(0, totalLetterLimit - 1) + char(127);
-    } else {
-        text = t;
-    }
+    text = t;
+
+    // Very happy case: all text fits on one line
     if (text.length() <= letterLength)
         lines.push(text);
     else {
@@ -29,7 +26,7 @@ Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int pS, strin
         bool bonusTime = false;
         queue<string> *linesRef = &lines;
         while(i < text.length()) {
-            cout << "char: " << text[i] << endl;
+            cout << "char: " << text[i] << "(" << int(text[i]) << ")" << endl;
             // Made it to end and all of current line fits on a line
             if (i == text.length() - 1) {
                 linesRef->push(text.substr(lineFirstCharIndex, i));
@@ -37,20 +34,25 @@ Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int pS, strin
                 break;
             }
             // Mark space, unless this is the last character of the last line
-            if (int(text[i]) == 32 && !(linesRef->size() >= letterHeight - 1 && i - lineFirstCharIndex == letterLength)) {
+            if (int(text[i]) == 32 && 
+                !(!bonusTime && 
+                    linesRef->size() >= letterHeight - 1 && 
+                    i - lineFirstCharIndex == letterLength
+                )) {
                 cout << "B" << endl;
                 lastSpace = i;
             }
             // Ran out of room for line
             if (i > 0 && i - lineFirstCharIndex == letterLength) {
                 // Ran out of lines that will fit
-                if (linesRef->size() >= letterHeight - 1) {
+                if (!bonusTime && linesRef->size() >= letterHeight - 1) {
                     linesRef->push(text.substr(lineFirstCharIndex, lastSpace - lineFirstCharIndex) + char(127));
                     cout << "C: " << text.substr(lineFirstCharIndex, lastSpace - lineFirstCharIndex)  + "..." << endl;
                     bonusTime = true;
                     linesRef = &hiddenLines;
+                    lineFirstCharIndex = i;
                     i = lastSpace + 1;
-                    break;
+                    continue;
                 }
                 // Word ends cleanly at end of line
                 if (lastSpace == i) {
