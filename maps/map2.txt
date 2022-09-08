@@ -1,5 +1,5 @@
 P,Zinnia,40,40,0,*./assets/sheets/SDL_TestSS.png,
-./assets/backgrounds/BurgTruncated.png,
+./assets/backgrounds/Burg.png,
 
 
 B,Sailor Shack,250,250,S
