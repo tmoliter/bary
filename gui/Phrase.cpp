@@ -109,9 +109,9 @@ void Phrase::renderLetter(int lineNumber, int position, int asciiValue) {
     int fontY = (adjustedFontValue / LETTERS_PER_FONT_ROW) * LETTER_HEIGHT;
     SDL_Rect sourceRect = { fontX, fontY, LETTER_WIDTH, LETTER_HEIGHT };
 
-    int xPosition = parent.x + offset.x + (position * LETTER_WIDTH);
-    int yPosition = parent.y + offset.y + (lineNumber * LETTER_HEIGHT);
-    SDL_Rect renderRect = { xPosition * phraseScale, yPosition * phraseScale, LETTER_WIDTH * phraseScale, LETTER_HEIGHT * phraseScale };
+    int xPosition = parent.x + offset.x + (position * LETTER_WIDTH * phraseScale);
+    int yPosition = parent.y + offset.y + (lineNumber * LETTER_HEIGHT * phraseScale);
+    SDL_Rect renderRect = { xPosition, yPosition, LETTER_WIDTH * phraseScale, LETTER_HEIGHT * phraseScale };
 
     SDL_RenderCopy(renderer, Phrase::font, &sourceRect, &renderRect);
 }

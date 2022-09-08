@@ -40,7 +40,7 @@ int main(int argc, char* args[]) {
 
     Phrase ph1 = Phrase(pt, Point(100,100), 210, 83, 2, "I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that.");
     Phrase ph2 = Phrase(pt, Point(450,450), 300, 12, 1, "Here is some really tiny text.");
-    Phrase ph3 = Phrase(pt, Point(200,100), 40, 200, 4, "A message that is super big");
+    Phrase ph3 = Phrase(pt, Point(700,500), 40, 200, 4, "A message that is super big");
 
     while (true){
     t.startFrame();
