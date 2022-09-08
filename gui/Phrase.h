@@ -12,7 +12,7 @@ using namespace std;
 
 class Phrase {
     public:
-        int letterLength, letterHeight, start, phraseScale;
+        int letterLength, letterHeight, phraseScale, progStart, advanceStart;
         Point &parent, offset;
         string text;
         queue<string> lines;
@@ -22,12 +22,12 @@ class Phrase {
 
         void progDisplay(int delay);
 
-        // static vector<Phrase*> generateMessagePhrases(int lL, int lH, string sentence);
+        void advance();
 
         static SDL_Texture *font;
 
     private:
-        void renderLetter(int lineNumber, int position, int asciiValue, int occlusion);
+        void renderLetter(int lineNumber, int position, int asciiValue, int occlusion, int raise);
 };
 
 #endif

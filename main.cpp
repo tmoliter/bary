@@ -38,7 +38,7 @@ int main(int argc, char* args[]) {
 
     Point pt = Point(0,0);
 
-    Phrase ph1 = Phrase(pt, Point(100,100), 210, 83, 2, "I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that.");
+    Phrase ph1 = Phrase(pt, Point(100,100), 210, 83, 2, "I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things.");
     // Phrase ph2 = Phrase(pt, Point(450,450), 300, 12, 1, "Here is some really tiny text.");
     // Phrase ph3 = Phrase(pt, Point(700,500), 40, 200, 4, "A message that is super big");
 
@@ -49,7 +49,10 @@ int main(int argc, char* args[]) {
             break;
         Thing::meatThings(keysDown);
         Camera::c->render();
-        ph1.progDisplay(1);
+
+        if (keysDown.debug_1)
+            ph1.advance();
+        ph1.progDisplay(2);
         // ph2.progDisplay(20);
         // ph3.progDisplay(35);
         t.endFrameAndWait(frameCount);
