@@ -31,7 +31,7 @@ Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, string t) : p
                 cout << "A: " << text.substr(lineFirstCharIndex, i - lineFirstCharIndex) << endl;
                 break;
             }
-            if (int(text[i]) == 127) {
+            if (int(text[i]) == 32) {
                 cout << "B" << endl;
                 lastSpace = i;
             }
@@ -65,6 +65,7 @@ Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, string t) : p
             cout << "++" << endl;
             i++;
         }
+        cout << endl << endl;
     }
 
 }
@@ -81,16 +82,18 @@ void Phrase::progDisplay(int delay) {
 
     int linesSize = lines.size();
     int total = 0;
+    queue<string> tmpLines = lines;
     // cout << lines.front() << endl;
     for (int i = 0; i < linesSize; i++) {
-        string line = lines.front();
+        string line = tmpLines.front();
+        // cout << "LINE: " << line << endl;
         for (int j = 0; j < line.size(); j++) {
-            if(total > charsToDisplay)
-                return;
+            // if (charsToDisplay < 1)
+            //     return;
             renderLetter(i, j, line[j]);
-            total++;
+            // charsToDisplay--;
         }
-        lines.pop();
+        tmpLines.pop();
     }
 }
 

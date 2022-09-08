@@ -38,7 +38,7 @@ int main(int argc, char* args[]) {
 
     Point pt = Point(0,0);
 
-    Phrase ph = Phrase(pt, Point(0,0), 32, 36, "testing stuff");
+    Phrase ph = Phrase(pt, Point(0,0), 123, 400, "I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually.");
 
     while (true){
     t.startFrame();
