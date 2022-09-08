@@ -2,7 +2,7 @@
 #define PHRASE_H
 #include <map>
 #include <string>
-#include <vector>
+#include <queue>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "globals.h"
@@ -15,6 +15,7 @@ class Phrase {
         int letterLength, letterHeight, start;
         Point &parent, offset;
         string text;
+        queue<string> lines;
 
         Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, string t);
 
@@ -25,7 +26,7 @@ class Phrase {
         static SDL_Texture *font;
 
     private:
-        void renderLetter(int position, int asciiValue);
+        void renderLetter(int lineNumber, int position, int asciiValue);
 };
 
 #endif

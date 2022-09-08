@@ -5,6 +5,11 @@ inline constexpr int LETTER_HEIGHT = 12;
 inline constexpr int LETTERS_PER_FONT_ROW = 24;
 
 Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, string t) : parent(p), offset(o), start(0) {
+    if (!font) {
+        SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
+        font = SDL_CreateTextureFromSurface(renderer, temp);
+        SDL_FreeSurface(temp);
+    }
     letterLength = pixelWidth / 8;
     letterHeight = pixelHeight / 12;
     int totalLetterLimit = letterLength * letterHeight;
@@ -13,38 +18,91 @@ Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, string t) : p
     } else {
         text = t;
     }
-    if (!font) {
-        SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
-        font = SDL_CreateTextureFromSurface(renderer, temp);
-        SDL_FreeSurface(temp);
+    if (text.length() <= letterLength)
+        lines.push(text);
+    else {
+        int i = 0;
+        int lastSpace = 0;
+        int lineFirstCharIndex = 0;
+        while(i < text.length()) {
+            cout << "char: " << text[i] << endl;
+            if (i == text.length() - 1) {
+                lines.push(text.substr(lineFirstCharIndex, i - lineFirstCharIndex));
+                cout << "A: " << text.substr(lineFirstCharIndex, i - lineFirstCharIndex) << endl;
+                break;
+            }
+            if (int(text[i]) == 127) {
+                cout << "B" << endl;
+                lastSpace = i;
+            }
+            if (i > 0 && i - lineFirstCharIndex == letterLength) {
+                cout << "LINES SIZE: " << lines.size() << endl;
+                if (lines.size() >= letterHeight - 1) {
+                    lines.push(text.substr(lineFirstCharIndex, letterLength - 1) + char(127));
+                    cout << "E: " << text.substr(lineFirstCharIndex, letterLength - 1) + "..." << endl;
+                    break;
+                }
+                if (lastSpace == i) {
+                    lines.push(text.substr(lineFirstCharIndex, letterLength));
+                    cout << "C: " << text.substr(lineFirstCharIndex, letterLength) << endl;
+                    i++;
+                    lineFirstCharIndex = i;
+                    continue;
+                }
+                if (lastSpace <= lineFirstCharIndex) {
+                    lines.push(text.substr(lineFirstCharIndex, letterLength - 1) + char(45));
+                    cout << "D: " << text.substr(lineFirstCharIndex, letterLength - 1) + char(45) << endl;
+                    i--;
+                    lineFirstCharIndex = i;
+                    continue;
+                }
+                lines.push(text.substr(lineFirstCharIndex, lastSpace - lineFirstCharIndex));
+                cout << "F: " << text.substr(lineFirstCharIndex, lastSpace - lineFirstCharIndex) << endl;
+                i = lastSpace + 1;
+                lineFirstCharIndex = i;
+                continue;
+            }
+            cout << "++" << endl;
+            i++;
+        }
     }
+
 }
 
 void Phrase::progDisplay(int delay) {
     if (start == 0)
         start = frameCount;
     int charsToDisplay = (frameCount - start) / delay;
-    cout << charsToDisplay << endl;
     string display;
-    if(charsToDisplay < text.length())
+    if(charsToDisplay > text.length())
         display = text.substr(0, charsToDisplay);
     else
         display = text;
-    
-    for (int i = 0; i < display.length(); i++) {
-        renderLetter(i, display[i]);
+
+    int linesSize = lines.size();
+    int total = 0;
+    // cout << lines.front() << endl;
+    for (int i = 0; i < linesSize; i++) {
+        string line = lines.front();
+        for (int j = 0; j < line.size(); j++) {
+            if(total > charsToDisplay)
+                return;
+            renderLetter(i, j, line[j]);
+            total++;
+        }
+        lines.pop();
     }
 }
 
-void Phrase::renderLetter(int position, int asciiValue) {
+void Phrase::renderLetter(int lineNumber, int position, int asciiValue) {
 
     int adjustedFontValue = asciiValue - 32;
     int fontX = (adjustedFontValue % LETTERS_PER_FONT_ROW) * LETTER_WIDTH;
     int fontY = (adjustedFontValue / LETTERS_PER_FONT_ROW) * LETTER_HEIGHT;
     SDL_Rect sourceRect = { fontX, fontY, LETTER_WIDTH, LETTER_HEIGHT };
 
-    int xPosition = parent.x + offset.x + ((position % letterLength) * LETTER_WIDTH);
-    int yPosition = parent.y + offset.y + ((position / letterLength) * LETTER_HEIGHT);
+    int xPosition = parent.x + offset.x + (position * LETTER_WIDTH);
+    int yPosition = parent.y + offset.y + (lineNumber * LETTER_HEIGHT);
     SDL_Rect renderRect = { xPosition * 4, yPosition * 4, LETTER_WIDTH * 4, LETTER_HEIGHT * 4 };
 
     SDL_RenderCopy(renderer, Phrase::font, &sourceRect, &renderRect);

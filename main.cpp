@@ -38,7 +38,7 @@ int main(int argc, char* args[]) {
 
     Point pt = Point(0,0);
 
-    Phrase ph = Phrase(pt, Point(0,0), 40, 15, "testing");
+    Phrase ph = Phrase(pt, Point(0,0), 32, 36, "testing stuff");
 
     while (true){
     t.startFrame();
