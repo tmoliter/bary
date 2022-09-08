@@ -7,6 +7,7 @@
 #include "globals.h"
 #include <vector>
 #include <algorithm>
+#include "gui/Phrase.h"
 
 using namespace std;
 
@@ -35,6 +36,10 @@ int main(int argc, char* args[]) {
     FpsTimer t;
     ProfileData p;
 
+    Point pt = Point(0,0);
+
+    Phrase ph = Phrase(pt, Point(0,0), 40, 15, "testing");
+
     while (true){
     t.startFrame();
         KeyPresses keysDown = in.getInput();  
@@ -42,6 +47,7 @@ int main(int argc, char* args[]) {
             break;
         Thing::meatThings(keysDown);
         Camera::c->render();
+        ph.progDisplay(30);
         t.endFrameAndWait(frameCount);
         SDL_RenderPresent(renderer);
         Thing::destroyThings();

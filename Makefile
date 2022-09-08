@@ -1,2 +1,2 @@
 timtest:
-	g++ -o bary -I . -I ./components *.cpp components/*.cpp things/*.cpp  -I include -L lib -l SDL2-2.0.0 -lSDL2_image -std=c++17
+	g++ -o bary -I . -I ./components *.cpp components/*.cpp things/*.cpp gui/*.cpp   -I include -L lib -l SDL2-2.0.0 -lSDL2_image -std=c++17

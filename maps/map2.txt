@@ -1,8 +1,8 @@
-P,Zinnia,650,800,0,*./assets/sheets/SDL_TestSS.png,
-./assets/backgrounds/tg.png,
+P,Zinnia,40,40,0,*./assets/sheets/SDL_TestSS.png,
+./assets/backgrounds/BurgTruncated.png,
 
 
-B,Sailor Shack,500,500,S
+B,Sailor Shack,250,250,S
 0,|291,117,|||135,./assets/sheets/Burg/SailorShack.png,S
 1,|308,26,|117,7,38,./assets/sheets/Burg/SailorShack.png,S
 2,|324,97,|143,|38,./assets/sheets/Burg/SailorShack.png,S
