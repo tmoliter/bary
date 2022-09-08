@@ -38,7 +38,7 @@ int main(int argc, char* args[]) {
 
     Point pt = Point(0,0);
 
-    Phrase ph = Phrase(pt, Point(0,0), 123, 400, "I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually.");
+    Phrase ph = Phrase(pt, Point(0,0), 123, 132, "I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that.");
 
     while (true){
     t.startFrame();
@@ -47,7 +47,7 @@ int main(int argc, char* args[]) {
             break;
         Thing::meatThings(keysDown);
         Camera::c->render();
-        ph.progDisplay(30);
+        ph.progDisplay(1);
         t.endFrameAndWait(frameCount);
         SDL_RenderPresent(renderer);
         Thing::destroyThings();
