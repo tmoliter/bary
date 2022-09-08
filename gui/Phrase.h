@@ -12,12 +12,12 @@ using namespace std;
 
 class Phrase {
     public:
-        int letterLength, letterHeight, start;
+        int letterLength, letterHeight, start, phraseScale;
         Point &parent, offset;
         string text;
         queue<string> lines;
 
-        Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, string t);
+        Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int pS, string t);
 
         void progDisplay(int delay);
 

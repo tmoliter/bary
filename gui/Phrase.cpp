@@ -4,7 +4,7 @@ inline constexpr int LETTER_WIDTH = 8;
 inline constexpr int LETTER_HEIGHT = 12;
 inline constexpr int LETTERS_PER_FONT_ROW = 24;
 
-Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, string t) : parent(p), offset(o), start(0) {
+Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int pS, string t) : parent(p), offset(o), phraseScale(pS), start(0) {
     if (!font) {
         SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
         font = SDL_CreateTextureFromSurface(renderer, temp);
@@ -27,8 +27,8 @@ Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, string t) : p
         while(i < text.length()) {
             cout << "char: " << text[i] << endl;
             if (i == text.length() - 1) {
-                lines.push(text.substr(lineFirstCharIndex, i - lineFirstCharIndex));
-                cout << "A: " << text.substr(lineFirstCharIndex, i - lineFirstCharIndex) << endl;
+                lines.push(text.substr(lineFirstCharIndex, i));
+                cout << "A: " << text.substr(lineFirstCharIndex, i) << endl;
                 break;
             }
             if (int(text[i]) == 32) {
@@ -111,7 +111,7 @@ void Phrase::renderLetter(int lineNumber, int position, int asciiValue) {
 
     int xPosition = parent.x + offset.x + (position * LETTER_WIDTH);
     int yPosition = parent.y + offset.y + (lineNumber * LETTER_HEIGHT);
-    SDL_Rect renderRect = { xPosition * 4, yPosition * 4, LETTER_WIDTH * 4, LETTER_HEIGHT * 4 };
+    SDL_Rect renderRect = { xPosition * phraseScale, yPosition * phraseScale, LETTER_WIDTH * phraseScale, LETTER_HEIGHT * phraseScale };
 
     SDL_RenderCopy(renderer, Phrase::font, &sourceRect, &renderRect);
 }
