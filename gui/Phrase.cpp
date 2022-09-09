@@ -111,8 +111,9 @@ void Phrase::advance() {
 };
 
 
+
 int Phrase::progDisplay(int delay) {
-    if(lines.size() < 0 && hiddenLines.size() < 0)
+    if(lines.size() < 1 && hiddenLines.size() < 1)
         return 0;
     
     if (progStart < 0)
@@ -156,7 +157,7 @@ int Phrase::progDisplay(int delay) {
 
     // Show ellipses
     if (
-        (scrollType == ScrollType::oneLine || scrollType == ScrollType::allButLast) && 
+        (scrollType == ScrollType::oneLine) && 
         frameCount % 60 < 30 &&
         hiddenLines.size() > 0
     )
@@ -165,28 +166,20 @@ int Phrase::progDisplay(int delay) {
     // One line's worth of scrolling has completed
     if(advanceProgress >= LETTER_HEIGHT) {
         int lastLineLength;
+        lastLineLength = lines.front().length();
+        lines.pop();
+        progStart = frameCount - (total * delay) + (lastLineLength * delay);
+        if(hiddenLines.size() > 0) {
+            lines.push(hiddenLines.front());
+            hiddenLines.pop();
+        }
         switch(scrollType) {
-            case (ScrollType::allButLast):
             case (ScrollType::oneLine):
-                lastLineLength = lines.front().length();
-                lines.pop();
-                lines.push(hiddenLines.front());
-                hiddenLines.pop();
-
                 advanceStart = -1;
-                progStart = frameCount - (total * delay) + (lastLineLength * delay);
                 break;
             case (ScrollType::continuous):
-                if (lines.size() < 1)
-                    return 0;
-                lastLineLength = lines.front().length();
                 advanceStart = frameCount + ((advanceProgress - LETTER_HEIGHT) * delay);
-                progStart = frameCount - (total * delay) + (lastLineLength * delay);
-                lines.pop();
-                if(hiddenLines.size() < 1)
                     return 1;
-                lines.push(hiddenLines.front());
-                hiddenLines.pop();
                 break;
             default:
                 break;
