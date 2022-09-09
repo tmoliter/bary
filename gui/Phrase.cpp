@@ -6,7 +6,14 @@ inline constexpr int LETTER_WIDTH = 8;
 inline constexpr int LETTER_HEIGHT = 12;
 inline constexpr int LETTERS_PER_FONT_ROW = 24;
 
-Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int pS, string t) : parent(p), offset(o), phraseScale(pS), progStart(0), advanceStart(0) {
+Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int scale, ScrollType type, string t) : 
+    parent(p), 
+    offset(o), 
+    phraseScale(scale), 
+    scrollType(type), 
+    progStart(-1),
+    advanceStart(-1),
+    fullyDisplayed(false) {
     if (!font) {
         SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
         font = SDL_CreateTextureFromSurface(renderer, temp);
@@ -46,7 +53,7 @@ Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int pS, strin
             if (i > 0 && i - lineFirstCharIndex == letterLength) {
                 // Ran out of lines that will fit
                 if (!bonusTime && linesRef->size() >= letterHeight - 1) {
-                    linesRef->push(text.substr(lineFirstCharIndex, lastSpace - lineFirstCharIndex) + char(127));
+                    linesRef->push(text.substr(lineFirstCharIndex, lastSpace - lineFirstCharIndex));
                     cout << "C: " << text.substr(lineFirstCharIndex, lastSpace - lineFirstCharIndex)  + "..." << endl;
                     bonusTime = true;
                     linesRef = &hiddenLines;
@@ -93,51 +100,99 @@ Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int pS, strin
 }
 
 void Phrase::advance() {
+    if(!fullyDisplayed)
+        return;
     if (hiddenLines.size() < 1) {
         while(!lines.empty()) lines.pop();
         return;
     }
     advanceStart = frameCount;
+    fullyDisplayed = false;
 };
 
 
-void Phrase::progDisplay(int delay) {
-    if (progStart == 0)
-        progStart = frameCount;
-
-    int charsToDisplay = (frameCount - progStart) / delay;
+int Phrase::progDisplay(int delay) {
+    if(lines.size() < 0 && hiddenLines.size() < 0)
+        return 0;
     
-    int advanceProgress = 0;
-    if (advanceStart > 0)
+    if (progStart < 0)
+        progStart = frameCount;
+    int charsToDisplay = (frameCount - progStart) / delay;
+
+    
+    int advanceProgress = -1;
+    if (advanceStart > -1)
         advanceProgress = (frameCount - advanceStart) / delay;
+
 
     queue<string> tmpLines = lines;
     int linesSize = tmpLines.size();
     int total = 0;
-    for (int i = 0; i < linesSize; i++) {
-        string line = tmpLines.front();
-        int occlusion = 0;
+    int i, j, occlusion;
+    string line;
+
+    // Render letters
+    for (i = 0; i < linesSize; i++) {
+        line = tmpLines.front();
         if (i == 0)
             occlusion = advanceProgress;
-        for (int j = 0; j < line.size(); j++) {
+        else
+            occlusion = 0;
+        for (j = 0; j < line.size(); j++) {
             if (charsToDisplay < 1)
-                return;
+                return 1;
             renderLetter(i, j, line[j], occlusion, advanceProgress);
             charsToDisplay--;
             total++;
         }
         tmpLines.pop();
     }
+    fullyDisplayed = true;
 
-    if(advanceProgress >= LETTER_HEIGHT) {
-        int lastLineLength = lines.front().length();
-        lines.pop();
-        lines.push(hiddenLines.front());
-        hiddenLines.pop();
-
-        advanceStart = 0;
-        progStart = frameCount - (total * delay) + lastLineLength;
+    // Begin another scroll cycle immediately for continuous
+    if (scrollType == ScrollType::continuous && advanceStart < 0) {
+        advance();
     }
+
+    // Show ellipses
+    if (
+        (scrollType == ScrollType::oneLine || scrollType == ScrollType::allButLast) && 
+        frameCount % 60 < 30 &&
+        hiddenLines.size() > 0
+    )
+        renderLetter(i - 1, j, 127, occlusion, advanceProgress);
+
+    // One line's worth of scrolling has completed
+    if(advanceProgress >= LETTER_HEIGHT) {
+        int lastLineLength;
+        switch(scrollType) {
+            case (ScrollType::allButLast):
+            case (ScrollType::oneLine):
+                lastLineLength = lines.front().length();
+                lines.pop();
+                lines.push(hiddenLines.front());
+                hiddenLines.pop();
+
+                advanceStart = -1;
+                progStart = frameCount - (total * delay) + lastLineLength;
+                break;
+            case (ScrollType::continuous):
+                if (lines.size() < 1)
+                    return 0;
+                lastLineLength = lines.front().length();
+                advanceStart = frameCount;
+                progStart = frameCount - (total * delay) + lastLineLength;
+                lines.pop();
+                if(hiddenLines.size() < 1)
+                    return 1;
+                lines.push(hiddenLines.front());
+                hiddenLines.pop();
+                break;
+            default:
+                break;
+        }
+    }
+    return 1;
 }
 
 void Phrase::renderLetter(int lineNumber, int position, int asciiValue, int occlusion, int raise) {

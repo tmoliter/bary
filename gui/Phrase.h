@@ -10,17 +10,25 @@
 
 using namespace std;
 
+enum ScrollType {
+    oneLine,
+    continuous,
+    allButLast,
+};
+
 class Phrase {
     public:
+        ScrollType scrollType;
+        bool fullyDisplayed;
         int letterLength, letterHeight, phraseScale, progStart, advanceStart;
         Point &parent, offset;
         string text;
         queue<string> lines;
         queue<string> hiddenLines;
 
-        Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int pS, string t);
+        Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int pS, ScrollType type, string t);
 
-        void progDisplay(int delay);
+        int progDisplay(int delay);
 
         void advance();
 
