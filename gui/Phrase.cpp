@@ -122,7 +122,7 @@ int Phrase::progDisplay(int delay) {
     
     int advanceProgress = -1;
     if (advanceStart > -1)
-        advanceProgress = (frameCount - advanceStart) / delay;
+        advanceProgress = (frameCount - advanceStart) / (delay * 2);
 
 
     queue<string> tmpLines = lines;
@@ -174,14 +174,14 @@ int Phrase::progDisplay(int delay) {
                 hiddenLines.pop();
 
                 advanceStart = -1;
-                progStart = frameCount - (total * delay) + lastLineLength;
+                progStart = frameCount - (total * delay) + (lastLineLength * delay);
                 break;
             case (ScrollType::continuous):
                 if (lines.size() < 1)
                     return 0;
                 lastLineLength = lines.front().length();
-                advanceStart = frameCount;
-                progStart = frameCount - (total * delay) + lastLineLength;
+                advanceStart = frameCount + (advanceProgress - LETTER_HEIGHT) * delay;
+                progStart = frameCount - (total * delay) + (lastLineLength * delay);
                 lines.pop();
                 if(hiddenLines.size() < 1)
                     return 1;
