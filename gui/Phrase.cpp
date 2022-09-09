@@ -180,7 +180,7 @@ int Phrase::progDisplay(int delay) {
                 if (lines.size() < 1)
                     return 0;
                 lastLineLength = lines.front().length();
-                advanceStart = frameCount + (advanceProgress - LETTER_HEIGHT) * delay;
+                advanceStart = frameCount + ((advanceProgress - LETTER_HEIGHT) * delay);
                 progStart = frameCount - (total * delay) + (lastLineLength * delay);
                 lines.pop();
                 if(hiddenLines.size() < 1)
