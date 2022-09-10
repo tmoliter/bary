@@ -20,7 +20,7 @@ class Phrase {
     public:
         ScrollType scrollType;
         bool fullyDisplayed;
-        int letterLength, letterHeight, phraseScale, progStart, advanceStart;
+        int letterLength, letterHeight, phraseScale, progStart, advanceStart, totalLines;
         Point &parent, offset;
         string text;
         queue<string> lines;

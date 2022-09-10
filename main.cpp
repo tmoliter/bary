@@ -36,12 +36,12 @@ int main(int argc, char* args[]) {
     FpsTimer t;
     ProfileData p;
 
+
+    /* UI TESTING */
     Point pt = Point(0,0);
-
-    Phrase ph1 = Phrase(pt, Point(100,100), 210, 83, 4, ScrollType::continuous, "I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things. I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things.");
-    // Phrase ph2 = Phrase(pt, Point(450,450), 300, 12, 1, "Here is some really tiny text.");
-    // Phrase ph3 = Phrase(pt, Point(700,500), 40, 200, 4, "A message that is super big");
-
+    Phrase ph1 = Phrase(pt, Point(100,100), 440, 200, 2, ScrollType::allButLast, "I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things. I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things.");
+    /* END UI TESTING */
+    
     while (true){
     t.startFrame();
         KeyPresses keysDown = in.getInput();  
@@ -50,11 +50,12 @@ int main(int argc, char* args[]) {
         Thing::meatThings(keysDown);
         Camera::c->render();
 
+        /* UI TESTING */
         if (keysDown.debug_1)
             ph1.advance();
-        ph1.progDisplay(6);
-        // ph2.progDisplay(20);
-        // ph3.progDisplay(35);
+        ph1.progDisplay(1);
+        /* END UI TESTING */
+
         t.endFrameAndWait(frameCount);
         SDL_RenderPresent(renderer);
         Thing::destroyThings();

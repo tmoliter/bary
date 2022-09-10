@@ -6,6 +6,7 @@ inline constexpr int LETTER_WIDTH = 8;
 inline constexpr int LETTER_HEIGHT = 12;
 inline constexpr int LETTERS_PER_FONT_ROW = 24;
 
+
 Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int scale, ScrollType type, string t) : 
     parent(p), 
     offset(o), 
@@ -19,8 +20,8 @@ Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int scale, Sc
         font = SDL_CreateTextureFromSurface(renderer, temp);
         SDL_FreeSurface(temp);
     }
-    letterLength = pixelWidth / 8;
-    letterHeight = pixelHeight / 12;
+    letterLength = (pixelWidth / scale) / 8;
+    letterHeight = (pixelHeight / scale) / 12;
     text = t;
 
     // Very happy case: all text fits on one line
@@ -33,11 +34,9 @@ Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int scale, Sc
         bool bonusTime = false;
         queue<string> *linesRef = &lines;
         while(i < text.length()) {
-            cout << "char: " << text[i] << "(" << int(text[i]) << ")" << endl;
             // Made it to end and all of current line fits on a line
             if (i == text.length() - 1) {
                 linesRef->push(text.substr(lineFirstCharIndex, i));
-                cout << "A: " << text.substr(lineFirstCharIndex, i) << endl;
                 break;
             }
             // Mark space, unless this is the last character of the last line
@@ -46,7 +45,6 @@ Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int scale, Sc
                     linesRef->size() >= letterHeight - 1 && 
                     i - lineFirstCharIndex == letterLength
                 )) {
-                cout << "B" << endl;
                 lastSpace = i;
             }
             // Ran out of room for line
@@ -54,7 +52,6 @@ Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int scale, Sc
                 // Ran out of lines that will fit
                 if (!bonusTime && linesRef->size() >= letterHeight - 1) {
                     linesRef->push(text.substr(lineFirstCharIndex, lastSpace - lineFirstCharIndex));
-                    cout << "C: " << text.substr(lineFirstCharIndex, lastSpace - lineFirstCharIndex)  + "..." << endl;
                     bonusTime = true;
                     linesRef = &hiddenLines;
                     i = lastSpace + 1;
@@ -64,7 +61,6 @@ Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int scale, Sc
                 // Word ends cleanly at end of line
                 if (lastSpace == i) {
                     linesRef->push(text.substr(lineFirstCharIndex, letterLength));
-                    cout << "D: " << text.substr(lineFirstCharIndex, letterLength) << endl;
                     i++;
                     lineFirstCharIndex = i;
                     continue;
@@ -72,7 +68,6 @@ Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int scale, Sc
                 // Current word takes up more than a whole line
                 if (lastSpace <= lineFirstCharIndex) {
                     linesRef->push(text.substr(lineFirstCharIndex, letterLength - 1) + char(45));
-                    cout << "E: " << text.substr(lineFirstCharIndex, letterLength - 1) + char(45) << endl;
                     i--;
                     lineFirstCharIndex = i;
                     continue;
@@ -80,23 +75,20 @@ Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int scale, Sc
                 // Current word would get pushed onto next line, but it is large enough to look weird
                 if (i - lastSpace > letterLength / 2) {
                     linesRef->push(text.substr(lineFirstCharIndex, letterLength - 1) + char(45));
-                    cout << "F: " << text.substr(lineFirstCharIndex, letterLength - 1) + char(45) << endl;
                     i--;
                     lineFirstCharIndex = i;
                     continue;
                 }
                 // We're in the middle of a word and it's small enough to push to the next line
                 linesRef->push(text.substr(lineFirstCharIndex, lastSpace - lineFirstCharIndex));
-                cout << "G: " << text.substr(lineFirstCharIndex, lastSpace - lineFirstCharIndex) << endl;
                 i = lastSpace + 1;
                 lineFirstCharIndex = i;
                 continue;
             }
-            cout << "++" << endl;
             i++;
         }
-        cout << endl << endl;
     }
+    totalLines = lines.size() + hiddenLines.size();
 }
 
 void Phrase::advance() {
@@ -110,8 +102,7 @@ void Phrase::advance() {
     fullyDisplayed = false;
 };
 
-
-
+/* TODO: This breaks if the pixelWidth value is above about 220 * scale. Need to fix */
 int Phrase::progDisplay(int delay) {
     if(lines.size() < 1 && hiddenLines.size() < 1)
         return 0;
@@ -124,7 +115,6 @@ int Phrase::progDisplay(int delay) {
     int advanceProgress = -1;
     if (advanceStart > -1)
         advanceProgress = (frameCount - advanceStart) / (delay * 2);
-
 
     queue<string> tmpLines = lines;
     int linesSize = tmpLines.size();
@@ -155,14 +145,6 @@ int Phrase::progDisplay(int delay) {
         advance();
     }
 
-    // Show ellipses
-    if (
-        (scrollType == ScrollType::oneLine) && 
-        frameCount % 60 < 30 &&
-        hiddenLines.size() > 0
-    )
-        renderLetter(i - 1, j, 127, occlusion, advanceProgress);
-
     // One line's worth of scrolling has completed
     if(advanceProgress >= LETTER_HEIGHT) {
         int lastLineLength;
@@ -174,17 +156,31 @@ int Phrase::progDisplay(int delay) {
             hiddenLines.pop();
         }
         switch(scrollType) {
+            case (ScrollType::allButLast):
+                if ((totalLines - lines.size() - hiddenLines.size()) % (letterHeight - 1) == 0)
+                    advanceStart = -1;
+                else 
+                    advanceStart = frameCount + ((advanceProgress - LETTER_HEIGHT) * delay);
+                break;
             case (ScrollType::oneLine):
                 advanceStart = -1;
                 break;
             case (ScrollType::continuous):
                 advanceStart = frameCount + ((advanceProgress - LETTER_HEIGHT) * delay);
-                    return 1;
-                break;
+                return 1;
             default:
                 break;
         }
     }
+
+    // Show ellipses
+    if (
+        (scrollType == ScrollType::oneLine || scrollType == ScrollType::allButLast) && 
+        frameCount % 60 < 30 &&
+        hiddenLines.size() > 0
+    )
+        renderLetter(i - 1, j, 127, occlusion, advanceProgress);
+
     return 1;
 }
 
