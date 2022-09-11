@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include "gui/Phrase.h"
+#include "gui/UIManager.h"
 
 using namespace std;
 
@@ -38,8 +39,7 @@ int main(int argc, char* args[]) {
 
 
     /* UI TESTING */
-    Point pt = Point(0,0);
-    Phrase ph1 = Phrase(pt, Point(100,100), 220, 80, 1, ScrollType::allButLast, "I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things. I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things.");
+    UIManager::addPhrase(Point(100,100), 220, 80, 1, ScrollType::allButLast, "I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things. I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things.", true);
     /* END UI TESTING */
     
     gameState = GameState::FieldFree;
@@ -49,27 +49,32 @@ int main(int argc, char* args[]) {
         KeyPresses keysDown = in.getInput();  
         if (keysDown.quit)
             break;
-        
-        if(gameState == GameState::FieldFree)
-            Thing::meatThings(keysDown);
-            
-        Camera::c->render();
-
-        /* UI TESTING */
-        if (keysDown.debug_1)
-            ph1.advance();
+        /* DEBUG */
         if (keysDown.debug_2) {
             if(gameState == GameState::FieldFree)
                 gameState = GameState::FieldUI;
             else
                 gameState = GameState::FieldFree;
         }
-        ph1.progDisplay(1);
-        /* END UI TESTING */
+        /* END DEBUG */
+        
+        switch(gameState) {
+            case (GameState::FieldUI):
+                UIManager::meat(keysDown);
+                break;
+            case (GameState::FieldFree):
+            default:
+                Thing::meatThings(keysDown);
+                break;
+        }
+            
+        Camera::c->render();
+        UIManager::renderPhrases();
 
         t.endFrameAndWait(frameCount);
         SDL_RenderPresent(renderer);
         Thing::destroyThings();
+        UIManager::cleanUp();
     }
     Thing::destroyThings();
     SDL_DestroyRenderer(renderer);

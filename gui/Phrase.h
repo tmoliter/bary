@@ -15,18 +15,19 @@ enum ScrollType {
     allButLast,
 };
 
+// We should probably also have a SimplePhrase class
 class Phrase {
     public:
         ScrollType scrollType;
         bool fullyDisplayed;
         int letterLength, letterHeight, phraseScale, progStart, advanceStart, totalLines;
-        Point &parent, offset;
+        Point position;
         SDL_Rect box;
         string text;
         queue<string> lines;
         queue<string> hiddenLines;
 
-        Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int pS, ScrollType type, string t);
+        Phrase(Point o, int pixelWidth, int pixelHeight, int pS, ScrollType type, string t);
 
         int progDisplay(int delay);
 

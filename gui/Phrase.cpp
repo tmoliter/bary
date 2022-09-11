@@ -7,15 +7,14 @@ inline constexpr int LETTER_HEIGHT = 12;
 inline constexpr int LETTERS_PER_FONT_ROW = 24;
 
 
-Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int scale, ScrollType type, string t) : 
-    parent(p), 
-    offset(o), 
+Phrase::Phrase(Point p, int pixelWidth, int pixelHeight, int scale, ScrollType type, string t) : 
+    position(p),
     phraseScale(scale), 
     scrollType(type), 
     progStart(-1),
     advanceStart(-1),
     fullyDisplayed(false) {
-    box = SDL_Rect { parent.x + offset.x, parent.y + offset.y, pixelWidth, pixelHeight };
+    box = SDL_Rect { position.x, position.y, pixelWidth, pixelHeight };
     if (!font) {
         SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
         font = SDL_CreateTextureFromSurface(renderer, temp);
@@ -105,11 +104,11 @@ void Phrase::advance() {
 
 /* TODO: This breaks if the pixelWidth value is above about 220 * scale. Need to fix */
 int Phrase::progDisplay(int delay) {
-    SDL_SetRenderDrawColor(renderer, 100,100,255,255);
-    SDL_RenderFillRect(renderer, &box);
     if(lines.size() < 1 && hiddenLines.size() < 1)
         return 0;
     
+    SDL_SetRenderDrawColor(renderer, 100,100,255,255);
+    SDL_RenderFillRect(renderer, &box);
     if (progStart < 0)
         progStart = frameCount;
     int charsToDisplay = (frameCount - progStart) / delay;
@@ -187,15 +186,15 @@ int Phrase::progDisplay(int delay) {
     return 1;
 }
 
-void Phrase::renderLetter(int lineNumber, int position, int asciiValue, int occlusion, int raise) {
+void Phrase::renderLetter(int lineNumber, int charPosition, int asciiValue, int occlusion, int raise) {
 
     int adjustedFontValue = asciiValue - 32;
     int fontX = (adjustedFontValue % LETTERS_PER_FONT_ROW) * LETTER_WIDTH;
     int fontY = (adjustedFontValue / LETTERS_PER_FONT_ROW) * LETTER_HEIGHT;
     SDL_Rect sourceRect = { fontX, fontY + occlusion, LETTER_WIDTH, LETTER_HEIGHT - occlusion};
 
-    int xPosition = parent.x + offset.x + (position * LETTER_WIDTH * phraseScale);
-    int yPosition = parent.y + offset.y + (lineNumber * LETTER_HEIGHT * phraseScale) - (raise * phraseScale);
+    int xPosition = position.x + (charPosition * LETTER_WIDTH * phraseScale);
+    int yPosition = position.y + (lineNumber * LETTER_HEIGHT * phraseScale) - (raise * phraseScale);
     SDL_Rect renderRect = { xPosition, yPosition + occlusion, LETTER_WIDTH * phraseScale, (LETTER_HEIGHT - occlusion) * phraseScale };
 
     SDL_RenderCopy(renderer, Phrase::font, &sourceRect, &renderRect);
