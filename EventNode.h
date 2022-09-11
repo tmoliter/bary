@@ -6,16 +6,22 @@
 #include <SDL2/SDL_image.h>
 #include "globals.h"
 #include "./gui/Phrase.h"
+#include "Input.h"
 
 using namespace std;
 
 struct EventNode {
-    Phrase *phrase;
-    void (*enterAction)(void);
-    void (*exitAction)(void);
-    EventNode (*nextNode)(void);
+    EventNode() {};
+    ~EventNode() {};
 
-    void execute();
+    Phrase *phrase;
+    int (*enterAction)(void);
+    int (*exitAction)(void);
+    EventNode *(*nextNode)(void);
+
+    // Destructor should take care of all phrases and action functions, unless action is a reusable
+
+    int hold(KeyPresses keysDown) { return 1; };
 };
 
 #endif

@@ -17,7 +17,7 @@ enum UiMode {
     Hidden
 };
 
-class UIManager {
+class UIRenderer {
     public:
         UiMode mode;
 
@@ -28,7 +28,7 @@ class UIManager {
         static void removePhrase(Phrase *p);
 
         static int currentPhraseId;
-        static UIManager *u;
+        static UIRenderer *u;
 };
 
 #endif

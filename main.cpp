@@ -8,7 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include "gui/Phrase.h"
-#include "gui/UIManager.h"
+#include "gui/UIRenderer.h"
 
 using namespace std;
 
@@ -40,7 +40,7 @@ int main(int argc, char* args[]) {
 
     /* UI TESTING */
     Phrase *ph = new Phrase(Point(100,100), 220, 80, 1, ScrollType::allButLast, "I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things. I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things.");
-    UIManager::addPhrase(ph);
+    UIRenderer::addPhrase(ph);
     /* END UI TESTING */
     
     gameState = GameState::FieldFree;
@@ -61,7 +61,7 @@ int main(int argc, char* args[]) {
         
         switch(gameState) {
             case (GameState::FieldUI):
-                if(keysDown.debug_1 && UIManager::u->phrases.size() > 0)
+                if(keysDown.debug_1 && UIRenderer::u->phrases.size() > 0)
                     ph->advance();
                 break;
             case (GameState::FieldFree):
@@ -71,10 +71,10 @@ int main(int argc, char* args[]) {
         }
             
         Camera::c->render();
-        UIManager::renderPhrases();
+        UIRenderer::renderPhrases();
 
         if (ph->isComplete())
-            UIManager::removePhrase(ph);
+            UIRenderer::removePhrase(ph);
 
         t.endFrameAndWait(frameCount);
         SDL_RenderPresent(renderer);

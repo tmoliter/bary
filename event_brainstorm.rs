@@ -39,7 +39,7 @@ ReceiveItemEvent : Event {
 
 // Eventnode lifecycle:
 // - enterAction is called
-// - phrase is added to UIManager
+// - phrase is added to UIRenderer
 // - listen for input and advance phrase (if one exists) 
 // - poll until phrase is complete, at which time:
 // --- phrase is removed from UI manager
