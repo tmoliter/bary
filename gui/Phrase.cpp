@@ -15,6 +15,7 @@ Phrase::Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int scale, Sc
     progStart(-1),
     advanceStart(-1),
     fullyDisplayed(false) {
+    box = SDL_Rect { parent.x + offset.x, parent.y + offset.y, pixelWidth, pixelHeight };
     if (!font) {
         SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
         font = SDL_CreateTextureFromSurface(renderer, temp);
@@ -104,6 +105,8 @@ void Phrase::advance() {
 
 /* TODO: This breaks if the pixelWidth value is above about 220 * scale. Need to fix */
 int Phrase::progDisplay(int delay) {
+    SDL_SetRenderDrawColor(renderer, 100,100,255,255);
+    SDL_RenderFillRect(renderer, &box);
     if(lines.size() < 1 && hiddenLines.size() < 1)
         return 0;
     
@@ -193,7 +196,7 @@ void Phrase::renderLetter(int lineNumber, int position, int asciiValue, int occl
 
     int xPosition = parent.x + offset.x + (position * LETTER_WIDTH * phraseScale);
     int yPosition = parent.y + offset.y + (lineNumber * LETTER_HEIGHT * phraseScale) - (raise * phraseScale);
-    SDL_Rect renderRect = { xPosition, yPosition, LETTER_WIDTH * phraseScale, (LETTER_HEIGHT - occlusion) * phraseScale };
+    SDL_Rect renderRect = { xPosition, yPosition + occlusion, LETTER_WIDTH * phraseScale, (LETTER_HEIGHT - occlusion) * phraseScale };
 
     SDL_RenderCopy(renderer, Phrase::font, &sourceRect, &renderRect);
 }

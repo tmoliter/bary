@@ -1,6 +1,5 @@
 #ifndef PHRASE_H
 #define PHRASE_H
-#include <map>
 #include <string>
 #include <queue>
 #include <SDL2/SDL.h>
@@ -22,6 +21,7 @@ class Phrase {
         bool fullyDisplayed;
         int letterLength, letterHeight, phraseScale, progStart, advanceStart, totalLines;
         Point &parent, offset;
+        SDL_Rect box;
         string text;
         queue<string> lines;
         queue<string> hiddenLines;
