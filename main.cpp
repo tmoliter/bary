@@ -42,17 +42,28 @@ int main(int argc, char* args[]) {
     Phrase ph1 = Phrase(pt, Point(100,100), 220, 80, 1, ScrollType::allButLast, "I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things. I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things.");
     /* END UI TESTING */
     
+    gameState = GameState::FieldFree;
+
     while (true){
     t.startFrame();
         KeyPresses keysDown = in.getInput();  
         if (keysDown.quit)
             break;
-        Thing::meatThings(keysDown);
+        
+        if(gameState == GameState::FieldFree)
+            Thing::meatThings(keysDown);
+            
         Camera::c->render();
 
         /* UI TESTING */
         if (keysDown.debug_1)
             ph1.advance();
+        if (keysDown.debug_2) {
+            if(gameState == GameState::FieldFree)
+                gameState = GameState::FieldUI;
+            else
+                gameState = GameState::FieldFree;
+        }
         ph1.progDisplay(1);
         /* END UI TESTING */
 

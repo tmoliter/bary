@@ -54,7 +54,7 @@ void Camera::handleFade() {
     if(fadeStatus == FxStatus::unapplying || fadeStatus == FxStatus::applying)
         setOverlay();
     if(fadeStatus != FxStatus::unapplied)
-        SDL_RenderFillRect(renderer, FULL_SCREEN);
+        SDL_RenderFillRect(renderer, RESOLUTION);
 };
 
 void Camera::setOverlay() {
