@@ -39,7 +39,8 @@ int main(int argc, char* args[]) {
 
 
     /* UI TESTING */
-    UIManager::addPhrase(Point(100,100), 220, 80, 1, ScrollType::allButLast, "I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things. I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things.", true);
+    Phrase *ph = new Phrase(Point(100,100), 220, 80, 1, ScrollType::allButLast, "I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things. I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things.");
+    UIManager::addPhrase(ph);
     /* END UI TESTING */
     
     gameState = GameState::FieldFree;
@@ -60,7 +61,8 @@ int main(int argc, char* args[]) {
         
         switch(gameState) {
             case (GameState::FieldUI):
-                UIManager::meat(keysDown);
+                if(keysDown.debug_1 && UIManager::u->phrases.size() > 0)
+                    ph->advance();
                 break;
             case (GameState::FieldFree):
             default:
@@ -71,10 +73,12 @@ int main(int argc, char* args[]) {
         Camera::c->render();
         UIManager::renderPhrases();
 
+        if (ph->isComplete())
+            UIManager::removePhrase(ph);
+
         t.endFrameAndWait(frameCount);
         SDL_RenderPresent(renderer);
         Thing::destroyThings();
-        UIManager::cleanUp();
     }
     Thing::destroyThings();
     SDL_DestroyRenderer(renderer);

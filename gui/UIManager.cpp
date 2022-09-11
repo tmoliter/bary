@@ -3,36 +3,15 @@
 int UIManager::currentPhraseId = 0;
 UIManager *UIManager::u = new UIManager();
 
-void UIManager::meat (KeyPresses keysDown) {
-    if(keysDown.debug_1 && u->phrases.count(u->activePhrase)) {
-        u->phrases[u->activePhrase]->advance();
-    }
-}
-
-void UIManager::addPhrase(Point o, int pixelWidth, int pixelHeight, int scale, ScrollType type, string t, bool setAsActive) {
-    Phrase *phrase = new Phrase(o, pixelWidth, pixelHeight, scale, type, t);
-    u->phrases[currentPhraseId] = phrase;
-    if(setAsActive)
-        u->activePhrase = currentPhraseId;
-    currentPhraseId++;
+void UIManager::addPhrase(Phrase *p) {
+    u->phrases.push_back(p);
 };
 
 void UIManager::renderPhrases() {
-    for (auto const& [id, p] : u->phrases){
-        if(!p->progDisplay(1)) {
-            u->phrasesToDelete.push_back(id);
-        }
-    }
+    for (auto p : u->phrases)
+        p->progDisplay(1);
 }
 
-void UIManager::cleanUp() {
-    for (auto id : u->phrasesToDelete){
-        Phrase *p = u->phrases[id];
-        delete p;
-        u->phrases.erase(id);
-        if(id == u->activePhrase)
-            u->activePhrase = -1;
-    }
-    u->phrasesToDelete.clear();
+void UIManager::removePhrase(Phrase *p) {
+    u->phrases.erase(remove(u->phrases.begin(), u->phrases.end(), p), u->phrases.end());
 }
-

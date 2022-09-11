@@ -21,15 +21,11 @@ class UIManager {
     public:
         UiMode mode;
 
-        // Maybe this should be a linked list or something
-        map<int, Phrase*> phrases;
-        vector<int> phrasesToDelete;
-        int activePhrase;
+        vector<Phrase*> phrases;
 
-        static void meat(KeyPresses keysDown);
-        static void addPhrase(Point o, int pixelWidth, int pixelHeight, int scale, ScrollType type, string t, bool setAsActive);
+        static void addPhrase(Phrase *p);
         static void renderPhrases();
-        static void cleanUp();
+        static void removePhrase(Phrase *p);
 
         static int currentPhraseId;
         static UIManager *u;

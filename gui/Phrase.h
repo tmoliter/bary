@@ -18,9 +18,11 @@ enum ScrollType {
 // We should probably also have a SimplePhrase class
 class Phrase {
     public:
-        ScrollType scrollType;
+        int letterLength, letterHeight, phraseScale;
+        int progStart, advanceStart, totalLines;
         bool fullyDisplayed;
-        int letterLength, letterHeight, phraseScale, progStart, advanceStart, totalLines;
+        bool complete;
+        ScrollType scrollType;
         Point position;
         SDL_Rect box;
         string text;
@@ -29,9 +31,11 @@ class Phrase {
 
         Phrase(Point o, int pixelWidth, int pixelHeight, int pS, ScrollType type, string t);
 
+        void advance();
+        bool isComplete();
+
         int progDisplay(int delay);
 
-        void advance();
 
         static SDL_Texture *font;
 
