@@ -12,14 +12,16 @@
 using namespace std;
 
 struct EventNode {
-    EventNode(int (*ent)(void), int (*ex)(void), int (*next)(EventNode*&), Phrase *ph);
+    EventNode(EventNode **nn = nullptr, Phrase *ph = nullptr, int (*ent)(void) = nullptr, int (*ex)(void) = nullptr, int (*nextCB)(EventNode*&) = nullptr);
     ~EventNode();
 
+    EventNode **nextNode;
     Phrase *phrase;
     int (*enterAction)(void);
     int (*exitAction)(void);
-    int (*nextNode)(EventNode*&);
+    int (*nextNodeCB)(EventNode*&);
 
+    int getNextNode(EventNode *&node);
     void loadPhrase();
     int hold(KeyPresses keysDown);
 };

@@ -37,13 +37,12 @@ void Event::holdNode(KeyPresses keysDown) {
 
 void Event::endNode() {
     if(current->exitAction == nullptr || current->exitAction()) {
-        EventNode *tmp;
-        if (current->nextNode == nullptr || !current->nextNode(tmp)) {
-            stage = EventStage::terminateEvent;
+        EventNode *tmp = current;
+        if (tmp->getNextNode(current)) {
+            stage = EventStage::enterNode;
             return;
         }
-        current = tmp;
-        stage = EventStage::enterNode;
+        stage = EventStage::terminateEvent;
     }
 };
 
