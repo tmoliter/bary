@@ -11,8 +11,20 @@
 #include "gui/UIRenderer.h"
 #include "Event.h"
 #include "EventNode.h"
+#include "Timer.h"
 
 using namespace std;
+
+int test_callback () {
+        Thing* player = Thing::things["Zinnia"];
+        Timer::startOrIgnore("test");
+        if(Timer::timeSince("test") < 60) {
+            player->position.y++;
+            return 0;
+        }
+        Timer::destroy("test");
+        return 1;
+    };
 
 int main(int argc, char* args[]) {
     SDL_Init(SDL_INIT_VIDEO);
@@ -43,10 +55,9 @@ int main(int argc, char* args[]) {
 
     /* UI TESTING */
     Phrase *ph = new Phrase(Point(100,100), 220, 80, 1, ScrollType::allButLast, "I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things. I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things.");
-    EventNode* node = new EventNode(nullptr, nullptr, nullptr, ph);
+    EventNode* node = new EventNode(&test_callback, nullptr, nullptr, ph);
     Event* event = new Event();
     event->addNode(node);
-    event->begin();
     /* END UI TESTING */
     
     while (true){
@@ -60,6 +71,8 @@ int main(int argc, char* args[]) {
                 break;
             case (GameState::FieldFree):
             default:
+                if(frameCount == 180)
+                    event->begin();
                 Thing::meatThings(keysDown);
                 break;
         }
