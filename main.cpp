@@ -8,8 +8,25 @@
 #include <vector>
 #include <algorithm>
 #include "gui/Phrase.h"
+#include "gui/UIRenderer.h"
+#include "Event.h"
+#include "EventNode.h"
+#include "Timer.h"
 
 using namespace std;
+
+int test_event_node_callback () {
+        Thing* player = Thing::things["Zinnia"];
+        Timer::startOrIgnore("test");
+        if(Timer::timeSince("test") < 60) {
+            if (frameCount > 200)
+                player->position.x++;
+            player->position.y++;
+            return 0;
+        }
+        Timer::destroy("test");
+        return 1;
+    };
 
 int main(int argc, char* args[]) {
     SDL_Init(SDL_INIT_VIDEO);
@@ -36,10 +53,17 @@ int main(int argc, char* args[]) {
     FpsTimer t;
     ProfileData p;
 
+    gameState = GameState::FieldFree;
 
     /* UI TESTING */
-    Point pt = Point(0,0);
-    Phrase ph1 = Phrase(pt, Point(100,100), 220, 80, 1, ScrollType::allButLast, "I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things. I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things.");
+    Phrase *ph = new Phrase(Point(100,100), 220, 80, 1, ScrollType::allButLast, "I think t.");
+    Phrase *ph2 = new Phrase(Point(200,150), 300, 80, 2, ScrollType::allButLast, "Much less text.");
+    EventNode *node, *node2;
+    node = new EventNode(&node2, ph, &test_event_node_callback, &test_event_node_callback);
+    node2 = new EventNode(NULL, ph2, &test_event_node_callback);
+    Event* event = new Event();
+    event->addNode(node);
+    event->addNode(node2);
     /* END UI TESTING */
     
     while (true){
@@ -47,14 +71,21 @@ int main(int argc, char* args[]) {
         KeyPresses keysDown = in.getInput();  
         if (keysDown.quit)
             break;
-        Thing::meatThings(keysDown);
+        switch(gameState) {
+            case (GameState::FieldUI):
+                Event::meat(keysDown);
+                break;
+            case (GameState::FieldFree):
+            default:
+                if(frameCount == 10)
+                    event->begin();
+                Thing::meatThings(keysDown);
+                break;
+        }
+
         Camera::c->render();
 
-        /* UI TESTING */
-        if (keysDown.debug_1)
-            ph1.advance();
-        ph1.progDisplay(1);
-        /* END UI TESTING */
+        UIRenderer::renderPhrases();
 
         t.endFrameAndWait(frameCount);
         SDL_RenderPresent(renderer);

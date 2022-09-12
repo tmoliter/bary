@@ -1,6 +1,5 @@
 #ifndef PHRASE_H
 #define PHRASE_H
-#include <map>
 #include <string>
 #include <queue>
 #include <SDL2/SDL.h>
@@ -16,21 +15,27 @@ enum ScrollType {
     allButLast,
 };
 
+// We should probably also have a SimplePhrase class
 class Phrase {
     public:
-        ScrollType scrollType;
+        int letterLength, letterHeight, phraseScale;
+        int progStart, advanceStart, totalLines;
         bool fullyDisplayed;
-        int letterLength, letterHeight, phraseScale, progStart, advanceStart, totalLines;
-        Point &parent, offset;
+        bool complete;
+        ScrollType scrollType;
+        Point position;
+        SDL_Rect box;
         string text;
         queue<string> lines;
         queue<string> hiddenLines;
 
-        Phrase(Point &p, Point o, int pixelWidth, int pixelHeight, int pS, ScrollType type, string t);
+        Phrase(Point o, int pixelWidth, int pixelHeight, int pS, ScrollType type, string t);
+
+        void advance();
+        bool isComplete();
 
         int progDisplay(int delay);
 
-        void advance();
 
         static SDL_Texture *font;
 

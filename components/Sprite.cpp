@@ -14,7 +14,7 @@ xOffset(sd.xOffset),
 yOffset(sd.yOffset),
 active(false) {
     id = currentID++;
-    Sprite::sprites[id] = this;
+    sprites[id] = this;
     if(!textures.count(sd.path)) {
         SDL_Surface* temp = IMG_Load(sd.path.c_str());
         textures[sd.path] = SDL_CreateTextureFromSurface(renderer, temp);

@@ -48,6 +48,16 @@ KeyPresses& Input::getInput () {
                     if (input.key.repeat == 0)
                         keysDown.down = true;
                     break;
+                case SDLK_j:
+                    if (input.key.repeat == 0)
+                        keysDown.cancel = true;
+                    break;
+                case SDLK_k:
+                    if (input.key.repeat == 0)
+                        keysDown.ok = true;
+                    break;
+                    
+                /* DEBUG */
                 case SDLK_UP:
                     if (input.key.repeat == 0)
                         keysDown.debug_up = true;
@@ -64,7 +74,6 @@ KeyPresses& Input::getInput () {
                     if (input.key.repeat == 0)
                         keysDown.debug_right = true;
                     break;
-                /* DEBUG */
                 case SDLK_1:
                     if (input.key.repeat == 0)
                         keysDown.debug_1 = true;
