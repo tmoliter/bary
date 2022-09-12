@@ -6,22 +6,22 @@
 #include <SDL2/SDL_image.h>
 #include "globals.h"
 #include "./gui/Phrase.h"
+#include "./gui/UIRenderer.h"
 #include "Input.h"
 
 using namespace std;
 
 struct EventNode {
-    EventNode() {};
-    ~EventNode() {};
+    EventNode(int (*ent)(void), int (*ex)(void), int (*next)(EventNode*&), Phrase *ph);
+    ~EventNode();
 
     Phrase *phrase;
     int (*enterAction)(void);
     int (*exitAction)(void);
-    EventNode *(*nextNode)(void);
+    int (*nextNode)(EventNode*&);
 
-    // Destructor should take care of all phrases and action functions, unless action is a reusable
-
-    int hold(KeyPresses keysDown) { return 1; };
+    void loadPhrase();
+    int hold(KeyPresses keysDown);
 };
 
 #endif

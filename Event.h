@@ -11,6 +11,7 @@
 using namespace std;
 
 enum EventStage {
+    pending,
     enterNode,
     holdNode,
     exitNode,
@@ -23,7 +24,6 @@ struct Event {
     Event();
     ~Event();
 
-    // No need to destroy nodes until Event destructor is called
     vector<EventNode*> nodes;
     void addNode(EventNode* node);
 
@@ -36,11 +36,13 @@ struct Event {
 
     void terminate();
 
+    void setBeginGameState();
+    void setEndGameState();
+
     EventStage stage;
-    
+
     static void meat(KeyPresses keysDown);
     inline static vector<Event*> activeEvents;
-
 };
 
 #endif

@@ -2,7 +2,7 @@
 
 Event::Event() {
     activeEvents.push_back(this);
-    stage = EventStage::enterNode;
+    stage = EventStage::pending;
 }
 
 Event::~Event() {
@@ -19,11 +19,15 @@ void Event::addNode(EventNode* node) {
 
 void Event::begin() {
     current = nodes.front();
+    stage = EventStage::enterNode;
+    setBeginGameState();
 }
 
 void Event::executeEnter() {
-    if(current->enterAction())
+    if(current->enterAction == nullptr || current->enterAction()) {
+        current->loadPhrase();
         stage = EventStage::holdNode;
+    }
 }
 
 void Event::holdNode(KeyPresses keysDown) {
@@ -32,9 +36,9 @@ void Event::holdNode(KeyPresses keysDown) {
 }
 
 void Event::endNode() {
-    if(current->exitAction()) {
-        EventNode *tmp = current->nextNode();
-        if (!tmp) {
+    if(current->exitAction == nullptr || current->exitAction()) {
+        EventNode *tmp;
+        if (current->nextNode == nullptr || !current->nextNode(tmp)) {
             stage = EventStage::terminateEvent;
             return;
         }
@@ -49,6 +53,8 @@ void Event::meat(KeyPresses keysDown) {
 
     Event *event = activeEvents.front();
     switch (event->stage) {
+        case (EventStage::pending):
+            break;
         case (EventStage::enterNode):
             event->executeEnter();
             break;
@@ -59,7 +65,16 @@ void Event::meat(KeyPresses keysDown) {
             event->endNode();
             break;
         case (EventStage::terminateEvent):
+            event->setEndGameState();
             delete event;
-
+            break;
     }
+}
+
+void Event::setBeginGameState() {
+    gameState = GameState::FieldUI;
+}
+
+void Event::setEndGameState() {
+    gameState = GameState::FieldFree;
 }

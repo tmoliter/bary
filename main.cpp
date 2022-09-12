@@ -9,6 +9,8 @@
 #include <algorithm>
 #include "gui/Phrase.h"
 #include "gui/UIRenderer.h"
+#include "Event.h"
+#include "EventNode.h"
 
 using namespace std;
 
@@ -37,44 +39,34 @@ int main(int argc, char* args[]) {
     FpsTimer t;
     ProfileData p;
 
+    gameState = GameState::FieldFree;
 
     /* UI TESTING */
     Phrase *ph = new Phrase(Point(100,100), 220, 80, 1, ScrollType::allButLast, "I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things. I think that if I type out this whole sentence even with a stupendouslygigantanormous word it will display nicely even if it gets cut off eventually or something like that, but actually we need to make this a bit longer to test some other things.");
-    UIRenderer::addPhrase(ph);
+    EventNode* node = new EventNode(nullptr, nullptr, nullptr, ph);
+    Event* event = new Event();
+    event->addNode(node);
+    event->begin();
     /* END UI TESTING */
     
-    gameState = GameState::FieldFree;
-
     while (true){
     t.startFrame();
         KeyPresses keysDown = in.getInput();  
         if (keysDown.quit)
             break;
-        /* DEBUG */
-        if (keysDown.debug_2) {
-            if(gameState == GameState::FieldFree)
-                gameState = GameState::FieldUI;
-            else
-                gameState = GameState::FieldFree;
-        }
-        /* END DEBUG */
-        
         switch(gameState) {
             case (GameState::FieldUI):
-                if(keysDown.debug_1 && UIRenderer::u->phrases.size() > 0)
-                    ph->advance();
+                Event::meat(keysDown);
                 break;
             case (GameState::FieldFree):
             default:
                 Thing::meatThings(keysDown);
                 break;
         }
-            
-        Camera::c->render();
-        UIRenderer::renderPhrases();
 
-        if (ph->isComplete())
-            UIRenderer::removePhrase(ph);
+        Camera::c->render();
+
+        UIRenderer::renderPhrases();
 
         t.endFrameAndWait(frameCount);
         SDL_RenderPresent(renderer);
