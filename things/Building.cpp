@@ -55,3 +55,7 @@ int Building::write_building_datum(ifstream &mapData, BuildingData &newTD) {
 
     return 1;
 }
+
+Building* Building::find_building (string name) {
+    return dynamic_cast<Building*>(Thing::things[name]);
+}

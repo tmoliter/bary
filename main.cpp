@@ -1,27 +1,29 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <SDL2/SDL_image.h>
+#include <algorithm>
+#include <vector>
 #include "Camera.h"
 #include "FpsTimer.h"
 #include "MapParser.h"
 #include "globals.h"
-#include <vector>
-#include <algorithm>
 #include "gui/Phrase.h"
 #include "gui/UIRenderer.h"
 #include "Event.h"
 #include "EventNode.h"
 #include "Timer.h"
+#include "./things/FieldPlayer.h"
 
 using namespace std;
 
 int test_event_node_callback () {
-        Thing* player = Thing::things["Zinnia"];
         Timer::startOrIgnore("test");
+        DirectionMap dM;
         if(Timer::timeSince("test") < 60) {
-            if (frameCount > 200)
-                player->position.x++;
-            player->position.y++;
+            if (frameCount > 350)
+                dM.right = true;
+            dM.up = true;
+            FieldPlayer::player->walk->move(dM);
             return 0;
         }
         Timer::destroy("test");
@@ -56,8 +58,8 @@ int main(int argc, char* args[]) {
     gameState = GameState::FieldFree;
 
     /* UI TESTING */
-    Phrase *ph = new Phrase(Point(100,100), 220, 80, 1, ScrollType::allButLast, "I think t.");
-    Phrase *ph2 = new Phrase(Point(200,150), 300, 80, 2, ScrollType::allButLast, "Much less text.");
+    Phrase *ph = new Phrase(Point(100,100), 150, 40, 1, ScrollType::allButLast, "What's that??`Is something up and to my right? I'd better go check this shit out.");
+    Phrase *ph2 = new Phrase(Point(200,150), 300, 24, 2, ScrollType::allButLast, "Damn, nothing.");
     EventNode *node, *node2;
     node = new EventNode(&node2, ph, &test_event_node_callback, &test_event_node_callback);
     node2 = new EventNode(NULL, ph2, &test_event_node_callback);
@@ -77,7 +79,7 @@ int main(int argc, char* args[]) {
                 break;
             case (GameState::FieldFree):
             default:
-                if(frameCount == 10)
+                if(frameCount == 300)
                     event->begin();
                 Thing::meatThings(keysDown);
                 break;

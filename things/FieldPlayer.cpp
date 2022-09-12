@@ -4,6 +4,8 @@
 
 using namespace std;
 
+FieldPlayer *FieldPlayer::player = nullptr;
+
 FieldPlayer::FieldPlayer(FieldPlayerData fpD) : Thing(fpD) {
     sprite = new Sprite(position.x,position.y,name,fpD.spriteData);
     sprite->divideSheet(9, 4);
@@ -11,12 +13,13 @@ FieldPlayer::FieldPlayer(FieldPlayerData fpD) : Thing(fpD) {
 
     height = sprite->height;
     width = sprite->width;
-    name = "Zinnia";
-};
+    FieldPlayer::player = this;
+}
 
 FieldPlayer::~FieldPlayer() { 
     delete sprite;
     delete walk;
+    FieldPlayer::player = nullptr;
 };
 
 void FieldPlayer::meat(KeyPresses keysDown) {

@@ -47,6 +47,13 @@ Phrase::Phrase(Point p, int pixelWidth, int pixelHeight, int scale, ScrollType t
                 )) {
                 lastSpace = i;
             }
+            // Manual new line with ` char (needs work for multiple)
+            if (int(text[i]) == 96) {
+                linesRef->push(text.substr(lineFirstCharIndex, i));
+                i++;
+                lineFirstCharIndex = i;
+                continue;
+            }
             // Ran out of room for line
             if (i > 0 && i - lineFirstCharIndex == letterLength) {
                 // Ran out of lines that will fit
