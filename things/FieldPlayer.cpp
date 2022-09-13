@@ -47,16 +47,16 @@ void FieldPlayer::meat(KeyPresses keysDown) {
         Ray ray;
         switch (currentDirection) {
             case (Direction::up):
-                ray = Ray(xCenter, yBottom, xCenter, yBottom - 16);
+                ray = Ray(xCenter, yBottom, xCenter, yBottom - 8);
                 break;
             case (Direction::down):
-                ray = Ray(xCenter, yBottom, xCenter, yBottom + 16);
+                ray = Ray(xCenter, yBottom, xCenter, yBottom + 8);
                 break;
             case (Direction::left):
-                ray = Ray(xCenter, yBottom, xCenter - 16, yBottom);
+                ray = Ray(xCenter, yBottom, xCenter - 8, yBottom);
                 break;
             case (Direction::right):
-                ray = Ray(xCenter, yBottom, xCenter + 16, yBottom);
+                ray = Ray(xCenter, yBottom, xCenter + 8, yBottom);
                 break;
             default:
                 ray = Ray(xCenter, yBottom, xCenter, yBottom);
