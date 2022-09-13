@@ -102,7 +102,7 @@ void Phrase::reset() {
 }
 
 void Phrase::advance() {
-    if(!fullyDisplayed)
+    if(!fullyDisplayed || advanceStart > 0)
         return;
     if (hiddenLines.size() < 1) {
         while(!lines.empty()) lines.pop();
