@@ -7,6 +7,7 @@ using namespace std;
 FieldPlayer *FieldPlayer::player = nullptr;
 
 FieldPlayer::FieldPlayer(FieldPlayerData fpD) : Thing(fpD) {
+    currentDirection = Direction::down;
     sprite = new Sprite(position.x,position.y,name,fpD.spriteData);
     sprite->divideSheet(9, 4);
     walk = new Walk(position.x, position.y, sprite->layer, sprite->sourceRect);
@@ -37,16 +38,29 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     if (keysDown.right)
         dM.right = true;
 
-    walk->move(dM);
+    Direction newDirection = walk->move(dM);
+    currentDirection = newDirection == Direction::none ? currentDirection : newDirection;
 
     if(keysDown.ok && gameState == GameState::FieldFree) {
-        Ray ray = Ray(position.x + 16, position.y + 32, position.x + 16, position.y - 400);
-        Interactable::checkForInteractables(ray, sprite->layer);
-        ray = Ray(position.x + 16, position.y + 400, position.x + 16, position.y);
-        Interactable::checkForInteractables(ray, sprite->layer);
-        ray = Ray(position.x + 500, position.y + 400, position.x + 16, position.y);
-        Interactable::checkForInteractables(ray, sprite->layer);
-        ray = Ray(position.x - 500, position.y + 400, position.x + 16, position.y);
+        int xCenter = position.x + (width / 2);
+        int yBottom = position.y + height;
+        Ray ray;
+        switch (currentDirection) {
+            case (Direction::up):
+                ray = Ray(xCenter, yBottom, xCenter, yBottom - 16);
+                break;
+            case (Direction::down):
+                ray = Ray(xCenter, yBottom, xCenter, yBottom + 16);
+                break;
+            case (Direction::left):
+                ray = Ray(xCenter, yBottom, xCenter - 16, yBottom);
+                break;
+            case (Direction::right):
+                ray = Ray(xCenter, yBottom, xCenter + 16, yBottom);
+                break;
+            default:
+                ray = Ray(xCenter, yBottom, xCenter, yBottom);
+        }
         Interactable::checkForInteractables(ray, sprite->layer);
     }
 

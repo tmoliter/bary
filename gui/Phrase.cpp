@@ -9,11 +9,7 @@ inline constexpr int LETTERS_PER_FONT_ROW = 24;
 Phrase::Phrase(Point p, int pixelWidth, int pixelHeight, int scale, ScrollType type, string t) : 
     position(p),
     phraseScale(scale), 
-    scrollType(type), 
-    progStart(-1),
-    advanceStart(-1),
-    fullyDisplayed(false),
-    complete(false) {
+    scrollType(type) {
     box = SDL_Rect { position.x, position.y, pixelWidth, pixelHeight };
     if (!font) {
         SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
@@ -23,7 +19,10 @@ Phrase::Phrase(Point p, int pixelWidth, int pixelHeight, int scale, ScrollType t
     letterLength = (pixelWidth / scale) / 8;
     letterHeight = (pixelHeight / scale) / 12;
     text = t;
+    reset();
+}
 
+void Phrase::reset() {
     // Very happy case: all text fits on one line
     if (text.length() <= letterLength)
         lines.push(text);
@@ -96,6 +95,10 @@ Phrase::Phrase(Point p, int pixelWidth, int pixelHeight, int scale, ScrollType t
         }
     }
     totalLines = lines.size() + hiddenLines.size();
+    progStart = -1;
+    advanceStart = -1;
+    fullyDisplayed = false;
+    complete = false;
 }
 
 void Phrase::advance() {

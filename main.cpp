@@ -18,20 +18,6 @@
 
 using namespace std;
 
-// int test_event_node_callback () {
-//         Timer::startOrIgnore("test");
-//         DirectionMap dM;
-//         if(Timer::timeSince("test") < 60) {
-//             if (frameCount > 350)
-//                 dM.right = true;
-//             dM.up = true;
-//             FieldPlayer::player->walk->move(dM);
-//             return 0;
-//         }
-//         Timer::destroy("test");
-//         return 1;
-//     };
-
 int main(int argc, char* args[]) {
     SDL_Init(SDL_INIT_VIDEO);
     IMG_Init(IMG_INIT_PNG);
@@ -60,19 +46,9 @@ int main(int argc, char* args[]) {
     gameState = GameState::FieldFree;
 
     /* UI TESTING */
-    // Phrase *ph = new Phrase(Point(100,100), 150, 40, 1, ScrollType::continuous, "What's that??`Is something up and to my right? I'd better go check this shit out.");
-    // Phrase *ph2 = new Phrase(Point(200,150), 300, 24, 2, ScrollType::allButLast, "Damn, nothing.");
-    // EventNode *node, *node2;
-    // node = new EventNode(&node2, ph, &test_event_node_callback, &test_event_node_callback);
-    // node2 = new EventNode(NULL, ph2, &test_event_node_callback);
-    // Event* event = new Event();
-    // event->addNode(node);
-    // event->addNode(node2);
-
     Building* ss = Building::find_building("Sailor Shack");
-
     CollidableData cd;
-    Ray *ray = new Ray(0,426,117,426);
+    Ray *ray = new Ray(117,253,173,253);
     cd.rays.push_back(ray);
     cd.layer = 0;
     SimpleMessageI *smi = new SimpleMessageI(ss,"AHHH!!`I'd better run the fuck away from here dude!", cd);
@@ -91,8 +67,6 @@ int main(int argc, char* args[]) {
                 break;
             case (GameState::FieldFree):
             default:
-                // if(frameCount == 300)
-                //     event->begin();
                 Thing::meatThings(keysDown);
                 break;
         }

@@ -21,6 +21,8 @@ class FieldPlayer : public Thing {
         FieldPlayer(FieldPlayerData fpD);
         ~FieldPlayer();
 
+        Direction currentDirection;
+
         Sprite *sprite;
 
         void meat(KeyPresses keysDown);

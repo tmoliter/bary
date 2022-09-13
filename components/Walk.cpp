@@ -98,16 +98,16 @@ void Walk::face(Direction d) {
     };
 }
 
-void Walk::move(DirectionMap dM){
+Direction Walk::move(DirectionMap dM){
     Direction d = directionFromMap(dM);
     face(d);
     if (speed == 0) {
         sourceRect.x = 0;
-        return;
+        return d;
     }
     if (speed < 3 && frameCount % (3 - speed) != 0) {
         animate(d);
-        return;
+        return d;
     }
 
     int appliedSpeed = speed < 4 ? 1 : speed;
@@ -137,6 +137,7 @@ void Walk::move(DirectionMap dM){
             x = x + appliedSpeed;
     }
     animate(directionFromMap(dM));
+    return d;
 };
 
 void Walk::changeSpeed(bool decrease) {

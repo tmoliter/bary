@@ -35,6 +35,7 @@ class Phrase {
         bool isComplete();
 
         int progDisplay(int delay);
+        void reset();
 
 
         static SDL_Texture *font;
