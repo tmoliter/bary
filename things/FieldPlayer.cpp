@@ -39,6 +39,17 @@ void FieldPlayer::meat(KeyPresses keysDown) {
 
     walk->move(dM);
 
+    if(keysDown.ok) {
+        Ray ray = Ray(position.x + 16, position.y + 32, position.x + 16, position.y - 400);
+        Interactable::checkForInteractables(ray, sprite->layer);
+        ray = Ray(position.x + 16, position.y + 400, position.x + 16, position.y);
+        Interactable::checkForInteractables(ray, sprite->layer);
+        ray = Ray(position.x + 500, position.y + 400, position.x + 16, position.y);
+        Interactable::checkForInteractables(ray, sprite->layer);
+        ray = Ray(position.x - 500, position.y + 400, position.x + 16, position.y);
+        Interactable::checkForInteractables(ray, sprite->layer);
+    }
+
     /* DEBUG MODE CONTROLS */
     if (keysDown.debug_left && sprite->layer > 0)
         sprite->layer--;

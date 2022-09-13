@@ -18,6 +18,8 @@ void EventNode::loadPhrase() {
 }
 
 int EventNode::hold (KeyPresses keysDown) {
+    if(phrase == nullptr)
+        return 1;
     if(phrase->isComplete()) {
         UIRenderer::removePhrase(phrase);
         return 1;

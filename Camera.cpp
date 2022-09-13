@@ -116,20 +116,26 @@ void Camera::panTo(string thingName) {
     GhostFocus::create(c->focus, thingName);
 }
 
-void Camera::fadeIn(int m) {
-    if(c->fadeStatus == FxStatus::unapplied) {
-        c->fadeMultiplier = m;
-        c->fadeStatus = FxStatus::applying;
-        c->fadeStart = frameCount;
-    }
-}
-
-void Camera::fadeOut(int m) {
+int Camera::fadeIn(int m) {
+    if(c->fadeStatus == unapplied)
+        return 1;
     if(c->fadeStatus == FxStatus::applied) {
         c->fadeMultiplier = m;
         c->fadeStatus = FxStatus::unapplying;
         c->fadeStart = frameCount;
     }
+    return 0;
+}
+
+int Camera::fadeOut(int m) {
+    if(c->fadeStatus == applied)
+        return 1;
+    if(c->fadeStatus == FxStatus::unapplied) {
+        c->fadeMultiplier = m;
+        c->fadeStatus = FxStatus::applying;
+        c->fadeStart = frameCount;
+    }
+    return 0;
 }
 
 void Camera::warpIn(int m) {

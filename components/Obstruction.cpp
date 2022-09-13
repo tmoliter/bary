@@ -1,9 +1,8 @@
 #include "./Obstruction.h"
 
 
-Obstruction::Obstruction(int &x, int &y, string &tN, CollidableData cd) : Collidable(x,y,tN,cd) {
-    id = currentID++;
-    Obstruction::obstructions[id] = this;
+Obstruction::Obstruction(Thing *parent, CollidableData cd) : Collidable(parent,cd) {
+    Obstruction::obstructions[currentID++] = this;
 }
 
 Obstruction::~Obstruction() {
@@ -14,11 +13,11 @@ Obstruction::~Obstruction() {
 
 int Obstruction::currentID = 0;
 
-bool Obstruction::checkForObstructions(Ray &incoming, int layer) {
+int Obstruction::checkForObstructions(Ray &incoming, int layer) {
     for (auto const& [id, o] : Obstruction::obstructions){
         if(o->isColliding(incoming, layer)) {
-            return true;
+            return 1;
         }
     }
-    return false;
+    return 0;
 }

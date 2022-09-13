@@ -5,6 +5,7 @@
 #include "../Ray.h"
 #include "../components/Walk.h"
 #include "../components/Obstruction.h"
+#include "../components/Interactable.h"
 #include <iostream>
 #include "Camera.h"
 

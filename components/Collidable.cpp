@@ -4,13 +4,13 @@
 
 using namespace std;
 
-Collidable::Collidable (int &x, int &y, string &tN, CollidableData cd) : 
-x(x), 
-y(y), 
-thingName(tN),
+Collidable::Collidable (Thing *parent, CollidableData cd) : 
 layer(cd.layer),
 rays(cd.rays),
-active(true) {}
+active(true),
+x(parent->position.x),
+y(parent->position.y),
+thingName(parent->name) {}
 
 Collidable::~Collidable() {
     for (auto r : rays) {

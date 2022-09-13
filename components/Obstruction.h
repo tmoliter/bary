@@ -5,13 +5,13 @@
 
 class Obstruction : public Collidable {
     public:
-        Obstruction(int &x, int &y, string &tN, CollidableData cd);
+        Obstruction(Thing *parent, CollidableData cd);
         ~Obstruction();
         int id;
 
         static int currentID;
         inline static map<int, Obstruction*> obstructions;
-        static bool checkForObstructions(Ray &incoming, int layer);
+        static int checkForObstructions(Ray &incoming, int layer);
 };
 
 #endif

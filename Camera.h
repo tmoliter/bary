@@ -61,8 +61,8 @@ class Camera {
 
         static int parse_camera(ifstream &mapData);
         static void panTo(string thingName);
-        static void fadeIn(int m);
-        static void fadeOut(int m);
+        static int fadeIn(int m);
+        static int fadeOut(int m);
         static void warpIn(int m);
         static void warpOut(int m);
         static string getFocusName();

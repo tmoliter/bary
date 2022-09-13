@@ -14,8 +14,8 @@ Building::Building(BuildingData bD) : Thing(bD) {
             height = tmpHeight;
         sprites.push_back(new Sprite(position.x,position.y,name,sd));
     }
-    for (auto bd : bD.obstructionData) {
-        obstructions.push_back(new Obstruction(position.x,position.y,name,bd));
+    for (auto cd : bD.obstructionData) {
+        obstructions.push_back(new Obstruction(this,cd));
     }
 };
 
