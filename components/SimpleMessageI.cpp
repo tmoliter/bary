@@ -16,10 +16,13 @@ int test_event_node_callback () {
 
 
 SimpleMessageI::SimpleMessageI(Thing* parent, string message, CollidableData cd) : Interactable(parent, cd) {
-    Phrase *ph = new Phrase(Point(200,200), 100, 40, 1, ScrollType::allButLast, "Testing an interactable.");
-    EventNode *node =  new EventNode(nullptr, ph, nullptr, &test_event_node_callback);
+    Phrase *ph = new Phrase(Point(100,100), 150, 40, 1, ScrollType::continuous, "What's that??`Is something up and to my right? I'd better go check this shit out.");
+    Phrase *ph2 = new Phrase(Point(200,150), 300, 24, 2, ScrollType::allButLast, "Damn, nothing.");
+    EventNode *node = new EventNode(&node2, ph, &test_event_node_callback, &test_event_node_callback);
+    node2 = new EventNode(NULL, ph2, &test_event_node_callback);
     event = new Event();
     event->addNode(node);
+    event->addNode(node2);
 }
 
 SimpleMessageI::~SimpleMessageI() {

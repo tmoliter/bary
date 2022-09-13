@@ -24,6 +24,7 @@ struct Event {
     Event();
     ~Event();
 
+    EventNode* firstNode;
     vector<EventNode*> nodes;
     void addNode(EventNode* node);
 

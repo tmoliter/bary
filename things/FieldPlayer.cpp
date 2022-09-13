@@ -39,7 +39,7 @@ void FieldPlayer::meat(KeyPresses keysDown) {
 
     walk->move(dM);
 
-    if(keysDown.ok) {
+    if(keysDown.ok && gameState == GameState::FieldFree) {
         Ray ray = Ray(position.x + 16, position.y + 32, position.x + 16, position.y - 400);
         Interactable::checkForInteractables(ray, sprite->layer);
         ray = Ray(position.x + 16, position.y + 400, position.x + 16, position.y);
