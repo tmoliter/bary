@@ -50,7 +50,7 @@ void Phrase::reset() {
             }
             // Manual new line with ` char (needs work for multiple)
             if (int(text[i]) == 96) {
-                linesRef->push(text.substr(lineFirstCharIndex, i));
+                linesRef->push(text.substr(lineFirstCharIndex, i - lineFirstCharIndex));
                 i++;
                 lineFirstCharIndex = i;
                 continue;

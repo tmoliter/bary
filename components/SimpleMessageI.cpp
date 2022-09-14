@@ -3,8 +3,9 @@
 int test_event_node_callback () {
         Timer::startOrIgnore("test");
         DirectionMap dM;
-        if(Timer::timeSince("test") < 60) {
-            if (frameCount > 350)
+        int time = Timer::timeSince("test");
+        if(time < 60) {
+            if (time > 30)
                 dM.right = true;
             dM.down = true;
             FieldPlayer::player->walk->move(dM);
@@ -22,7 +23,7 @@ int test_standlone_message_callback() {
 
 
 SimpleMessageI::SimpleMessageI(Thing* parent, string message, CollidableData cd) : Interactable(parent, cd) {
-    Phrase *ph = new Phrase(Point(100,100), 300, 40, 1, ScrollType::continuous, "What's that??`Is something up and to my right? I'd better go check this shit out. What's that?? Is something up and to my right? I'd better go check this shit out. What's that?? Is something up and to my right? I'd better go check this shit out. What's that?? Is something up and to my right? I'd better go check this shit out.", 4);
+    Phrase *ph = new Phrase(Point(100,100), 300, 70, 1, ScrollType::continuous, "What's that??`Is something up and to my right? I'd better go check this shit out.``What's that??`Is something up and to my right? I'd better go check this shit out.``What's that??`Is something up and to my right? I'd better go check this shit out.``What's that??`Is something up and to my right? I'd better go check this shit out.", 2);
     Phrase *ph2 = new Phrase(Point(200,150), 300, 24, 2, ScrollType::allButLast, "Damn, nothing.");
     EventNode *node = new EventNode(&node2, ph, &test_event_node_callback, &test_event_node_callback);
     node2 = new EventNode(NULL, ph2, &test_event_node_callback, &test_standlone_message_callback);
