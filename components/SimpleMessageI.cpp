@@ -22,7 +22,7 @@ int test_standlone_message_callback() {
 
 
 SimpleMessageI::SimpleMessageI(Thing* parent, string message, CollidableData cd) : Interactable(parent, cd) {
-    Phrase *ph = new Phrase(Point(100,100), 150, 40, 1, ScrollType::continuous, "What's that??`Is something up and to my right? I'd better go check this shit out.", 2);
+    Phrase *ph = new Phrase(Point(100,100), 300, 40, 1, ScrollType::continuous, "What's that??`Is something up and to my right? I'd better go check this shit out. What's that?? Is something up and to my right? I'd better go check this shit out. What's that?? Is something up and to my right? I'd better go check this shit out. What's that?? Is something up and to my right? I'd better go check this shit out.", 4);
     Phrase *ph2 = new Phrase(Point(200,150), 300, 24, 2, ScrollType::allButLast, "Damn, nothing.");
     EventNode *node = new EventNode(&node2, ph, &test_event_node_callback, &test_event_node_callback);
     node2 = new EventNode(NULL, ph2, &test_event_node_callback, &test_standlone_message_callback);

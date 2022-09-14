@@ -147,8 +147,11 @@ int Phrase::progDisplay() {
         else
             occlusion = 0;
         for (j = 0; j < line.size(); j++) {
-            if (charsToDisplay < 1)
+            if (charsToDisplay < 1){
+                if(advanceProgress >= LETTER_HEIGHT)
+                    advanceStart++;
                 return 1;
+            }
             renderLetter(i, j, line[j], occlusion, advanceProgress);
             charsToDisplay--;
             total++;
