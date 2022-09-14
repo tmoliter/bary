@@ -1,32 +1,16 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <SDL2/SDL_image.h>
+#include <algorithm>
+#include <vector>
+#include "globals.h"
 #include "Camera.h"
 #include "FpsTimer.h"
 #include "MapParser.h"
-#include "globals.h"
-#include <vector>
-#include <algorithm>
-#include "gui/Phrase.h"
 #include "gui/UIRenderer.h"
-#include "Event.h"
-#include "EventNode.h"
-#include "Timer.h"
+#include "events/eventMap.h"
 
 using namespace std;
-
-int test_event_node_callback () {
-        Thing* player = Thing::things["Zinnia"];
-        Timer::startOrIgnore("test");
-        if(Timer::timeSince("test") < 60) {
-            if (frameCount > 200)
-                player->position.x++;
-            player->position.y++;
-            return 0;
-        }
-        Timer::destroy("test");
-        return 1;
-    };
 
 int main(int argc, char* args[]) {
     SDL_Init(SDL_INIT_VIDEO);
@@ -48,26 +32,17 @@ int main(int argc, char* args[]) {
 
     string fullMapPath(string(BASE_PATH) + "maps/map2.txt");
     parse_map(fullMapPath.c_str());
+    eventMap::initialize();
+
+    gameState = GameState::FieldFree;
+    eventMap::load_events("Burg");
 
     Input in;
     FpsTimer t;
     ProfileData p;
-
-    gameState = GameState::FieldFree;
-
-    /* UI TESTING */
-    Phrase *ph = new Phrase(Point(100,100), 220, 80, 1, ScrollType::allButLast, "I think t.");
-    Phrase *ph2 = new Phrase(Point(200,150), 300, 80, 2, ScrollType::allButLast, "Much less text.");
-    EventNode *node, *node2;
-    node = new EventNode(&node2, ph, &test_event_node_callback, &test_event_node_callback);
-    node2 = new EventNode(NULL, ph2, &test_event_node_callback);
-    Event* event = new Event();
-    event->addNode(node);
-    event->addNode(node2);
-    /* END UI TESTING */
     
     while (true){
-    t.startFrame();
+        t.startFrame();
         KeyPresses keysDown = in.getInput();  
         if (keysDown.quit)
             break;
@@ -77,8 +52,6 @@ int main(int argc, char* args[]) {
                 break;
             case (GameState::FieldFree):
             default:
-                if(frameCount == 10)
-                    event->begin();
                 Thing::meatThings(keysDown);
                 break;
         }

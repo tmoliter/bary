@@ -14,8 +14,8 @@ Building::Building(BuildingData bD) : Thing(bD) {
             height = tmpHeight;
         sprites.push_back(new Sprite(position.x,position.y,name,sd));
     }
-    for (auto bd : bD.obstructionData) {
-        obstructions.push_back(new Obstruction(position.x,position.y,name,bd));
+    for (auto cd : bD.obstructionData) {
+        obstructions.push_back(new Obstruction(this,cd));
     }
 };
 
@@ -54,4 +54,8 @@ int Building::write_building_datum(ifstream &mapData, BuildingData &newTD) {
     }
 
     return 1;
+}
+
+Building* Building::find_building (string name) {
+    return dynamic_cast<Building*>(Thing::things[name]);
 }

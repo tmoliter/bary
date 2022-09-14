@@ -4,7 +4,9 @@
 #include "Thing.h"
 #include "../Ray.h"
 #include "../components/Walk.h"
+#include "../components/Sprite.h"
 #include "../components/Obstruction.h"
+#include "../components/Interactable.h"
 #include <iostream>
 #include "Camera.h"
 
@@ -14,16 +16,21 @@ struct FieldPlayerData : ThingData {
 
 class FieldPlayer : public Thing {
     private:
-        Walk* walk;
         string name;
     public:
+        Walk* walk;
         FieldPlayer(FieldPlayerData fpD);
         ~FieldPlayer();
+
+        Direction currentDirection;
 
         Sprite *sprite;
 
         void meat(KeyPresses keysDown);
 
         static int write_player_datum(ifstream &mapData, FieldPlayerData &newTD);
+        
+        static FieldPlayer *player;
 };
+
 #endif

@@ -9,6 +9,7 @@ EventNode::EventNode(EventNode **nn, Phrase *ph, int (*ent)(void), int (*ex)(voi
 {};
 
 EventNode::~EventNode() {
+    delete nextNode;
     delete phrase;
 }
 
@@ -18,7 +19,10 @@ void EventNode::loadPhrase() {
 }
 
 int EventNode::hold (KeyPresses keysDown) {
+    if(phrase == nullptr) 
+        return 1;
     if(phrase->isComplete()) {
+        phrase->reset();
         UIRenderer::removePhrase(phrase);
         return 1;
     }

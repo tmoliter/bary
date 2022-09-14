@@ -8,8 +8,17 @@ void UIRenderer::addPhrase(Phrase *p) {
 };
 
 void UIRenderer::renderPhrases() {
-    for (auto p : u->phrases)
-        p->progDisplay(1);
+   vector<Phrase*>::iterator itr = u->phrases.begin();
+   while (itr != u->phrases.end()) {
+        Phrase* p = *itr;
+        if (p->isComplete() && p->autoDestroy) {
+            delete p;
+            u->phrases.erase(remove(u->phrases.begin(), u->phrases.end(), p), u->phrases.end());
+            continue;
+        }
+        p->progDisplay();
+        itr++;
+   }
 }
 
 void UIRenderer::removePhrase(Phrase *p) {

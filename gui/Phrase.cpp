@@ -6,14 +6,12 @@ inline constexpr int LETTER_WIDTH = 8;
 inline constexpr int LETTER_HEIGHT = 12;
 inline constexpr int LETTERS_PER_FONT_ROW = 24;
 
-Phrase::Phrase(Point p, int pixelWidth, int pixelHeight, int scale, ScrollType type, string t) : 
+Phrase::Phrase(Point p, int pixelWidth, int pixelHeight, int scale, ScrollType type, string t, int d, bool aD) : 
     position(p),
     phraseScale(scale), 
-    scrollType(type), 
-    progStart(-1),
-    advanceStart(-1),
-    fullyDisplayed(false),
-    complete(false) {
+    scrollType(type),
+    delay(d),
+    autoDestroy(aD) {
     box = SDL_Rect { position.x, position.y, pixelWidth, pixelHeight };
     if (!font) {
         SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
@@ -23,7 +21,10 @@ Phrase::Phrase(Point p, int pixelWidth, int pixelHeight, int scale, ScrollType t
     letterLength = (pixelWidth / scale) / 8;
     letterHeight = (pixelHeight / scale) / 12;
     text = t;
+    reset();
+}
 
+void Phrase::reset() {
     // Very happy case: all text fits on one line
     if (text.length() <= letterLength)
         lines.push(text);
@@ -46,6 +47,18 @@ Phrase::Phrase(Point p, int pixelWidth, int pixelHeight, int scale, ScrollType t
                     i - lineFirstCharIndex == letterLength
                 )) {
                 lastSpace = i;
+            }
+            // Manual new line with ` char
+            if (int(text[i]) == 96) {
+                linesRef->push(text.substr(lineFirstCharIndex, i - lineFirstCharIndex));
+                if (!bonusTime && linesRef->size() > letterHeight) {
+                    bonusTime = true;
+                    linesRef = &hiddenLines;
+                }
+                i++;
+                lastSpace = i;
+                lineFirstCharIndex = i;
+                continue;
             }
             // Ran out of room for line
             if (i > 0 && i - lineFirstCharIndex == letterLength) {
@@ -89,10 +102,14 @@ Phrase::Phrase(Point p, int pixelWidth, int pixelHeight, int scale, ScrollType t
         }
     }
     totalLines = lines.size() + hiddenLines.size();
+    progStart = -1;
+    advanceStart = -1;
+    fullyDisplayed = false;
+    complete = false;
 }
 
 void Phrase::advance() {
-    if(!fullyDisplayed)
+    if(!fullyDisplayed || advanceStart > 0)
         return;
     if (hiddenLines.size() < 1) {
         while(!lines.empty()) lines.pop();
@@ -107,7 +124,7 @@ bool Phrase::isComplete() {
 }
 
 /* TODO: This breaks if the pixelWidth value is above about 220 * scale. Need to fix */
-int Phrase::progDisplay(int delay) {
+int Phrase::progDisplay() {
     if(complete)
         return 0;
     SDL_SetRenderDrawColor(renderer, 100,100,255,255);
@@ -135,8 +152,11 @@ int Phrase::progDisplay(int delay) {
         else
             occlusion = 0;
         for (j = 0; j < line.size(); j++) {
-            if (charsToDisplay < 1)
+            if (charsToDisplay < 1){
+                if(advanceProgress >= LETTER_HEIGHT)
+                    advanceStart++;
                 return 1;
+            }
             renderLetter(i, j, line[j], occlusion, advanceProgress);
             charsToDisplay--;
             total++;

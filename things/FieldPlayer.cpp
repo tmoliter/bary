@@ -4,19 +4,23 @@
 
 using namespace std;
 
+FieldPlayer *FieldPlayer::player = nullptr;
+
 FieldPlayer::FieldPlayer(FieldPlayerData fpD) : Thing(fpD) {
+    currentDirection = Direction::down;
     sprite = new Sprite(position.x,position.y,name,fpD.spriteData);
     sprite->divideSheet(9, 4);
     walk = new Walk(position.x, position.y, sprite->layer, sprite->sourceRect);
 
     height = sprite->height;
     width = sprite->width;
-    name = "Zinnia";
-};
+    FieldPlayer::player = this;
+}
 
 FieldPlayer::~FieldPlayer() { 
     delete sprite;
     delete walk;
+    FieldPlayer::player = nullptr;
 };
 
 void FieldPlayer::meat(KeyPresses keysDown) {
@@ -34,7 +38,31 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     if (keysDown.right)
         dM.right = true;
 
-    walk->move(dM);
+    Direction newDirection = walk->move(dM);
+    currentDirection = newDirection == Direction::none ? currentDirection : newDirection;
+
+    if(keysDown.ok && gameState == GameState::FieldFree) {
+        int xCenter = position.x + (width / 2);
+        int yBottom = position.y + height;
+        Ray ray;
+        switch (currentDirection) {
+            case (Direction::up):
+                ray = Ray(xCenter, yBottom, xCenter, yBottom - 8);
+                break;
+            case (Direction::down):
+                ray = Ray(xCenter, yBottom, xCenter, yBottom + 8);
+                break;
+            case (Direction::left):
+                ray = Ray(xCenter, yBottom, xCenter - 8, yBottom);
+                break;
+            case (Direction::right):
+                ray = Ray(xCenter, yBottom, xCenter + 8, yBottom);
+                break;
+            default:
+                ray = Ray(xCenter, yBottom, xCenter, yBottom);
+        }
+        Interactable::checkForInteractables(ray, sprite->layer);
+    }
 
     /* DEBUG MODE CONTROLS */
     if (keysDown.debug_left && sprite->layer > 0)

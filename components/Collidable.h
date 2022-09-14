@@ -1,6 +1,7 @@
 #ifndef COLLIDABLE_H
 #define COLLIDABLE_H
 #include "Ray.h"
+#include "../things/Thing.h"
 #include <vector>
 #include <string>
 #include <fstream>
@@ -14,7 +15,7 @@ struct CollidableData {
 
 class Collidable {
     public:
-        Collidable(int &x, int &y, string &tN, CollidableData cd);
+        Collidable(Thing *parent, CollidableData cd);
         ~Collidable();
         bool active;
         int &x, &y, layer;

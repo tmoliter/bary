@@ -18,7 +18,7 @@ class Walk {
         bool checkCollision(Direction d);
         void animate(Direction d);
         void face(Direction d);
-        void move(DirectionMap dM);
+        Direction move(DirectionMap dM);
         void changeSpeed(bool decrease);
 };
 

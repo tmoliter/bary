@@ -10,18 +10,18 @@ void Walk::padSide(DirectionMap dM) {
     int xCenter = x + (sourceRect.w / 2);
     int yBottom = y + sourceRect.h;
     if (dM.up || dM.down){
-        ray = Ray(xCenter, yBottom, xCenter - 7, yBottom);
+        ray = Ray(xCenter, yBottom, xCenter - 5, yBottom);
         if(Obstruction::checkForObstructions(ray, layer)) 
             x += 1;
-        ray = Ray(xCenter, yBottom, xCenter + 7, yBottom);
+        ray = Ray(xCenter, yBottom, xCenter + 5, yBottom);
         if(Obstruction::checkForObstructions(ray, layer)) 
             x -= 1;
     }
     if(dM.left || dM.right) {
-        ray = Ray(xCenter, yBottom, xCenter, yBottom - 7);
+        ray = Ray(xCenter, yBottom, xCenter, yBottom - 5);
         if(Obstruction::checkForObstructions(ray, layer)) 
             y += 1;
-        ray = Ray(xCenter, yBottom, xCenter, yBottom + 7);
+        ray = Ray(xCenter, yBottom, xCenter, yBottom + 5);
         if(Obstruction::checkForObstructions(ray, layer)) 
             y -= 1;
     }
@@ -34,16 +34,16 @@ bool Walk::checkCollision(Direction d) {
     int yBottom = y + sourceRect.h;
     switch(d){
         case (Direction::up):
-            ray = Ray(xCenter, yBottom, xCenter, yBottom - 8);
+            ray = Ray(xCenter, yBottom, xCenter, yBottom - 6);
             break;
         case (Direction::down):
-            ray = Ray(xCenter, yBottom, xCenter, yBottom + 8);
+            ray = Ray(xCenter, yBottom, xCenter, yBottom + 6);
             break;
         case (Direction::left):
-            ray = Ray(xCenter, yBottom, xCenter - 8, yBottom);
+            ray = Ray(xCenter, yBottom, xCenter - 6, yBottom);
             break;
         case (Direction::right):
-            ray = Ray(xCenter, yBottom, xCenter + 8, yBottom);
+            ray = Ray(xCenter, yBottom, xCenter + 6, yBottom);
             break;
         default:
             return false;
@@ -98,16 +98,16 @@ void Walk::face(Direction d) {
     };
 }
 
-void Walk::move(DirectionMap dM){
+Direction Walk::move(DirectionMap dM){
     Direction d = directionFromMap(dM);
     face(d);
     if (speed == 0) {
         sourceRect.x = 0;
-        return;
+        return d;
     }
     if (speed < 3 && frameCount % (3 - speed) != 0) {
         animate(d);
-        return;
+        return d;
     }
 
     int appliedSpeed = speed < 4 ? 1 : speed;
@@ -137,6 +137,7 @@ void Walk::move(DirectionMap dM){
             x = x + appliedSpeed;
     }
     animate(directionFromMap(dM));
+    return d;
 };
 
 void Walk::changeSpeed(bool decrease) {

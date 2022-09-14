@@ -3,6 +3,7 @@
 
 #include "Thing.h"
 #include "../components/Walk.h"
+#include "../components/Sprite.h"
 #include "../components/Obstruction.h"
 #include <iostream>
 #include <vector>
@@ -22,6 +23,7 @@ class Building : public Thing {
         vector<Sprite*> sprites;
         vector<Obstruction*> obstructions;
 
+        static Building *find_building(string name);
         static int write_building_datum(ifstream &mapData, BuildingData &newTD);
 };
 
