@@ -18,5 +18,5 @@ void burgEvents::sailor_shack_test() {
     Ray *ray = new Ray(117,253,173,253);
     cd.rays.push_back(ray);
     cd.layer = 0;
-    Interactable *smi = new Interactable(ss, cd, event);
+    new Interactable(ss, cd, event);
 }
