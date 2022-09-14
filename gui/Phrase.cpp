@@ -51,7 +51,7 @@ void Phrase::reset() {
             // Manual new line with ` char
             if (int(text[i]) == 96) {
                 linesRef->push(text.substr(lineFirstCharIndex, i - lineFirstCharIndex));
-                if (!bonusTime && linesRef->size() >= letterHeight - 1) {
+                if (!bonusTime && linesRef->size() > letterHeight) {
                     bonusTime = true;
                     linesRef = &hiddenLines;
                 }
