@@ -18,23 +18,23 @@ enum ScrollType {
 // We should probably also have a SimplePhrase class
 class Phrase {
     public:
-        int letterLength, letterHeight, phraseScale;
+        int letterLength, letterHeight, phraseScale, delay;
         int progStart, advanceStart, totalLines;
         bool fullyDisplayed;
         bool complete;
+        bool autoDestroy;
         ScrollType scrollType;
         Point position;
         SDL_Rect box;
         string text;
-        queue<string> lines;
-        queue<string> hiddenLines;
+        queue<string> lines, hiddenLines;
 
-        Phrase(Point o, int pixelWidth, int pixelHeight, int pS, ScrollType type, string t);
+        Phrase(Point o, int pixelWidth, int pixelHeight, int pS, ScrollType type, string t, int d = 1, bool aD = false);
 
         void advance();
         bool isComplete();
 
-        int progDisplay(int delay);
+        int progDisplay();
         void reset();
 
 

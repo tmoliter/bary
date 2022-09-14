@@ -6,10 +6,12 @@ inline constexpr int LETTER_WIDTH = 8;
 inline constexpr int LETTER_HEIGHT = 12;
 inline constexpr int LETTERS_PER_FONT_ROW = 24;
 
-Phrase::Phrase(Point p, int pixelWidth, int pixelHeight, int scale, ScrollType type, string t) : 
+Phrase::Phrase(Point p, int pixelWidth, int pixelHeight, int scale, ScrollType type, string t, int d, bool aD) : 
     position(p),
     phraseScale(scale), 
-    scrollType(type) {
+    scrollType(type),
+    delay(d),
+    autoDestroy(aD) {
     box = SDL_Rect { position.x, position.y, pixelWidth, pixelHeight };
     if (!font) {
         SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
@@ -117,7 +119,7 @@ bool Phrase::isComplete() {
 }
 
 /* TODO: This breaks if the pixelWidth value is above about 220 * scale. Need to fix */
-int Phrase::progDisplay(int delay) {
+int Phrase::progDisplay() {
     if(complete)
         return 0;
     SDL_SetRenderDrawColor(renderer, 100,100,255,255);
