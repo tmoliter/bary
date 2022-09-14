@@ -4,6 +4,7 @@
 #include "Thing.h"
 #include "../Ray.h"
 #include "../components/Walk.h"
+#include "../components/Sprite.h"
 #include "../components/Obstruction.h"
 #include "../components/Interactable.h"
 #include <iostream>

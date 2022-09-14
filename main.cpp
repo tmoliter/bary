@@ -3,18 +3,12 @@
 #include <SDL2/SDL_image.h>
 #include <algorithm>
 #include <vector>
+#include "globals.h"
 #include "Camera.h"
 #include "FpsTimer.h"
 #include "MapParser.h"
-#include "globals.h"
-#include "gui/Phrase.h"
 #include "gui/UIRenderer.h"
-#include "Event.h"
-#include "EventNode.h"
-#include "Timer.h"
-#include "./things/FieldPlayer.h"
-#include "./things/Building.h"
-#include "./components/SimpleMessageI.h"
+#include "events/eventMap.h"
 
 using namespace std;
 
@@ -38,26 +32,17 @@ int main(int argc, char* args[]) {
 
     string fullMapPath(string(BASE_PATH) + "maps/map2.txt");
     parse_map(fullMapPath.c_str());
+    eventMap::initialize();
+
+    gameState = GameState::FieldFree;
+    eventMap::load_events("Burg");
 
     Input in;
     FpsTimer t;
     ProfileData p;
-
-    gameState = GameState::FieldFree;
-
-    /* UI TESTING */
-    Building* ss = Building::find_building("Sailor Shack");
-    CollidableData cd;
-    Ray *ray = new Ray(117,253,173,253);
-    cd.rays.push_back(ray);
-    cd.layer = 0;
-    SimpleMessageI *smi = new SimpleMessageI(ss,"AHHH!!`I'd better run the fuck away from here dude!", cd);
-
-
-    /* END UI TESTING */
     
     while (true){
-    t.startFrame();
+        t.startFrame();
         KeyPresses keysDown = in.getInput();  
         if (keysDown.quit)
             break;

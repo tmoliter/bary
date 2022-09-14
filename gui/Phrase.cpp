@@ -48,10 +48,15 @@ void Phrase::reset() {
                 )) {
                 lastSpace = i;
             }
-            // Manual new line with ` char (needs work for multiple)
+            // Manual new line with ` char
             if (int(text[i]) == 96) {
                 linesRef->push(text.substr(lineFirstCharIndex, i - lineFirstCharIndex));
+                if (!bonusTime && linesRef->size() >= letterHeight - 1) {
+                    bonusTime = true;
+                    linesRef = &hiddenLines;
+                }
                 i++;
+                lastSpace = i;
                 lineFirstCharIndex = i;
                 continue;
             }

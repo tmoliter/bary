@@ -1,7 +1,5 @@
 #include "./Camera.h"
-#include <iostream>
-#include "globals.h"
-#include "./things/GhostFocus.h"
+
 
 
 using namespace std;

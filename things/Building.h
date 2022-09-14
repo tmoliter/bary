@@ -3,6 +3,7 @@
 
 #include "Thing.h"
 #include "../components/Walk.h"
+#include "../components/Sprite.h"
 #include "../components/Obstruction.h"
 #include <iostream>
 #include <vector>

@@ -7,7 +7,6 @@
 #include <SDL2/SDL.h>
 #include <fstream>
 #include "../globals.h"
-#include "Sprite.h"
 #include <vector>
 #include "../Ray.h"
 #include <string>

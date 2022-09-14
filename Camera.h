@@ -7,8 +7,10 @@
 #include <fstream>
 #include <string>
 #include "globals.h"
-#include "./things/Thing.h"
 #include "utils.h"
+#include "./things/Thing.h"
+#include "./things/GhostFocus.h"
+#include "./components/Sprite.h"
 
 using namespace std;
 
