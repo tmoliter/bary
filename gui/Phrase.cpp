@@ -123,7 +123,6 @@ bool Phrase::isComplete() {
     return complete;
 }
 
-/* TODO: This breaks if the pixelWidth value is above about 220 * scale. Need to fix */
 int Phrase::progDisplay() {
     if(complete)
         return 0;
@@ -206,6 +205,7 @@ int Phrase::progDisplay() {
     )
         renderLetter(i - 1, j, 127, occlusion, advanceProgress);
 
+    // End case
     if((lines.size() < 1 && hiddenLines.size() < 1))
         complete = true;
     
