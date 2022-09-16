@@ -9,6 +9,12 @@ MapBuilder::MapBuilder() : Thing(Point(0,0)) {
     sD.path = "assets/debug/onePixel.png";
     sprite = new Sprite(position.x, position.y ,name, sD);
 
+    if (!Phrase::font) {
+        SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
+        Phrase::font = SDL_CreateTextureFromSurface(renderer, temp);
+        SDL_FreeSurface(temp);
+    }
+
     mapBuilder = this;
 }
 
@@ -30,4 +36,22 @@ void MapBuilder::meat(KeyPresses keysDown) {
         position.x--;
     if (keysDown.debug_right)
         position.x++;
+    if (keysDown.textInput) {
+        input.push_back(keysDown.textInput);
+        UIRenderer::setText(input);
+    }
+    if(keysDown.debug_return) {
+        if (gameState == GameState::FieldFree) {
+            input.clear();
+            UIRenderer::clearText();
+            gameState = GameState::TextInput;
+            return;
+        }
+        if (gameState == GameState::TextInput) {
+            input.clear();
+            UIRenderer::clearText();
+            gameState = GameState::FieldFree;
+            return;
+        }
+    }
 }

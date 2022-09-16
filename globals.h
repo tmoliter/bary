@@ -16,9 +16,14 @@ inline SDL_Renderer* renderer;
 
 inline constexpr bool fullscreen_mode = false;
 
+inline constexpr int LETTER_WIDTH = 8;
+inline constexpr int LETTER_HEIGHT = 12;
+inline constexpr int LETTERS_PER_FONT_ROW = 24;
+
 enum GameState {
     FieldFree,
-    FieldUI
+    FieldUI,
+    TextInput,
 };
 inline GameState gameState;
 

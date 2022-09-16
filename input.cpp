@@ -1,6 +1,6 @@
-#include <SDL2/SDL_image.h>
 #include "./Input.h"
-#include <iostream>
+
+using namespace std;
 
 KeyPresses& Input::getInput () {
     SDL_Event input;
@@ -22,9 +22,21 @@ KeyPresses& Input::getInput () {
     keysDown.debug_9 = false;
     keysDown.debug_0 = false;
     keysDown.debug_return = false;
+    keysDown.textInput = false;
     while (SDL_PollEvent(&input)){
-        if (input.type == SDL_QUIT){
+        if (input.type == SDL_QUIT)
             keysDown.quit = true;
+        if (gameState == GameState::TextInput) {
+            if(input.type == SDL_KEYDOWN && input.key.keysym.sym == SDLK_RETURN) {
+                keysDown.debug_return = true;
+                return keysDown;
+            }
+            if (input.type == SDL_TEXTINPUT) {
+                char c = input.text.text[0];
+                if(c >= ' ' || c <= '~')
+					keysDown.textInput = c;
+            }
+            return keysDown;
         }
         if (input.type == SDL_KEYDOWN){
             switch( input.key.keysym.sym ){

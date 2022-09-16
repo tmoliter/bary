@@ -58,7 +58,7 @@ int main(int argc, char* args[]) {
 
         Camera::c->render();
 
-        UIRenderer::renderPhrases();
+        UIRenderer::render();
 
         t.endFrameAndWait(frameCount);
         SDL_RenderPresent(renderer);

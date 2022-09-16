@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <map>
 #include <vector>
+#include <string>
 #include <SDL2/SDL_image.h>
 #include "globals.h"
 #include "./Phrase.h"
@@ -24,11 +25,18 @@ class UIRenderer {
         vector<Phrase*> phrases;
 
         static void addPhrase(Phrase *p);
+        static void setText(string s);
+
         static void renderPhrases();
+        static void renderCenterText();
+        static void render();
+
         static void removePhrase(Phrase *p);
+        static void clearText();
 
         static int currentPhraseId;
         static UIRenderer *u;
+        static inline string text;
 };
 
 #endif

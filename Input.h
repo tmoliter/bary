@@ -1,5 +1,8 @@
 #ifndef INPUT_H
 #define INPUT_H
+#include <SDL2/SDL_image.h>
+#include <iostream>
+#include "globals.h"
 
 struct KeyPresses {
     bool up = false;
@@ -12,6 +15,7 @@ struct KeyPresses {
     bool menu2 = false;
     bool start = false;
     bool quit = false;
+    char textInput = false;
     /* DEBUG */
     bool debug_up = false;
     bool debug_down = false;
