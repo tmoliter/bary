@@ -7,6 +7,7 @@
 #include "./things/Thing.h"
 #include "./things/FieldPlayer.h"
 #include "./things/Building.h"
+#include "./things/MapBuilder.h"
 #include "./Camera.h"
 
 using namespace std;

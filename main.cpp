@@ -30,12 +30,12 @@ int main(int argc, char* args[]) {
     }
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-    string fullMapPath(string(BASE_PATH) + "maps/map2.txt");
+    string fullMapPath(string(BASE_PATH) + "maps/blankMap.txt");
     parse_map(fullMapPath.c_str());
     eventMap::initialize();
 
     gameState = GameState::FieldFree;
-    eventMap::load_events("Burg");
+    // eventMap::load_events("Burg");
 
     Input in;
     FpsTimer t;

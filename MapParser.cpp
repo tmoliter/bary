@@ -5,6 +5,11 @@ using namespace std;
 Thing *parse_thing(ifstream &mapData) {
     char next;
     mapData.get(next);
+    if(next == 'X') {
+        cout << next << endl;
+        mapData.get();
+        return new MapBuilder();
+    }
     if(next == 'T') {
         cout << next << endl;
         ThingData newTD;
