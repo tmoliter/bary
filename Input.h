@@ -16,7 +16,10 @@ struct KeyPresses {
     bool start = false;
     bool quit = false;
     char textInput = false;
+    bool del = false;
     /* DEBUG */
+    bool debug_plus = false;
+    bool debug_minus = false;
     bool debug_up = false;
     bool debug_down = false;
     bool debug_left = false;

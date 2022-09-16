@@ -1,6 +1,7 @@
 #ifndef MAP_BUILDER_H
 #define MAP_BUILDER_H
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <string>
 #include <SDL2/SDL.h>
@@ -16,8 +17,11 @@ class MapBuilder : public Thing {
     public:
         MapBuilder();
 
+        int editSpeed;
         string input;
         Sprite *sprite;
+
+        void setSprite();
 
         void meat(KeyPresses keysDown);
 

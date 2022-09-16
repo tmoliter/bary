@@ -7,6 +7,12 @@ KeyPresses& Input::getInput () {
     keysDown.cancel = false;
     keysDown.start = false;
     keysDown.ok = false;
+    
+    keysDown.textInput = false;
+    keysDown.del = false;
+
+    keysDown.debug_plus = false;
+    keysDown.debug_minus = false;
     keysDown.debug_up = false;
     keysDown.debug_down = false;
     keysDown.debug_left = false;
@@ -22,16 +28,18 @@ KeyPresses& Input::getInput () {
     keysDown.debug_9 = false;
     keysDown.debug_0 = false;
     keysDown.debug_return = false;
-    keysDown.textInput = false;
     while (SDL_PollEvent(&input)){
         if (input.type == SDL_QUIT)
             keysDown.quit = true;
         if (gameState == GameState::TextInput) {
-            if(input.type == SDL_KEYDOWN && input.key.keysym.sym == SDLK_RETURN) {
-                keysDown.debug_return = true;
-                return keysDown;
+            if(input.type == SDL_KEYDOWN) {
+                SDL_Keycode c = input.key.keysym.sym;
+                if (int(c) == SDLK_RETURN)
+                    keysDown.debug_return = true;
+                if (int(c) == SDLK_BACKSPACE)
+                    keysDown.del = true;
             }
-            if (input.type == SDL_TEXTINPUT) {
+            else if (input.type == SDL_TEXTINPUT) {
                 char c = input.text.text[0];
                 if(c >= ' ' || c <= '~')
 					keysDown.textInput = c;
@@ -70,6 +78,14 @@ KeyPresses& Input::getInput () {
                     break;
                     
                 /* DEBUG */
+                case SDLK_EQUALS:
+                    if (input.key.repeat == 0)
+                        keysDown.debug_plus = true;
+                    break;
+                case SDLK_MINUS:
+                    if (input.key.repeat == 0)
+                        keysDown.debug_minus = true;
+                    break;
                 case SDLK_UP:
                     if (input.key.repeat == 0)
                         keysDown.debug_up = true;
