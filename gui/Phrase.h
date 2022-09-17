@@ -15,7 +15,6 @@ enum ScrollType {
     allButLast,
 };
 
-// We should probably also have a SimplePhrase class
 class Phrase {
     public:
         int letterLength, letterHeight, phraseScale, delay;

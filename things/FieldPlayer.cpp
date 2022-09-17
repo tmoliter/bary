@@ -10,10 +10,10 @@ FieldPlayer::FieldPlayer(FieldPlayerData fpD) : Thing(fpD) {
     currentDirection = Direction::down;
     sprite = new Sprite(position.x,position.y,name,fpD.spriteData);
     sprite->divideSheet(9, 4);
-    walk = new Walk(position.x, position.y, sprite->layer, sprite->sourceRect);
+    walk = new Walk(position.x, position.y, sprite->d.layer, sprite);
 
-    height = sprite->height;
-    width = sprite->width;
+    height = sprite->d.height;
+    width = sprite->d.width;
     FieldPlayer::player = this;
 }
 
@@ -61,14 +61,14 @@ void FieldPlayer::meat(KeyPresses keysDown) {
             default:
                 ray = Ray(xCenter, yBottom, xCenter, yBottom);
         }
-        Interactable::checkForInteractables(ray, sprite->layer);
+        Interactable::checkForInteractables(ray, sprite->d.layer);
     }
 
     /* DEBUG MODE CONTROLS */
-    if (keysDown.debug_left && sprite->layer > 0)
-        sprite->layer--;
+    if (keysDown.debug_left && sprite->d.layer > 0)
+        sprite->d.layer--;
     if (keysDown.debug_right)
-        sprite->layer++;
+        sprite->d.layer++;
     if (keysDown.debug_up)
         walk->changeSpeed(false);
     if (keysDown.debug_down)

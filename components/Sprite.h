@@ -26,9 +26,9 @@ class Sprite {
         Sprite(int &x, int &y, string &tN, SpriteData sd);
         ~Sprite();
         bool active;
-        int id, &x, &y, layer, renderOffset, yOffset, xOffset, width, height;
+        int id, &x, &y;
+        SpriteData d;
         string &thingName;
-        SDL_Rect sourceRect, renderRect;
         SDL_Texture* texture;
 
         void divideSheet(int columns, int rows);

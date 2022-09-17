@@ -69,13 +69,6 @@ void Camera::setOverlay() {
 }
 
 void Camera::setWarpLevel() {
-    /* THIS IS A COOL 3D ANGLE SHIFT TO PLAY WITH LATER */
-    // if (frameCount < 300)
-    // {
-    //     sourceRect.h += 1;
-    //     if(frameCount % 5 == 0)
-    //         sourceRect.w -= 1;
-    // }
     if(warpStatus == FxStatus::unapplied || warpStatus == FxStatus::applied)
         return;
     int t = (frameCount - warpStart) * warpMultiplier;

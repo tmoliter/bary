@@ -30,7 +30,7 @@ int main(int argc, char* args[]) {
     }
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-    string fullMapPath(string(BASE_PATH) + "maps/blankMap.txt");
+    string fullMapPath(string(BASE_PATH) + "maps/map2.txt");
     parse_map(fullMapPath.c_str());
     eventMap::initialize();
 

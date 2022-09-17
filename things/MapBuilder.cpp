@@ -42,30 +42,30 @@ void MapBuilder::meat(KeyPresses keysDown) {
     if(keysDown.debug_minus && editSpeed > 1)
         editSpeed--;
 
-    if (keysDown.debug_1)
-        sprite->sourceRect.x -= editSpeed;
-    if (keysDown.debug_2)
-        sprite->sourceRect.x += editSpeed;
-    if (keysDown.debug_3)
-        sprite->sourceRect.y -= editSpeed;
-    if (keysDown.debug_4)
-        sprite->sourceRect.y += editSpeed;
-    if (keysDown.debug_5){
-        sprite->sourceRect.w -= editSpeed;
-        sprite->renderRect.w -= editSpeed;
-    }
-    if (keysDown.debug_6){
-        sprite->sourceRect.w += editSpeed;
-        sprite->renderRect.w += editSpeed;
-    }
-    if (keysDown.debug_7){
-        sprite->sourceRect.h -= editSpeed;
-        sprite->renderRect.h -= editSpeed;
-    }
-    if (keysDown.debug_8){
-        sprite->sourceRect.h += editSpeed;
-        sprite->renderRect.h += editSpeed;
-    }
+    // if (keysDown.debug_1)
+    //     sprite->sourceRect.x -= editSpeed;
+    // if (keysDown.debug_2)
+    //     sprite->sourceRect.x += editSpeed;
+    // if (keysDown.debug_3)
+    //     sprite->sourceRect.y -= editSpeed;
+    // if (keysDown.debug_4)
+    //     sprite->sourceRect.y += editSpeed;
+    // if (keysDown.debug_5){
+    //     sprite->sourceRect.w -= editSpeed;
+    //     sprite->renderRect.w -= editSpeed;
+    // }
+    // if (keysDown.debug_6){
+    //     sprite->sourceRect.w += editSpeed;
+    //     sprite->renderRect.w += editSpeed;
+    // }
+    // if (keysDown.debug_7){
+    //     sprite->sourceRect.h -= editSpeed;
+    //     sprite->renderRect.h -= editSpeed;
+    // }
+    // if (keysDown.debug_8){
+    //     sprite->sourceRect.h += editSpeed;
+    //     sprite->renderRect.h += editSpeed;
+    // }
 
 
     if (keysDown.textInput) {

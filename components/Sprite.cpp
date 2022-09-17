@@ -8,10 +8,7 @@ Sprite::Sprite (int &x, int &y, string &tN, SpriteData sd) :
 x(x), 
 y(y), 
 thingName(tN), 
-layer(sd.layer),
-renderOffset(sd.renderOffset),
-xOffset(sd.xOffset),
-yOffset(sd.yOffset),
+d(sd),
 active(false) {
     id = currentID++;
     sprites[id] = this;
@@ -21,18 +18,11 @@ active(false) {
         SDL_FreeSurface(temp);
     }
     texture = textures[sd.path];
-    SDL_QueryTexture(texture, NULL, NULL, &width, &height);
+    SDL_QueryTexture(texture, NULL, NULL, &d.width, &d.height);
     if(sd.width > 0)
-        width = sd.width;
+        d.width = sd.width;
     if(sd.height > 0)
-        height = sd.height;
-    renderRect = {
-        -1000,
-        -1000,
-        width * SCALE, 
-        height * SCALE 
-    };
-    sourceRect = { sd.sourceX, sd.sourceY, width, height };
+        d.height = sd.height;
     active = true;
 }
 
@@ -42,18 +32,17 @@ Sprite::~Sprite() {
 }
 
 void Sprite::divideSheet(int columns, int rows) { 
-    width = width / columns; 
-    height = height / rows; 
-    renderRect.w = width * SCALE;
-    renderRect.h = height * SCALE;
-    sourceRect = { 0, 0, width, height };
+    d.width = d.width / columns; 
+    d.height = d.height / rows; 
 }
 
 void Sprite::render(SDL_Renderer *renderer, Point camPosition) {
     if (!active)
         return;
-    renderRect.x = ((x - camPosition.x) + xOffset) * SCALE;
-    renderRect.y = ((y - camPosition.y) + yOffset) * SCALE;
+    int renderX = ((x - camPosition.x) + d.xOffset) * SCALE;
+    int renderY = ((y - camPosition.y) + d.yOffset) * SCALE;
+    SDL_Rect renderRect = { renderX, renderY, d.width * SCALE, d.height * SCALE };
+    SDL_Rect sourceRect = { d.sourceX, d.sourceY, d.width, d.height };
     SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
 };
 
@@ -62,12 +51,12 @@ void Sprite::render(SDL_Renderer *renderer, Point camPosition) {
 int Sprite::currentID = 0;
 
 bool _comparePosition (Sprite* a, Sprite* b) {
-    if (a->layer == b->layer)
+    if (a->d.layer == b->d.layer)
         return (
-            a->y + a->height + a->yOffset - a->renderOffset < 
-            b->y + b->height + b->yOffset - b->renderOffset
+            a->y + a->d.height + a->d.yOffset - a->d.renderOffset < 
+            b->y + b->d.height + b->d.yOffset - b->d.renderOffset
         );
-    return a->layer < b->layer;
+    return a->d.layer < b->d.layer;
 }
 void Sprite::renderSprites(SDL_Renderer *renderer, Point camPosition) {
     vector<Sprite*> spriteList;

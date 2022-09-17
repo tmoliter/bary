@@ -31,12 +31,12 @@ class Thing {
         Thing(Point p);
         virtual ~Thing();
 
+        virtual void calculateHeight() {};
+
         virtual void destroy();
         Point getCenter();
         
         virtual void meat() {};
-        /* insane stress test */
-        // virtual void meat() { int tmp = rand() % 20; y = tmp % 2 == 0 ? y + tmp : y -tmp; };
 
         virtual void meat(KeyPresses keysDown) {};
 
