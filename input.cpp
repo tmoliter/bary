@@ -27,7 +27,6 @@ KeyPresses& Input::getInput () {
     keysDown.debug_8 = false;
     keysDown.debug_9 = false;
     keysDown.debug_0 = false;
-    keysDown.debug_return = false;
     while (SDL_PollEvent(&input)){
         if (input.type == SDL_QUIT)
             keysDown.quit = true;
@@ -35,7 +34,7 @@ KeyPresses& Input::getInput () {
             if(input.type == SDL_KEYDOWN) {
                 SDL_Keycode c = input.key.keysym.sym;
                 if (int(c) == SDLK_RETURN)
-                    keysDown.debug_return = true;
+                    keysDown.start = true;
                 if (int(c) == SDLK_BACKSPACE)
                     keysDown.del = true;
             }
@@ -144,7 +143,7 @@ KeyPresses& Input::getInput () {
                     break;
                 case SDLK_RETURN:
                     if (input.key.repeat == 0)
-                        keysDown.debug_return = true;
+                        keysDown.start = true;
                     break;
                 /* END DEBUG */
             }

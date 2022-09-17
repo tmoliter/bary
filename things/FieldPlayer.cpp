@@ -74,21 +74,17 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     if (keysDown.debug_down)
         walk->changeSpeed(true);
 
-    if (keysDown.debug_return) {
+    if (keysDown.start) {
         if (Camera::getFocusName() == "Zinnia")
             Camera::panTo("Sailor Shack");
         else
             Camera::panTo("Zinnia");
     }
 
-    if (keysDown.debug_0)
+    if (keysDown.menu1)
         Camera::fadeIn(3);
-    if (keysDown.debug_9)
+    if (keysDown.menu2)
         Camera::fadeOut(3);
-    if (keysDown.debug_8)
-        Camera::warpIn(3);
-    if (keysDown.debug_7)
-        Camera::warpOut(3);
     /* END DEBUG MODE CONTROLS */        
 };
 

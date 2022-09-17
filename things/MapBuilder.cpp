@@ -78,7 +78,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
         UIRenderer::setText(input);
         return;
     }
-    if(keysDown.debug_return) {
+    if(keysDown.start) {
         if (gameState == GameState::FieldFree) {
             input.clear();
             UIRenderer::clearText();

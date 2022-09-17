@@ -34,7 +34,6 @@ struct KeyPresses {
     bool debug_8 = false;
     bool debug_9 = false;
     bool debug_0 = false;
-    bool debug_return = false;
     /* END DEBUG */
 };
 
