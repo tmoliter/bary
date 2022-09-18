@@ -50,13 +50,11 @@ int Collidable::parse_collidable_datum(ifstream &mapData, CollidableData &newCD)
     char current;
     while(mapData.get(current)) {
         if (current == ',') {
-            cout << value << endl;
             newCD.layer = std::stoi(value);
             value.clear();
             if (!(mapData.peek() == 'R'))
                 break;
             _parse_rays(mapData, newCD);
-            cout << endl;
             return 1;
         }
         value.push_back(current);
