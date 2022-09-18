@@ -35,7 +35,7 @@ int main(int argc, char* args[]) {
     eventMap::initialize();
 
     gameState = GameState::FieldFree;
-    // eventMap::load_events("Burg");
+    eventMap::load_events("Burg");
 
     Input in;
     FpsTimer t;

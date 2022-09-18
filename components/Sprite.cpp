@@ -88,59 +88,44 @@ int Sprite::write_sprite_datum(ifstream &mapData, SpriteData &newSD){
                 case (0):
                     cout << value << endl;
                     newSD.layer = std::stoi(value);
-                    value.clear();
-                    index++;
                     break;
                 case (1):
                     cout << value << endl;
                     newSD.renderOffset = std::stoi(value);
-                    value.clear();
-                    index++;
                     break;
                 case (2):
                     cout << value << endl;
                     newSD.width = std::stoi(value);
-                    value.clear();
-                    index++;
                     break;
                 case (3):
                     cout << value << endl;
                     newSD.height = std::stoi(value);
-                    value.clear();
-                    index++;
                     break;
                 case (4):
                     cout << value << endl;
                     newSD.sourceX = std::stoi(value);
-                    value.clear();
-                    index++;
                     break;
                 case (5):
                     cout << value << endl;
                     newSD.sourceY = std::stoi(value);
-                    value.clear();
-                    index++;
                     break;
                 case (6):
                     cout << value << endl;
                     newSD.xOffset = std::stoi(value);
-                    value.clear();
-                    index++;
                     break;
                 case (7):
                     cout << value << endl;
                     newSD.yOffset = std::stoi(value);
-                    value.clear();
-                    index++;
                     break;
                 case (8):
                     cout << value << endl << endl;
                     newSD.path = value;
-                    value.clear();
                     return 1;
                 default:
                     return 0;
             }
+            value.clear();
+            index++;
             continue;
         }
         value.push_back(current);

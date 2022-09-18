@@ -51,26 +51,23 @@ int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
         if (current == ',') {
             switch(index) {
                 case (0):
-                    index++;
                     break;
                 case (1):
-                    index++;
                     newTD.name = value;
                     value.clear();
                     break;
                 case (2):
-                    index++;
                     newTD.x = std::stoi(value);
                     value.clear();
                     break;
                 case (3):
-                    index++;
                     newTD.y = std::stoi(value);
                     value.clear();
                     return 1;
                 default:
                     return 0;
             }
+            index++;
             continue;
         }
         value.push_back(current);

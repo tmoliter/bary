@@ -10,20 +10,14 @@ int Ray::write_ray_datum(ifstream &mapData, Ray &newRay) {
                 case (0):
                     cout << value << endl;
                     newRay.a.x = std::stoi(value);
-                    value.clear();
-                    index++;
                     break;
                 case (1):
                     cout << value << endl;
                     newRay.a.y = std::stoi(value);
-                    value.clear();
-                    index++;
                     break;
                 case (2):
                     cout << value << endl;
                     newRay.b.x = std::stoi(value);
-                    value.clear();
-                    index++;
                     break;
                 case (3):
                     cout << value << endl;
@@ -33,6 +27,8 @@ int Ray::write_ray_datum(ifstream &mapData, Ray &newRay) {
                 default:
                     return 0;
             }
+            value.clear();
+            index++;
             continue;
         }
         value.push_back(current);
