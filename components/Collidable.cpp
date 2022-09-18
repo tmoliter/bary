@@ -41,7 +41,6 @@ void _write_rays (ifstream &mapData, CollidableData &newCD) {
             Ray::write_ray_datum(mapData,*newRay);
             newCD.rays.push_back(newRay);
             next = mapData.peek();
-            cout << endl;
     }
 }
 

@@ -44,19 +44,8 @@ Point Thing::getCenter() {
 // STATIC
 
 int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
-    int index = 0;
-    string value = "";
-    char current;
     mapData.get();
-    while(mapData.get(current)) {
-        if (current == ',') {
-                cout << value << endl;
-                newTD.name = value;
-                value.clear();
-                break;
-        }
-        value.push_back(current);
-    }
+    utils::parse_strings(vector <string*> { &newTD.name }, mapData);
     utils::parse_ints(vector <int*> { &newTD.x, &newTD.y }, mapData);
     return 1;
 }

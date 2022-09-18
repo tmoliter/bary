@@ -67,17 +67,7 @@ void Sprite::renderSprites(SDL_Renderer *renderer, Point camPosition) {
     }
 }
 int Sprite::write_sprite_datum(ifstream &mapData, SpriteData &newSD){
-    int index = 0;
-    string value = "";
-    char current;
     utils::parse_ints(vector<int*> { &newSD.layer, &newSD.renderOffset, &newSD.width, &newSD.height, &newSD.sourceX, &newSD.sourceY, &newSD.xOffset, &newSD.yOffset }, mapData);
-    while(mapData.get(current)) {
-            if (current == ',') {
-            cout << value << endl << endl;
-            newSD.path = value;
-            return 1;
-        }
-        value.push_back(current);
-    }
+    utils::parse_strings(vector<string*> { &newSD.path }, mapData);
     return 1;
 }

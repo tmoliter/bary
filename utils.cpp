@@ -24,3 +24,21 @@ void utils::parse_ints(vector<int*> ints, ifstream &mapData) {
         value.clear();
     }
 }
+
+void utils::parse_strings(vector<string*> strings, ifstream &mapData) {
+    string value = "";
+    char current;
+    for (auto s : strings) {
+        mapData.get(current);
+        if (current == '|')
+            continue;
+        if (current == '*') 
+            break;
+        while (current != ',' && current != '>') {
+            value.push_back(current);
+            mapData.get(current);
+        }
+        *s = value;
+        value.clear();
+    }
+}
