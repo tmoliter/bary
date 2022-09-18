@@ -18,10 +18,13 @@ struct BuildingData : ThingData {
 class Building : public Thing {
     public:
         Building(BuildingData fpD);
+        Building(Point p);
         ~Building();
 
         vector<Sprite*> sprites;
         vector<Obstruction*> obstructions;
+
+        void AddSprite(Sprite* sprite);
 
         static Building *find_building(string name);
         static int parse_building_datum(ifstream &mapData, BuildingData &newTD);

@@ -19,6 +19,8 @@ Building::Building(BuildingData bD) : Thing(bD) {
     }
 };
 
+Building::Building(Point p) : Thing(p) {};
+
 Building::~Building() {
     for (auto s : sprites) {
         delete s;
@@ -27,6 +29,18 @@ Building::~Building() {
         delete o;
     }
 };
+
+void Building::AddSprite(Sprite* sprite) {
+    int tmpWidth = sprite->d.width + sprite->d.xOffset;
+    if (tmpWidth > sprite->d.width)
+        width = tmpWidth;
+    int tmpHeight = sprite->d.height + sprite->d.yOffset;
+    if (tmpHeight > sprite->d.height)
+        height = tmpHeight;
+    sprites.push_back(sprite);
+}
+
+// STATIC
 
 int Building::parse_building_datum(ifstream &mapData, BuildingData &newTD) {
     Thing::parse_thing_datum(mapData, newTD);
