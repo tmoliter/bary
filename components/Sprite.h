@@ -42,7 +42,7 @@ class Sprite {
         inline static map<string, SDL_Texture*> textures;
         static void renderSprites(SDL_Renderer *renderer, Point camPosition);
 
-        static int write_sprite_datum(ifstream &mapData, SpriteData &newSD);
+        static int parse_sprite_datum(ifstream &mapData, SpriteData &newSD);
 };
 
 #endif

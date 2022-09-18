@@ -50,7 +50,7 @@ struct Ray {
     Ray (int aX,int aY,int bX,int bY) : a(aX, aY), b(bX, bY) {};
     Ray () : a(0,0), b(0,0) {};
 
-   static int write_ray_datum(ifstream &mapData, Ray &newRay);
+   static int parse_ray_datum(ifstream &mapData, Ray &newRay);
 };
 
 bool isCounterClockwise (Point A, Point B, Point C);

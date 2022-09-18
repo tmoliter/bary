@@ -1,6 +1,6 @@
 #include "Ray.h"
 
-int Ray::write_ray_datum(ifstream &mapData, Ray &newRay) {
+int Ray::parse_ray_datum(ifstream &mapData, Ray &newRay) {
     utils::parse_ints(vector<int*> { &newRay.a.x, &newRay.a.y, &newRay.b.x, &newRay.b.y }, mapData);
     return 1;
 }

@@ -28,15 +28,15 @@ Building::~Building() {
     }
 };
 
-int Building::write_building_datum(ifstream &mapData, BuildingData &newTD) {
-    Thing::write_thing_datum(mapData, newTD);
+int Building::parse_building_datum(ifstream &mapData, BuildingData &newTD) {
+    Thing::parse_thing_datum(mapData, newTD);
     char next = mapData.peek();
     while(next != '\n' && next != EOF) {
         if(next == 'S'){
             mapData.get();
             mapData.get();
             SpriteData newSD;
-            Sprite::write_sprite_datum(mapData,newSD);
+            Sprite::parse_sprite_datum(mapData,newSD);
             newTD.spriteDataVector.push_back(newSD);
             next = mapData.peek();
             continue;
@@ -45,7 +45,7 @@ int Building::write_building_datum(ifstream &mapData, BuildingData &newTD) {
             mapData.get();
             mapData.get();
             CollidableData newCD;
-            Collidable::write_collidable_datum(mapData,newCD);
+            Collidable::parse_collidable_datum(mapData,newCD);
             newTD.obstructionData.push_back(newCD);
             next = mapData.peek();
             continue;

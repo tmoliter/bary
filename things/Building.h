@@ -24,7 +24,7 @@ class Building : public Thing {
         vector<Obstruction*> obstructions;
 
         static Building *find_building(string name);
-        static int write_building_datum(ifstream &mapData, BuildingData &newTD);
+        static int parse_building_datum(ifstream &mapData, BuildingData &newTD);
 };
 
 #endif

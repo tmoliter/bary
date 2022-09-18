@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void Thing::_save_name_and_write_to_map(string n) {
+void Thing::_save_name_and_save_in_map(string n) {
     name = n;
     int i = 2;
     while(Thing::things.count(name)) {
@@ -19,14 +19,14 @@ Thing::Thing(ThingData td) :
     position(td.x, td.y),
     height(0), 
     width(0) {
-        _save_name_and_write_to_map(td.name);
+        _save_name_and_save_in_map(td.name);
     }
 
 Thing::Thing(Point p) : 
     position(p.x,p.y),
     height(0), 
     width(0) {
-        _save_name_and_write_to_map("AnonymousThing");
+        _save_name_and_save_in_map("AnonymousThing");
 }
 
 Thing::~Thing() {
@@ -43,7 +43,7 @@ Point Thing::getCenter() {
 
 // STATIC
 
-int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
+int Thing::parse_thing_datum(ifstream &mapData, ThingData &newTD) {
     mapData.get();
     utils::parse_strings(vector <string*> { &newTD.name }, mapData);
     utils::parse_ints(vector <int*> { &newTD.x, &newTD.y }, mapData);

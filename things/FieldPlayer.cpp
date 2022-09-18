@@ -88,10 +88,10 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     /* END DEBUG MODE CONTROLS */        
 };
 
-int FieldPlayer::write_player_datum(ifstream &mapData, FieldPlayerData &newTD) {
-    Thing::write_thing_datum(mapData, newTD);
+int FieldPlayer::parse_player_datum(ifstream &mapData, FieldPlayerData &newTD) {
+    Thing::parse_thing_datum(mapData, newTD);
     SpriteData newSD;
-    Sprite::write_sprite_datum(mapData,newSD);
+    Sprite::parse_sprite_datum(mapData,newSD);
     newTD.spriteData = newSD;
     return 1;
 }
