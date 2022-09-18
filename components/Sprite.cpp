@@ -1,5 +1,3 @@
-#include <vector>
-#include <iostream>
 #include "Sprite.h"
 
 using namespace std;
@@ -72,61 +70,12 @@ int Sprite::write_sprite_datum(ifstream &mapData, SpriteData &newSD){
     int index = 0;
     string value = "";
     char current;
+    utils::parse_ints(vector<int*> { &newSD.layer, &newSD.renderOffset, &newSD.width, &newSD.height, &newSD.sourceX, &newSD.sourceY, &newSD.xOffset, &newSD.yOffset }, mapData);
     while(mapData.get(current)) {
-        while (current == '|') {
-            cout << "skipping " << index << endl;
-            index++;
-            mapData.get(current);
-        }
-        if (current == '*') {
-            cout << "skipping remainder" << endl;
-            index = 8;
-            mapData.get(current);
-        }
-        if (current == ',') {
-            switch(index) {
-                case (0):
-                    cout << value << endl;
-                    newSD.layer = std::stoi(value);
-                    break;
-                case (1):
-                    cout << value << endl;
-                    newSD.renderOffset = std::stoi(value);
-                    break;
-                case (2):
-                    cout << value << endl;
-                    newSD.width = std::stoi(value);
-                    break;
-                case (3):
-                    cout << value << endl;
-                    newSD.height = std::stoi(value);
-                    break;
-                case (4):
-                    cout << value << endl;
-                    newSD.sourceX = std::stoi(value);
-                    break;
-                case (5):
-                    cout << value << endl;
-                    newSD.sourceY = std::stoi(value);
-                    break;
-                case (6):
-                    cout << value << endl;
-                    newSD.xOffset = std::stoi(value);
-                    break;
-                case (7):
-                    cout << value << endl;
-                    newSD.yOffset = std::stoi(value);
-                    break;
-                case (8):
-                    cout << value << endl << endl;
-                    newSD.path = value;
-                    return 1;
-                default:
-                    return 0;
-            }
-            value.clear();
-            index++;
-            continue;
+            if (current == ',') {
+            cout << value << endl << endl;
+            newSD.path = value;
+            return 1;
         }
         value.push_back(current);
     }

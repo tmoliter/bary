@@ -47,31 +47,17 @@ int Thing::write_thing_datum(ifstream &mapData, ThingData &newTD) {
     int index = 0;
     string value = "";
     char current;
+    mapData.get();
     while(mapData.get(current)) {
         if (current == ',') {
-            switch(index) {
-                case (0):
-                    break;
-                case (1):
-                    newTD.name = value;
-                    value.clear();
-                    break;
-                case (2):
-                    newTD.x = std::stoi(value);
-                    value.clear();
-                    break;
-                case (3):
-                    newTD.y = std::stoi(value);
-                    value.clear();
-                    return 1;
-                default:
-                    return 0;
-            }
-            index++;
-            continue;
+                cout << value << endl;
+                newTD.name = value;
+                value.clear();
+                break;
         }
         value.push_back(current);
     }
+    utils::parse_ints(vector <int*> { &newTD.x, &newTD.y }, mapData);
     return 1;
 }
 

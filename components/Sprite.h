@@ -2,10 +2,13 @@
 #define SPRITE_H
 #include <map>
 #include <string>
+#include <vector>
+#include <iostream>
 #include <../include/SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "globals.h"
 #include "Ray.h"
+#include "utils.h"
 
 using namespace std;
 
