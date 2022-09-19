@@ -1,10 +1,10 @@
-#include "Building.h"
+#include "RealThing.h"
 #include <../include/SDL2/SDL_image.h>
 #include <iostream>
 
 using namespace std;
 
-Building::Building(BuildingData bD) : Thing(bD) {
+RealThing::RealThing(RealThingData bD) : Thing(bD) {
     for (auto sd : bD.spriteDataVector) {
         int tmpWidth = sd.width + sd.xOffset;
         if (tmpWidth > width)
@@ -14,35 +14,41 @@ Building::Building(BuildingData bD) : Thing(bD) {
             height = tmpHeight;
         sprites.push_back(new Sprite(position.x,position.y,name,sd));
     }
-    for (auto cd : bD.obstructionData) {
+    for (auto cd : bD.obstructionData)
         obstructions.push_back(new Obstruction(this,cd));
-    }
 };
 
-Building::Building(Point p) : Thing(p) {};
+RealThing::RealThing(Point p) : Thing(p) {};
 
-Building::~Building() {
-    for (auto s : sprites) {
+RealThing::~RealThing() {
+    for (auto s : sprites)
         delete s;
-    }
-    for (auto o : obstructions) {
+    for (auto o : obstructions)
         delete o;
-    }
 };
 
-void Building::AddSprite(Sprite* sprite) {
+void RealThing::AddSprite(Sprite* sprite) {
+    sprite->x = position.x;
+    sprite->y = position.y;
+    sprite->thingName = name;
     int tmpWidth = sprite->d.width + sprite->d.xOffset;
+    int tmpHeight = sprite->d.height + sprite->d.yOffset;
     if (tmpWidth > sprite->d.width)
         width = tmpWidth;
-    int tmpHeight = sprite->d.height + sprite->d.yOffset;
     if (tmpHeight > sprite->d.height)
         height = tmpHeight;
     sprites.push_back(sprite);
 }
 
+Sprite* RealThing::AddRawSprite(string path) {
+    SpriteData sd;
+    sd.path = path.c_str();
+    return new Sprite(position.x, position.y, name, sd);
+}
+
 // STATIC
 
-int Building::parse_building_datum(ifstream &mapData, BuildingData &newTD) {
+int RealThing::parse_building_datum(ifstream &mapData, RealThingData &newTD) {
     Thing::parse_thing_datum(mapData, newTD);
     char next = mapData.peek();
     while(next != '\n' && next != EOF) {
@@ -70,6 +76,6 @@ int Building::parse_building_datum(ifstream &mapData, BuildingData &newTD) {
     return 1;
 }
 
-Building* Building::find_building (string name) {
-    return dynamic_cast<Building*>(Thing::things[name]);
+RealThing* RealThing::find_building (string name) {
+    return dynamic_cast<RealThing*>(Thing::things[name]);
 }

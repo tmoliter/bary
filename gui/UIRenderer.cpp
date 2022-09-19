@@ -39,7 +39,7 @@ void UIRenderer::renderCenterText() {
         SDL_Rect sourceRect = { fontX, fontY, LETTER_WIDTH, LETTER_HEIGHT};
 
         int xPosition = (SCREEN_WIDTH / 2) + (i * LETTER_WIDTH);
-        int yPosition = (SCREEN_HEIGHT / 2);
+        int yPosition = (SCREEN_HEIGHT / 2) - 64;
         SDL_Rect renderRect = { xPosition, yPosition, LETTER_WIDTH, LETTER_HEIGHT };
 
         SDL_RenderCopy(renderer, Phrase::font, &sourceRect, &renderRect);

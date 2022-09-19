@@ -37,7 +37,7 @@ class Sprite {
         void divideSheet(int columns, int rows);
         virtual void render(SDL_Renderer *renderer, Point camPosition);
 
-        void getInts(vector<int*> &ints);
+        void getInts(vector<int*> &ints, vector<string> &names);
 
         static int currentID;
         inline static map<int, Sprite*> sprites;

@@ -13,7 +13,7 @@ void burgEvents::sailor_shack_test() {
     event->addNode(node);
     event->addNode(*node2pointer);
 
-    Building* ss = Building::find_building("Sailor Shack");
+    RealThing* ss = RealThing::find_building("Sailor Shack");
     CollidableData cd;
     Ray *ray = new Ray(117,253,173,253);
     cd.rays.push_back(ray);

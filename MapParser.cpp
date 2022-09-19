@@ -7,7 +7,8 @@ Thing *parse_thing(ifstream &mapData) {
     mapData.get(next);
     if(next == 'X') {
         mapData.get();
-        return new MapBuilder();
+        MapBuilder *m = new MapBuilder();
+        return m->currentThing;
     }
     if(next == 'T') {
         ThingData newTD;
@@ -20,9 +21,9 @@ Thing *parse_thing(ifstream &mapData) {
         return new FieldPlayer(newTD);
     }
     if(next == 'B') {
-        BuildingData newTD;
-        Building::parse_building_datum(mapData, newTD);
-        return new Building(newTD);
+        RealThingData newTD;
+        RealThing::parse_building_datum(mapData, newTD);
+        return new RealThing(newTD);
     }
     return NULL;
 }

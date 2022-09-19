@@ -75,6 +75,10 @@ KeyPresses& Input::getInput () {
                     if (input.key.repeat == 0)
                         keysDown.ok = true;
                     break;
+                case SDLK_RETURN:
+                    if (input.key.repeat == 0)
+                        keysDown.start = true;
+                    break;
                     
                 /* DEBUG */
                 case SDLK_EQUALS:
@@ -140,10 +144,6 @@ KeyPresses& Input::getInput () {
                 case SDLK_0:
                     if (input.key.repeat == 0)
                         keysDown.debug_0 = true;
-                    break;
-                case SDLK_RETURN:
-                    if (input.key.repeat == 0)
-                        keysDown.start = true;
                     break;
                 /* END DEBUG */
             }

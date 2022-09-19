@@ -44,7 +44,7 @@ void Sprite::render(SDL_Renderer *renderer, Point camPosition) {
     SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
 };
 
-void Sprite::getInts(vector<int*> &ints) {
+void Sprite::getInts(vector<int*> &ints, vector<string> &names) {
     vector<int*> spriteInts = vector<int*> { 
         &d.layer, 
         &d.renderOffset, 
@@ -56,6 +56,17 @@ void Sprite::getInts(vector<int*> &ints) {
         &d.yOffset 
     };
     ints.insert(ints.end(), spriteInts.begin(), spriteInts.end());
+    vector<string> spriteNames = vector<string> { 
+        "layer", 
+        "renderOffset",
+        "width", 
+        "height", 
+        "sourceX", 
+        "sourceY", 
+        "xOffset", 
+        "yOffset" 
+    };
+    names.insert(names.end(), spriteNames.begin(), spriteNames.end());
 }
 
 // STATIC

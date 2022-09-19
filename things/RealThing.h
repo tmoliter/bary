@@ -1,5 +1,5 @@
-#ifndef BUILDING_H
-#define BUILDING_H
+#ifndef VISIBLE_THING_H
+#define VISIBLE_THING_H
 
 #include "Thing.h"
 #include "../components/Walk.h"
@@ -10,24 +10,25 @@
 
 using namespace std;
 
-struct BuildingData : ThingData {
+struct RealThingData : ThingData {
     vector<SpriteData> spriteDataVector;
     vector<CollidableData> obstructionData;
 };
 
-class Building : public Thing {
+class RealThing : public Thing {
     public:
-        Building(BuildingData fpD);
-        Building(Point p);
-        ~Building();
+        RealThing(RealThingData fpD);
+        RealThing(Point p);
+        ~RealThing();
 
         vector<Sprite*> sprites;
         vector<Obstruction*> obstructions;
 
         void AddSprite(Sprite* sprite);
+        Sprite* AddRawSprite(string path);
 
-        static Building *find_building(string name);
-        static int parse_building_datum(ifstream &mapData, BuildingData &newTD);
+        static RealThing *find_building(string name);
+        static int parse_building_datum(ifstream &mapData, RealThingData &newTD);
 };
 
 #endif
