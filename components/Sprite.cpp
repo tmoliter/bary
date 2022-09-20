@@ -62,14 +62,14 @@ void Sprite::getInts(vector<int*> &ints, vector<string> &names) {
     };
     ints.insert(ints.end(), spriteInts.begin(), spriteInts.end());
     vector<string> spriteNames = vector<string> { 
-        "layer", 
+        "layer",
         "renderOffset",
-        "width", 
-        "height", 
-        "sourceX", 
-        "sourceY", 
-        "xOffset", 
-        "yOffset" 
+        "width",
+        "height",
+        "sourceX",
+        "sourceY",
+        "xOffset",
+        "yOffset"
     };
     names.insert(names.end(), spriteNames.begin(), spriteNames.end());
 }
@@ -99,14 +99,14 @@ void Sprite::renderSprites(SDL_Renderer *renderer, Point camPosition) {
 
 int Sprite::parse_sprite_datum(ifstream &mapData, SpriteData &newSD){
     utils::parse_ints(vector<int*> { 
-        &newSD.layer, 
-        &newSD.renderOffset, 
-        &newSD.width, 
-        &newSD.height, 
-        &newSD.sourceX, 
-        &newSD.sourceY, 
-        &newSD.xOffset, 
-        &newSD.yOffset 
+        &newSD.layer,
+        &newSD.renderOffset,
+        &newSD.width,
+        &newSD.height,
+        &newSD.sourceX,
+        &newSD.sourceY,
+        &newSD.xOffset,
+        &newSD.yOffset
     }, mapData);
     utils::parse_strings(vector<string*> { &newSD.path }, mapData);
     return 1;
