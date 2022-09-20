@@ -123,5 +123,6 @@ int MapBuilder::addSprite() {
     }
     string path = "./assets/" + input;
     currentSprite = currentThing->AddRawSprite(path);
+    currentSprite->centerOffset();
     return 1;
 }

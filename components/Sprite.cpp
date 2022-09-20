@@ -7,6 +7,7 @@ x(x),
 y(y), 
 thingName(tN), 
 d(sd),
+alpha(255),
 active(false) {
     id = currentID++;
     sprites[id] = this;
@@ -34,6 +35,11 @@ void Sprite::divideSheet(int columns, int rows) {
     d.height = d.height / rows; 
 }
 
+void Sprite::centerOffset() {
+    d.xOffset = - (d.width / 2);
+    d.yOffset = - (d.height / 2);
+}
+
 Point Sprite::getScreenPos(Point camPosition) {
     int renderX = ((x - camPosition.x) + d.xOffset) * SCALE;
     int renderY = ((y - camPosition.y) + d.yOffset) * SCALE;
@@ -46,6 +52,7 @@ void Sprite::render(SDL_Renderer *renderer, Point camPosition) {
     Point renderPos = getScreenPos(camPosition);
     SDL_Rect renderRect = { renderPos.x, renderPos.y, d.width * SCALE, d.height * SCALE };
     SDL_Rect sourceRect = { d.sourceX, d.sourceY, d.width, d.height };
+    SDL_SetTextureAlphaMod(texture, alpha);
     SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
 };
 

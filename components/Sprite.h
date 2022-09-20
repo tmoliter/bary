@@ -30,13 +30,15 @@ class Sprite {
         ~Sprite();
         bool active;
         int id, &x, &y;
+        Uint8 alpha;
         SpriteData d;
         string &thingName;
         SDL_Texture* texture;
 
         void divideSheet(int columns, int rows);
+        void centerOffset();
         Point getScreenPos(Point camPosition);
-        virtual void render(SDL_Renderer *renderer, Point camPosition);
+        virtual void render(SDL_Renderer *renderer, Point camPositio);
 
         void getInts(vector<int*> &ints, vector<string> &names);
 
