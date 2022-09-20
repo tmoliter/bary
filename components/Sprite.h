@@ -35,6 +35,7 @@ class Sprite {
         SDL_Texture* texture;
 
         void divideSheet(int columns, int rows);
+        Point getScreenPos(Point camPosition);
         virtual void render(SDL_Renderer *renderer, Point camPosition);
 
         void getInts(vector<int*> &ints, vector<string> &names);

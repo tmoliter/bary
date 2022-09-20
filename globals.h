@@ -27,4 +27,7 @@ enum GameState {
 };
 inline GameState gameState;
 
+inline static SDL_Texture *font = nullptr;
+
+
 #endif

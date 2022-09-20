@@ -34,12 +34,17 @@ void Sprite::divideSheet(int columns, int rows) {
     d.height = d.height / rows; 
 }
 
+Point Sprite::getScreenPos(Point camPosition) {
+    int renderX = ((x - camPosition.x) + d.xOffset) * SCALE;
+    int renderY = ((y - camPosition.y) + d.yOffset) * SCALE;
+    return Point(renderX, renderY);
+}
+
 void Sprite::render(SDL_Renderer *renderer, Point camPosition) {
     if (!active)
         return;
-    int renderX = ((x - camPosition.x) + d.xOffset) * SCALE;
-    int renderY = ((y - camPosition.y) + d.yOffset) * SCALE;
-    SDL_Rect renderRect = { renderX, renderY, d.width * SCALE, d.height * SCALE };
+    Point renderPos = getScreenPos(camPosition);
+    SDL_Rect renderRect = { renderPos.x, renderPos.y, d.width * SCALE, d.height * SCALE };
     SDL_Rect sourceRect = { d.sourceX, d.sourceY, d.width, d.height };
     SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
 };

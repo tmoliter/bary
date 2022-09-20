@@ -4,6 +4,7 @@ MapBuilder *MapBuilder::mapBuilder = nullptr;
 
 MapBuilder::MapBuilder() : editSpeed(1), attributeIndex(0), phase(Phase::freeMove) {
     currentThing = dotThing = new RealThing(Point(0,0));
+    spriteText = nullptr;
     SpriteData sD;
     sD.height = 0;
     sD.width = 0;
@@ -15,9 +16,9 @@ MapBuilder::MapBuilder() : editSpeed(1), attributeIndex(0), phase(Phase::freeMov
         sD
     );
 
-    if (!Phrase::font) {
+    if (!font) {
         SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
-        Phrase::font = SDL_CreateTextureFromSurface(renderer, temp);
+        font = SDL_CreateTextureFromSurface(renderer, temp);
         SDL_FreeSurface(temp);
     }
 
@@ -46,8 +47,10 @@ void MapBuilder::meat(KeyPresses keysDown) {
         if (keysDown.cancel && currentThing != dotThing)
             currentThing = dotThing;
         if(keysDown.start) {
+            spriteText = new Text(Point(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 ), "");
+            UIRenderer::addText(spriteText);
             input.clear();
-            UIRenderer::clearText();
+            spriteText->clearText();
             gameState = GameState::TextInput;
             phase = Phase::pathInput;
             return;
@@ -57,12 +60,12 @@ void MapBuilder::meat(KeyPresses keysDown) {
     if (phase == Phase::pathInput) {
         if (keysDown.textInput) {
             input.push_back(keysDown.textInput);
-            UIRenderer::setText(input);
+            spriteText->setText(input);
             return;
         }
         if (keysDown.del && input.length() > 0){
             input.pop_back();
-            UIRenderer::setText(input);
+            spriteText->setText(input);
             return;
         }
         if(keysDown.start) {
@@ -75,7 +78,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
                 phase = Phase::freeMove;
             }
             input.clear();
-            UIRenderer::clearText();
+            spriteText->clearText();
             return;
         }
     }
@@ -90,7 +93,8 @@ void MapBuilder::meat(KeyPresses keysDown) {
         if (keysDown.debug_down || keysDown.down)
             *intAttrs[attributeIndex] -= editSpeed;
         if(keysDown.ok && intAttrs.size() <= ++attributeIndex) {
-            UIRenderer::clearText();
+            UIRenderer::removeText(spriteText);
+            spriteText = nullptr;
             Camera::panTo(currentThing->name);
             attributeIndex = 0;
             currentSprite = nullptr;
@@ -102,7 +106,9 @@ void MapBuilder::meat(KeyPresses keysDown) {
         if(keysDown.cancel && attributeIndex > 0)
             attributeIndex--;
         string display = attrNames[attributeIndex] + " " + to_string(*intAttrs[attributeIndex]);
-        UIRenderer::setText(display);
+        Point spritePos = currentSprite->getScreenPos(Camera::getPos());
+        spriteText->setPos(Point(spritePos.x, spritePos.y - (LETTER_HEIGHT * 2)));
+        spriteText->setText(display);
     }
 }
 
@@ -112,7 +118,6 @@ int MapBuilder::addSprite() {
     ifstream f(cPossiblePath);
     if(!f.good())
         return 0;
-
     if (currentThing == dotThing) {
         currentThing = new RealThing(Point(currentThing->position.x, currentThing->position.y));
     }

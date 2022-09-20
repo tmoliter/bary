@@ -11,6 +11,7 @@
 #include "things/Thing.h"
 #include "things/RealThing.h"
 #include "components/Sprite.h"
+#include "gui/Text.h"
 #include "gui/UIRenderer.h"
 
 using namespace std;
@@ -32,6 +33,7 @@ class MapBuilder {
         int editSpeed, attributeIndex;
         string input;
         Sprite *currentSprite;
+        Text *spriteText;
 
         vector<Sprite*> workingSprites;
         vector<int*> intAttrs;

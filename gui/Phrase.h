@@ -36,9 +36,6 @@ class Phrase {
         int progDisplay();
         void reset();
 
-
-        static SDL_Texture *font;
-
     private:
         void renderLetter(int lineNumber, int position, int asciiValue, int occlusion, int raise);
 };

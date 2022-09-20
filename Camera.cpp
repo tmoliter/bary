@@ -148,3 +148,7 @@ void Camera::warpOut(int m) {
 string Camera::getFocusName() {
     return c->focus->name;
 }
+
+Point Camera::getPos() {
+    return Point(c->sourceRect.x, c->sourceRect.y);
+}

@@ -7,13 +7,13 @@ void UIRenderer::addPhrase(Phrase *p) {
     u->phrases.push_back(p);
 };
 
-void UIRenderer::setText(string s) {
-    text = s;
-}
+void UIRenderer::addText(Text *t) {
+    u->texts.push_back(t);
+};
 
 void UIRenderer::renderPhrases() {
-   vector<Phrase*>::iterator itr = u->phrases.begin();
-   while (itr != u->phrases.end()) {
+    vector<Phrase*>::iterator itr = u->phrases.begin();
+    while (itr != u->phrases.end()) {
         Phrase* p = *itr;
         if (p->isComplete() && p->autoDestroy) {
             delete p;
@@ -22,40 +22,25 @@ void UIRenderer::renderPhrases() {
         }
         p->progDisplay();
         itr++;
-   }
-}
-
-
-void UIRenderer::renderCenterText() {
-    for (int i = 0; i < text.length();i++) {
-        if (!Phrase::font) {
-            SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
-            Phrase::font = SDL_CreateTextureFromSurface(renderer, temp);
-            SDL_FreeSurface(temp);
-        }
-        int adjustedFontValue = int(text[i]) - 32;
-        int fontX = (adjustedFontValue % LETTERS_PER_FONT_ROW) * LETTER_WIDTH;
-        int fontY = (adjustedFontValue / LETTERS_PER_FONT_ROW) * LETTER_HEIGHT;
-        SDL_Rect sourceRect = { fontX, fontY, LETTER_WIDTH, LETTER_HEIGHT};
-
-        int xPosition = (SCREEN_WIDTH / 2) + (i * LETTER_WIDTH);
-        int yPosition = (SCREEN_HEIGHT / 2) - 64;
-        SDL_Rect renderRect = { xPosition, yPosition, LETTER_WIDTH, LETTER_HEIGHT };
-
-        SDL_RenderCopy(renderer, Phrase::font, &sourceRect, &renderRect);
     }
 }
 
+void UIRenderer::renderTexts() {
+    for (auto t : u->texts) {
+        t->render();
+    }
+}
 
 void UIRenderer::render() {
     renderPhrases();
-    renderCenterText();
+    renderTexts();
 }
 
 void UIRenderer::removePhrase(Phrase *p) {
     u->phrases.erase(remove(u->phrases.begin(), u->phrases.end(), p), u->phrases.end());
 }
 
-void UIRenderer::clearText() {
-    text.clear();
-};
+void UIRenderer::removeText(Text *t) {
+    delete t;
+    u->texts.erase(remove(u->texts.begin(), u->texts.end(), t), u->texts.end());
+}

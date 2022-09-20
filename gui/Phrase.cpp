@@ -219,7 +219,5 @@ void Phrase::renderLetter(int lineNumber, int charPosition, int asciiValue, int 
     int yPosition = position.y + (lineNumber * LETTER_HEIGHT * phraseScale) - (raise * phraseScale);
     SDL_Rect renderRect = { xPosition, yPosition + occlusion, LETTER_WIDTH * phraseScale, (LETTER_HEIGHT - occlusion) * phraseScale };
 
-    SDL_RenderCopy(renderer, Phrase::font, &sourceRect, &renderRect);
+    SDL_RenderCopy(renderer, font, &sourceRect, &renderRect);
 }
-
-SDL_Texture *Phrase::font = nullptr;
