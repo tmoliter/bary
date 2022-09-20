@@ -93,6 +93,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
         if (keysDown.debug_down || keysDown.down)
             *intAttrs[attributeIndex] -= editSpeed;
         if(keysDown.ok && intAttrs.size() <= ++attributeIndex) {
+            currentThing->removeHighlight();
             UIRenderer::removeText(spriteText);
             spriteText = nullptr;
             Camera::panTo(currentThing->name);
@@ -124,5 +125,6 @@ int MapBuilder::addSprite() {
     string path = "./assets/" + input;
     currentSprite = currentThing->AddRawSprite(path);
     currentSprite->centerOffset();
+    currentThing->highlightSprite(currentSprite);
     return 1;
 }

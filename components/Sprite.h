@@ -30,7 +30,7 @@ class Sprite {
         ~Sprite();
         bool active;
         int id, &x, &y;
-        Uint8 alpha;
+        int alpha;
         SpriteData d;
         string &thingName;
         SDL_Texture* texture;

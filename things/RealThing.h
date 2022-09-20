@@ -25,8 +25,11 @@ class RealThing : public Thing {
         vector<Sprite*> sprites;
         vector<Obstruction*> obstructions;
 
-        void AddSprite(Sprite* sprite);
+        Sprite* AddSprite(Sprite* sprite);
         Sprite* AddRawSprite(string path);
+
+        void highlightSprite(Sprite* sprite);
+        void removeHighlight();
 
         static RealThing *find_building(string name);
         static int parse_building_datum(ifstream &mapData, RealThingData &newTD);

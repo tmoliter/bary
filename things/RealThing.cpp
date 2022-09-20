@@ -28,7 +28,7 @@ RealThing::~RealThing() {
         delete o;
 };
 
-void RealThing::AddSprite(Sprite* sprite) {
+Sprite* RealThing::AddSprite(Sprite* sprite) {
     sprite->x = position.x;
     sprite->y = position.y;
     sprite->thingName = name;
@@ -39,12 +39,25 @@ void RealThing::AddSprite(Sprite* sprite) {
     if (tmpHeight > sprite->d.height)
         height = tmpHeight;
     sprites.push_back(sprite);
+    return sprite;
 }
 
 Sprite* RealThing::AddRawSprite(string path) {
     SpriteData sd;
     sd.path = path.c_str();
-    return new Sprite(position.x, position.y, name, sd);
+    return AddSprite(new Sprite(position.x, position.y, name, sd));
+}
+
+void RealThing::highlightSprite(Sprite* sprite) {
+    for (auto s : sprites) {
+        if (s != sprite)
+            s->alpha = 100;
+    }
+}
+
+void RealThing::removeHighlight() {
+    for (auto s : sprites)
+        s->alpha = 255;
 }
 
 // STATIC
