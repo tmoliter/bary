@@ -90,8 +90,14 @@ void MapBuilder::meat(KeyPresses keysDown) {
         if (keysDown.debug_down || keysDown.down)
             *intAttrs[attributeIndex] -= editSpeed;
         if(keysDown.ok && intAttrs.size() <= ++attributeIndex) {
+            UIRenderer::clearText();
+            Camera::panTo(currentThing->name);
+            attributeIndex = 0;
+            currentSprite = nullptr;
             gameState = GameState::FieldFree;
             phase = Phase::freeMove;
+            intAttrs.clear();
+            return;
         }
         if(keysDown.cancel && attributeIndex > 0)
             attributeIndex--;

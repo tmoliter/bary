@@ -18,6 +18,7 @@ struct RealThingData : ThingData {
 class RealThing : public Thing {
     public:
         RealThing(RealThingData fpD);
+        RealThing(Point p, string name);
         RealThing(Point p);
         ~RealThing();
 

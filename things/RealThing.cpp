@@ -19,6 +19,7 @@ RealThing::RealThing(RealThingData bD) : Thing(bD) {
 };
 
 RealThing::RealThing(Point p) : Thing(p) {};
+RealThing::RealThing(Point p, string name) : Thing(p, name) {};
 
 RealThing::~RealThing() {
     for (auto s : sprites)

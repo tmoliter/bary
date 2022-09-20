@@ -22,6 +22,15 @@ Thing::Thing(ThingData td) :
         _save_name_and_save_in_map(td.name);
     }
 
+Thing::Thing(Point p, string name) : 
+    position(p.x,p.y),
+    height(0), 
+    width(0),
+    name(name) {
+        _save_name_and_save_in_map("AnonymousThing");
+}
+
+
 Thing::Thing(Point p) : 
     position(p.x,p.y),
     height(0), 

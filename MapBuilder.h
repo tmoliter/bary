@@ -6,9 +6,10 @@
 #include <string>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include "globals.h"
+#include "Camera.h"
 #include "things/Thing.h"
 #include "things/RealThing.h"
-#include "globals.h"
 #include "components/Sprite.h"
 #include "gui/UIRenderer.h"
 

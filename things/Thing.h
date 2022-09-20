@@ -28,6 +28,7 @@ class Thing {
         string name;
 
         Thing(ThingData td);
+        Thing(Point p, string name);
         Thing(Point p);
         virtual ~Thing();
 
