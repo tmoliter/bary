@@ -4,9 +4,11 @@ using namespace std;
 
 KeyPresses& Input::getInput () {
     SDL_Event input;
-    keysDown.cancel = false;
-    keysDown.start = false;
     keysDown.ok = false;
+    keysDown.cancel = false;
+    keysDown.menu1 = false;
+    keysDown.menu2 = false;
+    keysDown.start = false;
     
     keysDown.textInput = false;
     keysDown.del = false;
@@ -74,6 +76,14 @@ KeyPresses& Input::getInput () {
                 case SDLK_k:
                     if (input.key.repeat == 0)
                         keysDown.ok = true;
+                    break;
+                case SDLK_u:
+                    if (input.key.repeat == 0)
+                        keysDown.menu1 = true;
+                    break;
+                case SDLK_i:
+                    if (input.key.repeat == 0)
+                        keysDown.menu2 = true;
                     break;
                 case SDLK_RETURN:
                     if (input.key.repeat == 0)

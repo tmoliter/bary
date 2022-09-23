@@ -1,26 +1,23 @@
 #ifndef MAP_BUILDER_H
 #define MAP_BUILDER_H
 #include <iostream>
-#include <fstream>
-#include <vector>
 #include <string>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include "globals.h"
 #include "Camera.h"
 #include "things/Thing.h"
 #include "things/RealThing.h"
 #include "components/Sprite.h"
+#include "components/SpriteEditor.h"
 #include "gui/Text.h"
 #include "gui/UIRenderer.h"
 
 using namespace std;
 
-enum Phase {
+enum EditorState {
     freeMove,
+    thingMove,
     pathInput,
-    stringInput,
-    intInput,
+    spriteEdit,
 };
 
 class MapBuilder {
@@ -29,20 +26,15 @@ class MapBuilder {
 
         RealThing *dotThing, *currentThing;
 
-        Phase phase;
-        int editSpeed, attributeIndex;
+        EditorState state;
         string input;
-        Sprite *currentSprite;
+        SpriteEditor *spriteEditor;
         Text *spriteText;
-
-        vector<Sprite*> workingSprites;
-        vector<int*> intAttrs;
-        vector<string*> stringAttrs;
-        vector<string> attrNames;
 
         int addSprite();
 
         void meat(KeyPresses keysDown);
+        void prepareForNextSprite();
 
         static MapBuilder *mapBuilder;
 

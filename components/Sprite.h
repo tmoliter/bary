@@ -30,15 +30,16 @@ class Sprite {
         ~Sprite();
         bool active;
         int id, &x, &y;
-        int alpha;
+        int alpha, sheetHeight, sheetWidth;
         SpriteData d;
         string &thingName;
         SDL_Texture* texture;
 
         void divideSheet(int columns, int rows);
         void centerOffset();
+        void frontAndCenter();
         Point getScreenPos(Point camPosition);
-        virtual void render(SDL_Renderer *renderer, Point camPositio);
+        virtual void render(SDL_Renderer *renderer, Point camPosition);
 
         void getInts(vector<int*> &ints, vector<string> &names);
 
@@ -46,6 +47,10 @@ class Sprite {
         inline static map<int, Sprite*> sprites;
         inline static map<string, SDL_Texture*> textures;
         static void renderSprites(SDL_Renderer *renderer, Point camPosition);
+
+        static void highlightSprite(Sprite* sprite);
+        static void removeHighlight();
+
 
         static int parse_sprite_datum(ifstream &mapData, SpriteData &newSD);
 };

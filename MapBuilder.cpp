@@ -2,32 +2,33 @@
 
 MapBuilder *MapBuilder::mapBuilder = nullptr;
 
-MapBuilder::MapBuilder() : editSpeed(1), attributeIndex(0), phase(Phase::freeMove) {
-    currentThing = dotThing = new RealThing(Point(0,0));
+MapBuilder::MapBuilder() : state(EditorState::freeMove) {
+    mapBuilder = this;
     spriteText = nullptr;
+    currentThing = dotThing = new RealThing(Point(0,0));
     SpriteData sD;
-    sD.height = 0;
-    sD.width = 0;
     sD.path = "assets/debug/onePixel.png";
-    currentSprite = new Sprite(
+    dotThing->AddSprite(new Sprite(
         currentThing->position.x, 
         currentThing->position.y, 
         currentThing->name, 
         sD
-    );
-
-    if (!font) {
-        SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
-        font = SDL_CreateTextureFromSurface(renderer, temp);
-        SDL_FreeSurface(temp);
-    }
-
-    mapBuilder = this;
+    ));
 }
+
+void MapBuilder::prepareForNextSprite() {
+    spriteText = new Text(Point(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 ), "");
+    UIRenderer::addText(spriteText);
+    input.clear();
+    spriteText->clearText();
+    gameState = GameState::TextInput;
+    state = EditorState::pathInput;
+}
+
 
 void MapBuilder::meat(KeyPresses keysDown) {
     DirectionMap dM;
-    if (phase == Phase::freeMove) {
+    if (state == EditorState::freeMove || state == EditorState::thingMove) {
         if (keysDown.up) 
             currentThing->position.y-=3;
         if (keysDown.down)
@@ -47,17 +48,12 @@ void MapBuilder::meat(KeyPresses keysDown) {
         if (keysDown.cancel && currentThing != dotThing)
             currentThing = dotThing;
         if(keysDown.start) {
-            spriteText = new Text(Point(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 ), "");
-            UIRenderer::addText(spriteText);
-            input.clear();
-            spriteText->clearText();
-            gameState = GameState::TextInput;
-            phase = Phase::pathInput;
+            prepareForNextSprite();
             return;
         }
     }
 
-    if (phase == Phase::pathInput) {
+    if (state == EditorState::pathInput) {
         if (keysDown.textInput) {
             input.push_back(keysDown.textInput);
             spriteText->setText(input);
@@ -69,52 +65,36 @@ void MapBuilder::meat(KeyPresses keysDown) {
             return;
         }
         if(keysDown.start) {
+            gameState = GameState::FieldFree;
             if(addSprite()) {
-                currentSprite->getInts(intAttrs, attrNames);
-                phase = Phase::intInput;
-                gameState = GameState::FieldFree;
-            } else {
-                gameState = GameState::FieldFree;
-                phase = Phase::freeMove;
+                state = EditorState::spriteEdit;
+            }
+            else {
+                currentThing->removeHighlight();
+                currentThing = dotThing;
+                state = EditorState::freeMove;
             }
             input.clear();
             spriteText->clearText();
+            UIRenderer::removeText(spriteText);
+            spriteText = nullptr;
             return;
         }
     }
 
-    if(phase == Phase::intInput) {
-        if(keysDown.debug_plus)
-            editSpeed++;
-        if(keysDown.debug_minus && editSpeed > 1)
-            editSpeed--;
-        if (keysDown.debug_up || keysDown.up)
-            *intAttrs[attributeIndex] += editSpeed;
-        if (keysDown.debug_down || keysDown.down)
-            *intAttrs[attributeIndex] -= editSpeed;
-        if(keysDown.ok && intAttrs.size() <= ++attributeIndex) {
-            currentThing->removeHighlight();
-            UIRenderer::removeText(spriteText);
-            spriteText = nullptr;
-            Camera::panTo(currentThing->name);
-            attributeIndex = 0;
-            currentSprite = nullptr;
-            gameState = GameState::FieldFree;
-            phase = Phase::freeMove;
-            intAttrs.clear();
-            return;
+    if(state == EditorState::spriteEdit) {
+        if(spriteEditor->routeInput(keysDown)) {
+            spriteEditor->sprite->alpha = 100;
+            delete spriteEditor;
+            prepareForNextSprite();
         }
-        if(keysDown.cancel && attributeIndex > 0)
-            attributeIndex--;
-        string display = attrNames[attributeIndex] + " " + to_string(*intAttrs[attributeIndex]);
-        Point spritePos = currentSprite->getScreenPos(Camera::getPos());
-        spriteText->setPos(Point(spritePos.x, spritePos.y - (LETTER_HEIGHT * 2)));
-        spriteText->setText(display);
     }
 }
 
 int MapBuilder::addSprite() {
     string possiblePath = string(BASE_PATH) + "assets/" + input;
+    if(filesystem::path(possiblePath).extension() != ".png")
+        return 0;
     const char* cPossiblePath = possiblePath.c_str();
     ifstream f(cPossiblePath);
     if(!f.good())
@@ -123,8 +103,8 @@ int MapBuilder::addSprite() {
         currentThing = new RealThing(Point(currentThing->position.x, currentThing->position.y));
     }
     string path = "./assets/" + input;
-    currentSprite = currentThing->AddRawSprite(path);
-    currentSprite->centerOffset();
-    currentThing->highlightSprite(currentSprite);
+    spriteEditor = new SpriteEditor(currentThing->AddRawSprite(path));
+    spriteEditor->sprite->frontAndCenter();
+    currentThing->highlightSprite(spriteEditor->sprite);
     return 1;
 }

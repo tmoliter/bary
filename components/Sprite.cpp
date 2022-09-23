@@ -17,11 +17,9 @@ active(false) {
         SDL_FreeSurface(temp);
     }
     texture = textures[sd.path];
-    SDL_QueryTexture(texture, NULL, NULL, &d.width, &d.height);
-    if(sd.width > 0)
-        d.width = sd.width;
-    if(sd.height > 0)
-        d.height = sd.height;
+    SDL_QueryTexture(texture, NULL, NULL, &sheetWidth, &sheetHeight);
+    d.width = sd.width > 0 ? sd.width : sheetWidth;
+    d.height = sd.height > 0 ? sd.height : sheetHeight;
     active = true;
 }
 
@@ -36,8 +34,19 @@ void Sprite::divideSheet(int columns, int rows) {
 }
 
 void Sprite::centerOffset() {
-    d.xOffset = - (d.width / 2);
-    d.yOffset = - (d.height / 2);
+    d.xOffset -= (d.width / 2);
+    if(d.width % 2 == 0)
+        d.xOffset--;
+    d.yOffset -= (d.height / 2);
+    if(d.height % 2 == 0)
+        d.yOffset--;
+}
+
+void Sprite::frontAndCenter() {
+    d.xOffset -= (d.width / 2);
+    if(d.width % 2 == 0)
+        d.xOffset--;
+    d.yOffset -= d.height;
 }
 
 Point Sprite::getScreenPos(Point camPosition) {
@@ -95,12 +104,12 @@ bool _comparePosition (Sprite* a, Sprite* b) {
 }
 void Sprite::renderSprites(SDL_Renderer *renderer, Point camPosition) {
     vector<Sprite*> spriteList;
-    for (auto const& [id, sprite] : Sprite::sprites){
-        spriteList.push_back(sprite);
+    for (auto const& [id, s] : Sprite::sprites){
+        spriteList.push_back(s);
     }
     sort(spriteList.begin(), spriteList.end(), _comparePosition);
-    for (auto sprite : spriteList){
-        sprite->render(renderer, camPosition);
+    for (auto s : spriteList){
+        s->render(renderer, camPosition);
     }
 }
 
@@ -117,4 +126,15 @@ int Sprite::parse_sprite_datum(ifstream &mapData, SpriteData &newSD){
     }, mapData);
     utils::parse_strings(vector<string*> { &newSD.path }, mapData);
     return 1;
+}
+
+void Sprite::highlightSprite(Sprite* sprite) {
+    for (auto const& [id, s] : sprites)
+        if (s != sprite)
+            s->alpha = 100;
+}
+
+void Sprite::removeHighlight() {
+    for (auto const& [id, s] : sprites)
+        s->alpha = 255;
 }
