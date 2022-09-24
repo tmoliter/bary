@@ -37,9 +37,6 @@ class MapBuilder {
         void prepareForNextSprite();
 
         static MapBuilder *mapBuilder;
-
-        // stack of editTypes, where editType is enum of what we are editing
-        // Might need a second mode enum for whether we are moving around or editing
 };
 
 #endif
