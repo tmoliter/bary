@@ -2,9 +2,9 @@
 
 MapBuilder *MapBuilder::mapBuilder = nullptr;
 
-MapBuilder::MapBuilder() : state(EditorState::freeMove) {
+MapBuilder::MapBuilder() : state(EditorState::freeMove), input("") {
     mapBuilder = this;
-    spriteText = nullptr;
+    commandText = nullptr;
     currentThing = dotThing = new RealThing(Point(0,0));
     SpriteData sD;
     sD.path = "assets/debug/onePixel.png";
@@ -16,13 +16,67 @@ MapBuilder::MapBuilder() : state(EditorState::freeMove) {
     ));
 }
 
-void MapBuilder::prepareForNextSprite() {
-    spriteText = new Text(Point(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 ), "");
-    UIRenderer::addText(spriteText);
-    input.clear();
-    spriteText->clearText();
+void MapBuilder::changeState(EditorState newState) {
+    switch (newState) {
+        case freeMove:
+            endTextInput();
+            currentThing->removeHighlight();
+            currentThing = dotThing;
+            state = EditorState::freeMove;
+            break;
+        case thingMove:
+            endTextInput();
+            state = EditorState::thingMove;
+            break;
+        case commandInput:
+            beginTextInput();
+            state = EditorState::commandInput;
+            break;
+        case pathInput:
+            beginTextInput();
+            state = EditorState::pathInput;
+            break;
+        case spriteEdit:
+            endTextInput();
+            state = EditorState::spriteEdit;
+            break;
+    }
+}
+
+
+void MapBuilder::beginTextInput() {
     gameState = GameState::TextInput;
-    state = EditorState::pathInput;
+    if (commandText == nullptr) {
+        commandText = new Text(Point(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 ), "");
+        UIRenderer::addText(commandText);
+    }
+    input.clear();
+    commandText->clearText();
+}
+
+void MapBuilder::endTextInput() {
+    gameState = GameState::FieldFree;
+    input.clear();
+    if (commandText == nullptr)
+        return;
+    commandText->clearText();
+    UIRenderer::removeText(commandText);
+    commandText = nullptr;
+}
+
+
+int MapBuilder::listenForTextInput(KeyPresses keysDown) {
+    if (keysDown.textInput) {
+        input.push_back(keysDown.textInput);
+        commandText->setText(input);
+        return 1;
+    }
+    if (keysDown.del && input.length() > 0){
+        input.pop_back();
+        commandText->setText(input);
+        return 1;
+    }
+    return 0;
 }
 
 
@@ -33,37 +87,33 @@ void MapBuilder::meat(KeyPresses keysDown) {
         if (keysDown.cancel && currentThing != dotThing)
             currentThing = dotThing;
         if(keysDown.start) {
-            prepareForNextSprite();
+            changeState(EditorState::commandInput);
             return;
         }
     }
 
+
+    if (state == EditorState::commandInput) {
+        if (listenForTextInput(keysDown))
+            return;
+        if (keysDown.start) {
+            if (input == "sprite") {
+                changeState(EditorState::pathInput);
+                return;
+            }
+            changeState(EditorState::freeMove);
+            endTextInput();
+        }
+    }
+
     if (state == EditorState::pathInput) {
-        if (keysDown.textInput) {
-            input.push_back(keysDown.textInput);
-            spriteText->setText(input);
+        if (listenForTextInput(keysDown))
             return;
-        }
-        if (keysDown.del && input.length() > 0){
-            input.pop_back();
-            spriteText->setText(input);
-            return;
-        }
         if(keysDown.start) {
-            gameState = GameState::FieldFree;
-            if(addSprite()) {
-                state = EditorState::spriteEdit;
-            }
-            else {
-                currentThing->removeHighlight();
-                currentThing = dotThing;
-                state = EditorState::freeMove;
-            }
-            input.clear();
-            spriteText->clearText();
-            UIRenderer::removeText(spriteText);
-            spriteText = nullptr;
-            return;
+            if(addSprite())
+                changeState(EditorState::spriteEdit);
+            else
+                changeState(EditorState::freeMove);
         }
     }
 
@@ -71,7 +121,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
         if(spriteEditor->routeInput(keysDown)) {
             spriteEditor->sprite->alpha = 100;
             delete spriteEditor;
-            prepareForNextSprite();
+            changeState(EditorState::pathInput);
         }
     }
 }

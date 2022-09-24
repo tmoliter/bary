@@ -16,6 +16,7 @@ using namespace std;
 enum EditorState {
     freeMove,
     thingMove,
+    commandInput,
     pathInput,
     spriteEdit,
 };
@@ -29,12 +30,17 @@ class MapBuilder {
         EditorState state;
         string input;
         SpriteEditor *spriteEditor;
-        Text *spriteText;
+        Text *commandText;
+
+        void changeState(EditorState newState);
+
+        void beginTextInput();
+        void endTextInput();
+
+        int listenForTextInput(KeyPresses keysDown);
+        void meat(KeyPresses keysDown);
 
         int addSprite();
-
-        void meat(KeyPresses keysDown);
-        void prepareForNextSprite();
 
         static MapBuilder *mapBuilder;
 };
