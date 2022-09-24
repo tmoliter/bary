@@ -50,6 +50,25 @@ Point Thing::getCenter() {
     return Point(position.x + (width / 2) , position.y + (height / 2));
 }
 
+void Thing::manuallyControl(KeyPresses keysDown) {
+    if (keysDown.up) 
+        position.y-=3;
+    if (keysDown.down)
+        position.y+=3;
+    if (keysDown.left)
+        position.x-=3;
+    if (keysDown.right)
+        position.x+=3;
+    if (keysDown.debug_up) 
+        position.y--;
+    if (keysDown.debug_down)
+        position.y++;
+    if (keysDown.debug_left)
+        position.x--;
+    if (keysDown.debug_right)
+        position.x++;
+}
+
 // STATIC
 
 int Thing::parse_thing_datum(ifstream &mapData, ThingData &newTD) {

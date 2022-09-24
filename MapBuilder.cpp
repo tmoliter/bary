@@ -29,22 +29,7 @@ void MapBuilder::prepareForNextSprite() {
 void MapBuilder::meat(KeyPresses keysDown) {
     DirectionMap dM;
     if (state == EditorState::freeMove || state == EditorState::thingMove) {
-        if (keysDown.up) 
-            currentThing->position.y-=3;
-        if (keysDown.down)
-            currentThing->position.y+=3;
-        if (keysDown.left)
-            currentThing->position.x-=3;
-        if (keysDown.right)
-            currentThing->position.x+=3;
-        if (keysDown.debug_up) 
-            currentThing->position.y--;
-        if (keysDown.debug_down)
-            currentThing->position.y++;
-        if (keysDown.debug_left)
-            currentThing->position.x--;
-        if (keysDown.debug_right)
-            currentThing->position.x++;
+        currentThing->manuallyControl(keysDown);
         if (keysDown.cancel && currentThing != dotThing)
             currentThing = dotThing;
         if(keysDown.start) {

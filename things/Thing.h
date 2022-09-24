@@ -36,6 +36,7 @@ class Thing {
 
         virtual void destroy();
         Point getCenter();
+        void manuallyControl(KeyPresses keysDown);
         
         virtual void meat() {};
 

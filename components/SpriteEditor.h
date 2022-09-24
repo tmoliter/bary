@@ -13,7 +13,8 @@ enum EditState {
     grow,
     shrink,
     layer,
-    renderOffset
+    renderOffset,
+    cameraMove
 };
 
 class SpriteEditor {
@@ -22,7 +23,8 @@ class SpriteEditor {
         ~SpriteEditor();
 
         Sprite *sprite, *cross;
-        EditState editState;
+        Thing *focus, *oldFocus;
+        EditState editState, cameraPrevState;
         Text *text;
 
         int editSpeed;
@@ -30,6 +32,7 @@ class SpriteEditor {
         int nextMode();
         int lastMode();
 
+        void handleCameraControls(KeyPresses keysDown);
         void changeEditSpeed(KeyPresses keysDown);
         void frontAndCenter(KeyPresses keysDown);
         void displayText();
