@@ -5,7 +5,7 @@ SpriteEditor::SpriteEditor(Sprite *s) : sprite(s), editSpeed(1), editState(EditS
     sd.path = "./assets/debug/9x9cross.png";
     sd.layer = 100;
     cross = new Sprite(sprite->x, sprite->y, sprite->thingName, sd);
-    cross->frontAndCenter();
+    cross->centerOffset();
     text = new Text(Point(sprite->x, sprite->y), "");
     UIRenderer::addText(text);
 };
@@ -61,8 +61,9 @@ void SpriteEditor::changeEditSpeed(KeyPresses keysDown) {
 }
 
 void SpriteEditor::frontAndCenter(KeyPresses keysDown) {
-    if(keysDown.menu1)
+    if(keysDown.menu1){
         sprite->frontAndCenter();
+    }
 }
 
 void SpriteEditor::displayText() {

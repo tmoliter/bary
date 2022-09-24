@@ -45,7 +45,7 @@ class Sprite {
 
         static int currentID;
         inline static map<int, Sprite*> sprites;
-        inline static map<string, SDL_Texture*> textures;
+        inline static map<string, pair<int, SDL_Texture*>> textures;
         static void renderSprites(SDL_Renderer *renderer, Point camPosition);
 
         static void highlightSprite(Sprite* sprite);

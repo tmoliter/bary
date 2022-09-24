@@ -12,11 +12,14 @@ active(false) {
     id = currentID++;
     sprites[id] = this;
     if(!textures.count(sd.path)) {
-        SDL_Surface* temp = IMG_Load(sd.path.c_str());
-        textures[sd.path] = SDL_CreateTextureFromSurface(renderer, temp);
+        SDL_Surface* temp = IMG_Load(d.path.c_str());
+        textures[d.path].second = SDL_CreateTextureFromSurface(renderer, temp);
+        textures[d.path].first = 1;
         SDL_FreeSurface(temp);
+    } else {
+        textures[d.path].first++;
     }
-    texture = textures[sd.path];
+    texture = textures[d.path].second;
     SDL_QueryTexture(texture, NULL, NULL, &sheetWidth, &sheetHeight);
     d.width = sd.width > 0 ? sd.width : sheetWidth;
     d.height = sd.height > 0 ? sd.height : sheetHeight;
@@ -24,7 +27,11 @@ active(false) {
 }
 
 Sprite::~Sprite() {
-    SDL_DestroyTexture(texture);
+    textures[d.path].first--;
+    if (textures[d.path].first < 1) {
+        SDL_DestroyTexture(texture);
+        textures.erase(d.path);
+    }
     sprites.erase(id);
 }
 
@@ -34,19 +41,19 @@ void Sprite::divideSheet(int columns, int rows) {
 }
 
 void Sprite::centerOffset() {
-    d.xOffset -= (d.width / 2);
+    d.xOffset = -(d.width / 2);
     if(d.width % 2 == 0)
         d.xOffset--;
-    d.yOffset -= (d.height / 2);
+    d.yOffset = -(d.height / 2);
     if(d.height % 2 == 0)
         d.yOffset--;
 }
 
 void Sprite::frontAndCenter() {
-    d.xOffset -= (d.width / 2);
+    d.xOffset = -(d.width / 2);
     if(d.width % 2 == 0)
         d.xOffset--;
-    d.yOffset -= d.height;
+    d.yOffset = -d.height;
 }
 
 Point Sprite::getScreenPos(Point camPosition) {
@@ -104,13 +111,11 @@ bool _comparePosition (Sprite* a, Sprite* b) {
 }
 void Sprite::renderSprites(SDL_Renderer *renderer, Point camPosition) {
     vector<Sprite*> spriteList;
-    for (auto const& [id, s] : Sprite::sprites){
+    for (auto const& [id, s] : Sprite::sprites)
         spriteList.push_back(s);
-    }
     sort(spriteList.begin(), spriteList.end(), _comparePosition);
-    for (auto s : spriteList){
+    for (auto s : spriteList)
         s->render(renderer, camPosition);
-    }
 }
 
 int Sprite::parse_sprite_datum(ifstream &mapData, SpriteData &newSD){
