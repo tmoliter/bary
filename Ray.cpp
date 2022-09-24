@@ -1,43 +1,8 @@
 #include "Ray.h"
 
-int Ray::write_ray_datum(ifstream &mapData, Ray &newRay) {
-    int index = 0;
-    string value = "";
-    char current;
-    while(mapData.get(current)) {
-        if (current == ',' || current == '>') {
-            switch(index) {
-                case (0):
-                    cout << value << endl;
-                    newRay.a.x = std::stoi(value);
-                    value.clear();
-                    index++;
-                    break;
-                case (1):
-                    cout << value << endl;
-                    newRay.a.y = std::stoi(value);
-                    value.clear();
-                    index++;
-                    break;
-                case (2):
-                    cout << value << endl;
-                    newRay.b.x = std::stoi(value);
-                    value.clear();
-                    index++;
-                    break;
-                case (3):
-                    cout << value << endl;
-                    newRay.b.y = std::stoi(value);
-                    value.clear();
-                    return 1;
-                default:
-                    return 0;
-            }
-            continue;
-        }
-        value.push_back(current);
-    }
-    return 0;
+int Ray::parse_ray_datum(ifstream &mapData, Ray &newRay) {
+    utils::parse_ints(vector<int*> { &newRay.a.x, &newRay.a.y, &newRay.b.x, &newRay.b.y }, mapData);
+    return 1;
 }
 
 bool isCounterClockwise (Point A, Point B, Point C) {  

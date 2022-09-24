@@ -30,12 +30,14 @@ int main(int argc, char* args[]) {
     }
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-    string fullMapPath(string(BASE_PATH) + "maps/map2.txt");
+    string fullMapPath(string(BASE_PATH) + "maps/edit.txt");
     parse_map(fullMapPath.c_str());
     eventMap::initialize();
 
     gameState = GameState::FieldFree;
-    eventMap::load_events("Burg");
+
+    if (fullMapPath == string(BASE_PATH) + "maps/map2.txt")
+        eventMap::load_events("Burg");
 
     Input in;
     FpsTimer t;
@@ -46,6 +48,9 @@ int main(int argc, char* args[]) {
         KeyPresses keysDown = in.getInput();  
         if (keysDown.quit)
             break;
+        
+        if(MapBuilder::mapBuilder)
+            MapBuilder::mapBuilder->meat(keysDown);
         switch(gameState) {
             case (GameState::FieldUI):
                 Event::meat(keysDown);
@@ -58,7 +63,7 @@ int main(int argc, char* args[]) {
 
         Camera::c->render();
 
-        UIRenderer::renderPhrases();
+        UIRenderer::render();
 
         t.endFrameAndWait(frameCount);
         SDL_RenderPresent(renderer);

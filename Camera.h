@@ -61,13 +61,15 @@ class Camera {
 
         inline static Camera *c;
 
-        static int parse_camera(ifstream &mapData);
         static void panTo(string thingName);
         static int fadeIn(int m);
         static int fadeOut(int m);
         static void warpIn(int m);
         static void warpOut(int m);
+
         static string getFocusName();
+        static Point getPos();
+        static int parse_camera(ifstream &mapData);
 };
 
 #endif

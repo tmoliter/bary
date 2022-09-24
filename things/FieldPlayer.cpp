@@ -10,10 +10,10 @@ FieldPlayer::FieldPlayer(FieldPlayerData fpD) : Thing(fpD) {
     currentDirection = Direction::down;
     sprite = new Sprite(position.x,position.y,name,fpD.spriteData);
     sprite->divideSheet(9, 4);
-    walk = new Walk(position.x, position.y, sprite->layer, sprite->sourceRect);
+    walk = new Walk(position.x, position.y, sprite->d.layer, sprite);
 
-    height = sprite->height;
-    width = sprite->width;
+    height = sprite->d.height;
+    width = sprite->d.width;
     FieldPlayer::player = this;
 }
 
@@ -61,41 +61,37 @@ void FieldPlayer::meat(KeyPresses keysDown) {
             default:
                 ray = Ray(xCenter, yBottom, xCenter, yBottom);
         }
-        Interactable::checkForInteractables(ray, sprite->layer);
+        Interactable::checkForInteractables(ray, sprite->d.layer);
     }
 
     /* DEBUG MODE CONTROLS */
-    if (keysDown.debug_left && sprite->layer > 0)
-        sprite->layer--;
+    if (keysDown.debug_left && sprite->d.layer > 0)
+        sprite->d.layer--;
     if (keysDown.debug_right)
-        sprite->layer++;
+        sprite->d.layer++;
     if (keysDown.debug_up)
         walk->changeSpeed(false);
     if (keysDown.debug_down)
         walk->changeSpeed(true);
 
-    if (keysDown.debug_return) {
+    if (keysDown.start) {
         if (Camera::getFocusName() == "Zinnia")
             Camera::panTo("Sailor Shack");
         else
             Camera::panTo("Zinnia");
     }
 
-    if (keysDown.debug_0)
+    if (keysDown.menu1)
         Camera::fadeIn(3);
-    if (keysDown.debug_9)
+    if (keysDown.menu2)
         Camera::fadeOut(3);
-    if (keysDown.debug_8)
-        Camera::warpIn(3);
-    if (keysDown.debug_7)
-        Camera::warpOut(3);
     /* END DEBUG MODE CONTROLS */        
 };
 
-int FieldPlayer::write_player_datum(ifstream &mapData, FieldPlayerData &newTD) {
-    Thing::write_thing_datum(mapData, newTD);
+int FieldPlayer::parse_player_datum(ifstream &mapData, FieldPlayerData &newTD) {
+    Thing::parse_thing_datum(mapData, newTD);
     SpriteData newSD;
-    Sprite::write_sprite_datum(mapData,newSD);
+    Sprite::parse_sprite_datum(mapData,newSD);
     newTD.spriteData = newSD;
     return 1;
 }

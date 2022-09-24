@@ -7,8 +7,8 @@ using namespace std;
 
 void Walk::padSide(DirectionMap dM) {
     Ray ray;
-    int xCenter = x + (sourceRect.w / 2);
-    int yBottom = y + sourceRect.h;
+    int xCenter = x + (sprite->d.width / 2);
+    int yBottom = y + sprite->d.height;
     if (dM.up || dM.down){
         ray = Ray(xCenter, yBottom, xCenter - 5, yBottom);
         if(Obstruction::checkForObstructions(ray, layer)) 
@@ -30,8 +30,8 @@ void Walk::padSide(DirectionMap dM) {
 
 bool Walk::checkCollision(Direction d) {
     Ray ray;
-    int xCenter = x + (sourceRect.w / 2);
-    int yBottom = y + sourceRect.h;
+    int xCenter = x + (sprite->d.width / 2);
+    int yBottom = y + sprite->d.height;
     switch(d){
         case (Direction::up):
             ray = Ray(xCenter, yBottom, xCenter, yBottom - 6);
@@ -58,40 +58,40 @@ void Walk::animate(Direction d) {
     int delayPerFrame = 12 / speed;
     switch (d) {
         case (Direction::down):
-            sourceRect.y = sourceRect.h * 0;
+            sprite->d.sourceY = sprite->d.height * 0;
             break;
         case (Direction::up):
-            sourceRect.y = sourceRect.h * 1;
+            sprite->d.sourceY = sprite->d.height * 1;
             break;
         case (Direction::left):
-            sourceRect.y = sourceRect.h * 2;
+            sprite->d.sourceY = sprite->d.height * 2;
             break;
         case (Direction::right):
-            sourceRect.y = sourceRect.h * 3;
+            sprite->d.sourceY = sprite->d.height * 3;
             break;
         case (Direction::none):
-            sourceRect.x = 0;
+            sprite->d.sourceX = 0;
             return;
         default:
             break;
     }
     int frame = ((frameCount / delayPerFrame) % totalFrames) + 1;
-    sourceRect.x = frame * sourceRect.w;
+    sprite->d.sourceX = frame * sprite->d.width;
 }
 
 void Walk::face(Direction d) {
     switch (d) {
         case (Direction::down):
-            sourceRect.y = sourceRect.h * 0;
+            sprite->d.sourceY = sprite->d.height * 0;
             break;
         case (Direction::up):
-            sourceRect.y = sourceRect.h * 1;
+            sprite->d.sourceY = sprite->d.height * 1;
             break;
         case (Direction::left):
-            sourceRect.y = sourceRect.h * 2;
+            sprite->d.sourceY = sprite->d.height * 2;
             break;
         case (Direction::right):
-            sourceRect.y = sourceRect.h * 3;
+            sprite->d.sourceY = sprite->d.height * 3;
             break;
         default:
             break;
@@ -102,7 +102,7 @@ Direction Walk::move(DirectionMap dM){
     Direction d = directionFromMap(dM);
     face(d);
     if (speed == 0) {
-        sourceRect.x = 0;
+        sprite->d.sourceX = 0;
         return d;
     }
     if (speed < 3 && frameCount % (3 - speed) != 0) {

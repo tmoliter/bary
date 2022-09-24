@@ -3,10 +3,10 @@
 #include <string>
 #include <cstring>
 #include <fstream>
-#include <typeinfo>
 #include "./things/Thing.h"
 #include "./things/FieldPlayer.h"
-#include "./things/Building.h"
+#include "./things/RealThing.h"
+#include "./MapBuilder.h"
 #include "./Camera.h"
 
 using namespace std;

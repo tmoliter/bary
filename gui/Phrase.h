@@ -15,7 +15,6 @@ enum ScrollType {
     allButLast,
 };
 
-// We should probably also have a SimplePhrase class
 class Phrase {
     public:
         int letterLength, letterHeight, phraseScale, delay;
@@ -36,9 +35,6 @@ class Phrase {
 
         int progDisplay();
         void reset();
-
-
-        static SDL_Texture *font;
 
     private:
         void renderLetter(int lineNumber, int position, int asciiValue, int occlusion, int raise);

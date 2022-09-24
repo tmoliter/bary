@@ -2,10 +2,13 @@
 #define SPRITE_H
 #include <map>
 #include <string>
+#include <vector>
+#include <iostream>
 #include <../include/SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "globals.h"
 #include "Ray.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -18,7 +21,7 @@ struct SpriteData {
     int sourceY = 0;
     int width = 0;
     int height = 0;
-    string path;
+    string path = "";
 };
 
 class Sprite {
@@ -26,20 +29,30 @@ class Sprite {
         Sprite(int &x, int &y, string &tN, SpriteData sd);
         ~Sprite();
         bool active;
-        int id, &x, &y, layer, renderOffset, yOffset, xOffset, width, height;
+        int id, &x, &y;
+        int alpha, sheetHeight, sheetWidth;
+        SpriteData d;
         string &thingName;
-        SDL_Rect sourceRect, renderRect;
         SDL_Texture* texture;
 
         void divideSheet(int columns, int rows);
+        void centerOffset();
+        void frontAndCenter();
+        Point getScreenPos(Point camPosition);
         virtual void render(SDL_Renderer *renderer, Point camPosition);
+
+        void getInts(vector<int*> &ints, vector<string> &names);
 
         static int currentID;
         inline static map<int, Sprite*> sprites;
-        inline static map<string, SDL_Texture*> textures;
+        inline static map<string, pair<int, SDL_Texture*>> textures;
         static void renderSprites(SDL_Renderer *renderer, Point camPosition);
 
-        static int write_sprite_datum(ifstream &mapData, SpriteData &newSD);
+        static void highlightSprite(Sprite* sprite);
+        static void removeHighlight();
+
+
+        static int parse_sprite_datum(ifstream &mapData, SpriteData &newSD);
 };
 
 #endif

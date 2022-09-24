@@ -25,7 +25,7 @@ class Collidable {
 
         bool isColliding(Ray &incoming, int incomingLayer);
 
-        static int write_collidable_datum(ifstream &mapData, CollidableData &newCD);
+        static int parse_collidable_datum(ifstream &mapData, CollidableData &newCD);
 };
 
 #endif

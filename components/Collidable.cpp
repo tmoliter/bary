@@ -32,32 +32,29 @@ bool Collidable::isColliding(Ray &incoming, int incomingLayer) {
 
 // STATIC
 
-void _write_rays (ifstream &mapData, CollidableData &newCD) {
+void _parse_rays (ifstream &mapData, CollidableData &newCD) {
     char next = mapData.peek();
     while(next == 'R') {
             mapData.get();
             mapData.get(next);
             Ray *newRay = new Ray();
-            Ray::write_ray_datum(mapData,*newRay);
+            Ray::parse_ray_datum(mapData,*newRay);
             newCD.rays.push_back(newRay);
             next = mapData.peek();
-            cout << endl;
     }
 }
 
 
-int Collidable::write_collidable_datum(ifstream &mapData, CollidableData &newCD){
+int Collidable::parse_collidable_datum(ifstream &mapData, CollidableData &newCD){
     string value = "";
     char current;
     while(mapData.get(current)) {
         if (current == ',') {
-            cout << value << endl;
             newCD.layer = std::stoi(value);
             value.clear();
             if (!(mapData.peek() == 'R'))
                 break;
-            _write_rays(mapData, newCD);
-            cout << endl;
+            _parse_rays(mapData, newCD);
             return 1;
         }
         value.push_back(current);

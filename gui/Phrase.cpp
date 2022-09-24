@@ -2,10 +2,6 @@
 
 using namespace std;
 
-inline constexpr int LETTER_WIDTH = 8;
-inline constexpr int LETTER_HEIGHT = 12;
-inline constexpr int LETTERS_PER_FONT_ROW = 24;
-
 Phrase::Phrase(Point p, int pixelWidth, int pixelHeight, int scale, ScrollType type, string t, int d, bool aD) : 
     position(p),
     phraseScale(scale), 
@@ -123,7 +119,6 @@ bool Phrase::isComplete() {
     return complete;
 }
 
-/* TODO: This breaks if the pixelWidth value is above about 220 * scale. Need to fix */
 int Phrase::progDisplay() {
     if(complete)
         return 0;
@@ -206,6 +201,7 @@ int Phrase::progDisplay() {
     )
         renderLetter(i - 1, j, 127, occlusion, advanceProgress);
 
+    // End case
     if((lines.size() < 1 && hiddenLines.size() < 1))
         complete = true;
     
@@ -223,7 +219,5 @@ void Phrase::renderLetter(int lineNumber, int charPosition, int asciiValue, int 
     int yPosition = position.y + (lineNumber * LETTER_HEIGHT * phraseScale) - (raise * phraseScale);
     SDL_Rect renderRect = { xPosition, yPosition + occlusion, LETTER_WIDTH * phraseScale, (LETTER_HEIGHT - occlusion) * phraseScale };
 
-    SDL_RenderCopy(renderer, Phrase::font, &sourceRect, &renderRect);
+    SDL_RenderCopy(renderer, font, &sourceRect, &renderRect);
 }
-
-SDL_Texture *Phrase::font = nullptr;
