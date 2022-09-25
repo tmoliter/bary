@@ -32,9 +32,8 @@ class Thing {
         Thing(Point p);
         virtual ~Thing();
 
-        virtual void calculateHeight() {};
-
         virtual void destroy();
+        void rename(string newName);
         Point getCenter();
         void manuallyControl(KeyPresses keysDown);
         

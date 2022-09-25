@@ -46,6 +46,12 @@ void Thing::destroy() {
     Thing::destroyThing(name);
 }
 
+void Thing::rename(string newName) {
+    Thing::things.erase(name);
+    _save_name_and_save_in_map(newName);
+}
+
+
 Point Thing::getCenter() {
     return Point(position.x + (width / 2) , position.y + (height / 2));
 }

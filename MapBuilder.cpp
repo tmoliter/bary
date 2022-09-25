@@ -4,11 +4,12 @@ MapBuilder *MapBuilder::mapBuilder = nullptr;
 
 MapBuilder::MapBuilder() : input("") {
     mapBuilder = this;
+    commandText = nullptr;
 
     helpText = new Text(Point(16, 16), "");
     UIRenderer::addText(helpText);
     
-    dotThing = new RealThing(Point(0,0));
+    currentThing = dotThing = new RealThing(Point(0,0));
     SpriteData dotSD;
     dotSD.path = "assets/debug/onePixel.png";
     dotThing->AddSprite(new Sprite(
@@ -21,33 +22,44 @@ MapBuilder::MapBuilder() : input("") {
 }
 
 void MapBuilder::changeState(EditorState newState) {
+    string prefix = currentThing != dotThing ? currentThing->name + ": " : "";
     switch (newState) {
         case freeMove:
+            helpText->setText("Free Move");
             endTextInput();
             currentThing = dotThing;
-            currentThing->removeHighlight();
+            Camera::panTo(currentThing->name);
+            Sprite::removeHighlight();
             state = EditorState::freeMove;
-            helpText->setText("Free Move");
             break;
         case thingMove:
+            helpText->setText(prefix + "Thing Move");
             endTextInput();
+            Camera::panTo(currentThing->name);
             state = EditorState::thingMove;
-            helpText->setText("Thing Move");
             break;
         case commandInput:
+            helpText->setText(prefix + "Enter Command");
             beginTextInput();
             state = EditorState::commandInput;
-            helpText->setText("Enter Command");
+            break;
+        case renameThing:
+            helpText->setText(prefix + ": Enter New Name");
+            beginTextInput();
+            Sprite::highlightThing(currentThing->name);
+            state = EditorState::renameThing;
             break;
         case pathInput:
+            helpText->setText(prefix + "Enter Sprite Path");
             beginTextInput();
+            if (currentThing != dotThing)
+                currentThing->highlightSprite(nullptr);
             state = EditorState::pathInput;
-            helpText->setText("Enter Sprite Path");
             break;
         case spriteEdit:
+            helpText->setText(prefix + ": Sprite Edit Mode");
             endTextInput();
             state = EditorState::spriteEdit;
-            helpText->setText("Sprite Edit Mode");
             break;
     }
 }
@@ -56,7 +68,7 @@ void MapBuilder::changeState(EditorState newState) {
 void MapBuilder::beginTextInput() {
     gameState = GameState::TextInput;
     if (commandText == nullptr) {
-        commandText = new Text(Point(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2 ), "");
+        commandText = new Text(Point(32, 32), "");
         UIRenderer::addText(commandText);
     }
     input.clear();
@@ -93,8 +105,6 @@ void MapBuilder::meat(KeyPresses keysDown) {
     DirectionMap dM;
     if (state == EditorState::freeMove || state == EditorState::thingMove) {
         currentThing->manuallyControl(keysDown);
-        if (keysDown.cancel && currentThing != dotThing)
-            currentThing = dotThing;
         if(keysDown.start) {
             changeState(EditorState::commandInput);
             return;
@@ -110,8 +120,21 @@ void MapBuilder::meat(KeyPresses keysDown) {
                 changeState(EditorState::pathInput);
                 return;
             }
-            changeState(EditorState::freeMove);
-            endTextInput();
+            if (input == "free") {
+                changeState(EditorState::freeMove);
+                return;
+            }
+            if (currentThing != dotThing) {
+                if (input == "rename") {
+                    changeState(EditorState::renameThing);
+                    return;
+                }
+                if (input == "move") {
+                    changeState(EditorState::thingMove);
+                    return;
+                }
+            }
+            changeState(EditorState::commandInput);
         }
     }
 
@@ -126,11 +149,20 @@ void MapBuilder::meat(KeyPresses keysDown) {
         }
     }
 
+    if (state == EditorState::renameThing) {
+        if (listenForTextInput(keysDown))
+            return;
+        if(keysDown.start) {
+            if (input.length() > 0)
+                currentThing->rename(input);
+            changeState(EditorState::commandInput);
+        }
+    }
+
     if(state == EditorState::spriteEdit) {
         if(spriteEditor->routeInput(keysDown)) {
-            spriteEditor->sprite->alpha = 100;
             delete spriteEditor;
-            changeState(EditorState::pathInput);
+            changeState(EditorState::commandInput);
         }
     }
 }
@@ -144,7 +176,7 @@ int MapBuilder::addSprite() {
     if(!f.good())
         return 0;
     if (currentThing == dotThing) {
-        currentThing = new RealThing(Point(currentThing->position.x, currentThing->position.y));
+        currentThing = new RealThing(Point(currentThing->position.x, currentThing->position.y), input);
     }
     string path = "./assets/" + input;
     spriteEditor = new SpriteEditor(currentThing->AddRawSprite(path));

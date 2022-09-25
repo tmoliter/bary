@@ -17,6 +17,7 @@ enum EditorState {
     freeMove,
     thingMove,
     commandInput,
+    renameThing,
     pathInput,
     spriteEdit,
 };
