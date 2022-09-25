@@ -2,43 +2,52 @@
 
 MapBuilder *MapBuilder::mapBuilder = nullptr;
 
-MapBuilder::MapBuilder() : state(EditorState::freeMove), input("") {
+MapBuilder::MapBuilder() : input("") {
     mapBuilder = this;
-    commandText = nullptr;
-    currentThing = dotThing = new RealThing(Point(0,0));
-    SpriteData sD;
-    sD.path = "assets/debug/onePixel.png";
+
+    helpText = new Text(Point(16, 16), "");
+    UIRenderer::addText(helpText);
+    
+    dotThing = new RealThing(Point(0,0));
+    SpriteData dotSD;
+    dotSD.path = "assets/debug/onePixel.png";
     dotThing->AddSprite(new Sprite(
-        currentThing->position.x, 
-        currentThing->position.y, 
-        currentThing->name, 
-        sD
+        dotThing->position.x, 
+        dotThing->position.y, 
+        dotThing->name, 
+        dotSD
     ));
+    changeState(EditorState::freeMove);
 }
 
 void MapBuilder::changeState(EditorState newState) {
     switch (newState) {
         case freeMove:
             endTextInput();
-            currentThing->removeHighlight();
             currentThing = dotThing;
+            currentThing->removeHighlight();
             state = EditorState::freeMove;
+            helpText->setText("Free Move");
             break;
         case thingMove:
             endTextInput();
             state = EditorState::thingMove;
+            helpText->setText("Thing Move");
             break;
         case commandInput:
             beginTextInput();
             state = EditorState::commandInput;
+            helpText->setText("Enter Command");
             break;
         case pathInput:
             beginTextInput();
             state = EditorState::pathInput;
+            helpText->setText("Enter Sprite Path");
             break;
         case spriteEdit:
             endTextInput();
             state = EditorState::spriteEdit;
+            helpText->setText("Sprite Edit Mode");
             break;
     }
 }

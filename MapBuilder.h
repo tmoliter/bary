@@ -30,7 +30,7 @@ class MapBuilder {
         EditorState state;
         string input;
         SpriteEditor *spriteEditor;
-        Text *commandText;
+        Text *commandText, *helpText;
 
         void changeState(EditorState newState);
 
