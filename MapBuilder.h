@@ -31,9 +31,12 @@ class MapBuilder {
         EditorState state;
         string input;
         SpriteEditor *spriteEditor;
+        Sprite *cross;
         Text *commandText, *helpText;
 
         void changeState(EditorState newState);
+        void createOrSelectThing();
+        void focusDot();
 
         void beginTextInput();
         void endTextInput();

@@ -5,6 +5,7 @@ MapBuilder *MapBuilder::mapBuilder = nullptr;
 MapBuilder::MapBuilder() : input("") {
     mapBuilder = this;
     commandText = nullptr;
+    cross = nullptr;
 
     helpText = new Text(Point(16, 16), "");
     UIRenderer::addText(helpText);
@@ -27,8 +28,7 @@ void MapBuilder::changeState(EditorState newState) {
         case freeMove:
             helpText->setText("Free Move");
             endTextInput();
-            currentThing = dotThing;
-            Camera::panTo(currentThing->name);
+            focusDot();
             Sprite::removeHighlight();
             state = EditorState::freeMove;
             break;
@@ -41,6 +41,8 @@ void MapBuilder::changeState(EditorState newState) {
         case commandInput:
             helpText->setText(prefix + "Enter Command");
             beginTextInput();
+            if (currentThing != dotThing)
+                currentThing->removeHighlight();
             state = EditorState::commandInput;
             break;
         case renameThing:
@@ -62,6 +64,27 @@ void MapBuilder::changeState(EditorState newState) {
             state = EditorState::spriteEdit;
             break;
     }
+}
+
+
+void MapBuilder::createOrSelectThing() {
+    if (currentThing != dotThing)
+        return;
+    currentThing = new RealThing(Point(currentThing->position.x, currentThing->position.y));
+    SpriteData sd;
+    sd.path = "./assets/debug/9x9cross.png";
+    sd.layer = 100;
+    cross = new Sprite(currentThing->position.x, currentThing->position.y, currentThing->name, sd);
+    cross->centerOffset();
+}
+
+void MapBuilder::focusDot() {
+    currentThing = dotThing;
+    Camera::panTo(currentThing->name);
+    if (cross == nullptr)
+        return;
+    delete cross;
+    cross = nullptr;
 }
 
 
@@ -145,7 +168,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
             if(addSprite())
                 changeState(EditorState::spriteEdit);
             else
-                changeState(EditorState::freeMove);
+                changeState(EditorState::commandInput);
         }
     }
 
@@ -175,9 +198,7 @@ int MapBuilder::addSprite() {
     ifstream f(cPossiblePath);
     if(!f.good())
         return 0;
-    if (currentThing == dotThing) {
-        currentThing = new RealThing(Point(currentThing->position.x, currentThing->position.y), input);
-    }
+    createOrSelectThing();
     string path = "./assets/" + input;
     spriteEditor = new SpriteEditor(currentThing->AddRawSprite(path));
     spriteEditor->sprite->frontAndCenter();

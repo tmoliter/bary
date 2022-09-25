@@ -28,6 +28,12 @@ RealThing::~RealThing() {
         delete o;
 };
 
+void RealThing::_save_name_and_save_in_map(string n) {
+    Thing::_save_name_and_save_in_map(n);
+    for (auto s : sprites)
+        s->thingName = name;
+}
+
 Sprite* RealThing::AddSprite(Sprite* sprite) {
     sprite->x = position.x;
     sprite->y = position.y;
