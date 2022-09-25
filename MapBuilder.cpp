@@ -75,14 +75,15 @@ void MapBuilder::changeState(EditorState newState) {
 
 
 void MapBuilder::createOrSelectThing() {
-    if (currentThing != dotThing)
-        return;
-    currentThing = new RealThing(Point(currentThing->position.x, currentThing->position.y));
-    SpriteData sd;
-    sd.path = "./assets/debug/9x9cross.png";
-    sd.layer = 100;
-    cross = new Sprite(currentThing->position.x, currentThing->position.y, currentThing->name, sd);
-    cross->centerOffset();
+    if (currentThing == dotThing)
+        currentThing = new RealThing(Point(currentThing->position.x, currentThing->position.y));
+    if (!cross) {
+        SpriteData sd;
+        sd.path = "./assets/debug/9x9cross.png";
+        sd.layer = 100;
+        cross = new Sprite(currentThing->position.x, currentThing->position.y, currentThing->name, sd);
+        cross->centerOffset();
+    }
 }
 
 void MapBuilder::focusDot() {
@@ -149,6 +150,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
                     RealThing* match = dynamic_cast<RealThing*>(t);
                     if (match) {
                         currentThing = match;
+                        createOrSelectThing();
                         Camera::panTo(currentThing->name);
                         changeState(EditorState::commandInput);
                         return;
