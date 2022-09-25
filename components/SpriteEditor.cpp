@@ -1,17 +1,28 @@
 #include "SpriteEditor.h"
 
-SpriteEditor::SpriteEditor(Sprite *s) : sprite(s), editSpeed(1), editState(EditState::move) {
+SpriteEditor::SpriteEditor(Sprite *s) : 
+    sprite(s), 
+    editSpeed(1), 
+    editState(EditState::move), 
+    cameraPrevState(EditState::move) {
     SpriteData sd;
     sd.path = "./assets/debug/9x9cross.png";
     sd.layer = 100;
     cross = new Sprite(sprite->x, sprite->y, sprite->thingName, sd);
     cross->centerOffset();
+    
+    oldFocus = Thing::things[Camera::getFocusName()];
+    focus = new Thing(Point(sprite->x, sprite->y));
+    Camera::panTo(focus->name);
+
     text = new Text(Point(sprite->x, sprite->y), "");
     UIRenderer::addText(text);
 };
 
 SpriteEditor::~SpriteEditor() {
     UIRenderer::removeText(text);
+    Camera::panTo(oldFocus->name);
+    delete focus;
     delete cross;
 };
 
@@ -31,6 +42,8 @@ int SpriteEditor::nextMode() {
         return 0;
     case EditState::renderOffset:
         return 1;
+    default:
+        return 0;
     }
 }
 
@@ -50,6 +63,21 @@ int SpriteEditor::lastMode() {
     case EditState::renderOffset:
         editState = EditState::layer;
         return 0;
+    default:
+        return 0;
+    }
+}
+
+void SpriteEditor::handleCameraControls(KeyPresses keysDown) {
+    if (editState == EditState::cameraMove) {
+        if (keysDown.menu2)
+            editState = cameraPrevState;
+        focus->manuallyControl(keysDown);
+        return;
+    }
+    if (keysDown.menu2) {
+        cameraPrevState = editState;
+        editState = EditState::cameraMove;
     }
 }
 
@@ -87,6 +115,9 @@ void SpriteEditor::displayText() {
     case EditState::renderOffset:
         displayText = "render offset: " + to_string(sprite->d.renderOffset);
         break;
+    case EditState::cameraMove:
+        displayText = "camera move";
+        break;
     }
     text->setText(displayText);
 }
@@ -96,6 +127,7 @@ int SpriteEditor::routeInput(KeyPresses keysDown) {
         return nextMode();
     if(keysDown.cancel)
         return lastMode();
+    handleCameraControls(keysDown);
     changeEditSpeed(keysDown);
     frontAndCenter(keysDown);
     displayText();
@@ -114,6 +146,8 @@ int SpriteEditor::routeInput(KeyPresses keysDown) {
         break;
     case EditState::renderOffset:
         editRenderOffset(keysDown);
+        break;
+    default:
         break;
     }
     return 0;

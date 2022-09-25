@@ -49,6 +49,7 @@ class Sprite {
         static void renderSprites(SDL_Renderer *renderer, Point camPosition);
 
         static void highlightSprite(Sprite* sprite);
+        static void highlightThing(string thingName);
         static void removeHighlight();
 
 

@@ -16,25 +16,19 @@ void Thing::_save_name_and_save_in_map(string n) {
 }
 
 Thing::Thing(ThingData td) : 
-    position(td.x, td.y),
-    height(0), 
-    width(0) {
+    position(td.x, td.y) {
         _save_name_and_save_in_map(td.name);
     }
 
 Thing::Thing(Point p, string name) : 
     position(p.x,p.y),
-    height(0), 
-    width(0),
     name(name) {
-        _save_name_and_save_in_map("AnonymousThing");
+        _save_name_and_save_in_map(name);
 }
 
 
 Thing::Thing(Point p) : 
-    position(p.x,p.y),
-    height(0), 
-    width(0) {
+    position(p.x,p.y) {
         _save_name_and_save_in_map("AnonymousThing");
 }
 
@@ -46,8 +40,33 @@ void Thing::destroy() {
     Thing::destroyThing(name);
 }
 
+void Thing::rename(string newName) {
+    Thing::things.erase(name);
+    _save_name_and_save_in_map(newName);
+}
+
+
 Point Thing::getCenter() {
-    return Point(position.x + (width / 2) , position.y + (height / 2));
+    return Point(((2 * position.x) + bounds.right + bounds.left) / 2, ((2 * position.y) + bounds.bottom + bounds.top) / 2);
+}
+
+void Thing::manuallyControl(KeyPresses keysDown) {
+    if (keysDown.up) 
+        position.y-=3;
+    if (keysDown.down)
+        position.y+=3;
+    if (keysDown.left)
+        position.x-=3;
+    if (keysDown.right)
+        position.x+=3;
+    if (keysDown.debug_up) 
+        position.y--;
+    if (keysDown.debug_down)
+        position.y++;
+    if (keysDown.debug_left)
+        position.x--;
+    if (keysDown.debug_right)
+        position.x++;
 }
 
 // STATIC
@@ -84,4 +103,13 @@ void Thing::destroyAllThings() {
 
 void Thing::destroyThing(string n) {
     thingsToDestroy.push_back(n);
+}
+
+vector<Thing*> Thing::findThingsByPoint(Point p) {
+    vector<Thing*> matches;
+    for (auto const& [id, thing] : Thing::things) {
+        if (pointIsInside(p, thing->position, thing->bounds))
+            matches.push_back(thing);
+    }
+    return matches;
 }

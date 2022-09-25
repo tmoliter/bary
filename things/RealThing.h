@@ -22,11 +22,16 @@ class RealThing : public Thing {
         RealThing(Point p);
         ~RealThing();
 
+        void _save_name_and_save_in_map(string n);
+
         vector<Sprite*> sprites;
         vector<Obstruction*> obstructions;
 
+        void calculateHeight();
+
         Sprite* AddSprite(Sprite* sprite);
         Sprite* AddRawSprite(string path);
+        void RemoveSprite(Sprite* sprite);
 
         void highlightSprite(Sprite* sprite);
         void removeHighlight();

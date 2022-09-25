@@ -139,6 +139,12 @@ void Sprite::highlightSprite(Sprite* sprite) {
             s->alpha = 100;
 }
 
+void Sprite::highlightThing(string thingName) {
+    for (auto const& [id, s] : sprites)
+        if (s->thingName != thingName)
+            s->alpha = 100;
+}
+
 void Sprite::removeHighlight() {
     for (auto const& [id, s] : sprites)
         s->alpha = 255;

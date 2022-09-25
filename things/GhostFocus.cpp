@@ -4,7 +4,7 @@
 
 using namespace std;
 
-GhostFocus::GhostFocus(Thing *&f, string targetName) : Thing(f->getCenter()), focus(f) {
+GhostFocus::GhostFocus(Thing *&f, string targetName, bool usePos) : usePosition(usePos), Thing(usePos ? f->position : f->getCenter()), focus(f) {
     g = this;
     focus = this;
     target = Thing::things[targetName];
@@ -21,7 +21,7 @@ void GhostFocus::meat() {
 }
 
 void GhostFocus::pan() {
-    Point tp = target->getCenter();
+    Point tp = usePosition ? target->position : target->getCenter();
 
     // Snap to target if close enough
     if (tp.x < position.x + 3 && tp.x > position.x - 3)
@@ -51,9 +51,9 @@ void GhostFocus::pan() {
 
 GhostFocus* GhostFocus::g = nullptr;
 
-int GhostFocus::create(Thing *&f, string targetName) {
+int GhostFocus::create(Thing *&f, string targetName, bool usePos) {
     if (!g) {
-        new GhostFocus(f, targetName);
+        new GhostFocus(f, targetName, usePos);
         return 1;
     }
     return 0;

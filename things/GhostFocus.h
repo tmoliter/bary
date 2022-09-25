@@ -14,7 +14,9 @@ class GhostFocus : public Thing {
     public:
         Thing* target;
         Thing*& focus;
-        GhostFocus(Thing *&f, string targetName);
+        GhostFocus(Thing *&f, string targetName, bool usePos = false);
+
+        bool usePosition;
 
         void shiftFocus() {};
         void destroy();
@@ -24,7 +26,7 @@ class GhostFocus : public Thing {
         void pan();
 
         static GhostFocus *g;
-        static int create(Thing *&f, string targetName);
+        static int create(Thing *&f, string targetName, bool usePos = false);
 };
 
 #endif
