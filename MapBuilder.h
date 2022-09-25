@@ -19,6 +19,7 @@ enum EditorState {
     commandInput,
     renameThing,
     pathInput,
+    spriteSelect,
     spriteEdit,
 };
 
@@ -30,9 +31,13 @@ class MapBuilder {
 
         EditorState state;
         string input;
+        Text *commandText, *helpText;
+
+        int selectedSprite;
         SpriteEditor *spriteEditor;
         Sprite *cross;
-        Text *commandText, *helpText;
+
+
 
         void changeState(EditorState newState);
         void createOrSelectThing();

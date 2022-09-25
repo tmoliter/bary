@@ -2,7 +2,7 @@
 
 MapBuilder *MapBuilder::mapBuilder = nullptr;
 
-MapBuilder::MapBuilder() : input("") {
+MapBuilder::MapBuilder() : input(""), selectedSprite(-1) {
     mapBuilder = this;
     commandText = nullptr;
     cross = nullptr;
@@ -57,6 +57,13 @@ void MapBuilder::changeState(EditorState newState) {
             if (currentThing != dotThing)
                 currentThing->highlightSprite(nullptr);
             state = EditorState::pathInput;
+            break;
+        case spriteSelect:
+            helpText->setText(prefix + ": Select/Delete Sprite ");
+            endTextInput();
+            selectedSprite = 0;
+            currentThing->highlightSprite(currentThing->sprites[selectedSprite]);
+            state = EditorState::spriteSelect;
             break;
         case spriteEdit:
             helpText->setText(prefix + ": Sprite Edit Mode");
@@ -142,6 +149,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
                     RealThing* match = dynamic_cast<RealThing*>(t);
                     if (match) {
                         currentThing = match;
+                        Camera::panTo(currentThing->name);
                         changeState(EditorState::commandInput);
                         return;
                     }
@@ -172,6 +180,10 @@ void MapBuilder::meat(KeyPresses keysDown) {
                     changeState(EditorState::thingMove);
                     return;
                 }
+                if (input == "edit sprite") {
+                    changeState(EditorState::spriteSelect);
+                    return;
+                }
             }
             changeState(EditorState::commandInput);
         }
@@ -195,6 +207,36 @@ void MapBuilder::meat(KeyPresses keysDown) {
             if (input.length() > 0)
                 currentThing->rename(input);
             changeState(EditorState::commandInput);
+        }
+    }
+
+    if(state == EditorState::spriteSelect) {
+        if(keysDown.up || keysDown.debug_up) {
+            selectedSprite = (selectedSprite + 1) % currentThing->sprites.size();
+            currentThing->highlightSprite(currentThing->sprites[selectedSprite]);
+            return;
+        }
+        if(keysDown.down || keysDown.debug_down) {
+            selectedSprite = selectedSprite > 0 ? (selectedSprite - 1) : currentThing->sprites.size() - 1;
+            currentThing->highlightSprite(currentThing->sprites[selectedSprite]);
+            return;
+        }
+        if (keysDown.ok) {
+            spriteEditor = new SpriteEditor(currentThing->sprites[selectedSprite]);
+            selectedSprite = -1;
+            changeState(spriteEdit);
+            return;
+        }
+        if (keysDown.menu2 && currentThing->sprites.size() > 1) {
+            currentThing->RemoveSprite(currentThing->sprites[selectedSprite]);
+            selectedSprite = selectedSprite > 0 ? (selectedSprite - 1) : 0;
+            currentThing->highlightSprite(currentThing->sprites[selectedSprite]);
+            return;
+        }
+        if (keysDown.cancel) {
+            selectedSprite = -1;
+            changeState(commandInput);
+            return;
         }
     }
 

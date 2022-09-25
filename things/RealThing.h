@@ -31,6 +31,7 @@ class RealThing : public Thing {
 
         Sprite* AddSprite(Sprite* sprite);
         Sprite* AddRawSprite(string path);
+        void RemoveSprite(Sprite* sprite);
 
         void highlightSprite(Sprite* sprite);
         void removeHighlight();

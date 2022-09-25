@@ -68,10 +68,17 @@ Sprite* RealThing::AddRawSprite(string path) {
     return AddSprite(new Sprite(position.x, position.y, name, sd));
 }
 
+void RealThing::RemoveSprite(Sprite* sprite) {
+    delete sprite;
+    sprites.erase(remove(sprites.begin(), sprites.end(), sprite), sprites.end());
+}
+
 void RealThing::highlightSprite(Sprite* sprite) {
     for (auto s : sprites) {
         if (s != sprite)
             s->alpha = 100;
+        else
+            s->alpha = 255;
     }
 }
 
