@@ -27,6 +27,8 @@ class RealThing : public Thing {
         vector<Sprite*> sprites;
         vector<Obstruction*> obstructions;
 
+        void calculateHeight();
+
         Sprite* AddSprite(Sprite* sprite);
         Sprite* AddRawSprite(string path);
 

@@ -12,8 +12,8 @@ FieldPlayer::FieldPlayer(FieldPlayerData fpD) : Thing(fpD) {
     sprite->divideSheet(9, 4);
     walk = new Walk(position.x, position.y, sprite->d.layer, sprite);
 
-    height = sprite->d.height;
-    width = sprite->d.width;
+    bounds.bottom = sprite->d.height;
+    bounds.right = sprite->d.width;
     FieldPlayer::player = this;
 }
 
@@ -42,8 +42,8 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     currentDirection = newDirection == Direction::none ? currentDirection : newDirection;
 
     if(keysDown.ok && gameState == GameState::FieldFree) {
-        int xCenter = position.x + (width / 2);
-        int yBottom = position.y + height;
+        int xCenter = position.x + (bounds.right / 2);
+        int yBottom = position.y + bounds.bottom;
         Ray ray;
         switch (currentDirection) {
             case (Direction::up):

@@ -8,7 +8,7 @@ void Camera::setPosition() {
     setWarpLevel();
     int half_width =  sourceRect.w / 2;
     int half_height = sourceRect.h / 2;
-    Point fp = focus->getCenter();
+    Point fp = focusMode == center ? focus->getCenter() : focus->position;
 
     if (fp.x < half_width)
         sourceRect.x = 0;
@@ -27,6 +27,8 @@ void Camera::setPosition() {
 
 void Camera::init(Thing *f) {
     focus = f;
+    // This is kind of a hacky way to set focus mode for the map editor
+    focusMode = f->name == "EditorDot" ? point : center;
     SDL_Surface* temp = IMG_Load(path);
     bgTexture = SDL_CreateTextureFromSurface(renderer, temp);
     SDL_FreeSurface(temp);
@@ -105,7 +107,7 @@ int Camera::parse_camera(ifstream &mapData) {
 
 void Camera::panTo(string thingName) {
     if (c)
-        GhostFocus::create(c->focus, thingName);
+        GhostFocus::create(c->focus, thingName, c->focusMode == point);
 }
 
 int Camera::fadeIn(int m) {
@@ -152,4 +154,8 @@ string Camera::getFocusName() {
 
 Point Camera::getPos() {
     return Point(c->sourceRect.x, c->sourceRect.y);
+}
+
+void Camera::setFocusMode(FocusMode newMode) {
+    c->focusMode = newMode;
 }

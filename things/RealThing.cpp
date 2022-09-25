@@ -6,13 +6,7 @@ using namespace std;
 
 RealThing::RealThing(RealThingData bD) : Thing(bD) {
     for (auto sd : bD.spriteDataVector) {
-        int tmpWidth = sd.width + sd.xOffset;
-        if (tmpWidth > width)
-            width = tmpWidth;
-        int tmpHeight = sd.height + sd.yOffset;
-        if (tmpHeight > height)
-            height = tmpHeight;
-        sprites.push_back(new Sprite(position.x,position.y,name,sd));
+        AddSprite(new Sprite(position.x,position.y,name,sd));
     }
     for (auto cd : bD.obstructionData)
         obstructions.push_back(new Obstruction(this,cd));
@@ -34,17 +28,37 @@ void RealThing::_save_name_and_save_in_map(string n) {
         s->thingName = name;
 }
 
+void RealThing::calculateHeight() {
+    if (sprites.size() == 1) {
+        Sprite* sprite = sprites.back();
+        bounds.right = sprite->d.width + sprite->d.xOffset;
+        bounds.left = sprite->d.xOffset;
+        bounds.bottom = sprite->d.height + sprite->d.yOffset;
+        bounds.top = sprite->d.yOffset;
+        return;
+    }
+    for (auto s : sprites) {
+        int tmpRight = s->d.width + s->d.xOffset;
+        int tmpLeft = s->d.xOffset;
+        int tmpBottom = s->d.height + s->d.yOffset;
+        int tmpTop = s->d.yOffset;
+        if (tmpRight > bounds.right)
+            bounds.right = tmpRight;
+        if (tmpLeft < bounds.left)
+            bounds.left = tmpLeft;
+        if (tmpBottom > bounds.bottom)
+            bounds.bottom = tmpBottom;
+        if (tmpTop < bounds.top)
+            bounds.top = tmpTop;
+    }
+}
+
 Sprite* RealThing::AddSprite(Sprite* sprite) {
     sprite->x = position.x;
     sprite->y = position.y;
     sprite->thingName = name;
-    int tmpWidth = sprite->d.width + sprite->d.xOffset;
-    int tmpHeight = sprite->d.height + sprite->d.yOffset;
-    if (tmpWidth > sprite->d.width)
-        width = tmpWidth;
-    if (tmpHeight > sprite->d.height)
-        height = tmpHeight;
     sprites.push_back(sprite);
+    calculateHeight();
     return sprite;
 }
 

@@ -15,3 +15,9 @@ bool raysCollide(Ray &ray1, Ray &ray2) {
         isCounterClockwise(ray2.a,ray2.b,ray1.a)!= isCounterClockwise(ray2.a,ray2.b,ray1.b)
     );
 };
+
+bool pointIsInside(Point p, Point boxP, Bounds bounds) {
+    if (p.x < boxP.x + bounds.left || p.x > boxP.x + bounds.right || p.y < boxP.y + bounds.top || p.y > boxP.y + bounds.bottom)
+        return false;
+    return true;
+}

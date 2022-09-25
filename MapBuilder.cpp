@@ -10,7 +10,7 @@ MapBuilder::MapBuilder() : input("") {
     helpText = new Text(Point(16, 16), "");
     UIRenderer::addText(helpText);
     
-    currentThing = dotThing = new RealThing(Point(0,0));
+    currentThing = dotThing = new RealThing(Point(0,0), "EditorDot");
     SpriteData dotSD;
     dotSD.path = "assets/debug/onePixel.png";
     dotThing->AddSprite(new Sprite(
@@ -134,6 +134,22 @@ void MapBuilder::meat(KeyPresses keysDown) {
         }
     }
 
+    if (state == EditorState::freeMove) {
+        if (keysDown.ok) {
+            vector<Thing*> collisions = Thing::findThingsByPoint(dotThing->position);
+            for (auto t : collisions) {
+                if (t != dotThing) {
+                    RealThing* match = dynamic_cast<RealThing*>(t);
+                    if (match) {
+                        currentThing = match;
+                        changeState(EditorState::commandInput);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
 
     if (state == EditorState::commandInput) {
         if (listenForTextInput(keysDown))
@@ -185,6 +201,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
     if(state == EditorState::spriteEdit) {
         if(spriteEditor->routeInput(keysDown)) {
             delete spriteEditor;
+            currentThing->calculateHeight();
             changeState(EditorState::commandInput);
         }
     }

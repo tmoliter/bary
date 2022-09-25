@@ -23,8 +23,8 @@ class Thing {
     protected:
         virtual void _save_name_and_save_in_map(string n);
     public:
-        int height, width;
         Point position;
+        Bounds bounds;
         string name;
 
         Thing(ThingData td);
@@ -50,6 +50,8 @@ class Thing {
         static void destroyThings();
         static void destroyThing(string n);
         static void destroyAllThings();
+
+        static vector<Thing*> findThingsByPoint(Point p);
 };
 
 #endif

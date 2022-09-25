@@ -21,6 +21,11 @@ enum FxStatus {
     unapplied
 };
 
+enum FocusMode {
+    center,
+    point
+};
+
 class Camera {
     private:
         SDL_Rect renderRect, sourceRect;
@@ -30,6 +35,7 @@ class Camera {
         Thing* focus;
         SDL_Renderer* renderer;
         FxStatus fadeStatus, warpStatus;
+        FocusMode focusMode;
         int 
             bgWidth, bgHeight, 
             scaledScreenWidth, scaledScreenHeight,  
@@ -69,6 +75,7 @@ class Camera {
 
         static string getFocusName();
         static Point getPos();
+        static void setFocusMode(FocusMode newMode);
         static int parse_camera(ifstream &mapData);
 };
 
