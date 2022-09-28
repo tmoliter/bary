@@ -1,6 +1,8 @@
 #ifndef OBSTRUCTION_H
 #define OBSTRUCTION_H
 #include "./Collidable.h"
+#include "gui/Line.h"
+#include "gui/UIRenderer.h"
 #include <map>
 
 class Obstruction : public Collidable {

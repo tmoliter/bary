@@ -76,6 +76,10 @@ class Camera {
         static string getFocusName();
         static Point getPos();
         static void setFocusMode(FocusMode newMode);
+
+        static Point worldToScreen(Point p);
+        static Ray worldToScreen(Ray r);
+
         static int parse_camera(ifstream &mapData);
 };
 

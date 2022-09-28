@@ -3,6 +3,7 @@
 
 Obstruction::Obstruction(Thing *parent, CollidableData cd) : Collidable(parent,cd) {
     Obstruction::obstructions[currentID++] = this;
+    UIRenderer::addLines(x, y, rays, obstruction);
 }
 
 Obstruction::~Obstruction() {

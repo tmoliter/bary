@@ -11,6 +11,12 @@ void UIRenderer::addText(Text *t) {
     u->texts.push_back(t);
 };
 
+void UIRenderer::addLines(int &parentX, int &parentY, vector<Ray*> rays, LineType type) {
+    for (auto r : rays) {
+        u->lines.push_back(new Line(parentX, parentY, r,type));
+    }
+}
+
 void UIRenderer::renderPhrases() {
     vector<Phrase*>::iterator itr = u->phrases.begin();
     while (itr != u->phrases.end()) {
@@ -31,7 +37,21 @@ void UIRenderer::renderTexts() {
     }
 }
 
+// Sorting doesn't seem to work
+bool _compareType (Line* a, Line* b) {
+    if (a->type == obstruction)
+        return false;
+    return true;
+}
+void UIRenderer::renderLines() {
+    sort(u->lines.begin(), u->lines.end(), _compareType);
+    for (auto l : u->lines) {
+        l->render();
+    }
+}
+
 void UIRenderer::render() {
+    renderLines();
     renderPhrases();
     renderTexts();
 }

@@ -54,6 +54,7 @@ struct Ray {
     Point a;
     Point b;
     Ray (int aX,int aY,int bX,int bY) : a(aX, aY), b(bX, bY) {};
+    Ray (Point a, Point b) : a(a), b(b) {};
     Ray () : a(0,0), b(0,0) {};
 
    static int parse_ray_datum(ifstream &mapData, Ray &newRay);

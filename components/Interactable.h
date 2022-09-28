@@ -2,6 +2,8 @@
 #define INTERACTABLE_H
 #include "./Collidable.h"
 #include "Event.h"
+#include "gui/UIRenderer.h"
+#include "gui/Line.h"
 #include <map>
 
 class Interactable : public Collidable {

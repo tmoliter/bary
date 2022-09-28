@@ -156,6 +156,18 @@ Point Camera::getPos() {
     return Point(c->sourceRect.x, c->sourceRect.y);
 }
 
+Point Camera::worldToScreen(Point p) {
+    int renderX = (p.x - c->sourceRect.x) * SCALE;
+    int renderY = (p.y - c->sourceRect.y) * SCALE;
+    return Point(renderX, renderY);
+}
+
+Ray Camera::worldToScreen(Ray r) {
+    Point renderA = worldToScreen(r.a);
+    Point renderB = worldToScreen(r.b);
+    return Ray(renderA, renderB);
+}
+
 void Camera::setFocusMode(FocusMode newMode) {
     c->focusMode = newMode;
 }
