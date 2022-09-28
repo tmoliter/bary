@@ -7,10 +7,10 @@ Line::Line(int &pX, int &pY, Ray *r, LineType t) : parentX(pX), parentY(pY), ray
 void Line::render() {
     switch(type) {
         case obstruction:
-            SDL_SetRenderDrawColor(renderer, 255,0,0,255);
+            SDL_SetRenderDrawColor(renderer,255,0,0,255);
             break;
         case interactable:
-            SDL_SetRenderDrawColor(renderer, 0,255,0,255);
+            SDL_SetRenderDrawColor(renderer,85,150,255,255);
             break;
         case line:
             SDL_SetRenderDrawColor(renderer, 0,0,0,255);

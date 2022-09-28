@@ -37,11 +37,10 @@ void UIRenderer::renderTexts() {
     }
 }
 
-// Sorting doesn't seem to work
 bool _compareType (Line* a, Line* b) {
     if (a->type == obstruction)
-        return false;
-    return true;
+        return true;
+    return false;
 }
 void UIRenderer::renderLines() {
     sort(u->lines.begin(), u->lines.end(), _compareType);
