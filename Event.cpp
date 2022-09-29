@@ -1,6 +1,7 @@
 #include "Event.h"
 
 Event::Event() {
+    terminateOnActivation = false;
     activeEvents.push_back(this);
     stage = EventStage::pending;
 }
@@ -69,7 +70,7 @@ void Event::meat(KeyPresses keysDown) {
             event->setEndGameState();
             event->current = event->firstNode;
             event->stage = EventStage::pending;
-            // delete event;
+            event->terminateOnActivation = true;
             break;
     }
 }

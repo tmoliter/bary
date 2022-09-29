@@ -16,7 +16,7 @@ int testActions::test_event_node_callback () {
 };
 
 int testActions::test_standlone_message_callback() {
-    Phrase *ph = new Phrase(Point(300,200), 150, 40, 1, ScrollType::continuous, "Another scrolling phrase that will just continue on for a while and then eventually it will destroy itself", 3, true);
+    Phrase *ph = new Phrase(Point(300,200), 150, 40, 1, ScrollType::continuous, "Hey, by the way, that event can only happen once. So,`uh..`if you go talk to that door again it'll just disappear", 3, true);
     UIRenderer::addPhrase(ph);
     return 1;
 };

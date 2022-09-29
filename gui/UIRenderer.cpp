@@ -55,6 +55,18 @@ void UIRenderer::render() {
     renderTexts();
 }
 
+void UIRenderer::removeLine(Ray *r) {
+vector <Line*>::iterator it;
+for (it = u->lines.begin(); it != u->lines.end(); ++it) {
+    Line* l = *it;
+    if (l->ray == r) {
+        delete l;
+        it = u->lines.erase(it);
+        break;
+        }
+    }
+}
+
 void UIRenderer::removePhrase(Phrase *p) {
     u->phrases.erase(remove(u->phrases.begin(), u->phrases.end(), p), u->phrases.end());
 }

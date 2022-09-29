@@ -20,6 +20,7 @@ enum EventStage {
 
 struct Event {
     EventNode* current;
+    bool terminateOnActivation;
 
     Event();
     ~Event();

@@ -7,6 +7,8 @@ Obstruction::Obstruction(Thing *parent, CollidableData cd) : Collidable(parent,c
 }
 
 Obstruction::~Obstruction() {
+    for (auto r : rays)
+        UIRenderer::removeLine(r);
     obstructions.erase(id);
 }
 

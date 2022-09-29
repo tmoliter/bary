@@ -39,7 +39,7 @@ class UIRenderer {
 
         static void removePhrase(Phrase *p);
         static void removeText(Text *t);
-        static void clearLines();
+        static void removeLine(Ray *r);
 
         static int currentPhraseId;
         static UIRenderer *u;

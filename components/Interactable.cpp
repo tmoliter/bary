@@ -8,6 +8,10 @@ Interactable::Interactable(Thing* parent, CollidableData cd, Event* e) : Collida
 }
 
 Interactable::~Interactable() {
+    for (auto r : rays) {
+        delete event;
+        UIRenderer::removeLine(r);
+    }
     interactables.erase(id);
 }
 
@@ -16,10 +20,13 @@ Interactable::~Interactable() {
 int Interactable::currentID = 0;
 
 int Interactable::checkForInteractables(Ray &incoming, int layer) {
-    for (auto const& [id, o] : Interactable::interactables){
-        if(o->isColliding(incoming, layer)) {
-            if(o->event)
-                o->event->begin();
+    for (auto const& [id, i] : Interactable::interactables){
+        if(i->isColliding(incoming, layer)) {
+            if(i->event->terminateOnActivation) {
+                delete i;
+                return 0;
+            }
+            i->event->begin();
             return 1;
         }
     }
