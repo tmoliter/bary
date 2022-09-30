@@ -1,8 +1,6 @@
 #include "Line.h"
 
-Line::Line(int &pX, int &pY, Ray *r, LineType t) : parentX(pX), parentY(pY), ray(r), type(t) {
-    Line::lines.push_back(this);
-};
+Line::Line(int &pX, int &pY, Ray *r, LineType t) : parentX(pX), parentY(pY), ray(r), type(t) {};
 
 void Line::render() {
     switch(type) {
@@ -21,8 +19,4 @@ void Line::render() {
     }
     Ray adjusted = Camera::worldToScreen(Ray(Point(parentX + ray->a.x, parentY + ray->a.y), Point(parentX + ray->b.x, parentY + ray->b.y)));
     SDL_RenderDrawLine(renderer, adjusted.a.x, adjusted.a.y, adjusted.b.x, adjusted.b.y);
-}
-
-void Line::removeLine(Line *l) {
-    lines.erase(remove(lines.begin(), lines.end(), l), lines.end());
 }

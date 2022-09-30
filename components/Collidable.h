@@ -16,6 +16,7 @@ struct CollidableData {
 class Collidable {
     public:
         Collidable(Thing *parent, CollidableData cd);
+        Collidable(Thing *parent);
         ~Collidable();
         bool active;
         int &x, &y, layer;

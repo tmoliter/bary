@@ -23,13 +23,6 @@ struct Line {
     LineType type;
     int &parentX, &parentY;
     void render();
-
-    inline static vector<Line*> lines;
-
-    static void removeLine(Line *);
-
-    static void renderLines();
-    static void renderLines(LineType type);
 };
 
 #endif

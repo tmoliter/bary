@@ -12,6 +12,13 @@ x(parent->position.x),
 y(parent->position.y),
 thingName(parent->name) {}
 
+Collidable::Collidable (Thing *parent) : 
+layer(0),
+active(true),
+x(parent->position.x),
+y(parent->position.y),
+thingName(parent->name) {}
+
 Collidable::~Collidable() {
     for (auto r : rays) {
         delete r;

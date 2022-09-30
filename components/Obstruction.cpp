@@ -6,6 +6,16 @@ Obstruction::Obstruction(Thing *parent, CollidableData cd) : Collidable(parent,c
     UIRenderer::addLines(x, y, rays, obstruction);
 }
 
+Obstruction::Obstruction(Thing *parent) : Collidable(parent) {
+    Obstruction::obstructions[currentID++] = this;
+    UIRenderer::addLines(x, y, rays, obstruction);
+}
+
+void Obstruction::addRay(Ray *r) {
+    rays.push_back(r);
+    UIRenderer::addLine(x, y, r, obstruction);
+}
+
 Obstruction::~Obstruction() {
     for (auto r : rays)
         UIRenderer::removeLine(r);

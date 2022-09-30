@@ -25,11 +25,25 @@ RayEditor::RayEditor(RealThing *p) :
 };
 
 RayEditor::~RayEditor() {
-    UIRenderer::removeLine(ray);
+    saveRay();
     UIRenderer::removeText(text);
+    UIRenderer::removeLine(ray);
     Camera::panTo(oldFocus->name);
+    delete ray;
     delete focus;
 };
+
+void RayEditor::saveRay() {
+    Obstruction* o;
+    if (parent->obstructions.size() < 1){
+        o = new Obstruction(parent);
+        parent->obstructions.push_back(o);
+    }
+    else
+        o = parent->obstructions.back();
+    Ray *r = new Ray(ray->a,ray->b);
+    o->addRay(r);
+}
 
 int RayEditor::nextMode() {
     switch (editState) {

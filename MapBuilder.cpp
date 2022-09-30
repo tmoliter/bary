@@ -86,8 +86,6 @@ void MapBuilder::changeState(EditorState newState) {
     }
 }
 
-// Construct command list text
-
 
 void MapBuilder::createOrSelectThing() {
     if (currentThing == dotThing)

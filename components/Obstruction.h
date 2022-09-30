@@ -8,8 +8,11 @@
 class Obstruction : public Collidable {
     public:
         Obstruction(Thing *parent, CollidableData cd);
+        Obstruction(Thing *parent);
         ~Obstruction();
         int id;
+
+        void addRay(Ray *r);
 
         static int currentID;
         inline static map<int, Obstruction*> obstructions;

@@ -29,6 +29,8 @@ class RayEditor {
         RayEditState editState, cameraPrevState;
         Text *text;
 
+        void saveRay();
+
         int nextMode();
         int lastMode();
 
