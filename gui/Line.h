@@ -12,6 +12,7 @@ using namespace std;
 enum LineType {
     interactable,
     obstruction,
+    editing,
     line
 };
 

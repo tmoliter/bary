@@ -70,6 +70,13 @@ void MapBuilder::changeState(EditorState newState) {
             endTextInput();
             state = EditorState::spriteEdit;
             break;
+        case rayEdit:
+            createOrSelectThing();
+            rayEditor = new RayEditor(currentThing);
+            helpText->setText(prefix + ": Ray Edit Mode");
+            endTextInput();
+            state = EditorState::rayEdit;
+            break;
     }
 }
 
@@ -173,6 +180,10 @@ void MapBuilder::meat(KeyPresses keysDown) {
                 changeState(EditorState::freeMove);
                 return;
             }
+            if (input == "ray") {
+                changeState(EditorState::rayEdit);
+                return;
+            }
             if (currentThing != dotThing) {
                 if (input == "rename") {
                     changeState(EditorState::renameThing);
@@ -245,6 +256,14 @@ void MapBuilder::meat(KeyPresses keysDown) {
     if(state == EditorState::spriteEdit) {
         if(spriteEditor->routeInput(keysDown)) {
             delete spriteEditor;
+            currentThing->calculateHeight();
+            changeState(EditorState::commandInput);
+        }
+    }
+
+    if(state == EditorState::rayEdit) {
+        if(rayEditor->routeInput(keysDown)) {
+            delete rayEditor;
             currentThing->calculateHeight();
             changeState(EditorState::commandInput);
         }

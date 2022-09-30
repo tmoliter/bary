@@ -30,6 +30,7 @@ class UIRenderer {
         
         static void addPhrase(Phrase *p);
         static void addText(Text *t);
+        static void addLine(int &parentX, int &parentY, Ray* ray, LineType type);
         static void addLines(int &parentX, int &parentY, vector<Ray*> rays, LineType type);
 
         static void renderPhrases();

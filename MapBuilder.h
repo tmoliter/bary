@@ -8,6 +8,7 @@
 #include "things/RealThing.h"
 #include "components/Sprite.h"
 #include "components/SpriteEditor.h"
+#include "components/RayEditor.h"
 #include "gui/Text.h"
 #include "gui/UIRenderer.h"
 
@@ -21,6 +22,7 @@ enum EditorState {
     pathInput,
     spriteSelect,
     spriteEdit,
+    rayEdit,
 };
 
 class MapBuilder {
@@ -37,7 +39,7 @@ class MapBuilder {
         SpriteEditor *spriteEditor;
         Sprite *cross;
 
-
+        RayEditor *rayEditor;
 
         void changeState(EditorState newState);
         void createOrSelectThing();

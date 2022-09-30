@@ -11,9 +11,13 @@ void UIRenderer::addText(Text *t) {
     u->texts.push_back(t);
 };
 
+void UIRenderer::addLine(int &parentX, int &parentY, Ray* ray, LineType type) {
+    u->lines.push_back(new Line(parentX, parentY, ray, type));
+}
+
 void UIRenderer::addLines(int &parentX, int &parentY, vector<Ray*> rays, LineType type) {
     for (auto r : rays) {
-        u->lines.push_back(new Line(parentX, parentY, r,type));
+        u->lines.push_back(new Line(parentX, parentY, r, type));
     }
 }
 

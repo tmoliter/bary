@@ -12,6 +12,9 @@ void Line::render() {
         case interactable:
             SDL_SetRenderDrawColor(renderer,85,150,255,255);
             break;
+        case editing:
+            SDL_SetRenderDrawColor(renderer, 100,255,255,255);
+            break;
         case line:
             SDL_SetRenderDrawColor(renderer, 0,0,0,255);
             break;
