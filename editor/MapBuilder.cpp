@@ -52,7 +52,7 @@ void MapBuilder::changeState(EditorState newState) {
             state = EditorState::commandInput;
             break;
         case renameThing:
-            helpText->setText(prefix + ": Enter New Name");
+            helpText->setText(prefix + "Enter New Name");
             beginTextInput();
             Sprite::highlightThing(currentThing->name);
             state = EditorState::renameThing;
@@ -65,21 +65,22 @@ void MapBuilder::changeState(EditorState newState) {
             state = EditorState::pathInput;
             break;
         case spriteSelect:
-            helpText->setText(prefix + ": Select/Delete Sprite ");
+            helpText->setText(prefix + "Select/Delete Sprite ");
             endTextInput();
             selectedSprite = 0;
             currentThing->highlightSprite(currentThing->sprites[selectedSprite]);
             state = EditorState::spriteSelect;
             break;
         case spriteEdit:
-            helpText->setText(prefix + ": Sprite Edit Mode");
+            helpText->setText(prefix + "Sprite Edit Mode");
             endTextInput();
             state = EditorState::spriteEdit;
             break;
         case rayEdit:
             createOrSelectThing();
+            prefix = currentThing->name + ": ";
             rayEditor = new RayEditor(currentThing);
-            helpText->setText(prefix + ": Ray Edit Mode");
+            helpText->setText(prefix + "Ray Edit Mode");
             endTextInput();
             state = EditorState::rayEdit;
             break;

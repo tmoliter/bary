@@ -5,6 +5,15 @@ int Ray::parse_ray_datum(ifstream &mapData, Ray &newRay) {
     return 1;
 }
 
+string Ray::getStringPosition() {
+    double angle = atan2((b.y - a.y), (b.x - a.x));
+    double degrees = angle * (180.0/3.1415927);
+    double rounded = floor(degrees * 100 + .5) / 100;
+    string trimmed = to_string(rounded).substr(0, std::to_string(rounded).find(".") + 3);
+    return to_string(a.x) + "," + to_string(a.y) + " : " + to_string(b.x) + "," + to_string(b.y) + " (" + trimmed + "deg)";
+}
+
+
 bool isCounterClockwise (Point A, Point B, Point C) {  
     return (C.y-A.y)*(B.x-A.x) > (B.y-A.y)*(C.x-A.x);
 };

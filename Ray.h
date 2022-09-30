@@ -1,5 +1,6 @@
 #ifndef RAY_H
 #define RAY_H
+#include <tgmath.h>
 #include <fstream>
 #include <string>
 #include <iostream>
@@ -57,7 +58,9 @@ struct Ray {
     Ray (Point a, Point b) : a(a), b(b) {};
     Ray () : a(0,0), b(0,0) {};
 
-   static int parse_ray_datum(ifstream &mapData, Ray &newRay);
+    string getStringPosition();
+
+    static int parse_ray_datum(ifstream &mapData, Ray &newRay);
 };
 
 bool isCounterClockwise (Point A, Point B, Point C);

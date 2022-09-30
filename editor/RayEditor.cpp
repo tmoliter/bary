@@ -1,11 +1,5 @@
 #include "RayEditor.h"
 
-// We should add choosing layer as an mode, and then when we save,
-// Look for an obstruction with that layer in the parent.
-// If none exists, we create a new obstruction, otherwise use existing.
-
-// Also TODO: display relative coordinates as text.
-
 RayEditor::RayEditor(RealThing *p) : 
     parent(p),
     layer(0),
@@ -109,6 +103,7 @@ void RayEditor::displayText() {
         displayText = "camera move";
         break;
     }
+    displayText = displayText + "`" + ray->getStringPosition();
     text->setText(displayText);
 }
 
