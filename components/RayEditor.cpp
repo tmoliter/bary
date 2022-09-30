@@ -6,15 +6,13 @@
 
 // Also TODO: display relative coordinates as text.
 
-// Also: https://stackoverflow.com/questions/11363737/enum-value-collision-with-enum-name
-
 RayEditor::RayEditor(RealThing *p) : 
     parent(p), 
-    editState(RayEditState::rMove), 
-    cameraPrevState(RayEditState::rMove) {
+    editState(RayEditState::move), 
+    cameraPrevState(RayEditState::move) {
     
     ray = new Ray(Point(0,0), Point(0,0));
-    UIRenderer::addLine(parent->position.x, parent->position.y, ray, editing);
+    UIRenderer::addLine(parent->position.x, parent->position.y, ray, LineType::editing);
     
     oldFocus = Thing::things[Camera::getFocusName()];
     focus = new Thing(Point(parent->position.x, parent->position.y));
@@ -47,7 +45,7 @@ void RayEditor::saveRay() {
 
 int RayEditor::nextMode() {
     switch (editState) {
-    case RayEditState::rMove:
+    case RayEditState::move:
         editState = RayEditState::stretch;
         return 0;
     case RayEditState::stretch:
@@ -59,10 +57,10 @@ int RayEditor::nextMode() {
 
 int RayEditor::lastMode() {
     switch (editState) {
-    case RayEditState::rMove:
+    case RayEditState::move:
         return 0;
     case RayEditState::stretch:
-        editState = RayEditState::rMove;
+        editState = RayEditState::move;
         return 0;
     default:
         return 0;
@@ -70,7 +68,7 @@ int RayEditor::lastMode() {
 }
 
 void RayEditor::handleCameraControls(KeyPresses keysDown) {
-    if (editState == RayEditState::rCameraMove) {
+    if (editState == RayEditState::cameraMove) {
         if (keysDown.menu2)
             editState = cameraPrevState;
         focus->manuallyControl(keysDown);
@@ -78,7 +76,7 @@ void RayEditor::handleCameraControls(KeyPresses keysDown) {
     }
     if (keysDown.menu2) {
         cameraPrevState = editState;
-        editState = RayEditState::rCameraMove;
+        editState = RayEditState::cameraMove;
     }
 }
 
@@ -87,13 +85,13 @@ void RayEditor::displayText() {
 
     string displayText;
     switch (editState) {
-    case RayEditState::rMove:
+    case RayEditState::move:
         displayText = "move";
         break;
     case RayEditState::stretch:
         displayText = "stretch";
         break;
-    case RayEditState::rCameraMove:
+    case RayEditState::cameraMove:
         displayText = "camera move";
         break;
     }
@@ -108,7 +106,7 @@ int RayEditor::routeInput(KeyPresses keysDown) {
     handleCameraControls(keysDown);
     displayText();
     switch (editState) {
-    case RayEditState::rMove:
+    case RayEditState::move:
         move(keysDown);
         break;
     case RayEditState::stretch:

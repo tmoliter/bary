@@ -4,16 +4,16 @@ Line::Line(int &pX, int &pY, Ray *r, LineType t) : parentX(pX), parentY(pY), ray
 
 void Line::render() {
     switch(type) {
-        case obstruction:
+        case LineType::obstruction:
             SDL_SetRenderDrawColor(renderer,255,0,0,255);
             break;
-        case interactable:
+        case LineType::interactable:
             SDL_SetRenderDrawColor(renderer,85,150,255,255);
             break;
-        case editing:
+        case LineType::editing:
             SDL_SetRenderDrawColor(renderer, 100,255,255,255);
             break;
-        case line:
+        case LineType::line:
             SDL_SetRenderDrawColor(renderer, 0,0,0,255);
             break;
     }

@@ -14,14 +14,14 @@
 
 using namespace std;
 
-enum FxStatus {
+enum class FxStatus {
     applying,
     unapplying,
     applied,
     unapplied
 };
 
-enum FocusMode {
+enum class FocusMode {
     center,
     point
 };
@@ -46,8 +46,8 @@ class Camera {
         Camera(SDL_Renderer* r) : 
         renderer(r),
         initialized(false),
-        warpStatus(unapplied),
-        fadeStatus(applied),
+        warpStatus(FxStatus::unapplied),
+        fadeStatus(FxStatus::applied),
         fadeMultiplier(2),
         warpMultiplier(1),
         scaledScreenWidth(SCREEN_WIDTH / SCALE),

@@ -8,7 +8,7 @@ void Camera::setPosition() {
     setWarpLevel();
     int half_width =  sourceRect.w / 2;
     int half_height = sourceRect.h / 2;
-    Point fp = focusMode == center ? focus->getCenter() : focus->position;
+    Point fp = focusMode == FocusMode::center ? focus->getCenter() : focus->position;
 
     if (fp.x < half_width)
         sourceRect.x = 0;
@@ -28,7 +28,7 @@ void Camera::setPosition() {
 void Camera::init(Thing *f) {
     focus = f;
     // This is kind of a hacky way to set focus mode for the map editor
-    focusMode = f->name == "EditorDot" ? point : center;
+    focusMode = f->name == "EditorDot" ? FocusMode::point : FocusMode::center;
     SDL_Surface* temp = IMG_Load(path);
     bgTexture = SDL_CreateTextureFromSurface(renderer, temp);
     SDL_FreeSurface(temp);
@@ -107,11 +107,11 @@ int Camera::parse_camera(ifstream &mapData) {
 
 void Camera::panTo(string thingName) {
     if (c)
-        GhostFocus::create(c->focus, thingName, c->focusMode == point);
+        GhostFocus::create(c->focus, thingName, c->focusMode == FocusMode::point);
 }
 
 int Camera::fadeIn(int m) {
-    if(c->fadeStatus == unapplied)
+    if(c->fadeStatus == FxStatus::unapplied)
         return 1;
     if(c->fadeStatus == FxStatus::applied) {
         c->fadeMultiplier = m;
@@ -122,7 +122,7 @@ int Camera::fadeIn(int m) {
 }
 
 int Camera::fadeOut(int m) {
-    if(c->fadeStatus == applied)
+    if(c->fadeStatus == FxStatus::applied)
         return 1;
     if(c->fadeStatus == FxStatus::unapplied) {
         c->fadeMultiplier = m;

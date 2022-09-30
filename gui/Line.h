@@ -9,7 +9,7 @@
 
 using namespace std;
 
-enum LineType {
+enum class LineType {
     interactable,
     obstruction,
     editing,

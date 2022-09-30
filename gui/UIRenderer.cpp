@@ -42,7 +42,7 @@ void UIRenderer::renderTexts() {
 }
 
 bool _compareType (Line* a, Line* b) {
-    if (a->type == obstruction)
+    if (a->type == LineType::obstruction)
         return true;
     return false;
 }

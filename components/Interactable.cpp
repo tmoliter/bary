@@ -5,7 +5,7 @@ Interactable::Interactable(Thing* parent, CollidableData cd, Event* e) : Collida
     event = e;
     event->references++;
     Interactable::interactables[currentID++] = this;
-    UIRenderer::addLines(x, y, rays, interactable);
+    UIRenderer::addLines(x, y, rays, LineType::interactable);
 }
 
 Interactable::~Interactable() {

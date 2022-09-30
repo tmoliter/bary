@@ -3,17 +3,17 @@
 
 Obstruction::Obstruction(Thing *parent, CollidableData cd) : Collidable(parent,cd) {
     Obstruction::obstructions[currentID++] = this;
-    UIRenderer::addLines(x, y, rays, obstruction);
+    UIRenderer::addLines(x, y, rays, LineType::obstruction);
 }
 
 Obstruction::Obstruction(Thing *parent) : Collidable(parent) {
     Obstruction::obstructions[currentID++] = this;
-    UIRenderer::addLines(x, y, rays, obstruction);
+    UIRenderer::addLines(x, y, rays, LineType::obstruction);
 }
 
 void Obstruction::addRay(Ray *r) {
     rays.push_back(r);
-    UIRenderer::addLine(x, y, r, obstruction);
+    UIRenderer::addLine(x, y, r, LineType::obstruction);
 }
 
 Obstruction::~Obstruction() {

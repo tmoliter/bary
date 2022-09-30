@@ -8,7 +8,7 @@
 
 using namespace std;
 
-enum Direction {
+enum class Direction {
     up,
     down,
     left,

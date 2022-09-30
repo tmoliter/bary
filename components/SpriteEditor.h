@@ -8,7 +8,7 @@
 
 using namespace std;
 
-enum SpriteEditState {
+enum class SpriteEditState {
     move,
     grow,
     shrink,

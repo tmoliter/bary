@@ -10,10 +10,10 @@
 
 using namespace std;
 
-enum RayEditState {
-    rMove,
+enum class RayEditState {
+    move,
     stretch,
-    rCameraMove
+    cameraMove
 };
 
 class RayEditor {

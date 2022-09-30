@@ -13,7 +13,7 @@
 
 using namespace std;
 
-enum UiMode {
+enum class UiMode {
     Menu,
     Dialog,
     DisplayOnly,

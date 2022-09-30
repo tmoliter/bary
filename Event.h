@@ -10,7 +10,7 @@
 
 using namespace std;
 
-enum EventStage {
+enum class EventStage {
     pending,
     enterNode,
     holdNode,
