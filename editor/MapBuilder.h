@@ -7,8 +7,8 @@
 #include "things/Thing.h"
 #include "things/RealThing.h"
 #include "components/Sprite.h"
-#include "components/SpriteEditor.h"
-#include "components/RayEditor.h"
+#include "editor/SpriteEditor.h"
+#include "editor/RayEditor.h"
 #include "gui/Text.h"
 #include "gui/UIRenderer.h"
 

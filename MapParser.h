@@ -6,7 +6,7 @@
 #include "./things/Thing.h"
 #include "./things/FieldPlayer.h"
 #include "./things/RealThing.h"
-#include "./MapBuilder.h"
+#include "editor/MapBuilder.h"
 #include "./Camera.h"
 
 using namespace std;
