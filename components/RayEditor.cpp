@@ -6,6 +6,8 @@
 
 // Also TODO: display relative coordinates as text.
 
+// Also: https://stackoverflow.com/questions/11363737/enum-value-collision-with-enum-name
+
 RayEditor::RayEditor(RealThing *p) : 
     parent(p), 
     editState(RayEditState::rMove), 
