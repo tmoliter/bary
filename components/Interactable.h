@@ -11,6 +11,7 @@ class Interactable : public Collidable {
         Interactable(Thing* parent, CollidableData cd, Event *e = nullptr);
         ~Interactable();
         int id;
+        bool done;
 
         Event* event;
 
