@@ -13,6 +13,7 @@ using namespace std;
 enum class RayEditState {
     move,
     stretch,
+    layer,
     cameraMove
 };
 
@@ -21,6 +22,7 @@ class RayEditor {
         RayEditor(RealThing *p);
         ~RayEditor();
 
+        int layer;
         Ray* ray;
         Line* line;
 
@@ -41,6 +43,7 @@ class RayEditor {
 
         void move (KeyPresses keysDown);
         void stretch (KeyPresses keysDown);
+        void editLayer(KeyPresses keysDown);
 };
 
 #endif

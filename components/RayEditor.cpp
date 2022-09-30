@@ -7,7 +7,8 @@
 // Also TODO: display relative coordinates as text.
 
 RayEditor::RayEditor(RealThing *p) : 
-    parent(p), 
+    parent(p),
+    layer(0),
     editState(RayEditState::move), 
     cameraPrevState(RayEditState::move) {
     
@@ -32,15 +33,19 @@ RayEditor::~RayEditor() {
 };
 
 void RayEditor::saveRay() {
-    Obstruction* o;
-    if (parent->obstructions.size() < 1){
-        o = new Obstruction(parent);
-        parent->obstructions.push_back(o);
+    Obstruction* obstruction = nullptr;
+    for (auto o : parent->obstructions) {
+        if (o->layer == layer) {
+            obstruction = o;
+            break;
+        }
     }
-    else
-        o = parent->obstructions.back();
+    if (!obstruction){
+        obstruction = new Obstruction(parent);
+        parent->obstructions.push_back(obstruction);
+    }
     Ray *r = new Ray(ray->a,ray->b);
-    o->addRay(r);
+    obstruction->addRay(r);
 }
 
 int RayEditor::nextMode() {
@@ -49,6 +54,9 @@ int RayEditor::nextMode() {
         editState = RayEditState::stretch;
         return 0;
     case RayEditState::stretch:
+        editState = RayEditState::layer;
+        return 0;
+    case RayEditState::layer:
         return 1;
     default:
         return 0;
@@ -61,6 +69,9 @@ int RayEditor::lastMode() {
         return 0;
     case RayEditState::stretch:
         editState = RayEditState::move;
+        return 0;
+    case RayEditState::layer:
+        editState = RayEditState::stretch;
         return 0;
     default:
         return 0;
@@ -91,6 +102,9 @@ void RayEditor::displayText() {
     case RayEditState::stretch:
         displayText = "stretch";
         break;
+    case RayEditState::layer:
+        displayText = "layer: " + to_string(layer);
+        break;
     case RayEditState::cameraMove:
         displayText = "camera move";
         break;
@@ -111,6 +125,9 @@ int RayEditor::routeInput(KeyPresses keysDown) {
         break;
     case RayEditState::stretch:
         stretch(keysDown);
+        break;
+    case RayEditState::layer:
+        editLayer(keysDown);
         break;
     default:
         break;
@@ -150,4 +167,11 @@ void RayEditor::stretch (KeyPresses keysDown) {
     if(keysDown.right || keysDown.debug_right) {
         ray->b.x += 1;
     }
+}
+
+void RayEditor::editLayer (KeyPresses keysDown) {
+    if(keysDown.up || keysDown.debug_up)
+        layer += 1;
+    if(keysDown.down || keysDown.debug_down)
+        layer -= 1;
 }
