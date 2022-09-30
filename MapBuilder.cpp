@@ -9,6 +9,9 @@ MapBuilder::MapBuilder() : input(""), selectedSprite(-1) {
 
     helpText = new Text(Point(16, 16), "");
     UIRenderer::addText(helpText);
+
+    commandList = new Text(Point(SCREEN_WIDTH - 128, 16), "");
+    UIRenderer::addText(commandList);
     
     currentThing = dotThing = new RealThing(Point(0,0), "EditorDot");
     SpriteData dotSD;
@@ -41,8 +44,11 @@ void MapBuilder::changeState(EditorState newState) {
         case commandInput:
             helpText->setText(prefix + "Enter Command");
             beginTextInput();
-            if (currentThing != dotThing)
+                commandList->setText("COMMANDS:` sprite` ray");
+            if (currentThing != dotThing) {
+            commandList->setText(commandList->text + "` rename` move` edit sprite` free");
                 currentThing->removeHighlight();
+            }
             state = EditorState::commandInput;
             break;
         case renameThing:
@@ -79,6 +85,8 @@ void MapBuilder::changeState(EditorState newState) {
             break;
     }
 }
+
+// Construct command list text
 
 
 void MapBuilder::createOrSelectThing() {
@@ -172,6 +180,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
         if (listenForTextInput(keysDown))
             return;
         if (keysDown.start) {
+            commandList->clearText();
             if (input == "sprite") {
                 changeState(EditorState::pathInput);
                 return;

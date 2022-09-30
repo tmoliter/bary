@@ -33,7 +33,7 @@ class MapBuilder {
 
         EditorState state;
         string input;
-        Text *commandText, *helpText;
+        Text *commandText, *helpText, *commandList;
 
         int selectedSprite;
         SpriteEditor *spriteEditor;
