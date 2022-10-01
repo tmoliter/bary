@@ -13,12 +13,11 @@ RayEditor::RayEditor(RealThing *p) :
     focus = new Thing(Point(parent->position.x, parent->position.y));
     Camera::panTo(focus->name);
 
-    text = new Text(Point(parent->position.x, parent->position.y), "");
+    text = new Text(Point(LETTER_WIDTH * 2, LETTER_HEIGHT * 4), "");
     UIRenderer::addText(text);
 };
 
 RayEditor::~RayEditor() {
-    saveRay();
     UIRenderer::removeText(text);
     UIRenderer::removeLine(ray);
     Camera::panTo(oldFocus->name);
@@ -40,6 +39,7 @@ void RayEditor::saveRay() {
     }
     Ray *r = new Ray(ray->a,ray->b);
     obstruction->addRay(r);
+    editState = RayEditState::move;
 }
 
 int RayEditor::nextMode() {
@@ -51,7 +51,8 @@ int RayEditor::nextMode() {
         editState = RayEditState::layer;
         return 0;
     case RayEditState::layer:
-        return 1;
+        saveRay();
+        return 0;
     default:
         return 0;
     }
@@ -60,7 +61,7 @@ int RayEditor::nextMode() {
 int RayEditor::lastMode() {
     switch (editState) {
     case RayEditState::move:
-        return 0;
+        return 1;
     case RayEditState::stretch:
         editState = RayEditState::move;
         return 0;
@@ -86,8 +87,6 @@ void RayEditor::handleCameraControls(KeyPresses keysDown) {
 }
 
 void RayEditor::displayText() {
-    text->setPos(Point(LETTER_WIDTH * 4, LETTER_HEIGHT * 2));
-
     string displayText;
     switch (editState) {
     case RayEditState::move:
