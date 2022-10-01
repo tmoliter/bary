@@ -4,20 +4,18 @@
 
 using namespace std;
 
-Collidable::Collidable (Thing *parent, CollidableData cd) : 
+Collidable::Collidable (Point &pP, string &tN, CollidableData cd) : 
 layer(cd.layer),
 rays(cd.rays),
 active(true),
-x(parent->position.x),
-y(parent->position.y),
-thingName(parent->name) {}
+parentPos(pP),
+thingName(tN) {}
 
-Collidable::Collidable (Thing *parent) : 
+Collidable::Collidable (Point &pP, string &tN) : 
 layer(0),
 active(true),
-x(parent->position.x),
-y(parent->position.y),
-thingName(parent->name) {}
+parentPos(pP),
+thingName(tN) {}
 
 Collidable::~Collidable() {
     for (auto r : rays) {
@@ -29,7 +27,7 @@ bool Collidable::isColliding(Ray &incoming, int incomingLayer) {
     if (incomingLayer != layer)
         return false;
     for (auto r : rays) {
-        Ray ray = Ray(x + r->a.x, y + r->a.y, x + r->b.x, y + r->b.y);
+        Ray ray = Ray(parentPos.x + r->a.x, parentPos.y + r->a.y, parentPos.x + r->b.x, parentPos.y + r->b.y);
         if (raysCollide(incoming, ray)) {
             return true;
         }

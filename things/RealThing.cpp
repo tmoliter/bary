@@ -9,7 +9,7 @@ RealThing::RealThing(RealThingData bD) : Thing(bD) {
         AddSprite(new Sprite(position.x,position.y,name,sd));
     }
     for (auto cd : bD.obstructionData)
-        obstructions.push_back(new Obstruction(this,cd));
+        obstructions.push_back(new Obstruction(position, name, cd));
 };
 
 RealThing::RealThing(Point p) : Thing(p) {};
@@ -66,6 +66,30 @@ Sprite* RealThing::AddRawSprite(string path) {
     SpriteData sd;
     sd.path = path.c_str();
     return AddSprite(new Sprite(position.x, position.y, name, sd));
+}
+
+Interactable* RealThing::addInteractable(vector<Ray*> rays, int layer, Event* event) {
+    Interactable* i = new Interactable(position, name, rays, layer, event);
+    interactables.push_back(i);
+    return i;
+}
+
+Obstruction* RealThing::addObstruction(vector<Ray*> rays, int layer) {
+    Obstruction* o = new Obstruction(position, name, rays, layer);
+    obstructions.push_back(o);
+    return o;
+}
+
+Interactable* RealThing::addInteractable() {
+    Interactable* i = new Interactable(position, name);
+    interactables.push_back(i);
+    return i;
+}
+
+Obstruction* RealThing::addObstruction() {
+    Obstruction* o = new Obstruction(position, name);
+    obstructions.push_back(o);
+    return o;
 }
 
 void RealThing::RemoveSprite(Sprite* sprite) {

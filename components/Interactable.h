@@ -8,7 +8,9 @@
 
 class Interactable : public Collidable {
     public:
-        Interactable(Thing* parent, CollidableData cd, Event *e = nullptr);
+        Interactable(Point &pP, string &tN, CollidableData cd, Event *e = nullptr);
+        Interactable(Point &pP, string &tN, vector<Ray*> r, int l, Event *e = nullptr);
+        Interactable(Point &pP, string &tN, Event *e = nullptr);
         ~Interactable();
         int id, remaining;
         Event* event;

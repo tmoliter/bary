@@ -1,18 +1,36 @@
 #include "./Interactable.h"
 
 
-Interactable::Interactable(Thing* parent, CollidableData cd, Event* e) : Collidable(parent,cd), remaining(-1) {
+Interactable::Interactable(Point &pP, string &tN, CollidableData cd, Event* e) : Collidable(pP,tN,cd), remaining(-1) {
     event = e;
-    event->references++;
+    if (event)
+        event->references++;
     Interactable::interactables[currentID++] = this;
-    UIRenderer::addLines(x, y, rays, LineType::interactable);
+    UIRenderer::addLines(parentPos.x, parentPos.y, rays, LineType::interactable);
+}
+
+
+Interactable::Interactable(Point &pP, string &tN, Event *e) : Collidable(pP,tN), remaining(-1) {
+    event = e;
+    Interactable::interactables[currentID++] = this;
+    UIRenderer::addLines(parentPos.x, parentPos.y, rays, LineType::interactable);
+}
+
+Interactable::Interactable(Point &pP, string &tN, vector<Ray*> r, int l, Event *e) : Collidable(pP,tN), remaining(-1) {
+    event = e;
+    layer = layer;
+    rays = r;
+    if (event)
+        event->references++;
+    Interactable::interactables[currentID++] = this;
+    UIRenderer::addLines(parentPos.x, parentPos.y, rays, LineType::interactable);
 }
 
 Interactable::~Interactable() {
     for (auto r : rays) {
         UIRenderer::removeLine(r);
     }
-    if(--event->references < 1)
+    if(event && --event->references < 1)
         delete event;
     interactables.erase(id);
 }

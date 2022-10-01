@@ -14,9 +14,7 @@ void burgEvents::sailor_shack_test() {
     event->addNode(*node2pointer);
 
     RealThing* ss = RealThing::find_building("Sailor Shack");
-    CollidableData cd;
-    Ray *ray = new Ray(117,252,173,252);
-    cd.rays.push_back(ray);
-    cd.layer = 0;
-    new Interactable(ss, cd, event);
+    vector<Ray*> r;
+    r.push_back(new Ray(117,252,173,252));
+    ss->addInteractable(r,0,event);
 }

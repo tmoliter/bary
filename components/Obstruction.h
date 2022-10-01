@@ -7,8 +7,9 @@
 
 class Obstruction : public Collidable {
     public:
-        Obstruction(Thing *parent, CollidableData cd);
-        Obstruction(Thing *parent);
+        Obstruction(Point &pP, string &tN, CollidableData cd);
+        Obstruction(Point &pP, string &tN, vector<Ray*> r, int l);
+        Obstruction(Point &pP, string &tN);
         ~Obstruction();
         int id;
 

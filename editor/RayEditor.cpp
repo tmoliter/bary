@@ -34,11 +34,12 @@ void RayEditor::saveRay() {
         }
     }
     if (!obstruction){
-        obstruction = new Obstruction(parent);
+        obstruction = parent->addObstruction();
         parent->obstructions.push_back(obstruction);
     }
     Ray *r = new Ray(ray->a,ray->b);
     obstruction->addRay(r);
+    obstruction->layer = layer;
     editState = RayEditState::move;
 }
 
