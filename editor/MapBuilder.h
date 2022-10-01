@@ -32,7 +32,7 @@ class MapBuilder {
         RealThing *dotThing, *currentThing;
 
         EditorState state;
-        string input;
+        string input, lastPath;
         Text *commandText, *helpText, *commandList;
 
         int selectedSprite;
