@@ -44,9 +44,9 @@ void MapBuilder::changeState(EditorState newState) {
         case commandInput:
             helpText->setText(prefix + "Enter Command");
             beginTextInput();
-                commandList->setText("COMMANDS:` sprite` ray");
+                commandList->setText("COMMANDS:` sprite` ray` free");
             if (currentThing != dotThing) {
-            commandList->setText(commandList->text + "` rename` move` edit sprite` delete` free");
+            commandList->setText(commandList->text + "` rename` move` edit sprite` delete");
                 currentThing->removeHighlight();
             }
             state = EditorState::commandInput;

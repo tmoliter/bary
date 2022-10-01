@@ -10,9 +10,7 @@ class Interactable : public Collidable {
     public:
         Interactable(Thing* parent, CollidableData cd, Event *e = nullptr);
         ~Interactable();
-        int id;
-        bool done;
-
+        int id, remaining;
         Event* event;
 
         static int currentID;

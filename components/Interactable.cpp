@@ -1,7 +1,7 @@
 #include "./Interactable.h"
 
 
-Interactable::Interactable(Thing* parent, CollidableData cd, Event* e) : Collidable(parent,cd), done(false) {
+Interactable::Interactable(Thing* parent, CollidableData cd, Event* e) : Collidable(parent,cd), remaining(-1) {
     event = e;
     event->references++;
     Interactable::interactables[currentID++] = this;
@@ -24,13 +24,13 @@ int Interactable::currentID = 0;
 int Interactable::checkForInteractables(Ray &incoming, int layer) {
     for (auto const& [id, i] : Interactable::interactables){
         if(i->isColliding(incoming, layer)) {
-            if(i->done || !i->event) {
+            if(i->remaining == 0 || !i->event) {
                 delete i;
                 return 0;
             }
             i->event->begin();
-            // TODO: More flexible way of deciding whether interactable is done
-            i->done = true;
+            if (i->remaining)
+                i->remaining--;
             return 1;
         }
     }
