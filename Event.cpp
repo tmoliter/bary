@@ -14,13 +14,11 @@ Event::~Event() {
 
 void Event::addNode(EventNode* node) {
     nodes.push_back(node);
-
-    // Maybe we shouldn't do this every time. There's a refactor here.
-    firstNode = nodes.front();
-    current = firstNode;
 }
 
 void Event::begin() {
+    firstNode = nodes.front();
+    current = firstNode;
     stage = EventStage::enterNode;
     setBeginGameState();
 }
@@ -67,7 +65,6 @@ void Event::meat(KeyPresses keysDown) {
             break;
         case (EventStage::terminateEvent):
             event->setEndGameState();
-            event->current = event->firstNode;
             event->stage = EventStage::pending;
             break;
     }
