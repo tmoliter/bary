@@ -26,20 +26,7 @@ RayEditor::~RayEditor() {
 };
 
 void RayEditor::saveRay() {
-    Obstruction* obstruction = nullptr;
-    for (auto o : parent->obstructions) {
-        if (o->layer == layer) {
-            obstruction = o;
-            break;
-        }
-    }
-    if (!obstruction){
-        obstruction = parent->addObstruction();
-        parent->obstructions.push_back(obstruction);
-    }
-    Ray *r = new Ray(ray->a,ray->b);
-    obstruction->addRay(r);
-    obstruction->layer = layer;
+    parent->addObstruction({ new Ray(ray->a,ray->b) }, layer);
     editState = RayEditState::move;
 }
 

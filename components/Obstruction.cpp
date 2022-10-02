@@ -6,7 +6,8 @@ Obstruction::Obstruction(Point &pP, string &tN, CollidableData cd) : Collidable(
     UIRenderer::addLines(parentPos.x, parentPos.y, rays, LineType::obstruction);
 }
 
-Obstruction::Obstruction(Point &pP, string &tN) : Collidable(pP,tN) {
+Obstruction::Obstruction(Point &pP, string &tN, int l) : Collidable(pP,tN) {
+    layer = l;
     Obstruction::obstructions[currentID++] = this;
     UIRenderer::addLines(parentPos.x, parentPos.y, rays, LineType::obstruction);
 }
@@ -25,7 +26,7 @@ void Obstruction::addRay(Ray *r) {
 
 Obstruction::~Obstruction() {
     for (auto r : rays)
-        UIRenderer::removeLine(r);
+    UIRenderer::removeLine(r);
     obstructions.erase(id);
 }
 

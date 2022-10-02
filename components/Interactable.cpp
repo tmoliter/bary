@@ -1,7 +1,7 @@
 #include "./Interactable.h"
 
 
-Interactable::Interactable(Point &pP, string &tN, CollidableData cd, Event* e) : Collidable(pP,tN,cd), remaining(-1) {
+Interactable::Interactable(Point &pP, string &tN, string n, CollidableData cd, Event* e) : Collidable(pP,tN,cd), name(n), remaining(-1) {
     event = e;
     if (event)
         event->references++;
@@ -10,13 +10,13 @@ Interactable::Interactable(Point &pP, string &tN, CollidableData cd, Event* e) :
 }
 
 
-Interactable::Interactable(Point &pP, string &tN, Event *e) : Collidable(pP,tN), remaining(-1) {
+Interactable::Interactable(Point &pP, string &tN, string n, Event *e) : Collidable(pP,tN), name(n), remaining(-1) {
     event = e;
     Interactable::interactables[currentID++] = this;
     UIRenderer::addLines(parentPos.x, parentPos.y, rays, LineType::interactable);
 }
 
-Interactable::Interactable(Point &pP, string &tN, vector<Ray*> r, int l, Event *e) : Collidable(pP,tN), remaining(-1) {
+Interactable::Interactable(Point &pP, string &tN, string n, vector<Ray*> r, int l, Event *e) : Collidable(pP,tN), name(n), remaining(-1) {
     event = e;
     layer = layer;
     rays = r;

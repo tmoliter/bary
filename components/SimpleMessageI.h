@@ -6,7 +6,7 @@
 
 class SimpleMessageI : public Interactable {
     public:
-        SimpleMessageI(Point &pP, string &tN, string message, CollidableData cd);
+        SimpleMessageI(Point &pP, string &tN, string name, string message, CollidableData cd);
         ~SimpleMessageI();
 };
 

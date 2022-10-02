@@ -16,5 +16,5 @@ void burgEvents::sailor_shack_test() {
     RealThing* ss = RealThing::find_building("Sailor Shack");
     vector<Ray*> r;
     r.push_back(new Ray(117,252,173,252));
-    ss->addInteractable(r,0,event);
+    ss->addInteractable("empty door message",r,0,event);
 }

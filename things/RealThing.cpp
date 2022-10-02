@@ -9,7 +9,7 @@ RealThing::RealThing(RealThingData bD) : Thing(bD) {
         AddSprite(new Sprite(position.x,position.y,name,sd));
     }
     for (auto cd : bD.obstructionData)
-        obstructions.push_back(new Obstruction(position, name, cd));
+        addObstruction(cd.rays, cd.layer);
 };
 
 RealThing::RealThing(Point p) : Thing(p) {};
@@ -18,8 +18,10 @@ RealThing::RealThing(Point p, string name) : Thing(p, name) {};
 RealThing::~RealThing() {
     for (auto s : sprites)
         delete s;
-    for (auto o : obstructions)
-        delete o;
+    for (auto const& [layer, o] : obstructions)
+        removeObstruction(o->layer);
+    for (auto const& [name, in] : interactables)
+        removeInteractable(in->name);
 };
 
 void RealThing::_save_name_and_save_in_map(string n) {
@@ -68,27 +70,51 @@ Sprite* RealThing::AddRawSprite(string path) {
     return AddSprite(new Sprite(position.x, position.y, name, sd));
 }
 
-Interactable* RealThing::addInteractable(vector<Ray*> rays, int layer, Event* event) {
-    Interactable* i = new Interactable(position, name, rays, layer, event);
-    interactables.push_back(i);
-    return i;
+Interactable* RealThing::addInteractable(string iName, vector<Ray*> rays, int layer, Event* event) {
+    Interactable* in;
+    int i = 2;
+    string tmpName = iName;
+    while (interactables.count(tmpName)) {
+        tmpName = iName + to_string(i);
+        i++;
+    }
+    in = new Interactable(position, tmpName, iName, rays, layer, event);
+    interactables[tmpName] = in;
+    return in;
 }
 
 Obstruction* RealThing::addObstruction(vector<Ray*> rays, int layer) {
-    Obstruction* o = new Obstruction(position, name, rays, layer);
-    obstructions.push_back(o);
+    Obstruction* o;
+    if (obstructions.count(layer)) {
+        o = obstructions[layer];
+        for (auto r : rays)
+            o->addRay(r);
+    }
+    else {
+        o = new Obstruction(position, name, rays, layer);
+        obstructions[layer] = o;
+    }
     return o;
 }
 
-Interactable* RealThing::addInteractable() {
-    Interactable* i = new Interactable(position, name);
-    interactables.push_back(i);
-    return i;
+Interactable* RealThing::addInteractable(string iName) {
+    int i = 2;
+    string tmpName = iName;
+    while (interactables.count(tmpName)) {
+        tmpName = iName + to_string(i);
+        i++;
+    }
+    Interactable* in = new Interactable(position, name, tmpName);
+    interactables[tmpName] = in;
+    return in;
 }
 
-Obstruction* RealThing::addObstruction() {
-    Obstruction* o = new Obstruction(position, name);
-    obstructions.push_back(o);
+Obstruction* RealThing::addObstruction(int layer) {
+    if (obstructions.count(layer)) {
+        return obstructions[layer];
+    }
+    Obstruction *o = new Obstruction(position, name, layer);
+    obstructions[layer] = o;
     return o;
 }
 
@@ -96,6 +122,16 @@ void RealThing::RemoveSprite(Sprite* sprite) {
     delete sprite;
     sprites.erase(remove(sprites.begin(), sprites.end(), sprite), sprites.end());
 }
+
+void RealThing::removeInteractable(string name) {
+    delete interactables[name];
+    interactables.erase(name);
+};
+
+void RealThing::removeObstruction(int layer) {
+    delete obstructions[layer];
+    obstructions.erase(layer);
+};
 
 void RealThing::highlightSprite(Sprite* sprite) {
     for (auto s : sprites) {

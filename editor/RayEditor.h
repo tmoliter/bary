@@ -17,6 +17,11 @@ enum class RayEditState {
     cameraMove
 };
 
+enum class RayType {
+    obstruction,
+    interactable
+};
+
 class RayEditor {
     public:
         RayEditor(RealThing *p);
