@@ -44,11 +44,22 @@ class RealThing : public Thing {
         void removeInteractable(string name);
         void removeObstruction(int layer);
 
+        void showObstructionLines(int layer = -1001);
+        void showInteractableLines(string name = "");
+        void showLines();
+        void hideObstructionLines();
+        void hideInteractableLines();
+        void hideLines();
+
         void highlightSprite(Sprite* sprite);
         void removeHighlight();
 
+        static void showAllLines();
+        static void hideAllLines();
+
         static RealThing *find_building(string name);
         static int parse_building_datum(ifstream &mapData, RealThingData &newTD);
+
 };
 
 #endif

@@ -16,9 +16,8 @@ void UIRenderer::addLine(int &parentX, int &parentY, Ray* ray, LineType type) {
 }
 
 void UIRenderer::addLines(int &parentX, int &parentY, vector<Ray*> rays, LineType type) {
-    for (auto r : rays) {
+    for (auto r : rays)
         u->lines.push_back(new Line(parentX, parentY, r, type));
-    }
 }
 
 void UIRenderer::renderPhrases() {
@@ -62,12 +61,13 @@ void UIRenderer::render() {
 }
 
 void UIRenderer::removeLine(Ray *r) {
-vector <Line*>::iterator it;
-for (it = u->lines.begin(); it != u->lines.end(); ++it) {
-    Line* l = *it;
+// Should make sure this can delete dupes
+vector <Line*>::iterator itr;
+for (itr = u->lines.begin(); itr != u->lines.end(); ++itr) {
+    Line* l = *itr;
     if (l->ray == r) {
         delete l;
-        it = u->lines.erase(it);
+        itr = u->lines.erase(itr);
         break;
         }
     }

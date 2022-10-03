@@ -9,19 +9,45 @@ layer(cd.layer),
 rays(cd.rays),
 active(true),
 parentPos(pP),
-thingName(tN) {}
+thingName(tN),
+linesVisible(false) {}
 
 Collidable::Collidable (Point &pP, string &tN) : 
 layer(0),
 active(true),
 parentPos(pP),
-thingName(tN) {}
+thingName(tN),
+linesVisible(false) {}
 
 Collidable::~Collidable() {
     for (auto r : rays) {
+        UIRenderer::removeLine(r);
         delete r;
     }
 }
+
+void Collidable::addRay(Ray *r) {
+    rays.push_back(r);
+    if (linesVisible)
+        UIRenderer::addLine(parentPos.x, parentPos.y, r, lineType);
+}
+
+void Collidable::showLines() {
+    if(linesVisible)
+        return;
+    linesVisible = true;
+    for (auto r : rays)
+        UIRenderer::addLine(parentPos.x, parentPos.y, r, lineType);
+}
+
+void Collidable::hideLines() {
+    if(!linesVisible)
+        return;
+    linesVisible = false;
+    for (auto r : rays)
+        UIRenderer::removeLine(r);
+}
+
 
 bool Collidable::isColliding(Ray &incoming, int incomingLayer) {
     if (incomingLayer != layer)

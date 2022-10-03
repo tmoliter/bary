@@ -11,13 +11,15 @@
 using namespace std;
 
 enum class RayEditState {
+    selectType,
+    name,
+    layer,
     move,
     stretch,
-    layer,
     cameraMove
 };
 
-enum class RayType {
+enum class CollidableType {
     obstruction,
     interactable
 };
@@ -28,13 +30,16 @@ class RayEditor {
         ~RayEditor();
 
         int layer;
+        string name;
         Ray* ray;
         Line* line;
+        Text *text;
 
         RealThing *parent;
         Thing *focus, *oldFocus;
+
         RayEditState editState, cameraPrevState;
-        Text *text;
+        CollidableType type;
 
         void saveRay();
 
@@ -43,12 +48,17 @@ class RayEditor {
 
         void handleCameraControls(KeyPresses keysDown);
         void displayText();
+        void updateLines();
+        void handleNameSubmit();
 
         int routeInput(KeyPresses keysDown);
 
+
+        void setType (KeyPresses keysDown);
+        void editLayer(KeyPresses keysDown);
         void move (KeyPresses keysDown);
         void stretch (KeyPresses keysDown);
-        void editLayer(KeyPresses keysDown);
+        void handleNameInput(KeyPresses keysDown);
 };
 
 #endif

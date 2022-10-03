@@ -44,6 +44,7 @@ class MapBuilder {
         void changeState(EditorState newState);
         void createOrSelectThing();
         void focusDot();
+        void updateLines();
 
         void beginTextInput();
         void endTextInput();

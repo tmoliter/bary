@@ -1,9 +1,7 @@
 #ifndef OBSTRUCTION_H
 #define OBSTRUCTION_H
-#include "./Collidable.h"
-#include "gui/Line.h"
-#include "gui/UIRenderer.h"
 #include <map>
+#include "./Collidable.h"
 
 class Obstruction : public Collidable {
     public:
@@ -12,8 +10,6 @@ class Obstruction : public Collidable {
         Obstruction(Point &pP, string &tN, int l);
         ~Obstruction();
         int id;
-
-        void addRay(Ray *r);
 
         static int currentID;
         inline static map<int, Obstruction*> obstructions;

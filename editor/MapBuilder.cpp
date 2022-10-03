@@ -44,9 +44,9 @@ void MapBuilder::changeState(EditorState newState) {
         case commandInput:
             helpText->setText(prefix + "Enter Command");
             beginTextInput();
-                commandList->setText("COMMANDS:` sprite` ray` free");
+            commandList->setText("COMMANDS:` sprite` ray` free");
             if (currentThing != dotThing) {
-            commandList->setText(commandList->text + "` rename` move` edit sprite` delete");
+                commandList->setText(commandList->text + "` rename` move` edit sprite` delete");
                 currentThing->removeHighlight();
             }
             state = EditorState::commandInput;
@@ -87,6 +87,7 @@ void MapBuilder::changeState(EditorState newState) {
             state = EditorState::rayEdit;
             break;
     }
+    updateLines();
 }
 
 
@@ -109,6 +110,15 @@ void MapBuilder::focusDot() {
         return;
     delete cross;
     cross = nullptr;
+}
+
+void MapBuilder::updateLines() {
+    if(currentThing == dotThing)
+        RealThing::showAllLines();
+    else {
+        RealThing::hideAllLines();
+        currentThing->showLines();
+    }
 }
 
 
@@ -284,6 +294,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
             delete rayEditor;
             currentThing->calculateHeight();
             changeState(EditorState::commandInput);
+            updateLines();
         }
     }
 }

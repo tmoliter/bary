@@ -5,31 +5,32 @@ Interactable::Interactable(Point &pP, string &tN, string n, CollidableData cd, E
     event = e;
     if (event)
         event->references++;
+    lineType = LineType::interactable;
     Interactable::interactables[currentID++] = this;
-    UIRenderer::addLines(parentPos.x, parentPos.y, rays, LineType::interactable);
 }
 
 
 Interactable::Interactable(Point &pP, string &tN, string n, Event *e, int mT) : Collidable(pP,tN), name(n), timesTriggered(0), maxTriggers(mT) {
     event = e;
+    if (event)
+        event->references++;
+    lineType = LineType::interactable;
     Interactable::interactables[currentID++] = this;
-    UIRenderer::addLines(parentPos.x, parentPos.y, rays, LineType::interactable);
 }
 
 Interactable::Interactable(Point &pP, string &tN, string n, vector<Ray*> r, int l, Event *e, int mT) : Collidable(pP,tN), name(n), timesTriggered(0), maxTriggers(mT) {
     event = e;
+    if (event)
+        event->references++;
+    lineType = LineType::interactable;
     layer = layer;
     rays = r;
     if (event)
         event->references++;
     Interactable::interactables[currentID++] = this;
-    UIRenderer::addLines(parentPos.x, parentPos.y, rays, LineType::interactable);
 }
 
 Interactable::~Interactable() {
-    for (auto r : rays) {
-        UIRenderer::removeLine(r);
-    }
     if(event && --event->references < 1)
         delete event;
     interactables.erase(id);

@@ -98,14 +98,10 @@ Obstruction* RealThing::addObstruction(vector<Ray*> rays, int layer) {
 }
 
 Interactable* RealThing::addInteractable(string iName) {
-    int i = 2;
-    string tmpName = iName;
-    while (interactables.count(tmpName)) {
-        tmpName = iName + to_string(i);
-        i++;
-    }
-    Interactable* in = new Interactable(position, name, tmpName);
-    interactables[tmpName] = in;
+    if (interactables.count(iName))
+        return interactables[iName];
+    Interactable* in = new Interactable(position, name, iName);
+    interactables[iName] = in;
     return in;
 }
 
@@ -133,6 +129,43 @@ void RealThing::removeObstruction(int layer) {
     obstructions.erase(layer);
 };
 
+void RealThing::showObstructionLines(int layer) {
+    for (auto const& [l, o] : obstructions) {
+        if (layer < -1000 || l == layer)
+            o->showLines();
+        else 
+            o->hideLines();
+    }
+}
+
+void RealThing::showInteractableLines(string name) {
+    for (auto const& [n, in] : interactables) {
+        if (name.size() < 1 || n == name)
+        in->showLines();
+    }
+}
+
+void RealThing::showLines() {
+    showObstructionLines();
+    showInteractableLines();
+}
+
+void RealThing::hideObstructionLines() {
+    for (auto const& [l, o] : obstructions)
+        o->hideLines();
+}
+
+void RealThing::hideInteractableLines() {
+    for (auto const& [n, in] : interactables)
+        in->hideLines();
+}
+
+void RealThing::hideLines() {
+    hideObstructionLines();
+    hideInteractableLines();
+}
+
+
 void RealThing::highlightSprite(Sprite* sprite) {
     for (auto s : sprites) {
         if (s != sprite)
@@ -148,6 +181,22 @@ void RealThing::removeHighlight() {
 }
 
 // STATIC
+
+void RealThing::showAllLines() {
+    for (auto const& [id, t] : Thing::things) {
+        RealThing* rt = dynamic_cast<RealThing*>(t);
+        if (rt)
+            rt->showLines();
+    }
+}
+
+void RealThing::hideAllLines() {
+    for (auto const& [id, t] : Thing::things) {
+        RealThing* rt = dynamic_cast<RealThing*>(t);
+        if (rt)
+            rt->hideLines();
+    }
+}
 
 int RealThing::parse_building_datum(ifstream &mapData, RealThingData &newTD) {
     Thing::parse_thing_datum(mapData, newTD);

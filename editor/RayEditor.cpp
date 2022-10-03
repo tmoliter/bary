@@ -3,8 +3,10 @@
 RayEditor::RayEditor(RealThing *p) : 
     parent(p),
     layer(0),
-    editState(RayEditState::move), 
-    cameraPrevState(RayEditState::move) {
+    editState(RayEditState::selectType), 
+    cameraPrevState(RayEditState::selectType),
+    type(CollidableType::obstruction),
+    name("") {
     
     ray = new Ray(Point(0,0), Point(0,0));
     UIRenderer::addLine(parent->position.x, parent->position.y, ray, LineType::editing);
@@ -26,19 +28,35 @@ RayEditor::~RayEditor() {
 };
 
 void RayEditor::saveRay() {
-    parent->addObstruction({ new Ray(ray->a,ray->b) }, layer);
+    if (type == CollidableType::obstruction)
+        parent->addObstruction({ new Ray(ray->a,ray->b) }, layer);
+    if (type == CollidableType::interactable)
+        parent->interactables[name]->addRay(new Ray(ray->a,ray->b));
+    updateLines();
     editState = RayEditState::move;
 }
 
 int RayEditor::nextMode() {
     switch (editState) {
+    case RayEditState::selectType:
+        if (type == CollidableType::obstruction)
+            updateLines();
+            editState = RayEditState::layer;
+        if (type == CollidableType::interactable) {
+            gameState = GameState::TextInput;
+            editState = RayEditState::name;
+        }
+        return 0;
+    case RayEditState::name:
+        handleNameSubmit();
+        return 0;
+    case RayEditState::layer:
+        editState = RayEditState::move;
+        return 0;
     case RayEditState::move:
         editState = RayEditState::stretch;
         return 0;
     case RayEditState::stretch:
-        editState = RayEditState::layer;
-        return 0;
-    case RayEditState::layer:
         saveRay();
         return 0;
     default:
@@ -48,13 +66,20 @@ int RayEditor::nextMode() {
 
 int RayEditor::lastMode() {
     switch (editState) {
+    case RayEditState::selectType:
+        return 1;
+    case RayEditState::name:
+        return 0;
+    case RayEditState::layer:
+        if (type == CollidableType::obstruction)
+            return 1;
+        if (type == CollidableType::interactable)
+            editState = RayEditState::name;
+        return 0;
     case RayEditState::move:
         return 1;
     case RayEditState::stretch:
         editState = RayEditState::move;
-        return 0;
-    case RayEditState::layer:
-        editState = RayEditState::stretch;
         return 0;
     default:
         return 0;
@@ -76,22 +101,53 @@ void RayEditor::handleCameraControls(KeyPresses keysDown) {
 
 void RayEditor::displayText() {
     string displayText;
+    string prefix = name.size() > 0 ? name + ": " : "";
+    string suffix = "`layer: " + to_string(layer);
     switch (editState) {
-    case RayEditState::move:
-        displayText = "move";
+    case RayEditState::selectType:
+        displayText = type == CollidableType::interactable ? "interactable" : "collidable";
         break;
-    case RayEditState::stretch:
-        displayText = "stretch";
+    case RayEditState::name:
+        displayText = "enter name: " + name;
+        if (parent->interactables.size() > 0) {
+            displayText = displayText + "``existing interactables:";
+            for (auto const& [name, in] : parent->interactables)
+                displayText = displayText + "`  " + name;
+        }
         break;
     case RayEditState::layer:
-        displayText = "layer: " + to_string(layer);
+        displayText = prefix + "set layer" + suffix;
+        break;
+    case RayEditState::move:
+        displayText = prefix + "move" + suffix;
+        break;
+    case RayEditState::stretch:
+        displayText = prefix + "stretch" + suffix;
         break;
     case RayEditState::cameraMove:
-        displayText = "camera move";
+        displayText = prefix + "camera move" + suffix;
         break;
     }
     displayText = displayText + "`" + ray->getStringPosition();
     text->setText(displayText);
+}
+
+void RayEditor::updateLines() {
+    parent->showObstructionLines(layer);
+    parent->showInteractableLines(name);
+}
+
+void RayEditor::handleNameSubmit() {
+    if (name.size() < 1)
+        return;
+    if (parent->interactables.count(name))
+        editState = RayEditState::move;
+    else
+        editState = RayEditState::layer;
+    Interactable *in = parent->addInteractable(name);
+    layer = in->layer;
+    updateLines();
+    gameState = GameState::FieldFree;
 }
 
 int RayEditor::routeInput(KeyPresses keysDown) {
@@ -102,20 +158,55 @@ int RayEditor::routeInput(KeyPresses keysDown) {
     handleCameraControls(keysDown);
     displayText();
     switch (editState) {
+    case RayEditState::selectType:
+        setType(keysDown);
+        break;
+    case RayEditState::name:
+        handleNameInput(keysDown);
+        break;
+    case RayEditState::layer:
+        editLayer(keysDown);
+        break;
     case RayEditState::move:
         move(keysDown);
         break;
     case RayEditState::stretch:
         stretch(keysDown);
         break;
-    case RayEditState::layer:
-        editLayer(keysDown);
-        break;
     default:
         break;
     }
     return 0;
 }
+
+void RayEditor::setType (KeyPresses keysDown) {
+    if( keysDown.up || keysDown.debug_up)
+        type = CollidableType::obstruction;
+    if (keysDown.down || keysDown.debug_down)
+        type = CollidableType::interactable;
+}
+
+void RayEditor::handleNameInput(KeyPresses keysDown) {
+    if (keysDown.textInput)
+        name.push_back(keysDown.textInput);
+    if (keysDown.del && name.length() > 0)
+        name.pop_back();
+    if (keysDown.start) {
+        nextMode();
+    }
+}
+
+void RayEditor::editLayer (KeyPresses keysDown) {
+    if(keysDown.up || keysDown.debug_up) {
+        layer += 1;
+        updateLines();
+    }
+    if(keysDown.down || keysDown.debug_down) {
+        layer -= 1;
+        updateLines();
+    }
+}
+
 
 void RayEditor::move (KeyPresses keysDown) {
     if((keysDown.up || keysDown.debug_up)) {
@@ -149,11 +240,4 @@ void RayEditor::stretch (KeyPresses keysDown) {
     if(keysDown.right || keysDown.debug_right) {
         ray->b.x += 1;
     }
-}
-
-void RayEditor::editLayer (KeyPresses keysDown) {
-    if(keysDown.up || keysDown.debug_up)
-        layer += 1;
-    if(keysDown.down || keysDown.debug_down)
-        layer -= 1;
 }
