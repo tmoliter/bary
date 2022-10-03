@@ -134,7 +134,7 @@ void RayEditor::displayText() {
 
 void RayEditor::updateLines() {
     parent->showObstructionLines(layer);
-    parent->showInteractableLines(name);
+    parent->showInteractableLines(layer, name);
 }
 
 void RayEditor::handleNameSubmit() {

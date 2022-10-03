@@ -14,7 +14,7 @@ inline SDL_Rect* RESOLUTION = new SDL_Rect {0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
 inline SDL_Window* window;
 inline SDL_Renderer* renderer;
 
-inline constexpr bool fullscreen_mode = false;
+inline constexpr bool fullscreen_mode = true;
 
 inline constexpr int LETTER_WIDTH = 8;
 inline constexpr int LETTER_HEIGHT = 12;

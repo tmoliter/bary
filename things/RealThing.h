@@ -45,7 +45,7 @@ class RealThing : public Thing {
         void removeObstruction(int layer);
 
         void showObstructionLines(int layer = -1001);
-        void showInteractableLines(string name = "");
+        void showInteractableLines(int layer = -1001, string name = "");
         void showLines();
         void hideObstructionLines();
         void hideInteractableLines();

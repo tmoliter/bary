@@ -138,11 +138,14 @@ void RealThing::showObstructionLines(int layer) {
     }
 }
 
-void RealThing::showInteractableLines(string name) {
+void RealThing::showInteractableLines(int layer, string name) {
     for (auto const& [n, in] : interactables) {
-        if (name.size() < 1 || n == name)
-        in->showLines();
+        if ( (layer < -1000 || in->layer == layer) && (name.size() < 1 || n == name) )
+            in->showLines();
+        else
+            in->hideLines();
     }
+
 }
 
 void RealThing::showLines() {
