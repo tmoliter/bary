@@ -3,13 +3,9 @@
 SpriteEditor::SpriteEditor(Sprite *s) : 
     sprite(s), 
     editSpeed(1), 
-    editState(EditState::move), 
-    cameraPrevState(EditState::move) {
+    editState(SpriteEditState::move), 
+    cameraPrevState(SpriteEditState::move) {
     SpriteData sd;
-    sd.path = "./assets/debug/9x9cross.png";
-    sd.layer = 100;
-    cross = new Sprite(sprite->x, sprite->y, sprite->thingName, sd);
-    cross->centerOffset();
     
     oldFocus = Thing::things[Camera::getFocusName()];
     focus = new Thing(Point(sprite->x, sprite->y));
@@ -23,24 +19,23 @@ SpriteEditor::~SpriteEditor() {
     UIRenderer::removeText(text);
     Camera::panTo(oldFocus->name);
     delete focus;
-    delete cross;
 };
 
 int SpriteEditor::nextMode() {
     switch (editState) {
-    case EditState::move:
-        editState = EditState::shrink;
+    case SpriteEditState::move:
+        editState = SpriteEditState::shrink;
         return 0;
-    case EditState::shrink:
-        editState = EditState::grow;
+    case SpriteEditState::shrink:
+        editState = SpriteEditState::grow;
         return 0;
-    case EditState::grow:
-        editState = EditState::layer;
+    case SpriteEditState::grow:
+        editState = SpriteEditState::layer;
         return 0;
-    case EditState::layer:
-        editState = EditState::renderOffset;
+    case SpriteEditState::layer:
+        editState = SpriteEditState::renderOffset;
         return 0;
-    case EditState::renderOffset:
+    case SpriteEditState::renderOffset:
         return 1;
     default:
         return 0;
@@ -49,19 +44,19 @@ int SpriteEditor::nextMode() {
 
 int SpriteEditor::lastMode() {
     switch (editState) {
-    case EditState::move:
+    case SpriteEditState::move:
         return 0;
-    case EditState::shrink:
-        editState = EditState::move;
+    case SpriteEditState::shrink:
+        editState = SpriteEditState::move;
         return 0;
-    case EditState::grow:
-        editState = EditState::shrink;
+    case SpriteEditState::grow:
+        editState = SpriteEditState::shrink;
         return 0;
-    case EditState::layer:
-        editState = EditState::grow;
+    case SpriteEditState::layer:
+        editState = SpriteEditState::grow;
         return 0;
-    case EditState::renderOffset:
-        editState = EditState::layer;
+    case SpriteEditState::renderOffset:
+        editState = SpriteEditState::layer;
         return 0;
     default:
         return 0;
@@ -69,7 +64,7 @@ int SpriteEditor::lastMode() {
 }
 
 void SpriteEditor::handleCameraControls(KeyPresses keysDown) {
-    if (editState == EditState::cameraMove) {
+    if (editState == SpriteEditState::cameraMove) {
         if (keysDown.menu2)
             editState = cameraPrevState;
         focus->manuallyControl(keysDown);
@@ -77,7 +72,7 @@ void SpriteEditor::handleCameraControls(KeyPresses keysDown) {
     }
     if (keysDown.menu2) {
         cameraPrevState = editState;
-        editState = EditState::cameraMove;
+        editState = SpriteEditState::cameraMove;
     }
 }
 
@@ -100,22 +95,22 @@ void SpriteEditor::displayText() {
 
     string displayText;
     switch (editState) {
-    case EditState::move:
+    case SpriteEditState::move:
         displayText = "move";
         break;
-    case EditState::shrink:
+    case SpriteEditState::shrink:
         displayText = "shrink";
         break;
-    case EditState::grow:
+    case SpriteEditState::grow:
         displayText = "grow";
         break;
-    case EditState::layer:
+    case SpriteEditState::layer:
         displayText = "layer: " + to_string(sprite->d.layer);
         break;
-    case EditState::renderOffset:
+    case SpriteEditState::renderOffset:
         displayText = "render offset: " + to_string(sprite->d.renderOffset);
         break;
-    case EditState::cameraMove:
+    case SpriteEditState::cameraMove:
         displayText = "camera move";
         break;
     }
@@ -132,19 +127,19 @@ int SpriteEditor::routeInput(KeyPresses keysDown) {
     frontAndCenter(keysDown);
     displayText();
     switch (editState) {
-    case EditState::move:
+    case SpriteEditState::move:
         move(keysDown);
         break;
-    case EditState::shrink:
+    case SpriteEditState::shrink:
         shrink(keysDown);
         break;
-    case EditState::grow:
+    case SpriteEditState::grow:
         grow(keysDown);
         break;
-    case EditState::layer:
+    case SpriteEditState::layer:
         editLayer(keysDown);
         break;
-    case EditState::renderOffset:
+    case SpriteEditState::renderOffset:
         editRenderOffset(keysDown);
         break;
     default:

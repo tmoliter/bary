@@ -10,7 +10,7 @@
 
 using namespace std;
 
-enum EventStage {
+enum class EventStage {
     pending,
     enterNode,
     holdNode,
@@ -20,6 +20,7 @@ enum EventStage {
 
 struct Event {
     EventNode* current;
+    int references;
 
     Event();
     ~Event();

@@ -8,7 +8,7 @@
 
 using namespace std;
 
-enum EditState {
+enum class SpriteEditState {
     move,
     grow,
     shrink,
@@ -22,9 +22,9 @@ class SpriteEditor {
         SpriteEditor(Sprite *s);
         ~SpriteEditor();
 
-        Sprite *sprite, *cross;
+        Sprite *sprite;
         Thing *focus, *oldFocus;
-        EditState editState, cameraPrevState;
+        SpriteEditState editState, cameraPrevState;
         Text *text;
 
         int editSpeed;

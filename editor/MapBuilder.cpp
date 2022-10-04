@@ -2,13 +2,16 @@
 
 MapBuilder *MapBuilder::mapBuilder = nullptr;
 
-MapBuilder::MapBuilder() : input(""), selectedSprite(-1) {
+MapBuilder::MapBuilder() : input(""), lastPath(""), selectedSprite(-1) {
     mapBuilder = this;
     commandText = nullptr;
     cross = nullptr;
 
     helpText = new Text(Point(16, 16), "");
     UIRenderer::addText(helpText);
+
+    commandList = new Text(Point(SCREEN_WIDTH - 128, 16), "");
+    UIRenderer::addText(commandList);
     
     currentThing = dotThing = new RealThing(Point(0,0), "EditorDot");
     SpriteData dotSD;
@@ -41,12 +44,15 @@ void MapBuilder::changeState(EditorState newState) {
         case commandInput:
             helpText->setText(prefix + "Enter Command");
             beginTextInput();
-            if (currentThing != dotThing)
+            commandList->setText("COMMANDS:` sprite` ray` free");
+            if (currentThing != dotThing) {
+                commandList->setText(commandList->text + "` rename` move` edit sprite` delete");
                 currentThing->removeHighlight();
+            }
             state = EditorState::commandInput;
             break;
         case renameThing:
-            helpText->setText(prefix + ": Enter New Name");
+            helpText->setText(prefix + "Enter New Name");
             beginTextInput();
             Sprite::highlightThing(currentThing->name);
             state = EditorState::renameThing;
@@ -54,23 +60,34 @@ void MapBuilder::changeState(EditorState newState) {
         case pathInput:
             helpText->setText(prefix + "Enter Sprite Path");
             beginTextInput();
+            input = lastPath;
+            commandText->setText(input);
             if (currentThing != dotThing)
                 currentThing->highlightSprite(nullptr);
             state = EditorState::pathInput;
             break;
         case spriteSelect:
-            helpText->setText(prefix + ": Select/Delete Sprite ");
+            helpText->setText(prefix + "Select/Delete Sprite ");
             endTextInput();
             selectedSprite = 0;
             currentThing->highlightSprite(currentThing->sprites[selectedSprite]);
             state = EditorState::spriteSelect;
             break;
         case spriteEdit:
-            helpText->setText(prefix + ": Sprite Edit Mode");
+            helpText->setText(prefix + "Sprite Edit Mode");
             endTextInput();
             state = EditorState::spriteEdit;
             break;
+        case rayEdit:
+            createOrSelectThing();
+            prefix = currentThing->name + ": ";
+            rayEditor = new RayEditor(currentThing);
+            helpText->setText(prefix + "Ray Edit Mode");
+            endTextInput();
+            state = EditorState::rayEdit;
+            break;
     }
+    updateLines();
 }
 
 
@@ -93,6 +110,15 @@ void MapBuilder::focusDot() {
         return;
     delete cross;
     cross = nullptr;
+}
+
+void MapBuilder::updateLines() {
+    if(currentThing == dotThing)
+        RealThing::showAllLines();
+    else {
+        RealThing::hideAllLines();
+        currentThing->showLines();
+    }
 }
 
 
@@ -165,12 +191,17 @@ void MapBuilder::meat(KeyPresses keysDown) {
         if (listenForTextInput(keysDown))
             return;
         if (keysDown.start) {
+            commandList->clearText();
             if (input == "sprite") {
                 changeState(EditorState::pathInput);
                 return;
             }
             if (input == "free") {
                 changeState(EditorState::freeMove);
+                return;
+            }
+            if (input == "ray") {
+                changeState(EditorState::rayEdit);
                 return;
             }
             if (currentThing != dotThing) {
@@ -186,6 +217,11 @@ void MapBuilder::meat(KeyPresses keysDown) {
                     changeState(EditorState::spriteSelect);
                     return;
                 }
+                if (input == "delete") {
+                    delete currentThing;
+                    changeState(EditorState::freeMove);
+                    return;
+                }
             }
             changeState(EditorState::commandInput);
         }
@@ -195,10 +231,13 @@ void MapBuilder::meat(KeyPresses keysDown) {
         if (listenForTextInput(keysDown))
             return;
         if(keysDown.start) {
-            if(addSprite())
+            if(addSprite()) {
                 changeState(EditorState::spriteEdit);
-            else
+            }
+            else {
+                lastPath = "";
                 changeState(EditorState::commandInput);
+            }
         }
     }
 
@@ -246,7 +285,16 @@ void MapBuilder::meat(KeyPresses keysDown) {
         if(spriteEditor->routeInput(keysDown)) {
             delete spriteEditor;
             currentThing->calculateHeight();
+            changeState(EditorState::pathInput);
+        }
+    }
+
+    if(state == EditorState::rayEdit) {
+        if(rayEditor->routeInput(keysDown)) {
+            delete rayEditor;
+            currentThing->calculateHeight();
             changeState(EditorState::commandInput);
+            updateLines();
         }
     }
 }
@@ -259,6 +307,7 @@ int MapBuilder::addSprite() {
     ifstream f(cPossiblePath);
     if(!f.good())
         return 0;
+    lastPath = input;
     createOrSelectThing();
     string path = "./assets/" + input;
     spriteEditor = new SpriteEditor(currentThing->AddRawSprite(path));

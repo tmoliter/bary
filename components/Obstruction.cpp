@@ -1,7 +1,21 @@
 #include "./Obstruction.h"
 
 
-Obstruction::Obstruction(Thing *parent, CollidableData cd) : Collidable(parent,cd) {
+Obstruction::Obstruction(Point &pP, string &tN, CollidableData cd) : Collidable(pP,tN,cd) {
+    lineType = LineType::obstruction;
+    Obstruction::obstructions[currentID++] = this;
+}
+
+Obstruction::Obstruction(Point &pP, string &tN, int l) : Collidable(pP,tN) {
+    layer = l;
+    lineType = LineType::obstruction;
+    Obstruction::obstructions[currentID++] = this;
+}
+
+Obstruction::Obstruction(Point &pP, string &tN, vector<Ray*> r, int l) : Collidable(pP,tN) {
+    rays = r;
+    layer = l;
+    lineType = LineType::obstruction;
     Obstruction::obstructions[currentID++] = this;
 }
 

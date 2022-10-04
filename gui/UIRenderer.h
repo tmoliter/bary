@@ -8,11 +8,12 @@
 #include "globals.h"
 #include "./Phrase.h"
 #include "./Text.h"
+#include "./Line.h"
 #include "../Camera.h"
 
 using namespace std;
 
-enum UiMode {
+enum class UiMode {
     Menu,
     Dialog,
     DisplayOnly,
@@ -25,16 +26,21 @@ class UIRenderer {
 
         vector<Phrase*> phrases;
         vector<Text*> texts;
-
+        vector<Line*> lines;
+        
         static void addPhrase(Phrase *p);
         static void addText(Text *t);
+        static void addLine(int &parentX, int &parentY, Ray* ray, LineType type);
+        static void addLines(int &parentX, int &parentY, vector<Ray*> rays, LineType type);
 
         static void renderPhrases();
         static void renderTexts();
+        static void renderLines();
         static void render();
 
         static void removePhrase(Phrase *p);
         static void removeText(Text *t);
+        static void removeLine(Ray *r);
 
         static int currentPhraseId;
         static UIRenderer *u;

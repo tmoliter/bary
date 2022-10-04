@@ -11,6 +11,15 @@ void UIRenderer::addText(Text *t) {
     u->texts.push_back(t);
 };
 
+void UIRenderer::addLine(int &parentX, int &parentY, Ray* ray, LineType type) {
+    u->lines.push_back(new Line(parentX, parentY, ray, type));
+}
+
+void UIRenderer::addLines(int &parentX, int &parentY, vector<Ray*> rays, LineType type) {
+    for (auto r : rays)
+        u->lines.push_back(new Line(parentX, parentY, r, type));
+}
+
 void UIRenderer::renderPhrases() {
     vector<Phrase*>::iterator itr = u->phrases.begin();
     while (itr != u->phrases.end()) {
@@ -31,9 +40,37 @@ void UIRenderer::renderTexts() {
     }
 }
 
+bool _compareType (Line* a, Line* b) {
+    if (a->type == LineType::editing)
+        return true;
+    if (a->type == LineType::obstruction && b->type != LineType::editing)
+        return true;
+    return false;
+}
+void UIRenderer::renderLines() {
+    sort(u->lines.begin(), u->lines.end(), _compareType);
+    for (auto l : u->lines) {
+        l->render();
+    }
+}
+
 void UIRenderer::render() {
+    renderLines();
     renderPhrases();
     renderTexts();
+}
+
+void UIRenderer::removeLine(Ray *r) {
+// Should make sure this can delete dupes
+vector <Line*>::iterator itr;
+for (itr = u->lines.begin(); itr != u->lines.end(); ++itr) {
+    Line* l = *itr;
+    if (l->ray == r) {
+        delete l;
+        itr = u->lines.erase(itr);
+        break;
+        }
+    }
 }
 
 void UIRenderer::removePhrase(Phrase *p) {

@@ -9,7 +9,7 @@
 
 using namespace std;
 
-enum ScrollType {
+enum class ScrollType {
     oneLine,
     continuous,
     allButLast,

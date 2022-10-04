@@ -3,11 +3,10 @@
 #include "Event.h"
 #include "Timer.h"
 #include "./Interactable.h"
-#include "../things/FieldPlayer.h"
 
 class SimpleMessageI : public Interactable {
     public:
-        SimpleMessageI(Thing *parent, string message, CollidableData cd);
+        SimpleMessageI(Point &pP, string &tN, string name, string message, CollidableData cd);
         ~SimpleMessageI();
 };
 

@@ -7,7 +7,8 @@
 #include "things/Thing.h"
 #include "things/RealThing.h"
 #include "components/Sprite.h"
-#include "components/SpriteEditor.h"
+#include "editor/SpriteEditor.h"
+#include "editor/RayEditor.h"
 #include "gui/Text.h"
 #include "gui/UIRenderer.h"
 
@@ -21,6 +22,7 @@ enum EditorState {
     pathInput,
     spriteSelect,
     spriteEdit,
+    rayEdit,
 };
 
 class MapBuilder {
@@ -30,18 +32,19 @@ class MapBuilder {
         RealThing *dotThing, *currentThing;
 
         EditorState state;
-        string input;
-        Text *commandText, *helpText;
+        string input, lastPath;
+        Text *commandText, *helpText, *commandList;
 
         int selectedSprite;
         SpriteEditor *spriteEditor;
         Sprite *cross;
 
-
+        RayEditor *rayEditor;
 
         void changeState(EditorState newState);
         void createOrSelectThing();
         void focusDot();
+        void updateLines();
 
         void beginTextInput();
         void endTextInput();

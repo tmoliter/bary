@@ -1,15 +1,18 @@
 #ifndef INTERACTABLE_H
 #define INTERACTABLE_H
-#include "./Collidable.h"
-#include "Event.h"
 #include <map>
+#include <string>
+#include "Event.h"
+#include "./Collidable.h"
 
 class Interactable : public Collidable {
     public:
-        Interactable(Thing* parent, CollidableData cd, Event *e = nullptr);
+        Interactable(Point &pP, string &tN, string n, CollidableData cd, Event *e = nullptr, int maxTriggers = -1);
+        Interactable(Point &pP, string &tN, string n, vector<Ray*> r, int l, Event *e = nullptr, int maxTriggers = -1);
+        Interactable(Point &pP, string &tN, string n, Event *e = nullptr, int maxTriggers = -1);
         ~Interactable();
-        int id;
-
+        int id, remaining, timesTriggered, maxTriggers;
+        string name;
         Event* event;
 
         static int currentID;

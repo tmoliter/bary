@@ -6,6 +6,10 @@ Thing *parse_thing(ifstream &mapData) {
     char next;
     mapData.get(next);
     if(next == 'X') {
+        if(SCALE != 1) {
+            cout << "Map Builder can only be used if SCALE == 1" << endl;
+            throw exception();
+        }
         mapData.get();
         MapBuilder *m = new MapBuilder();
         return m->currentThing;

@@ -20,7 +20,7 @@ inline constexpr int LETTER_WIDTH = 8;
 inline constexpr int LETTER_HEIGHT = 12;
 inline constexpr int LETTERS_PER_FONT_ROW = 24;
 
-enum GameState {
+enum class GameState {
     FieldFree,
     FieldUI,
     TextInput,

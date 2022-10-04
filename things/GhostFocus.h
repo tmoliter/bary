@@ -1,11 +1,9 @@
 #ifndef CAMERA_EFFECT_H
 #define CAMERA_EFFECT_H
 
-#include "Thing.h"
-#include "../components/Walk.h"
-#include "../components/Obstruction.h"
 #include <iostream>
 #include <vector>
+#include "Thing.h"
 #include "globals.h"
 
 using namespace std;

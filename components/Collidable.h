@@ -1,10 +1,11 @@
 #ifndef COLLIDABLE_H
 #define COLLIDABLE_H
-#include "Ray.h"
-#include "../things/Thing.h"
 #include <vector>
 #include <string>
 #include <fstream>
+#include "Ray.h"
+#include "gui/UIRenderer.h"
+#include "gui/Line.h"
 
 using namespace std;
 
@@ -15,13 +16,21 @@ struct CollidableData {
 
 class Collidable {
     public:
-        Collidable(Thing *parent, CollidableData cd);
+        Collidable (Point &pP, string &tN, CollidableData cd);
+        Collidable (Point &pP, string &tN);
         ~Collidable();
-        bool active;
-        int &x, &y, layer;
+        Point &parentPos;
         string &thingName;
+        LineType lineType;
+        bool active, linesVisible;
+        int layer;
 
         vector<Ray*> rays;
+
+        void addRay(Ray *r);
+
+        void showLines();
+        void hideLines();
 
         bool isColliding(Ray &incoming, int incomingLayer);
 

@@ -1,12 +1,14 @@
 #ifndef VISIBLE_THING_H
 #define VISIBLE_THING_H
 
+#include <iostream>
+#include <vector>
+#include <map>
 #include "Thing.h"
 #include "../components/Walk.h"
 #include "../components/Sprite.h"
 #include "../components/Obstruction.h"
-#include <iostream>
-#include <vector>
+#include "../components/Interactable.h"
 
 using namespace std;
 
@@ -25,19 +27,39 @@ class RealThing : public Thing {
         void _save_name_and_save_in_map(string n);
 
         vector<Sprite*> sprites;
-        vector<Obstruction*> obstructions;
+        map<int, Obstruction*> obstructions;
+        map<string, Interactable*> interactables;
 
         void calculateHeight();
 
         Sprite* AddSprite(Sprite* sprite);
         Sprite* AddRawSprite(string path);
+
+        Interactable* addInteractable(string iName, vector<Ray*> rays, int layer, Event* event = nullptr);
+        Obstruction* addObstruction(vector<Ray*> rays, int layer);
+        Interactable* addInteractable(string iName);
+        Obstruction* addObstruction(int layer);
+
         void RemoveSprite(Sprite* sprite);
+        void removeInteractable(string name);
+        void removeObstruction(int layer);
+
+        void showObstructionLines(int layer = -1001);
+        void showInteractableLines(int layer = -1001, string name = "");
+        void showLines();
+        void hideObstructionLines();
+        void hideInteractableLines();
+        void hideLines();
 
         void highlightSprite(Sprite* sprite);
         void removeHighlight();
 
+        static void showAllLines();
+        static void hideAllLines();
+
         static RealThing *find_building(string name);
         static int parse_building_datum(ifstream &mapData, RealThingData &newTD);
+
 };
 
 #endif
