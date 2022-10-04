@@ -30,8 +30,13 @@ RayEditor::~RayEditor() {
 void RayEditor::saveRay() {
     if (type == CollidableType::obstruction)
         parent->addObstruction({ new Ray(ray->a,ray->b) }, layer);
-    if (type == CollidableType::interactable)
-        parent->interactables[name]->addRay(new Ray(ray->a,ray->b));
+    if (type == CollidableType::interactable) {
+        bool editExisting = parent->interactables.count(name);
+        Interactable *in = parent->addInteractable(name);
+        if (!editExisting)
+            in->layer = layer;
+        in->addRay(new Ray(ray->a,ray->b));
+    }
     updateLines();
     editState = RayEditState::move;
 }
@@ -140,13 +145,13 @@ void RayEditor::updateLines() {
 void RayEditor::handleNameSubmit() {
     if (name.size() < 1)
         return;
-    if (parent->interactables.count(name))
+    if (parent->interactables.count(name)) {
         editState = RayEditState::move;
+        layer =  parent->interactables[name]->layer;
+        updateLines();
+    }
     else
         editState = RayEditState::layer;
-    Interactable *in = parent->addInteractable(name);
-    layer = in->layer;
-    updateLines();
     gameState = GameState::FieldFree;
 }
 
