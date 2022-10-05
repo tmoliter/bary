@@ -23,8 +23,9 @@ class FieldPlayer : public Thing {
         ~FieldPlayer();
 
         Direction currentDirection;
-
         Sprite *sprite;
+
+        void getRay(Ray &r);
 
         void meat(KeyPresses keysDown);
 

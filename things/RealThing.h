@@ -29,6 +29,7 @@ class RealThing : public Thing {
         vector<Sprite*> sprites;
         map<int, Obstruction*> obstructions;
         map<string, Interactable*> interactables;
+        map<string, Trigger*> triggers;
 
         void calculateHeight();
 
@@ -36,19 +37,24 @@ class RealThing : public Thing {
         Sprite* AddRawSprite(string path);
 
         Interactable* addInteractable(string iName, vector<Ray*> rays, int layer, Event* event = nullptr);
+        Trigger* addTrigger(string iName, vector<Ray*> rays, int layer, Event* event = nullptr);
         Obstruction* addObstruction(vector<Ray*> rays, int layer);
         Interactable* addInteractable(string iName);
+        Trigger* addTrigger(string iName);
         Obstruction* addObstruction(int layer);
 
         void RemoveSprite(Sprite* sprite);
         void removeInteractable(string name);
+        void removeTrigger(string name);
         void removeObstruction(int layer);
 
         void showObstructionLines(int layer = -1001);
         void showInteractableLines(int layer = -1001, string name = "");
+        void showTriggerLines(int layer = -1001, string name = "");
         void showLines();
         void hideObstructionLines();
         void hideInteractableLines();
+        void hideTriggerLines();
         void hideLines();
 
         void highlightSprite(Sprite* sprite);

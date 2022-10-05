@@ -11,6 +11,7 @@ using namespace std;
 
 enum class LineType {
     interactable,
+    trigger,
     obstruction,
     editing,
     line

@@ -5,9 +5,8 @@
 using namespace std;
 
 RealThing::RealThing(RealThingData bD) : Thing(bD) {
-    for (auto sd : bD.spriteDataVector) {
+    for (auto sd : bD.spriteDataVector)
         AddSprite(new Sprite(position.x,position.y,name,sd));
-    }
     for (auto cd : bD.obstructionData)
         addObstruction(cd.rays, cd.layer);
 };
@@ -22,6 +21,8 @@ RealThing::~RealThing() {
         removeObstruction(o->layer);
     for (auto const& [name, in] : interactables)
         removeInteractable(in->name);
+    for (auto const& [name, tr] : triggers)
+        removeTrigger(tr->name);
 };
 
 void RealThing::_save_name_and_save_in_map(string n) {
@@ -71,16 +72,19 @@ Sprite* RealThing::AddRawSprite(string path) {
 }
 
 Interactable* RealThing::addInteractable(string iName, vector<Ray*> rays, int layer, Event* event) {
-    Interactable* in;
-    int i = 2;
-    string tmpName = iName;
-    while (interactables.count(tmpName)) {
-        tmpName = iName + to_string(i);
-        i++;
-    }
-    in = new Interactable(position, tmpName, iName, rays, layer, event);
-    interactables[tmpName] = in;
+    if (interactables.count(iName))
+        return interactables[iName];
+    Interactable* in = new Interactable(position, name, iName, rays, layer, event);
+    interactables[iName] = in;
     return in;
+}
+
+Trigger* RealThing::addTrigger(string iName, vector<Ray*> rays, int layer, Event* event) {
+    if (triggers.count(iName))
+        return triggers[iName];
+    Trigger* tr = new Trigger(position, name, iName, rays, layer, event);
+    triggers[iName] = tr;
+    return tr;
 }
 
 Obstruction* RealThing::addObstruction(vector<Ray*> rays, int layer) {
@@ -105,6 +109,15 @@ Interactable* RealThing::addInteractable(string iName) {
     return in;
 }
 
+Trigger* RealThing::addTrigger(string iName) {
+    if (triggers.count(iName))
+        return triggers[iName];
+    Trigger* tr = new Trigger(position, name, iName);
+    triggers[iName] = tr;
+    return tr;
+}
+
+
 Obstruction* RealThing::addObstruction(int layer) {
     if (obstructions.count(layer)) {
         return obstructions[layer];
@@ -123,6 +136,13 @@ void RealThing::removeInteractable(string name) {
     delete interactables[name];
     interactables.erase(name);
 };
+
+
+void RealThing::removeTrigger(string name) {
+    delete triggers[name];
+    triggers.erase(name);
+};
+
 
 void RealThing::removeObstruction(int layer) {
     delete obstructions[layer];
@@ -145,12 +165,21 @@ void RealThing::showInteractableLines(int layer, string name) {
         else
             in->hideLines();
     }
+}
 
+void RealThing::showTriggerLines(int layer, string name) {
+    for (auto const& [n, tr] : triggers) {
+        if ( (layer < -1000 || tr->layer == layer) && (name.size() < 1 || n == name) )
+            tr->showLines();
+        else
+            tr->hideLines();
+    }
 }
 
 void RealThing::showLines() {
     showObstructionLines();
     showInteractableLines();
+    showTriggerLines();
 }
 
 void RealThing::hideObstructionLines() {
@@ -163,9 +192,16 @@ void RealThing::hideInteractableLines() {
         in->hideLines();
 }
 
+void RealThing::hideTriggerLines() {
+    for (auto const& [n, tr] : triggers)
+        tr->hideLines();
+}
+
+
 void RealThing::hideLines() {
     hideObstructionLines();
     hideInteractableLines();
+    hideTriggerLines();
 }
 
 

@@ -23,6 +23,27 @@ FieldPlayer::~FieldPlayer() {
     FieldPlayer::player = nullptr;
 };
 
+void FieldPlayer::getRay(Ray &r) {
+    int xCenter = position.x + (bounds.right / 2);
+    int yBottom = position.y + bounds.bottom;
+    switch (currentDirection) {
+        case (Direction::up):
+            r = Ray(xCenter, yBottom, xCenter, yBottom - 8);
+            break;
+        case (Direction::down):
+            r = Ray(xCenter, yBottom, xCenter, yBottom + 8);
+            break;
+        case (Direction::left):
+            r = Ray(xCenter, yBottom, xCenter - 8, yBottom);
+            break;
+        case (Direction::right):
+            r = Ray(xCenter, yBottom, xCenter + 8, yBottom);
+            break;
+        default:
+            r = Ray(xCenter, yBottom, xCenter, yBottom);
+    }
+}
+
 void FieldPlayer::meat(KeyPresses keysDown) {
     int xV = 0, yV = 0;
     int rayX = position.x + 16;
@@ -41,26 +62,10 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     Direction newDirection = walk->move(dM);
     currentDirection = newDirection == Direction::none ? currentDirection : newDirection;
 
+    Ray ray;
+    getRay(ray);
+    Trigger::checkForTriggers(ray, sprite->d.layer);
     if(keysDown.ok && gameState == GameState::FieldFree) {
-        int xCenter = position.x + (bounds.right / 2);
-        int yBottom = position.y + bounds.bottom;
-        Ray ray;
-        switch (currentDirection) {
-            case (Direction::up):
-                ray = Ray(xCenter, yBottom, xCenter, yBottom - 8);
-                break;
-            case (Direction::down):
-                ray = Ray(xCenter, yBottom, xCenter, yBottom + 8);
-                break;
-            case (Direction::left):
-                ray = Ray(xCenter, yBottom, xCenter - 8, yBottom);
-                break;
-            case (Direction::right):
-                ray = Ray(xCenter, yBottom, xCenter + 8, yBottom);
-                break;
-            default:
-                ray = Ray(xCenter, yBottom, xCenter, yBottom);
-        }
         Interactable::checkForInteractables(ray, sprite->d.layer);
     }
 
