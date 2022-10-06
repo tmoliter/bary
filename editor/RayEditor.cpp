@@ -196,28 +196,22 @@ void RayEditor::enterSelect () {
             if (parent->obstructions.count(layer)) {
                 selected = parent->obstructions[layer];
                 found = true;
-            } else {
-                exitSelect();
             }
             break;
         case CollidableType::interactable:
             if (parent->interactables.count(name)) {
                 selected = parent->interactables[name];
                 found = true;
-            } else {
-                exitSelect();
             }
             break;
         case CollidableType::trigger:
             if (parent->triggers.count(name)) {
                 selected = parent->triggers[name];
                 found = true;
-            } else {
-                exitSelect();
             }
             break;
     }
-    if (selected->rays.size() < 1) {
+    if (!found || selected->rays.size() < 1) {
         exitSelect();
         return;
     }
