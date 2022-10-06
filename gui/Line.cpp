@@ -16,6 +16,9 @@ void Line::render() {
         case LineType::editing:
             SDL_SetRenderDrawColor(renderer, 100,255,255,255);
             break;
+        case LineType::highlight:
+            SDL_SetRenderDrawColor(renderer, 180,180,180,180);
+            break;
         case LineType::line:
             SDL_SetRenderDrawColor(renderer, 0,0,0,255);
             break;

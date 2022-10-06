@@ -6,7 +6,9 @@ RayEditor::RayEditor(RealThing *p) :
     editState(RayEditState::selectType), 
     cameraPrevState(RayEditState::selectType),
     type(CollidableType::obstruction),
-    name("") {
+    name(""),
+    selected(nullptr),
+    selectedI(-1) {
     
     ray = new Ray(Point(0,0), Point(0,0));
     UIRenderer::addLine(parent->position.x, parent->position.y, ray, LineType::editing);
@@ -71,6 +73,9 @@ int RayEditor::nextMode() {
     case RayEditState::stretch:
         saveRay();
         return 0;
+    case RayEditState::select:
+        redoRay();
+        return 0;
     default:
         return 0;
     }
@@ -92,6 +97,9 @@ int RayEditor::lastMode() {
         return 1;
     case RayEditState::stretch:
         editState = RayEditState::move;
+        return 0;
+    case RayEditState::select:
+        exitSelect();
         return 0;
     default:
         return 0;
@@ -146,6 +154,9 @@ void RayEditor::displayText() {
     case RayEditState::stretch:
         displayText = prefix + "stretch" + suffix;
         break;
+    case RayEditState::select:
+        displayText = prefix + "select to edit" + suffix;
+        break;
     case RayEditState::cameraMove:
         displayText = prefix + "camera move" + suffix;
         break;
@@ -156,8 +167,8 @@ void RayEditor::displayText() {
 
 void RayEditor::updateLines() {
     parent->showObstructionLines(layer);
-    parent->showInteractableLines(layer, name);
-    parent->showTriggerLines(layer, name);
+    parent->showInteractableLines(layer, type == CollidableType::interactable ? name : "");
+    parent->showTriggerLines(layer, type == CollidableType::trigger ? name : "");
 }
 
 void RayEditor::handleNameSubmit() {
@@ -175,6 +186,58 @@ void RayEditor::handleNameSubmit() {
         editState = RayEditState::layer;
     gameState = GameState::FieldFree;
 }
+
+void RayEditor::enterSelect () {
+    editState = RayEditState::select;
+    bool found = false;
+    UIRenderer::changeLineType(ray, LineType::highlight);
+    switch (type) {
+        case CollidableType::obstruction:
+            if (parent->obstructions.count(layer)) {
+                selected = parent->obstructions[layer];
+                found = true;
+            }
+            break;
+        case CollidableType::interactable:
+            if (parent->interactables.count(name)) {
+                selected = parent->interactables[name];
+                found = true;
+            }
+            break;
+        case CollidableType::trigger:
+            if (parent->triggers.count(name)) {
+                selected = parent->triggers[name];
+                found = true;
+            }
+            break;
+    }
+    if (selected->rays.size() < 1) {
+        exitSelect();
+        return;
+    }
+    selectedI = 0;
+    matchSelected();
+}
+
+void RayEditor::exitSelect() {
+    UIRenderer::changeLineType(ray, LineType::editing);
+    selected = nullptr;
+    selectedI = -1;
+    editState = RayEditState::move;
+}
+
+void RayEditor::matchSelected() {
+    ray->a = selected->rays[selectedI]->a;
+    ray->b = selected->rays[selectedI]->b;
+    updateLines();
+}
+
+void RayEditor::redoRay() {
+    selected->removeRay(selectedI);
+    exitSelect();
+    updateLines();
+}
+
 
 int RayEditor::routeInput(KeyPresses keysDown) {
     if(keysDown.ok)
@@ -198,6 +261,9 @@ int RayEditor::routeInput(KeyPresses keysDown) {
         break;
     case RayEditState::stretch:
         stretch(keysDown);
+        break;
+    case RayEditState::select:
+        select(keysDown);
         break;
     default:
         break;
@@ -253,6 +319,10 @@ void RayEditor::editLayer (KeyPresses keysDown) {
 
 
 void RayEditor::move (KeyPresses keysDown) {
+    if (keysDown.menu1) {
+        enterSelect();
+        return;
+    }
     if((keysDown.up || keysDown.debug_up)) {
         ray->a.y -= 1;
         ray->b.y -= 1;
@@ -272,16 +342,31 @@ void RayEditor::move (KeyPresses keysDown) {
 }
 
 void RayEditor::stretch (KeyPresses keysDown) {
-    if(keysDown.up || keysDown.debug_up) {
+    if (keysDown.menu1) {
+        enterSelect();
+        return;
+    }
+    if(keysDown.up || keysDown.debug_up)
         ray->b.y -= 1;
+    if(keysDown.down || keysDown.debug_down)
+        ray->b.y += 1;
+    if(keysDown.left || keysDown.debug_left)
+        ray->b.x -= 1;
+    if(keysDown.right || keysDown.debug_right)
+        ray->b.x += 1;
+}
+
+void RayEditor::select (KeyPresses keysDown) {
+    if (selected->rays.size() < 1) {
+        exitSelect();
+        return;
+    }
+    if(keysDown.up || keysDown.debug_up) {
+        selectedI = selectedI > 0 ? (selectedI - 1) : selected->rays.size() - 1;
+        matchSelected();
     }
     if(keysDown.down || keysDown.debug_down) {
-        ray->b.y += 1;
-    }
-    if(keysDown.left || keysDown.debug_left) {
-        ray->b.x -= 1;
-    }
-    if(keysDown.right || keysDown.debug_right) {
-        ray->b.x += 1;
+        selectedI = (selectedI + 1) % selected->rays.size();
+        matchSelected();
     }
 }

@@ -35,6 +35,7 @@ class Collidable {
         vector<Ray*> rays;
 
         void addRay(Ray *r);
+        void removeRay(int index);
 
         void showLines();
         void hideLines();

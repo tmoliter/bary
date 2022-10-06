@@ -14,6 +14,7 @@ enum class LineType {
     trigger,
     obstruction,
     editing,
+    highlight,
     line
 };
 

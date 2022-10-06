@@ -16,6 +16,7 @@ enum class RayEditState {
     layer,
     move,
     stretch,
+    select,
     cameraMove
 };
 
@@ -24,7 +25,7 @@ class RayEditor {
         RayEditor(RealThing *p);
         ~RayEditor();
 
-        int layer;
+        int layer, selectedI;
         string name;
         Ray* ray;
         Line* line;
@@ -32,6 +33,7 @@ class RayEditor {
 
         RealThing *parent;
         Thing *focus, *oldFocus;
+        Collidable* selected;
 
         RayEditState editState, cameraPrevState;
         CollidableType type;
@@ -45,6 +47,10 @@ class RayEditor {
         void displayText();
         void updateLines();
         void handleNameSubmit();
+        void enterSelect();
+        void exitSelect();
+        void matchSelected();
+        void redoRay();
 
         int routeInput(KeyPresses keysDown);
 
@@ -54,6 +60,7 @@ class RayEditor {
         void move (KeyPresses keysDown);
         void stretch (KeyPresses keysDown);
         void handleNameInput(KeyPresses keysDown);
+        void select(KeyPresses keysDown);
 };
 
 #endif
