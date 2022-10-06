@@ -14,7 +14,6 @@ void burgEvents::sailor_shack_test() {
     event->addNode(*node2pointer);
 
     RealThing* ss = RealThing::find_building("Sailor Shack");
-    vector<Ray*> r;
-    r.push_back(new Ray(117,252,173,252));
-    ss->addTrigger("empty door message",r,0,event);
+    ss->addTrigger("empty door message",{},0, event);
+    ss->triggers["empty door message"]->addRay(new Ray(117,252,173,252));
 }

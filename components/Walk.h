@@ -5,7 +5,7 @@
 #include <../include/SDL2/SDL.h>
 #include "../Ray.h"
 #include "./Sprite.h"
-#include "./Obstruction.h"
+#include "./things/RealThing.h"
 
 class Walk {
     private:

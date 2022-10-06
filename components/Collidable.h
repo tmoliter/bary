@@ -9,6 +9,13 @@
 
 using namespace std;
 
+
+enum class CollidableType {
+    obstruction,
+    interactable,
+    trigger
+};
+
 struct CollidableData {
     int layer = 0;
     vector<Ray*> rays;

@@ -42,6 +42,8 @@ int main(int argc, char* args[]) {
     Input in;
     FpsTimer t;
     ProfileData p;
+
+    RealThing::showAllLines();
     
     while (true){
         t.startFrame();

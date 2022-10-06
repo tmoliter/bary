@@ -64,9 +64,9 @@ void FieldPlayer::meat(KeyPresses keysDown) {
 
     Ray ray;
     getRay(ray);
-    Trigger::checkForTriggers(ray, sprite->d.layer);
+    RealThing::checkAllTriggers(ray, sprite->d.layer);
     if(keysDown.ok && gameState == GameState::FieldFree) {
-        Interactable::checkForInteractables(ray, sprite->d.layer);
+        RealThing::checkAllInteractables(ray, sprite->d.layer);
     }
 
     /* DEBUG MODE CONTROLS */
