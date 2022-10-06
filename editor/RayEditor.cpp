@@ -37,6 +37,13 @@ void RayEditor::saveRay() {
             in->layer = layer;
         in->addRay(new Ray(ray->a,ray->b));
     }
+    if (type == CollidableType::trigger) {
+        bool editExisting = parent->triggers.count(name);
+        Trigger *tr = parent->addTrigger(name);
+        if (!editExisting)
+            tr->layer = layer;
+        tr->addRay(new Ray(ray->a,ray->b));
+    }
     updateLines();
     editState = RayEditState::move;
 }
@@ -44,10 +51,10 @@ void RayEditor::saveRay() {
 int RayEditor::nextMode() {
     switch (editState) {
     case RayEditState::selectType:
-        if (type == CollidableType::obstruction)
+        if (type == CollidableType::obstruction) {
             updateLines();
             editState = RayEditState::layer;
-        if (type == CollidableType::interactable) {
+        } else {
             gameState = GameState::TextInput;
             editState = RayEditState::name;
         }
@@ -78,7 +85,7 @@ int RayEditor::lastMode() {
     case RayEditState::layer:
         if (type == CollidableType::obstruction)
             return 1;
-        if (type == CollidableType::interactable)
+        else
             editState = RayEditState::name;
         return 0;
     case RayEditState::move:
@@ -110,13 +117,23 @@ void RayEditor::displayText() {
     string suffix = "`layer: " + to_string(layer);
     switch (editState) {
     case RayEditState::selectType:
-        displayText = type == CollidableType::interactable ? "interactable" : "collidable";
+        if (type == CollidableType::obstruction)
+            displayText = "obstruction";
+        if (type == CollidableType::interactable)
+            displayText = "interactable";
+        if (type == CollidableType::trigger)
+            displayText = "trigger";
         break;
     case RayEditState::name:
         displayText = "enter name: " + name;
-        if (parent->interactables.size() > 0) {
+        if (type == CollidableType::interactable && parent->interactables.size() > 0) {
             displayText = displayText + "``existing interactables:";
             for (auto const& [name, in] : parent->interactables)
+                displayText = displayText + "`  " + name;
+        }
+        if (type == CollidableType::trigger && parent->triggers.size() > 0) {
+            displayText = displayText + "``existing triggers:";
+            for (auto const& [name, tr] : parent->triggers)
                 displayText = displayText + "`  " + name;
         }
         break;
@@ -140,17 +157,21 @@ void RayEditor::displayText() {
 void RayEditor::updateLines() {
     parent->showObstructionLines(layer);
     parent->showInteractableLines(layer, name);
+    parent->showTriggerLines(layer, name);
 }
 
 void RayEditor::handleNameSubmit() {
     if (name.size() < 1)
         return;
-    if (parent->interactables.count(name)) {
+    if (type == CollidableType::interactable && parent->interactables.count(name)) {
         editState = RayEditState::move;
         layer =  parent->interactables[name]->layer;
         updateLines();
-    }
-    else
+    } else if (type == CollidableType::trigger && parent->triggers.count(name)) {
+        editState = RayEditState::move;
+        layer =  parent->triggers[name]->layer;
+        updateLines();
+    } else
         editState = RayEditState::layer;
     gameState = GameState::FieldFree;
 }
@@ -185,10 +206,28 @@ int RayEditor::routeInput(KeyPresses keysDown) {
 }
 
 void RayEditor::setType (KeyPresses keysDown) {
-    if( keysDown.up || keysDown.debug_up)
-        type = CollidableType::obstruction;
-    if (keysDown.down || keysDown.debug_down)
-        type = CollidableType::interactable;
+    if( keysDown.up || keysDown.debug_up) {
+        switch (type) {
+            case CollidableType::obstruction:
+            case CollidableType::interactable:
+                type = CollidableType::obstruction;
+                break;
+            case CollidableType::trigger:
+                type = CollidableType::interactable;
+                break;
+        }
+    }
+    if (keysDown.down || keysDown.debug_down) {
+        switch (type) {
+            case CollidableType::obstruction:
+                type = CollidableType::interactable;
+                break;
+            case CollidableType::interactable:
+            case CollidableType::trigger:
+                type = CollidableType::trigger;
+                break;
+        }
+    }
 }
 
 void RayEditor::handleNameInput(KeyPresses keysDown) {
