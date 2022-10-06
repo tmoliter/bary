@@ -44,18 +44,16 @@ void Collidable::showLines() {
     if(linesVisible)
         return;
     linesVisible = true;
-    for (auto r : rays){
+    for (auto r : rays)
         UIRenderer::addLine(parentPos.x, parentPos.y, r, lineType);
-    }
 }
 
 void Collidable::hideLines() {
     if(!linesVisible)
         return;
     linesVisible = false;
-    for (auto r : rays) {
+    for (auto r : rays)
         UIRenderer::removeLine(r);
-    }
 }
 
 
