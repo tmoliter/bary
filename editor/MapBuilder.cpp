@@ -219,6 +219,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
                 }
                 if (input == "delete") {
                     delete currentThing;
+                    currentThing = dotThing;
                     changeState(EditorState::freeMove);
                     return;
                 }
