@@ -24,36 +24,35 @@ struct SpriteData {
     string path = "";
 };
 
-class Sprite {
-    public:
-        Sprite(int &x, int &y, string &tN, SpriteData sd);
-        ~Sprite();
-        bool active;
-        int id, &x, &y;
-        int alpha, sheetHeight, sheetWidth;
-        SpriteData d;
-        string &thingName;
-        SDL_Texture* texture;
+struct Sprite {
+    Sprite(int &x, int &y, string &tN, SpriteData sd);
+    ~Sprite();
+    bool active;
+    int id, &x, &y;
+    int alpha, sheetHeight, sheetWidth;
+    SpriteData d;
+    string &thingName;
+    SDL_Texture* texture;
 
-        void divideSheet(int columns, int rows);
-        void centerOffset();
-        void frontAndCenter();
-        Point getScreenPos(Point camPosition);
-        virtual void render(SDL_Renderer *renderer, Point camPosition);
+    void divideSheet(int columns, int rows);
+    void centerOffset();
+    void frontAndCenter();
+    Point getScreenPos(Point camPosition);
+    virtual void render(SDL_Renderer *renderer, Point camPosition);
 
-        void getInts(vector<int*> &ints, vector<string> &names);
+    void getInts(vector<int*> &ints, vector<string> &names);
 
-        static int currentID;
-        inline static map<int, Sprite*> sprites;
-        inline static map<string, pair<int, SDL_Texture*>> textures;
-        static void renderSprites(SDL_Renderer *renderer, Point camPosition);
+    static int currentID;
+    inline static map<int, Sprite*> sprites;
+    inline static map<string, pair<int, SDL_Texture*>> textures;
+    static void renderSprites(SDL_Renderer *renderer, Point camPosition);
 
-        static void highlightSprite(Sprite* sprite);
-        static void highlightThing(string thingName);
-        static void removeHighlight();
+    static void highlightSprite(Sprite* sprite);
+    static void highlightThing(string thingName);
+    static void removeHighlight();
 
 
-        static int parse_sprite_datum(ifstream &mapData, SpriteData &newSD);
+    static int parse_sprite_datum(ifstream &mapData, SpriteData &newSD);
 };
 
 #endif

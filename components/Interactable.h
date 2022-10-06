@@ -8,7 +8,7 @@ struct EventCollidable : public Collidable {
     EventCollidable(Point &pP, string &tN, string n, vector<Ray*> r, int l, Event *e = nullptr, int maxTriggers = -1);
     EventCollidable(Point &pP, string &tN, string n, Event *e = nullptr, int maxTriggers = -1);
     ~EventCollidable();
-    int id, remaining, timesTriggered, maxTriggers;
+    int timesTriggered, maxTriggers;
     string name;
     Event* event;
 };
