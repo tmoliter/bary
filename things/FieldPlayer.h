@@ -5,8 +5,7 @@
 #include "../Ray.h"
 #include "../components/Walk.h"
 #include "../components/Sprite.h"
-#include "../components/Obstruction.h"
-#include "../components/Interactable.h"
+#include "things/RealThing.h"
 #include <iostream>
 #include "Camera.h"
 
@@ -23,8 +22,9 @@ class FieldPlayer : public Thing {
         ~FieldPlayer();
 
         Direction currentDirection;
-
         Sprite *sprite;
+
+        void getRay(Ray &r);
 
         void meat(KeyPresses keysDown);
 

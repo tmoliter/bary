@@ -41,6 +41,10 @@ void UIRenderer::renderTexts() {
 }
 
 bool _compareType (Line* a, Line* b) {
+    if (a->type == LineType::highlight)
+        return false;
+    if (b->type == LineType::highlight)
+        return true;
     if (a->type == LineType::editing)
         return true;
     if (a->type == LineType::obstruction && b->type != LineType::editing)
@@ -81,3 +85,12 @@ void UIRenderer::removeText(Text *t) {
     delete t;
     u->texts.erase(remove(u->texts.begin(), u->texts.end(), t), u->texts.end());
 }
+
+void UIRenderer::changeLineType(Ray *r, LineType lineType) {
+    for (auto l : u->lines) {
+        if (l->ray == r) {
+            l->type = lineType;
+            return;
+        }
+    }
+};

@@ -32,6 +32,14 @@ void Collidable::addRay(Ray *r) {
         UIRenderer::addLine(parentPos.x, parentPos.y, r, lineType);
 }
 
+void Collidable::removeRay(int index) {
+    if (rays.size() < index + 1)
+        return;
+    UIRenderer::removeLine(rays[index]);
+    delete rays[index];
+    rays.erase(rays.begin() + index);
+}
+
 void Collidable::showLines() {
     if(linesVisible)
         return;

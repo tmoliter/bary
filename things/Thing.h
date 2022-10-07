@@ -1,15 +1,15 @@
 #ifndef THING_H
 #define THING_H
-#include "../Input.h"
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <map>
+#include <vector>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
-#include <fstream>
+#include "../Input.h"
 #include "../globals.h"
-#include <vector>
 #include "../Ray.h"
-#include <string>
 
 using namespace std;
 

@@ -41,6 +41,7 @@ class UIRenderer {
         static void removePhrase(Phrase *p);
         static void removeText(Text *t);
         static void removeLine(Ray *r);
+        static void changeLineType(Ray *r, LineType lineType);
 
         static int currentPhraseId;
         static UIRenderer *u;

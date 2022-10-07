@@ -10,8 +10,14 @@ void Line::render() {
         case LineType::interactable:
             SDL_SetRenderDrawColor(renderer,85,150,255,255);
             break;
+        case LineType::trigger:
+            SDL_SetRenderDrawColor(renderer,255,255,0,255);
+            break;
         case LineType::editing:
             SDL_SetRenderDrawColor(renderer, 100,255,255,255);
+            break;
+        case LineType::highlight:
+            SDL_SetRenderDrawColor(renderer, 180,180,180,180);
             break;
         case LineType::line:
             SDL_SetRenderDrawColor(renderer, 0,0,0,255);

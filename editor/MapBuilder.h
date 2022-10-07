@@ -14,6 +14,11 @@
 
 using namespace std;
 
+
+// TODO: EVENT BUILDER (new class) (enter thing name [do we dedupe and expand suffixes?] -> choose trig/inter -> choose from list -> choose named event or simple message)
+// TODO: "play" COMMAND (makes a FieldPlayer and focuses them, but still allows pressing START -> START deletes FieldPlayer and returns to freemove)
+
+
 enum EditorState {
     freeMove,
     thingMove,

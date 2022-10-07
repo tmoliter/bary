@@ -5,7 +5,6 @@
 #include <vector>
 #include <map>
 #include "Thing.h"
-#include "../components/Walk.h"
 #include "../components/Sprite.h"
 #include "../components/Obstruction.h"
 #include "../components/Interactable.h"
@@ -29,6 +28,7 @@ class RealThing : public Thing {
         vector<Sprite*> sprites;
         map<int, Obstruction*> obstructions;
         map<string, Interactable*> interactables;
+        map<string, Trigger*> triggers;
 
         void calculateHeight();
 
@@ -36,26 +36,38 @@ class RealThing : public Thing {
         Sprite* AddRawSprite(string path);
 
         Interactable* addInteractable(string iName, vector<Ray*> rays, int layer, Event* event = nullptr);
+        Trigger* addTrigger(string iName, vector<Ray*> rays, int layer, Event* event = nullptr);
         Obstruction* addObstruction(vector<Ray*> rays, int layer);
         Interactable* addInteractable(string iName);
+        Trigger* addTrigger(string iName);
         Obstruction* addObstruction(int layer);
 
         void RemoveSprite(Sprite* sprite);
         void removeInteractable(string name);
+        void removeTrigger(string name);
         void removeObstruction(int layer);
+
+        int checkForCollidables(Ray incoming, int layer, CollidableType collidableType);
 
         void showObstructionLines(int layer = -1001);
         void showInteractableLines(int layer = -1001, string name = "");
+        void showTriggerLines(int layer = -1001, string name = "");
         void showLines();
         void hideObstructionLines();
         void hideInteractableLines();
+        void hideTriggerLines();
         void hideLines();
 
         void highlightSprite(Sprite* sprite);
         void removeHighlight();
 
+
         static void showAllLines();
         static void hideAllLines();
+
+        static int checkAllObstructions (Ray incoming, int layer);
+        static int checkAllInteractables (Ray incoming, int layer);
+        static int checkAllTriggers (Ray incoming, int layer);
 
         static RealThing *find_building(string name);
         static int parse_building_datum(ifstream &mapData, RealThingData &newTD);
