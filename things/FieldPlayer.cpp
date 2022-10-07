@@ -6,10 +6,25 @@ using namespace std;
 
 FieldPlayer *FieldPlayer::player = nullptr;
 
-FieldPlayer::FieldPlayer(FieldPlayerData fpD) : Thing(fpD) {
+FieldPlayer::FieldPlayer(FieldPlayerData fpD) : RealThing(fpD) {
+    init();
+}
+
+FieldPlayer::FieldPlayer(Point p, string name, string spritePath) : RealThing(p,name) {
+    AddRawSprite(spritePath);
+    init();
+}
+
+FieldPlayer::~FieldPlayer() { 
+    delete walk;
+    FieldPlayer::player = nullptr;
+};
+
+void FieldPlayer::init() {
     currentDirection = Direction::down;
-    sprite = new Sprite(position.x,position.y,name,fpD.spriteData);
+    sprite = sprites[0];
     sprite->divideSheet(9, 4);
+    sprite->frontAndCenter();
     walk = new Walk(position.x, position.y, sprite->d.layer, sprite);
 
     bounds.bottom = sprite->d.height;
@@ -17,11 +32,6 @@ FieldPlayer::FieldPlayer(FieldPlayerData fpD) : Thing(fpD) {
     FieldPlayer::player = this;
 }
 
-FieldPlayer::~FieldPlayer() { 
-    delete sprite;
-    delete walk;
-    FieldPlayer::player = nullptr;
-};
 
 void FieldPlayer::getRay(Ray &r) {
     int xCenter = position.x + (bounds.right / 2);
@@ -79,13 +89,6 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     if (keysDown.debug_down)
         walk->changeSpeed(true);
 
-    if (keysDown.start) {
-        if (Camera::getFocusName() == "Zinnia")
-            Camera::panTo("Sailor Shack");
-        else
-            Camera::panTo("Zinnia");
-    }
-
     if (keysDown.menu1)
         Camera::fadeIn(3);
     if (keysDown.menu2)
@@ -94,9 +97,6 @@ void FieldPlayer::meat(KeyPresses keysDown) {
 };
 
 int FieldPlayer::parse_player_datum(ifstream &mapData, FieldPlayerData &newTD) {
-    Thing::parse_thing_datum(mapData, newTD);
-    SpriteData newSD;
-    Sprite::parse_sprite_datum(mapData,newSD);
-    newTD.spriteData = newSD;
+    RealThing::parse_building_datum(mapData, newTD);
     return 1;
 }

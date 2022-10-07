@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <algorithm>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 #include "../Input.h"
@@ -31,6 +32,14 @@ class Thing {
         Thing(Point p, string name);
         Thing(Point p);
         virtual ~Thing();
+
+        // Note for Door, etc.:
+        // Have a vector of Thing pointers called dependencies
+        // When we create a Door, we pass in its parent's name, if any, 
+        // and call Thing::things[parentName]->addDependency().
+        // When a Thing is deleted or moved in any way, all of its dependencies must follow suit.
+        // We might also store this relationship in a static graph of pointers,
+        // in addition to a list of Point &references or something if we think we want to optimize
 
         virtual void destroy();
         void rename(string newName);

@@ -1,7 +1,4 @@
-#include "./things/Thing.h"
-#include <SDL2/SDL.h>
-#include <algorithm>
-#include <SDL2/SDL_image.h>
+#include "things/Thing.h"
 
 using namespace std;
 
@@ -12,7 +9,7 @@ void Thing::_save_name_and_save_in_map(string n) {
         name = n + to_string(i);
         i++;
     }
-    Thing::things[name] = this; 
+    Thing::things[name] = this;
 }
 
 Thing::Thing(ThingData td) : 

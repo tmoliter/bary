@@ -1,6 +1,6 @@
-#include "RealThing.h"
 #include <../include/SDL2/SDL_image.h>
 #include <iostream>
+#include "RealThing.h"
 
 using namespace std;
 
@@ -143,17 +143,18 @@ void RealThing::removeTrigger(string name) {
     triggers.erase(name);
 };
 
-int RealThing::checkForCollidables(Ray incoming, int layer, CollidableType collidableType) {
+// Pass in incoming Thing name here to ignore collisions
+int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) {
     switch (collidableType) {
         case (CollidableType::obstruction):
             for (auto const& [layer, o] : obstructions){
-            if(o->isColliding(incoming, layer))
+            if(o->isColliding(incoming, incomingLayer))
                 return 1;
             }
             break;
         case (CollidableType::interactable):
             for (auto const& [name, in] : interactables){
-                if(in->isColliding(incoming, layer)) {
+                if(in->isColliding(incoming, incomingLayer)) {
                     if(in->timesTriggered++ == in->maxTriggers || !in->event) {
                         delete in;
                         interactables.erase(name);
@@ -166,7 +167,7 @@ int RealThing::checkForCollidables(Ray incoming, int layer, CollidableType colli
             break;
         case (CollidableType::trigger):
             for (auto const& [name, tr] : triggers){
-                if(tr->isColliding(incoming, layer)) {
+                if(tr->isColliding(incoming, incomingLayer)) {
                     if(tr->timesTriggered++ == tr->maxTriggers || !tr->event) {
                         triggers.erase(name);
                         delete tr;
@@ -274,29 +275,29 @@ void RealThing::hideAllLines() {
     }
 }
 
-int RealThing::checkAllObstructions (Ray incoming, int layer) {
-    for (auto const& [name, t] : Thing::things) {
+int RealThing::checkAllObstructions (Ray incoming, int incomingLayer) {
+    for (auto const& [n, t] : Thing::things) {
         RealThing* rt = dynamic_cast<RealThing*>(t);
-        if (rt)
-            return rt->checkForCollidables(incoming, layer, CollidableType::obstruction);
+        if (rt && rt->checkForCollidables(incoming, incomingLayer, CollidableType::obstruction))
+            return 1;
     }
     return 0;
 }
 
-int RealThing::checkAllInteractables (Ray incoming, int layer) {
+int RealThing::checkAllInteractables (Ray incoming, int incomingLayer) {
     for (auto const& [name, t] : Thing::things) {
         RealThing* rt = dynamic_cast<RealThing*>(t);
-        if (rt)
-            return rt->checkForCollidables(incoming, layer, CollidableType::interactable);
+        if (rt && rt->checkForCollidables(incoming, incomingLayer, CollidableType::interactable))
+            return 1;
     }
     return 0;
 }
 
-int RealThing::checkAllTriggers (Ray incoming, int layer) {
+int RealThing::checkAllTriggers (Ray incoming, int incomingLayer) {
     for (auto const& [name, t] : Thing::things) {
         RealThing* rt = dynamic_cast<RealThing*>(t);
-        if (rt)
-            return rt->checkForCollidables(incoming, layer, CollidableType::trigger);
+        if (rt && rt->checkForCollidables(incoming, incomingLayer, CollidableType::trigger))
+            return 1;
     }
     return 0;
 }

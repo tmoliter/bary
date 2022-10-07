@@ -4,10 +4,10 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include "Thing.h"
-#include "../components/Sprite.h"
-#include "../components/Obstruction.h"
-#include "../components/Interactable.h"
+#include "things/Thing.h"
+#include "components/Sprite.h"
+#include "components/Obstruction.h"
+#include "components/Interactable.h"
 
 using namespace std;
 
@@ -47,7 +47,7 @@ class RealThing : public Thing {
         void removeTrigger(string name);
         void removeObstruction(int layer);
 
-        int checkForCollidables(Ray incoming, int layer, CollidableType collidableType);
+        int checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType);
 
         void showObstructionLines(int layer = -1001);
         void showInteractableLines(int layer = -1001, string name = "");
@@ -65,9 +65,9 @@ class RealThing : public Thing {
         static void showAllLines();
         static void hideAllLines();
 
-        static int checkAllObstructions (Ray incoming, int layer);
-        static int checkAllInteractables (Ray incoming, int layer);
-        static int checkAllTriggers (Ray incoming, int layer);
+        static int checkAllObstructions (Ray incoming, int incomingLayer);
+        static int checkAllInteractables (Ray incoming, int incomingLayer);
+        static int checkAllTriggers (Ray incoming, int incomingLayer);
 
         static RealThing *find_building(string name);
         static int parse_building_datum(ifstream &mapData, RealThingData &newTD);

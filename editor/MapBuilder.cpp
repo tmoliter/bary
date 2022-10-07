@@ -35,6 +35,13 @@ void MapBuilder::changeState(EditorState newState) {
             Sprite::removeHighlight();
             state = EditorState::freeMove;
             break;
+        case play:
+            helpText->setText("Play");
+            endTextInput();
+            currentThing = new FieldPlayer(dotThing->position, "test player", "./assets/sheets/SDL_TestSS.png");
+            Camera::panTo(currentThing->name);
+            state = EditorState::play;
+            break;
         case thingMove:
             helpText->setText(prefix + "Thing Move");
             endTextInput();
@@ -48,6 +55,8 @@ void MapBuilder::changeState(EditorState newState) {
             if (currentThing != dotThing) {
                 commandList->setText(commandList->text + "` rename` move` edit sprite` delete");
                 currentThing->removeHighlight();
+            } else {
+                commandList->setText(commandList->text + "` play");
             }
             state = EditorState::commandInput;
             break;
@@ -168,6 +177,15 @@ void MapBuilder::meat(KeyPresses keysDown) {
         }
     }
 
+    if(state == EditorState::play) {
+        if (keysDown.start) {
+            delete currentThing;
+            currentThing = dotThing;
+            changeState(EditorState::freeMove);
+            return;
+        }
+    }
+
     if (state == EditorState::freeMove) {
         if (keysDown.ok) {
             vector<Thing*> collisions = Thing::findThingsByPoint(dotThing->position);
@@ -221,6 +239,12 @@ void MapBuilder::meat(KeyPresses keysDown) {
                     delete currentThing;
                     currentThing = dotThing;
                     changeState(EditorState::freeMove);
+                    return;
+                }
+            }
+            else {
+                if (input == "play") {
+                    changeState(EditorState::play);
                     return;
                 }
             }
@@ -314,5 +338,6 @@ int MapBuilder::addSprite() {
     spriteEditor = new SpriteEditor(currentThing->AddRawSprite(path));
     spriteEditor->sprite->frontAndCenter();
     currentThing->highlightSprite(spriteEditor->sprite);
+
     return 1;
 }

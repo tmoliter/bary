@@ -3,9 +3,7 @@
 
 #include <vector>
 #include <../include/SDL2/SDL.h>
-#include "../Ray.h"
-#include "./Sprite.h"
-#include "./things/RealThing.h"
+#include "things/RealThing.h"
 
 class Walk {
     private:

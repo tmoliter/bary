@@ -4,9 +4,7 @@
 #include <string>
 #include "globals.h"
 #include "Camera.h"
-#include "things/Thing.h"
-#include "things/RealThing.h"
-#include "components/Sprite.h"
+#include "things/FieldPlayer.h"
 #include "editor/SpriteEditor.h"
 #include "editor/RayEditor.h"
 #include "gui/Text.h"
@@ -21,6 +19,7 @@ using namespace std;
 
 enum EditorState {
     freeMove,
+    play,
     thingMove,
     commandInput,
     renameThing,
