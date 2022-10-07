@@ -7,21 +7,19 @@ using namespace std;
 
 void Walk::padSide(DirectionMap dM) {
     Ray ray;
-    int xCenter = x;
-    int yBottom = y;
     if (dM.up || dM.down){
-        ray = Ray(xCenter, yBottom, xCenter - 5, yBottom);
+        ray = Ray(x, y, x - 5, y);
         if(RealThing::checkAllObstructions(ray, layer)) 
             x += 1;
-        ray = Ray(xCenter, yBottom, xCenter + 5, yBottom);
+        ray = Ray(x, y, x + 5, y);
         if(RealThing::checkAllObstructions(ray, layer)) 
             x -= 1;
     }
     if(dM.left || dM.right) {
-        ray = Ray(xCenter, yBottom, xCenter, yBottom - 5);
+        ray = Ray(x, y, x, y - 5);
         if(RealThing::checkAllObstructions(ray, layer)) 
             y += 1;
-        ray = Ray(xCenter, yBottom, xCenter, yBottom + 5);
+        ray = Ray(x, y, x, y + 5);
         if(RealThing::checkAllObstructions(ray, layer)) 
             y -= 1;
     }
@@ -30,20 +28,18 @@ void Walk::padSide(DirectionMap dM) {
 
 bool Walk::checkCollision(Direction d) {
     Ray ray;
-    int xCenter = x;
-    int yBottom = y;
     switch(d){
         case (Direction::up):
-            ray = Ray(xCenter, yBottom, xCenter, yBottom - 6);
+            ray = Ray(x, y, x, y - 6);
             break;
         case (Direction::down):
-            ray = Ray(xCenter, yBottom, xCenter, yBottom + 6);
+            ray = Ray(x, y, x, y + 6);
             break;
         case (Direction::left):
-            ray = Ray(xCenter, yBottom, xCenter - 6, yBottom);
+            ray = Ray(x, y, x - 6, y);
             break;
         case (Direction::right):
-            ray = Ray(xCenter, yBottom, xCenter + 6, yBottom);
+            ray = Ray(x, y, x + 6, y);
             break;
         default:
             return false;
