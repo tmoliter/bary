@@ -1,7 +1,4 @@
-#include "./things/Thing.h"
-#include <SDL2/SDL.h>
-#include <algorithm>
-#include <SDL2/SDL_image.h>
+#include "things/Thing.h"
 
 using namespace std;
 

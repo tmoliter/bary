@@ -2,11 +2,10 @@
 #define RAY_EDITOR_H
 #include "Input.h"
 #include "Camera.h"
+#include "things/RealThing.h"
 #include "gui/Text.h"
 #include "gui/UIRenderer.h"
 #include "gui/Line.h"
-#include "Ray.h"
-#include "things/RealThing.h"
 
 using namespace std;
 

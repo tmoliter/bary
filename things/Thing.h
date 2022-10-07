@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <algorithm>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 #include "../Input.h"

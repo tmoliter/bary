@@ -3,7 +3,6 @@
 #include <string>
 #include <cstring>
 #include <fstream>
-#include "./things/Thing.h"
 #include "./things/FieldPlayer.h"
 #include "./things/RealThing.h"
 #include "editor/MapBuilder.h"

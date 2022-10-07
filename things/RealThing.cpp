@@ -1,6 +1,6 @@
-#include "RealThing.h"
 #include <../include/SDL2/SDL_image.h>
 #include <iostream>
+#include "RealThing.h"
 
 using namespace std;
 

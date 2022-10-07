@@ -4,10 +4,10 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include "Thing.h"
-#include "../components/Sprite.h"
-#include "../components/Obstruction.h"
-#include "../components/Interactable.h"
+#include "things/Thing.h"
+#include "components/Sprite.h"
+#include "components/Obstruction.h"
+#include "components/Interactable.h"
 
 using namespace std;
 
