@@ -33,6 +33,14 @@ class Thing {
         Thing(Point p);
         virtual ~Thing();
 
+        // Note for Door, etc.:
+        // Have a vector of Thing pointers called dependencies
+        // When we create a Door, we pass in its parent's name, if any, 
+        // and call Thing::things[parentName]->addDependency().
+        // When a Thing is deleted or mannualyControl'd, all of its dependencies follow suit.
+        // We might also store this relationship in a static graph or something if we think
+        // we want to optimize
+        
         virtual void destroy();
         void rename(string newName);
         Point getCenter();
