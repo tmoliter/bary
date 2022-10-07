@@ -18,11 +18,11 @@ RealThing::~RealThing() {
     for (auto s : sprites)
         delete s;
     for (auto const& [layer, o] : obstructions)
-        removeObstruction(o->layer);
+        delete o;
     for (auto const& [name, in] : interactables)
-        removeInteractable(in->name);
+        delete in;
     for (auto const& [name, tr] : triggers)
-        removeTrigger(tr->name);
+        delete tr;
 };
 
 void RealThing::_save_name_and_save_in_map(string n) {
