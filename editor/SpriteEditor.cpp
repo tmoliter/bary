@@ -8,7 +8,7 @@ SpriteEditor::SpriteEditor(Sprite *s) :
     SpriteData sd;
     
     oldFocus = Thing::things[Camera::getFocusName()];
-    focus = new Thing(Point(sprite->x, sprite->y));
+    focus = new Thing(Point(sprite->x, sprite->y), "sprite focus");
     Camera::panTo(focus->name);
 
     text = new Text(Point(sprite->x, sprite->y), "");

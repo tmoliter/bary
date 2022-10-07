@@ -1,24 +1,22 @@
 #ifndef FIELD_PLAYER_H
 #define FIELD_PLAYER_H
 
-#include "Thing.h"
-#include "../Ray.h"
-#include "../components/Walk.h"
-#include "../components/Sprite.h"
-#include "things/RealThing.h"
 #include <iostream>
+#include "../components/Walk.h"
+#include "things/RealThing.h"
 #include "Camera.h"
 
-struct FieldPlayerData : ThingData {
-    SpriteData spriteData;
+struct FieldPlayerData : RealThingData {
 };
 
-class FieldPlayer : public Thing {
+class FieldPlayer : public RealThing {
     private:
         string name;
+        void init();
     public:
         Walk* walk;
         FieldPlayer(FieldPlayerData fpD);
+        FieldPlayer(Point p, string name, string spritePath);
         ~FieldPlayer();
 
         Direction currentDirection;

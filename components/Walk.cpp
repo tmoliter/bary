@@ -7,8 +7,8 @@ using namespace std;
 
 void Walk::padSide(DirectionMap dM) {
     Ray ray;
-    int xCenter = x + (sprite->d.width / 2);
-    int yBottom = y + sprite->d.height;
+    int xCenter = x;
+    int yBottom = y;
     if (dM.up || dM.down){
         ray = Ray(xCenter, yBottom, xCenter - 5, yBottom);
         if(RealThing::checkAllObstructions(ray, layer)) 
@@ -30,8 +30,8 @@ void Walk::padSide(DirectionMap dM) {
 
 bool Walk::checkCollision(Direction d) {
     Ray ray;
-    int xCenter = x + (sprite->d.width / 2);
-    int yBottom = y + sprite->d.height;
+    int xCenter = x;
+    int yBottom = y;
     switch(d){
         case (Direction::up):
             ray = Ray(xCenter, yBottom, xCenter, yBottom - 6);

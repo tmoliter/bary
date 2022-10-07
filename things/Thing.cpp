@@ -12,7 +12,7 @@ void Thing::_save_name_and_save_in_map(string n) {
         name = n + to_string(i);
         i++;
     }
-    Thing::things[name] = this; 
+    Thing::things[name] = this;
 }
 
 Thing::Thing(ThingData td) : 

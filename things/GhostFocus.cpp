@@ -4,7 +4,7 @@
 
 using namespace std;
 
-GhostFocus::GhostFocus(Thing *&f, string targetName, bool usePos) : usePosition(usePos), Thing(usePos ? f->position : f->getCenter()), focus(f) {
+GhostFocus::GhostFocus(Thing *&f, string targetName, bool usePos) : usePosition(usePos), Thing(usePos ? f->position : f->getCenter(), "GhostFocus"), focus(f) {
     g = this;
     focus = this;
     target = Thing::things[targetName];
