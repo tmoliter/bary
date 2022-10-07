@@ -37,10 +37,10 @@ class Thing {
         // Have a vector of Thing pointers called dependencies
         // When we create a Door, we pass in its parent's name, if any, 
         // and call Thing::things[parentName]->addDependency().
-        // When a Thing is deleted or mannualyControl'd, all of its dependencies follow suit.
-        // We might also store this relationship in a static graph or something if we think
-        // we want to optimize
-        
+        // When a Thing is deleted or moved in any way, all of its dependencies must follow suit.
+        // We might also store this relationship in a static graph of pointers,
+        // in addition to a list of Point &references or something if we think we want to optimize
+
         virtual void destroy();
         void rename(string newName);
         Point getCenter();
