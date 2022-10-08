@@ -58,6 +58,9 @@ class RealThing : public Thing {
         void hideTriggerLines();
         void hideLines();
 
+        vector<string> findAndShowInteractableLines(string beginning);
+        vector<string> findAndShowTriggerLines(string beginning);
+
         void highlightSprite(Sprite* sprite);
         void removeHighlight();
 
@@ -69,7 +72,7 @@ class RealThing : public Thing {
         static int checkAllInteractables (Ray incoming, int incomingLayer);
         static int checkAllTriggers (Ray incoming, int incomingLayer);
 
-        static RealThing *find_building(string name);
+        static RealThing *findRealThing(string name);
         static int parse_building_datum(ifstream &mapData, RealThingData &newTD);
 
 };

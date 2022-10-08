@@ -4,13 +4,17 @@
 #include <vector>
 #include <string>
 #include "./burgEvents.h"
+#include "Event.h"
 
 using namespace std;
 
 namespace eventMap {
-    inline map<string, vector<void (*)()>> mapping;
-    void initialize();
-    void load_events(string key);
+    inline map<string, Event* (*)()> eventNameToGenerator;
+    inline map<string, pair<string, string>> eventNameToCollidable;
+    void buildEventMap();
+    void load_events();
+
+    void attachEvent(string event, string thing, string collidable);
 };
 
 #endif

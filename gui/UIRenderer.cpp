@@ -65,17 +65,18 @@ void UIRenderer::render() {
 }
 
 void UIRenderer::removeLine(Ray *r) {
-// Should make sure this can delete dupes
-vector <Line*>::iterator itr;
-for (itr = u->lines.begin(); itr != u->lines.end(); ++itr) {
-    Line* l = *itr;
-    if (l->ray == r) {
-        delete l;
-        itr = u->lines.erase(itr);
-        break;
+    vector <Line*>::iterator itr = u->lines.begin();
+    while (itr != u->lines.end()) {
+        Line* l = *itr;
+        if (l->ray == r) {
+            delete l;
+            itr = u->lines.erase(itr);
+            continue;
         }
+        itr++;
     }
 }
+
 
 void UIRenderer::removePhrase(Phrase *p) {
     u->phrases.erase(remove(u->phrases.begin(), u->phrases.end(), p), u->phrases.end());

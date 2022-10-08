@@ -1,6 +1,6 @@
 #include "./burgEvents.h"
 
-void burgEvents::sailor_shack_test() {
+Event* burgEvents::testEvent() {
     Phrase *ph = new Phrase(Point(100,100), 300, 70, 1, ScrollType::continuous, "What's that??``Is something up and to my right? I'd better go check this shit out.`I say again..``What's that??``Let's see...", 2);
     Phrase *ph2 = new Phrase(Point(200,150), 300, 24, 2, ScrollType::allButLast, "Damn, nothing.");
 
@@ -13,7 +13,9 @@ void burgEvents::sailor_shack_test() {
     event->addNode(node);
     event->addNode(*node2pointer);
 
-    RealThing* ss = RealThing::find_building("Sailor Shack");
-    ss->addTrigger("empty door message",{},0, event);
-    ss->triggers["empty door message"]->addRay(new Ray(117,252,173,252));
+    return event;
+
+    // RealThing* ss = RealThing::findRealThing(thingName);
+    // ss->addTrigger(interactableName,{},0, event);
+    // ss->triggers["empty door message"]->addRay(new Ray(117,252,173,252));
 }
