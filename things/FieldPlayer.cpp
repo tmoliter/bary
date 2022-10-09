@@ -34,30 +34,26 @@ void FieldPlayer::init() {
 
 
 void FieldPlayer::getRay(Ray &r) {
-    int xCenter = position.x + (bounds.right / 2);
-    int yBottom = position.y + bounds.bottom;
     switch (currentDirection) {
         case (Direction::up):
-            r = Ray(xCenter, yBottom, xCenter, yBottom - 8);
+            r = Ray(position.x, position.y, position.x, position.y - 8);
             break;
         case (Direction::down):
-            r = Ray(xCenter, yBottom, xCenter, yBottom + 8);
+            r = Ray(position.x, position.y, position.x, position.y + 8);
             break;
         case (Direction::left):
-            r = Ray(xCenter, yBottom, xCenter - 8, yBottom);
+            r = Ray(position.x, position.y, position.x - 8, position.y);
             break;
         case (Direction::right):
-            r = Ray(xCenter, yBottom, xCenter + 8, yBottom);
+            r = Ray(position.x, position.y, position.x + 8, position.y);
             break;
         default:
-            r = Ray(xCenter, yBottom, xCenter, yBottom);
+            r = Ray(position.x, position.y, position.x, position.y);
     }
 }
 
 void FieldPlayer::meat(KeyPresses keysDown) {
     int xV = 0, yV = 0;
-    int rayX = position.x + 16;
-    int rayY = position.y + 32;
     DirectionMap dM;
     vector<Ray> rv;
     if (keysDown.up) 
