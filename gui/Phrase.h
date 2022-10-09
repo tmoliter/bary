@@ -32,7 +32,7 @@ class Phrase {
         queue<string> lines, hiddenLines;
 
         Phrase(Point p, Point pixelSize, ScrollType type, string t, Point gL = Point(1000,1000), int pS = 1, int d = 1);
-
+        Phrase(const Phrase& ph);
         void reset();
 
         void advance();

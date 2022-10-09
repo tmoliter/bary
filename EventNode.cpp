@@ -8,6 +8,7 @@ EventNode::EventNode(EventNode **nn, Phrase *ph, int (*ent)(void), int (*ex)(voi
     nextNodeCB(nextCB) {};
 
 EventNode::~EventNode() {
+    delete *nextNode;
     delete nextNode;
     delete phrase;
 }

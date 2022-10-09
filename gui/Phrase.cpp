@@ -20,6 +20,19 @@ Phrase::Phrase(Point p, Point pixelSize, ScrollType type, string t, Point gL, in
     reset();
 }
 
+Phrase::Phrase(const Phrase& ph) :     
+    autoDestroy(ph.autoDestroy),
+    box(ph.box),
+    phraseScale(ph.phraseScale),
+    scrollType(ph.scrollType),
+    delay(ph.delay),
+    text(ph.text),
+    leftPad(ph.leftPad),
+    topPad(ph.topPad),
+    gridLimits(ph.gridLimits) {
+        reset();
+    }
+
 void Phrase::reset() {
     queue<string>().swap(lines);
     queue<string>().swap(hiddenLines);

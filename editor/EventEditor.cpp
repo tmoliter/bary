@@ -96,6 +96,11 @@ int EventEditor::changeState(EventEditState nextState) {
             editState = nextState;
             updateDisplay();
             return 0;
+        case EventEditState::messageSuccess:
+            gameState = GameState::FieldFree;
+            editState = nextState;
+            updateDisplay();
+            return 0;
         default:
             return 0;
     }
@@ -165,6 +170,10 @@ void EventEditor::updateDisplay() {
                     break;
             }
             break;
+        case EventEditState::messageSuccess:
+            text->clearText();
+            displayText =  "Successfully added Simple Message to collidable '" + collidable.first + "'!";
+            break;
         default:
             break;
     }
@@ -193,6 +202,7 @@ int EventEditor::routeInput(KeyPresses keysDown) {
         editBox(keysDown);
         break;
     case EventEditState::predefinedSuccess:
+    case EventEditState::messageSuccess:
         if (keysDown.ok)
             return 1;
     default:
@@ -309,8 +319,7 @@ void EventEditor::enterMessage (KeyPresses keysDown) {
         updateDisplay();
     }
     if (keysDown.start && input.size() > 0) {
-        previewPhrase = new Phrase(Point(100,100), Point(300, 70), ScrollType::preview, 
-        "Ontomontopeaia that?? Is something up and to my right? I'd better go check this shit out. I say again.. What's that?? Let's see.. What's that?? Is something up and to my right? I'd better go check this shit out. I say again.. What's that?? Let's see.");
+        previewPhrase = new Phrase(Point(100,100), Point(300, 70), ScrollType::preview, input);
         UIRenderer::addPhrase(previewPhrase);
         changeState(EventEditState::editBox);
     }
@@ -390,7 +399,20 @@ void EventEditor::editBox(KeyPresses keysDown) {
             return;
         }
         if (keysDown.ok) {
-            cout << "ALL DONE" << endl;
+
+            Phrase *newPhrase = new Phrase(*previewPhrase);
+            newPhrase->scrollType = ScrollType::allButLast;
+            UIRenderer::removePhrase(previewPhrase);
+            delete previewPhrase;
+            previewPhrase = nullptr;
+
+            // TODO Deal with multi-message events
+            EventCollidable *ec = collidable.second;
+            if (ec->event != nullptr)
+                delete ec->event;
+            ec->event = new Event();
+            ec->event->addNode(new EventNode(nullptr, newPhrase));
+            changeState(EventEditState::messageSuccess);
             return;
         }
         if((keysDown.up || keysDown.debug_up)) {
