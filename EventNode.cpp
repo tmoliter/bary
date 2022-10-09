@@ -5,8 +5,7 @@ EventNode::EventNode(EventNode **nn, Phrase *ph, int (*ent)(void), int (*ex)(voi
     phrase(ph),
     enterAction(ent),
     exitAction(ex),
-    nextNodeCB(nextCB)
-{};
+    nextNodeCB(nextCB) {};
 
 EventNode::~EventNode() {
     delete nextNode;
@@ -14,8 +13,10 @@ EventNode::~EventNode() {
 }
 
 void EventNode::loadPhrase() {
-    if(phrase != nullptr)
+    if(phrase != nullptr) {
+        phrase-> autoDestroy = false;
         UIRenderer::addPhrase(phrase);
+    }
 }
 
 int EventNode::hold (KeyPresses keysDown) {

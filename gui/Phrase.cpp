@@ -3,6 +3,7 @@
 using namespace std;
 
 Phrase::Phrase(Point p, Point pixelSize, ScrollType type, string t, Point gL, int pS, int d) :
+    autoDestroy(true),
     phraseScale(pS),
     scrollType(type),
     delay(d),
@@ -15,7 +16,6 @@ Phrase::Phrase(Point p, Point pixelSize, ScrollType type, string t, Point gL, in
         font = SDL_CreateTextureFromSurface(renderer, temp);
         SDL_FreeSurface(temp);
     }
-    autoDestroy = scrollType == ScrollType::continuous;
     box = SDL_Rect { p.x, p.y, pixelSize.x, pixelSize.y };
     reset();
 }
@@ -149,6 +149,8 @@ int Phrase::progDisplay() {
             }
             tmpLines.pop();
         }
+        if (hiddenLines.size() > 0)
+            renderLetter(i - 1, j, 127, 0, 0);
         return 0;
     }
 

@@ -5,7 +5,7 @@ parent(p),
 input(""),
 eventName(""),
 collidable(make_pair("",nullptr)),
-phrase(nullptr),
+previewPhrase(nullptr),
 collidableType(CollidableType::interactable), 
 eventType(EventType::simpleMessage),
 boxState(BoxEditState::resize) {
@@ -309,9 +309,9 @@ void EventEditor::enterMessage (KeyPresses keysDown) {
         updateDisplay();
     }
     if (keysDown.start && input.size() > 0) {
-        phrase = new Phrase(Point(100,100), Point(300, 70), ScrollType::preview, 
+        previewPhrase = new Phrase(Point(100,100), Point(300, 70), ScrollType::preview, 
         "Ontomontopeaia that?? Is something up and to my right? I'd better go check this shit out. I say again.. What's that?? Let's see.. What's that?? Is something up and to my right? I'd better go check this shit out. I say again.. What's that?? Let's see.");
-        UIRenderer::addPhrase(phrase);
+        UIRenderer::addPhrase(previewPhrase);
         changeState(EventEditState::editBox);
     }
 }
@@ -320,8 +320,8 @@ void EventEditor::editBox(KeyPresses keysDown) {
     bool changed = false;
     if (boxState == BoxEditState::resize) {
         if (keysDown.cancel) {
-            input = phrase->text;
-            UIRenderer::removePhrase(phrase);
+            input = previewPhrase->text;
+            UIRenderer::removePhrase(previewPhrase);
             changeState(EventEditState::enterMessage);
             return;
         }
@@ -330,7 +330,7 @@ void EventEditor::editBox(KeyPresses keysDown) {
             updateDisplay();
             return;
         }
-        SDL_Rect &box = phrase->getBox();
+        SDL_Rect &box = previewPhrase->getBox();
         if((keysDown.up || keysDown.debug_up) && box.h >= LETTER_HEIGHT + 2) {
             box.h--;
             changed = true;
@@ -378,7 +378,7 @@ void EventEditor::editBox(KeyPresses keysDown) {
             changed = true;
         }
         if (changed) {
-            phrase->setGridLimits(dM);
+            previewPhrase->setGridLimits(dM);
             return;
         }
     }
@@ -394,32 +394,32 @@ void EventEditor::editBox(KeyPresses keysDown) {
             return;
         }
         if((keysDown.up || keysDown.debug_up)) {
-            phrase->box.y--;
+            previewPhrase->box.y--;
             changed = true;
         }
         if ((keysDown.down || keysDown.debug_down)) {
-            phrase->box.y++;
+            previewPhrase->box.y++;
             changed = true;
         }
         if ((keysDown.left || keysDown.debug_left)) {
-            phrase->box.x--;
+            previewPhrase->box.x--;
             changed = true;
         }
         if ((keysDown.right || keysDown.debug_right)) {
-            phrase->box.x++;
+            previewPhrase->box.x++;
             changed = true;
         }
     }
     
-    if ((keysDown.menu1 && phrase->phraseScale > 1)) {
-        phrase->phraseScale /= 2;
+    if ((keysDown.menu1 && previewPhrase->phraseScale > 1)) {
+        previewPhrase->phraseScale /= 2;
         changed = true;
     }
-    if ((keysDown.menu2 && phrase->phraseScale > 1)) {
-        phrase->phraseScale *= 2;
+    if ((keysDown.menu2 && previewPhrase->phraseScale < 4)) {
+        previewPhrase->phraseScale *= 2;
         changed = true;
     }
     if (changed) {
-        phrase->reset();
+        previewPhrase->reset();
     }
 }

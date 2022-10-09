@@ -43,7 +43,7 @@ class EventEditor {
 
         RealThing* parent;
         pair<string, EventCollidable*> collidable;
-        Phrase* phrase;
+        Phrase* previewPhrase;
 
         vector<string> availableCollidables;
 
