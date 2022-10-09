@@ -20,8 +20,7 @@ EventEditor::~EventEditor() {
 
 int EventEditor::changeState(EventEditState nextState) {
     switch(nextState) {
-        int totalInteractables;
-        int totalTriggers;
+        int totalInteractables, totalTriggers;
         case EventEditState::selectCollidableType:
             totalInteractables = parent->interactables.size();
             totalTriggers = parent->triggers.size();
@@ -84,6 +83,11 @@ int EventEditor::changeState(EventEditState nextState) {
             editState = nextState;
             updateDisplay();
             return 0;
+        case EventEditState::enterMessage:
+            gameState = GameState::TextInput;
+            editState = nextState;
+            updateDisplay();
+            return 0;
         default:
             return 0;
     }
@@ -92,8 +96,8 @@ int EventEditor::changeState(EventEditState nextState) {
 
 
 void EventEditor::updateDisplay() {
-    string displayText;
-    string prefix;
+    string displayText, prefix;
+    int maxLine, size, magnitude, remainder;
     switch (editState) {
         case EventEditState::selectCollidableType:
             text->clearText();
@@ -125,6 +129,20 @@ void EventEditor::updateDisplay() {
             text->clearText();
             displayText =  "Successfully added event '" + eventName + "' to collidable '" + collidable.first + "'!";
             break;
+        case EventEditState::enterMessage:
+            text->clearText();
+            displayText =  "Enter message for collidable '" + collidable.first + "':";
+            maxLine = 30;
+            size = input.size();
+            magnitude = size / maxLine;
+            remainder = size % maxLine;
+            for (int i = 0; i <= magnitude; i++) {
+                if (i < magnitude)
+                    displayText = displayText + "` " + input.substr(i * maxLine, maxLine);
+                else
+                    displayText = displayText + "` " + input.substr(i * maxLine, (i * maxLine) + remainder);
+            } 
+            break;
         default:
             break;
     }
@@ -145,6 +163,9 @@ int EventEditor::routeInput(KeyPresses keysDown) {
         break;
     case EventEditState::choosePredefined:
         choosePredefined(keysDown);
+        break;
+    case EventEditState::enterMessage:
+        enterMessage(keysDown);
         break;
     case EventEditState::predefinedSuccess:
         if (keysDown.ok)
@@ -248,5 +269,20 @@ void EventEditor::choosePredefined (KeyPresses keysDown) {
             eventMap::attachEvent(eventName, parent->name, collidable.first, collidableType);
             changeState(EventEditState::predefinedSuccess);
         }
+    }
+}
+
+
+void EventEditor::enterMessage (KeyPresses keysDown) {
+    if (keysDown.textInput){
+        input.push_back(keysDown.textInput);
+        updateDisplay();
+    }
+    if (keysDown.del && input.length() > 0){
+        input.pop_back();
+        updateDisplay();
+    }
+    if (keysDown.start && input.size() < 1) {
+        changeState(EventEditState::predefinedSuccess);
     }
 }

@@ -54,6 +54,7 @@ class EventEditor {
         void selectEventType (KeyPresses keysDown);
         void chooseCollidable (KeyPresses keysDown);
         void choosePredefined (KeyPresses keysDown);
+        void enterMessage (KeyPresses keysDown);
 };
 
 #endif
