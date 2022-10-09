@@ -37,7 +37,7 @@ int main(int argc, char* args[]) {
     gameState = GameState::FieldFree;
 
     // if (fullMapPath == string(BASE_PATH) + "maps/map2.txt")
-    //     eventMap::load_events(currentMap);
+    //     eventMap::load_events();
 
     Input in;
     FpsTimer t;

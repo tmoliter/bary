@@ -21,10 +21,16 @@ enum class EventEditState {
     chooseCollidable,
     selectEventType,
     enterMessage,
-    positionBox,
+    editBox,
     messageSuccess,
     choosePredefined,
     predefinedSuccess,
+};
+
+enum class BoxEditState {
+    resize,
+    padding,
+    move,
 };
 
 class EventEditor {
@@ -37,10 +43,12 @@ class EventEditor {
 
         RealThing* parent;
         pair<string, EventCollidable*> collidable;
+        Phrase* phrase;
 
         vector<string> availableCollidables;
 
         EventEditState editState;
+        BoxEditState boxState;
         EventType eventType;
         CollidableType collidableType;
 
@@ -55,6 +63,7 @@ class EventEditor {
         void chooseCollidable (KeyPresses keysDown);
         void choosePredefined (KeyPresses keysDown);
         void enterMessage (KeyPresses keysDown);
+        void editBox (KeyPresses keysDown);
 };
 
 #endif

@@ -2,27 +2,33 @@
 
 using namespace std;
 
-Phrase::Phrase(Point p, int pixelWidth, int pixelHeight, int scale, ScrollType type, string t, int d, bool aD) : 
-    position(p),
-    phraseScale(scale), 
+Phrase::Phrase(Point p, Point pixelSize, ScrollType type, string t, Point gL, int pS, int d) :
+    phraseScale(pS),
     scrollType(type),
     delay(d),
-    autoDestroy(aD) {
-    box = SDL_Rect { position.x, position.y, pixelWidth, pixelHeight };
+    text(t),
+    leftPad(0),
+    topPad(0),
+    gridLimits(gL) {
     if (!font) {
         SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
         font = SDL_CreateTextureFromSurface(renderer, temp);
         SDL_FreeSurface(temp);
     }
-    letterLength = (pixelWidth / scale) / 8;
-    letterHeight = (pixelHeight / scale) / 12;
-    text = t;
+    autoDestroy = scrollType == ScrollType::continuous;
+    box = SDL_Rect { p.x, p.y, pixelSize.x, pixelSize.y };
     reset();
 }
 
 void Phrase::reset() {
+    queue<string>().swap(lines);
+    queue<string>().swap(hiddenLines);
+
+    utils::limit(gridLimits.x, 1, (box.w / (phraseScale * LETTER_WIDTH)) - 2);
+    utils::limit(gridLimits.y, 1, (box.h / (phraseScale * LETTER_HEIGHT)) - 1);
+
     // Very happy case: all text fits on one line
-    if (text.length() <= letterLength)
+    if (text.length() <= gridLimits.x)
         lines.push(text);
     else {
         int i = 0;
@@ -39,15 +45,15 @@ void Phrase::reset() {
             // Mark space, unless this is the last character of the last line
             if (int(text[i]) == 32 && 
                 !(!bonusTime && 
-                    linesRef->size() >= letterHeight - 1 && 
-                    i - lineFirstCharIndex == letterLength
+                    linesRef->size() >= gridLimits.y - 1 && 
+                    i - lineFirstCharIndex == gridLimits.x
                 )) {
                 lastSpace = i;
             }
             // Manual new line with ` char
             if (int(text[i]) == 96) {
                 linesRef->push(text.substr(lineFirstCharIndex, i - lineFirstCharIndex));
-                if (!bonusTime && linesRef->size() > letterHeight) {
+                if (!bonusTime && linesRef->size() > gridLimits.y) {
                     bonusTime = true;
                     linesRef = &hiddenLines;
                 }
@@ -57,9 +63,9 @@ void Phrase::reset() {
                 continue;
             }
             // Ran out of room for line
-            if (i > 0 && i - lineFirstCharIndex == letterLength) {
+            if (i > 0 && i - lineFirstCharIndex == gridLimits.x) {
                 // Ran out of lines that will fit
-                if (!bonusTime && linesRef->size() >= letterHeight - 1) {
+                if (!bonusTime && linesRef->size() >= gridLimits.y - 1) {
                     linesRef->push(text.substr(lineFirstCharIndex, lastSpace - lineFirstCharIndex));
                     bonusTime = true;
                     linesRef = &hiddenLines;
@@ -69,21 +75,21 @@ void Phrase::reset() {
                 }
                 // Word ends cleanly at end of line
                 if (lastSpace == i) {
-                    linesRef->push(text.substr(lineFirstCharIndex, letterLength));
+                    linesRef->push(text.substr(lineFirstCharIndex, gridLimits.x));
                     i++;
                     lineFirstCharIndex = i;
                     continue;
                 }
                 // Current word takes up more than a whole line
                 if (lastSpace <= lineFirstCharIndex) {
-                    linesRef->push(text.substr(lineFirstCharIndex, letterLength - 1) + char(45));
+                    linesRef->push(text.substr(lineFirstCharIndex, gridLimits.x - 1) + char(45));
                     i--;
                     lineFirstCharIndex = i;
                     continue;
                 }
                 // Current word would get pushed onto next line, but it is large enough to look weird
-                if (i - lastSpace > letterLength / 2) {
-                    linesRef->push(text.substr(lineFirstCharIndex, letterLength - 1) + char(45));
+                if (i - lastSpace > gridLimits.x / 2) {
+                    linesRef->push(text.substr(lineFirstCharIndex, gridLimits.x - 1) + char(45));
                     i--;
                     lineFirstCharIndex = i;
                     continue;
@@ -98,6 +104,10 @@ void Phrase::reset() {
         }
     }
     totalLines = lines.size() + hiddenLines.size();
+
+    leftPad = (box.w - (phraseScale * gridLimits.x * LETTER_WIDTH)) / 2;
+    topPad = (box.h - (phraseScale * lines.size() * LETTER_HEIGHT)) / 2;
+
     progStart = -1;
     advanceStart = -1;
     fullyDisplayed = false;
@@ -124,6 +134,24 @@ int Phrase::progDisplay() {
         return 0;
     SDL_SetRenderDrawColor(renderer, 100,100,255,255);
     SDL_RenderFillRect(renderer, &box);
+    queue<string> tmpLines = lines;
+    int linesSize = tmpLines.size();
+    int total = 0;
+    int i, j, occlusion;
+    string line;
+
+    if (scrollType == ScrollType::preview) {
+        // This shits fucked up, debug me
+        for (i = 0; i < linesSize; i++) {
+            line = tmpLines.front();
+            for (j = 0; j < line.size(); j++) {
+                renderLetter(i, j, line[j], 0, 0);
+            }
+            tmpLines.pop();
+        }
+        return 0;
+    }
+
     if (progStart < 0)
         progStart = frameCount;
     int charsToDisplay = (frameCount - progStart) / delay;
@@ -132,12 +160,6 @@ int Phrase::progDisplay() {
     int advanceProgress = -1;
     if (advanceStart > -1)
         advanceProgress = (frameCount - advanceStart) / (delay * 2);
-
-    queue<string> tmpLines = lines;
-    int linesSize = tmpLines.size();
-    int total = 0;
-    int i, j, occlusion;
-    string line;
 
     // Render letters
     for (i = 0; i < linesSize; i++) {
@@ -177,7 +199,7 @@ int Phrase::progDisplay() {
         }
         switch(scrollType) {
             case (ScrollType::allButLast):
-                if ((totalLines - lines.size() - hiddenLines.size()) % (letterHeight - 1) == 0)
+                if ((totalLines - lines.size() - hiddenLines.size()) % (gridLimits.y - 1) == 0)
                     advanceStart = -1;
                 else 
                     advanceStart = frameCount + ((advanceProgress - LETTER_HEIGHT) * delay);
@@ -215,9 +237,32 @@ void Phrase::renderLetter(int lineNumber, int charPosition, int asciiValue, int 
     int fontY = (adjustedFontValue / LETTERS_PER_FONT_ROW) * LETTER_HEIGHT;
     SDL_Rect sourceRect = { fontX, fontY + occlusion, LETTER_WIDTH, LETTER_HEIGHT - occlusion};
 
-    int xPosition = position.x + (charPosition * LETTER_WIDTH * phraseScale);
-    int yPosition = position.y + (lineNumber * LETTER_HEIGHT * phraseScale) - (raise * phraseScale);
+    int xPosition = box.x + leftPad + (charPosition * LETTER_WIDTH * phraseScale);
+    int yPosition = box.y + topPad + (lineNumber * LETTER_HEIGHT * phraseScale) - (raise * phraseScale);
     SDL_Rect renderRect = { xPosition, yPosition + occlusion, LETTER_WIDTH * phraseScale, (LETTER_HEIGHT - occlusion) * phraseScale };
 
     SDL_RenderCopy(renderer, font, &sourceRect, &renderRect);
+}
+
+SDL_Rect& Phrase::getBox() {
+    return box;
+}
+
+void Phrase::setGridLimits(DirectionMap dM) {
+    if (dM.up && gridLimits.y <= (box.h / (phraseScale * LETTER_HEIGHT)) - 1) {
+        gridLimits.y++;
+        reset();
+    }
+    if (dM.down && gridLimits.y > 1) {
+        gridLimits.y--;
+        reset();
+    }
+    if (dM.left && gridLimits.x > 10) {
+        gridLimits.x--;
+        reset();
+    }
+    if (dM.right && gridLimits.x <= (box.w / (phraseScale * LETTER_WIDTH)) - 2) {
+        gridLimits.x++;
+        reset();
+    }
 }

@@ -25,8 +25,7 @@ void UIRenderer::renderPhrases() {
     while (itr != u->phrases.end()) {
         Phrase* p = *itr;
         if (p->isComplete() && p->autoDestroy) {
-            delete p;
-            u->phrases.erase(remove(u->phrases.begin(), u->phrases.end(), p), u->phrases.end());
+            removePhrase(p);
             continue;
         }
         p->progDisplay();
@@ -79,6 +78,7 @@ void UIRenderer::removeLine(Ray *r) {
 
 
 void UIRenderer::removePhrase(Phrase *p) {
+    delete p;
     u->phrases.erase(remove(u->phrases.begin(), u->phrases.end(), p), u->phrases.end());
 }
 

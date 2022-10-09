@@ -5,8 +5,10 @@ parent(p),
 input(""),
 eventName(""),
 collidable(make_pair("",nullptr)),
+phrase(nullptr),
 collidableType(CollidableType::interactable), 
-eventType(EventType::simpleMessage) {
+eventType(EventType::simpleMessage),
+boxState(BoxEditState::resize) {
     parent->showInteractableLines();
     text = new Text(Point(LETTER_WIDTH * 2, LETTER_HEIGHT * 4), "");
     UIRenderer::addText(text);
@@ -17,6 +19,7 @@ EventEditor::~EventEditor() {
     UIRenderer::removeText(text);
 };
 
+// NEED CANCEL ACTIONS
 
 int EventEditor::changeState(EventEditState nextState) {
     switch(nextState) {
@@ -88,6 +91,11 @@ int EventEditor::changeState(EventEditState nextState) {
             editState = nextState;
             updateDisplay();
             return 0;
+        case EventEditState::editBox:
+            gameState = GameState::FieldFree;
+            editState = nextState;
+            updateDisplay();
+            return 0;
         default:
             return 0;
     }
@@ -143,6 +151,20 @@ void EventEditor::updateDisplay() {
                     displayText = displayText + "` " + input.substr(i * maxLine, (i * maxLine) + remainder);
             } 
             break;
+        case EventEditState::editBox:
+            text->clearText();
+            switch (boxState) {
+                case BoxEditState::resize:
+                    displayText = "Resize phrase box";
+                    break;
+                case BoxEditState::padding:
+                    displayText = "Adjust phrase padding";
+                    break;
+                case BoxEditState::move:
+                    displayText = "Move phrase box";
+                    break;
+            }
+            break;
         default:
             break;
     }
@@ -166,6 +188,9 @@ int EventEditor::routeInput(KeyPresses keysDown) {
         break;
     case EventEditState::enterMessage:
         enterMessage(keysDown);
+        break;
+    case EventEditState::editBox:
+        editBox(keysDown);
         break;
     case EventEditState::predefinedSuccess:
         if (keysDown.ok)
@@ -235,6 +260,7 @@ void EventEditor::selectEventType (KeyPresses keysDown) {
             case EventType::simpleMessage:
             case EventType::predefined:
                 eventType = EventType::simpleMessage;
+                input.clear();
                 updateDisplay();
                 break;
         }
@@ -282,7 +308,118 @@ void EventEditor::enterMessage (KeyPresses keysDown) {
         input.pop_back();
         updateDisplay();
     }
-    if (keysDown.start && input.size() < 1) {
-        changeState(EventEditState::predefinedSuccess);
+    if (keysDown.start && input.size() > 0) {
+        phrase = new Phrase(Point(100,100), Point(300, 70), ScrollType::preview, 
+        "Ontomontopeaia that?? Is something up and to my right? I'd better go check this shit out. I say again.. What's that?? Let's see.. What's that?? Is something up and to my right? I'd better go check this shit out. I say again.. What's that?? Let's see.");
+        UIRenderer::addPhrase(phrase);
+        changeState(EventEditState::editBox);
+    }
+}
+
+void EventEditor::editBox(KeyPresses keysDown) {
+    bool changed = false;
+    if (boxState == BoxEditState::resize) {
+        if (keysDown.cancel) {
+            input = phrase->text;
+            UIRenderer::removePhrase(phrase);
+            changeState(EventEditState::enterMessage);
+            return;
+        }
+        if (keysDown.ok) {
+            boxState = BoxEditState::padding;
+            updateDisplay();
+            return;
+        }
+        SDL_Rect &box = phrase->getBox();
+        if((keysDown.up || keysDown.debug_up) && box.h >= LETTER_HEIGHT + 2) {
+            box.h--;
+            changed = true;
+        }
+        if ((keysDown.down || keysDown.debug_down)) {
+            box.h++;
+            changed = true;
+        }
+        if ((keysDown.left || keysDown.debug_left) && box.w >= LETTER_WIDTH + 2) {
+            box.w--;
+            changed = true;
+        }
+        if ((keysDown.right || keysDown.debug_right)) {
+            box.w++;
+            changed = true;
+        }
+    }
+
+    if (boxState == BoxEditState::padding) {
+        if (keysDown.cancel) {
+            boxState = BoxEditState::resize;
+            updateDisplay();
+            return;
+        }
+        if (keysDown.ok) {
+            boxState = BoxEditState::move;
+            updateDisplay();
+            return;
+        }
+        DirectionMap dM;
+        if((keysDown.up || keysDown.debug_up)) {
+            dM.up = true;
+            changed = true;
+        }
+        if ((keysDown.down || keysDown.debug_down)) {
+            dM.down = true;
+            changed = true;
+        }
+        if ((keysDown.left || keysDown.debug_left)) {
+            dM.left = true;
+            changed = true;
+        }
+        if ((keysDown.right || keysDown.debug_right)) {
+            dM.right = true;
+            changed = true;
+        }
+        if (changed) {
+            phrase->setGridLimits(dM);
+            return;
+        }
+    }
+
+    if (boxState == BoxEditState::move) {
+        if (keysDown.cancel) {
+            boxState = BoxEditState::padding;
+            updateDisplay();
+            return;
+        }
+        if (keysDown.ok) {
+            cout << "ALL DONE" << endl;
+            return;
+        }
+        if((keysDown.up || keysDown.debug_up)) {
+            phrase->box.y--;
+            changed = true;
+        }
+        if ((keysDown.down || keysDown.debug_down)) {
+            phrase->box.y++;
+            changed = true;
+        }
+        if ((keysDown.left || keysDown.debug_left)) {
+            phrase->box.x--;
+            changed = true;
+        }
+        if ((keysDown.right || keysDown.debug_right)) {
+            phrase->box.x++;
+            changed = true;
+        }
+    }
+    
+    if ((keysDown.menu1 && phrase->phraseScale > 1)) {
+        phrase->phraseScale /= 2;
+        changed = true;
+    }
+    if ((keysDown.menu2 && phrase->phraseScale > 1)) {
+        phrase->phraseScale *= 2;
+        changed = true;
+    }
+    if (changed) {
+        phrase->reset();
     }
 }
