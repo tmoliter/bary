@@ -5,16 +5,20 @@
 #include <string>
 #include "./burgEvents.h"
 #include "Event.h"
+#include "components/Collidable.h"
 
 using namespace std;
 
 namespace eventMap {
     inline map<string, Event* (*)()> eventNameToGenerator;
-    inline map<string, pair<string, string>> eventNameToCollidable;
+    inline map<pair<string, string>, string> interactableToEventName;
+    inline map<pair<string, string>, string> triggerToEventName;
     void buildEventMap();
     void load_events();
 
-    void attachEvent(string event, string thing, string collidable);
+    string namePlusEvent(string thing, string collidable, CollidableType type);
+
+    int attachEvent(string event, string thing, string collidable, CollidableType type);
 };
 
 #endif

@@ -6,6 +6,7 @@
 #include "gui/Text.h"
 #include "gui/UIRenderer.h"
 #include "gui/Line.h"
+#include "events/eventMap.h"
 
 using namespace std;
 
@@ -20,31 +21,39 @@ enum class EventEditState {
     chooseCollidable,
     selectEventType,
     enterMessage,
+    positionBox,
+    messageSuccess,
+    choosePredefined,
+    predefinedSuccess,
 };
 
 class EventEditor {
     public:
-        EventEditor(RealThing *p, Text *&t) : parent(p), input(""), editState(EventEditState::chooseCollidable), text(t) {};
+        EventEditor(RealThing *p);
         ~EventEditor();
 
-        string input;
-        Text *&text;
+        string input, eventName;
+        Text *text;
 
         RealThing* parent;
-        EventCollidable* collidable;
+        pair<string, EventCollidable*> collidable;
+
+        vector<string> availableCollidables;
 
         EventEditState editState;
-        EventType type;
+        EventType eventType;
+        CollidableType collidableType;
 
         int changeState(EventEditState nextState);
 
         void updateDisplay();
-        void updateLines();
 
         int routeInput(KeyPresses keysDown);
 
-        void selectType (KeyPresses keysDown);
-        void enterInput (KeyPresses keysDown);
+        void selectCollidableType (KeyPresses keysDown);
+        void selectEventType (KeyPresses keysDown);
+        void chooseCollidable (KeyPresses keysDown);
+        void choosePredefined (KeyPresses keysDown);
 };
 
 #endif

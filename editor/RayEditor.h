@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "Camera.h"
 #include "things/RealThing.h"
+#include "events/eventMap.h"
 #include "gui/Text.h"
 #include "gui/UIRenderer.h"
 #include "gui/Line.h"
