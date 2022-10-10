@@ -150,8 +150,6 @@ bool Phrase::isComplete() {
 int Phrase::progDisplay() {
     if(complete)
         return 0;
-    // SDL_SetRenderDrawColor(renderer, 100,100,255,255);
-    // SDL_RenderFillRect(renderer, &box);
     SDL_Rect sourceRect = SDL_Rect { 0, 0, 640, 480 };
     SDL_RenderCopy(renderer, defaultSpeechBubble, &sourceRect, &box);
     queue<string> tmpLines = lines;
