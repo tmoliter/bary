@@ -2,6 +2,7 @@
 #define EVENT_EDITOR_H
 #include "Input.h"
 #include "Camera.h"
+#include "util.h"
 #include "things/RealThing.h"
 #include "gui/Text.h"
 #include "gui/UIRenderer.h"

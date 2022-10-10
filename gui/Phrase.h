@@ -20,7 +20,6 @@ class Phrase {
     // Bugs to fix:
     //  Saving to existing event breaks (maybe just work on SimpleMessage event child)
     //  Making a second thing with another SimpleMessage freezes when interacting
-    //  Renaming a Thing needs to update everything in the EventMap db
     //  Triggers and simple message creates infinite loop. Maybe we don't care?
     public:
         int maxLettersPerRow, maxRows, phraseScale, delay;
@@ -47,6 +46,8 @@ class Phrase {
 
         SDL_Rect& getBox();
         void setGridLimits(DirectionMap dM);
+
+        static inline SDL_Texture *defaultSpeechBubble = nullptr;
 
     private:
         void renderLetter(int lineNumber, int position, int asciiValue, int occlusion, int raise);
