@@ -30,8 +30,8 @@ Phrase::Phrase(const Phrase& ph) :
     leftPad(ph.leftPad),
     topPad(ph.topPad),
     gridLimits(ph.gridLimits) {
-        reset();
-    }
+    reset();
+}
 
 void Phrase::reset() {
     queue<string>().swap(lines);
@@ -214,7 +214,7 @@ int Phrase::progDisplay() {
         }
         switch(scrollType) {
             case (ScrollType::allButLast):
-                if ((totalLines - lines.size() - hiddenLines.size()) % (gridLimits.y - 1) == 0)
+                if ((totalLines - lines.size() - hiddenLines.size()) % (gridLimits.y - 1) == 0 || gridLimits.y == 1)
                     advanceStart = -1;
                 else 
                     advanceStart = frameCount + ((advanceProgress - LETTER_HEIGHT) * delay);

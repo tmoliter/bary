@@ -319,7 +319,8 @@ void EventEditor::enterMessage (KeyPresses keysDown) {
         updateDisplay();
     }
     if (keysDown.start && input.size() > 0) {
-        previewPhrase = new Phrase(Point(100,100), Point(300, 70), ScrollType::preview, input);
+        // previewPhrase = new Phrase(Point(100,100), Point(300, 70), ScrollType::preview, input);
+        previewPhrase = new Phrase(Point(100,100), Point(300, 70), ScrollType::preview, utils::LOREM_IPSUM);
         UIRenderer::addPhrase(previewPhrase);
         changeState(EventEditState::editBox);
     }
@@ -399,7 +400,6 @@ void EventEditor::editBox(KeyPresses keysDown) {
             return;
         }
         if (keysDown.ok) {
-
             Phrase *newPhrase = new Phrase(*previewPhrase);
             newPhrase->scrollType = ScrollType::allButLast;
             UIRenderer::removePhrase(previewPhrase);
