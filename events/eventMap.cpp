@@ -33,10 +33,10 @@ int eventMap::attachEvent(string event, string thing, string collidable, Collida
 
 void eventMap::removeCollidableEvent(pair<string, string> collidablePair, CollidableType type) {
     if (type == CollidableType::trigger && triggerToEventName.count(collidablePair)) {
-        rt->triggers.erase(collidablePair);
+        eventMap::triggerToEventName.erase(collidablePair);
     }
     if (type == CollidableType::interactable && interactableToEventName.count(collidablePair)) {
-        rt->interactables.erase(collidablePair);
+        eventMap::interactableToEventName.erase(collidablePair);
     }
 }
 

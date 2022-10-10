@@ -8,6 +8,7 @@
 #include "gui/UIRenderer.h"
 #include "gui/Line.h"
 #include "events/eventMap.h"
+#include "events/SimpleMessage.h"
 
 using namespace std;
 

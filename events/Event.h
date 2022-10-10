@@ -28,7 +28,7 @@ struct Event {
 
     EventNode* firstNode;
     vector<EventNode*> nodes;
-    EventNode* addNode(EventNode* node);
+    virtual EventNode* addNode(EventNode* node);
     void addNodes(vector<EventNode*> newNodes);
     EventNode* addChild(EventNode* prev, EventNode* newNode);
 

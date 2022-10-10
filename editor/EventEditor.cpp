@@ -408,10 +408,14 @@ void EventEditor::editBox(KeyPresses keysDown) {
 
             // TODO Deal with multi-message events
             EventCollidable *ec = collidable.second;
-            if (ec->event != nullptr)
-                delete ec->event;
-            ec->event = new Event();
-            ec->event->addNode(new EventNode(nullptr, newPhrase));
+            if (ec->event != nullptr) {
+                SimpleMessage* sm = dynamic_cast<SimpleMessage*>(ec->event);
+                if (sm)
+                    sm->addPhrase(newPhrase);
+                else
+                    delete ec->event;
+            } else
+                ec->event = new SimpleMessage(newPhrase);
             changeState(EventEditState::messageSuccess);
             return;
         }

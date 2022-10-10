@@ -5,7 +5,7 @@
 #include <vector>
 
 struct SimpleMessage : public Event {
-    SimpleMessage() : Event() {};
+    SimpleMessage(Phrase *ph = nullptr);
     void addPhrase(Phrase *ph);
 };
 
