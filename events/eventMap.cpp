@@ -17,6 +17,8 @@ int eventMap::attachEvent(string event, string thing, string collidable, Collida
         return 0;
     if (!eventMap::eventNameToGenerator.count(event))
         return 0;
+    if (eventMap::eventNameToGenerator[event] == nullptr)
+        return 0;
     Event *blah = eventMap::eventNameToGenerator[event]();
     if (type == CollidableType::trigger) {
         rt->triggers[collidable]->event = blah;

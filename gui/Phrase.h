@@ -19,7 +19,6 @@ enum class ScrollType {
 class Phrase {
     // Bugs to fix:
     //  Saving to existing event breaks (maybe just work on SimpleMessage event child)
-    //  Making a second thing with another SimpleMessage freezes when interacting
     //  Triggers and simple message creates infinite loop. Maybe we don't care?
     public:
         int maxLettersPerRow, maxRows, phraseScale, delay;

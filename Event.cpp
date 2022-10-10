@@ -9,9 +9,23 @@ Event::~Event() {
         delete node;
 }
 
-void Event::addNode(EventNode* node) {
+EventNode* Event::addNode(EventNode* node) {
     nodes.push_back(node);
+    return node;
 }
+
+void Event::addNodes(vector<EventNode*> newNodes) {
+    for (auto node : newNodes)
+        addNode(node);
+}
+
+EventNode* Event::addChild(EventNode* prev, EventNode* newNode) {
+    EventNode **newNodeP = new EventNode*;
+    *newNodeP = newNode;
+    prev->nextNode = newNodeP;
+    return addNode(newNode);
+}
+
 
 void Event::begin() {
     activeEvents.push_back(this);

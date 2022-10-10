@@ -2,6 +2,7 @@
 #define EVENT_H
 #include <string>
 #include <queue>
+#include <vector>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "globals.h"
@@ -27,8 +28,9 @@ struct Event {
 
     EventNode* firstNode;
     vector<EventNode*> nodes;
-    void addNode(EventNode* node);
-
+    EventNode* addNode(EventNode* node);
+    void addNodes(vector<EventNode*> newNodes);
+    EventNode* addChild(EventNode* prev, EventNode* newNode);
 
     void begin();
 
