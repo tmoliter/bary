@@ -242,6 +242,32 @@ void RealThing::hideLines() {
     hideTriggerLines();
 }
 
+vector<string> RealThing::findAndShowInteractableLines(string beginning) {
+    vector<string> matches;
+    for (auto const& [name, in] : interactables) {
+        if (name.rfind(beginning, 0) == 0) {
+            matches.push_back(name);
+            in->showLines();
+        } else {
+            in->hideLines();
+        }
+    }
+    return matches;
+}
+vector<string> RealThing::findAndShowTriggerLines(string beginning) {
+    vector<string> matches;
+    for (auto const& [name, tr] : triggers) {
+        if (name.rfind(beginning, 0) == 0) {
+            matches.push_back(name);
+            tr->showLines();
+        } else {
+            tr->hideLines();
+        }
+    }
+    return matches;
+}
+
+
 
 void RealThing::highlightSprite(Sprite* sprite) {
     for (auto s : sprites) {
@@ -330,6 +356,6 @@ int RealThing::parse_building_datum(ifstream &mapData, RealThingData &newTD) {
     return 1;
 }
 
-RealThing* RealThing::find_building (string name) {
+RealThing* RealThing::findRealThing (string name) {
     return dynamic_cast<RealThing*>(Thing::things[name]);
 }

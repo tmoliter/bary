@@ -32,12 +32,12 @@ int main(int argc, char* args[]) {
 
     string fullMapPath(string(BASE_PATH) + "maps/edit.txt");
     parse_map(fullMapPath.c_str());
-    eventMap::initialize();
+    eventMap::buildEventMap();
 
     gameState = GameState::FieldFree;
 
-    if (fullMapPath == string(BASE_PATH) + "maps/map2.txt")
-        eventMap::load_events("Burg");
+    // if (fullMapPath == string(BASE_PATH) + "maps/map2.txt")
+    //     eventMap::load_events();
 
     Input in;
     FpsTimer t;

@@ -7,6 +7,7 @@
 #include "things/FieldPlayer.h"
 #include "editor/SpriteEditor.h"
 #include "editor/RayEditor.h"
+#include "editor/EventEditor.h"
 #include "gui/Text.h"
 #include "gui/UIRenderer.h"
 
@@ -27,6 +28,7 @@ enum EditorState {
     spriteSelect,
     spriteEdit,
     rayEdit,
+    eventEdit,
 };
 
 class MapBuilder {
@@ -44,6 +46,7 @@ class MapBuilder {
         Sprite *cross;
 
         RayEditor *rayEditor;
+        EventEditor *eventEditor;
 
         void changeState(EditorState newState);
         void createOrSelectThing();

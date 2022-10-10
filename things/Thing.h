@@ -40,9 +40,10 @@ class Thing {
         // When a Thing is deleted or moved in any way, all of its dependencies must follow suit.
         // We might also store this relationship in a static graph of pointers,
         // in addition to a list of Point &references or something if we think we want to optimize
+        // Maybe something like map<Thing*, Point&>
 
         virtual void destroy();
-        void rename(string newName);
+        string rename(string newName);
         Point getCenter();
         void manuallyControl(KeyPresses keysDown);
         

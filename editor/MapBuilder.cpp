@@ -53,7 +53,7 @@ void MapBuilder::changeState(EditorState newState) {
             beginTextInput();
             commandList->setText("COMMANDS:` sprite` ray` free");
             if (currentThing != dotThing) {
-                commandList->setText(commandList->text + "` rename` move` edit sprite` delete");
+                commandList->setText(commandList->text + "` rename` move` event` edit sprite` delete");
                 currentThing->removeHighlight();
             } else {
                 commandList->setText(commandList->text + "` play");
@@ -90,10 +90,17 @@ void MapBuilder::changeState(EditorState newState) {
         case rayEdit:
             createOrSelectThing();
             prefix = currentThing->name + ": ";
-            rayEditor = new RayEditor(currentThing);
             helpText->setText(prefix + "Ray Edit Mode");
             endTextInput();
+            rayEditor = new RayEditor(currentThing);
             state = EditorState::rayEdit;
+            break;
+        case eventEdit:
+            prefix = currentThing->name + ": ";
+            helpText->setText(prefix + "Event Edit Mode");
+            endTextInput();
+            eventEditor = new EventEditor(currentThing);
+            state = EditorState::eventEdit;
             break;
     }
     updateLines();
@@ -231,6 +238,10 @@ void MapBuilder::meat(KeyPresses keysDown) {
                     changeState(EditorState::thingMove);
                     return;
                 }
+                if (input == "event") {
+                    changeState(EditorState::eventEdit);
+                    return;
+                }
                 if (input == "edit sprite") {
                     changeState(EditorState::spriteSelect);
                     return;
@@ -270,8 +281,9 @@ void MapBuilder::meat(KeyPresses keysDown) {
         if (listenForTextInput(keysDown))
             return;
         if(keysDown.start) {
+            string oldName = currentThing->name;
             if (input.length() > 0)
-                currentThing->rename(input);
+                eventMap::updateThingName(oldName, currentThing->rename(input));
             changeState(EditorState::commandInput);
         }
     }
@@ -317,9 +329,15 @@ void MapBuilder::meat(KeyPresses keysDown) {
     if(state == EditorState::rayEdit) {
         if(rayEditor->routeInput(keysDown)) {
             delete rayEditor;
-            currentThing->calculateHeight();
             changeState(EditorState::commandInput);
             updateLines();
+        }
+    }
+
+    if(state == EditorState::eventEdit) {
+        if(eventEditor->routeInput(keysDown)) {
+            delete eventEditor;
+            changeState(EditorState::commandInput);
         }
     }
 }

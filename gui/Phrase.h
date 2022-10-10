@@ -13,28 +13,37 @@ enum class ScrollType {
     oneLine,
     continuous,
     allButLast,
+    preview,
 };
 
 class Phrase {
     public:
-        int letterLength, letterHeight, phraseScale, delay;
+        int maxLettersPerRow, maxRows, phraseScale, delay;
         int progStart, advanceStart, totalLines;
+
+        Point gridLimits;
+        int leftPad, topPad;
         bool fullyDisplayed;
         bool complete;
         bool autoDestroy;
         ScrollType scrollType;
-        Point position;
         SDL_Rect box;
         string text;
         queue<string> lines, hiddenLines;
 
-        Phrase(Point o, int pixelWidth, int pixelHeight, int pS, ScrollType type, string t, int d = 1, bool aD = false);
+        Phrase(Point p, Point pixelSize, ScrollType type, string t, Point gL = Point(1000,1000), int pS = 1, int d = 1);
+        Phrase(const Phrase& ph);
+        void reset();
 
         void advance();
         bool isComplete();
 
         int progDisplay();
-        void reset();
+
+        SDL_Rect& getBox();
+        void setGridLimits(DirectionMap dM);
+
+        static inline SDL_Texture *defaultSpeechBubble = nullptr;
 
     private:
         void renderLetter(int lineNumber, int position, int asciiValue, int occlusion, int raise);

@@ -121,7 +121,7 @@ void RayEditor::handleCameraControls(KeyPresses keysDown) {
 
 void RayEditor::displayText() {
     string displayText;
-    string prefix = name.size() > 0 ? name + ": " : "";
+    string prefix = name.size() > 0 ? eventMap::namePlusEvent(parent->name, name, type) + ": " : "";
     string suffix = "`layer: " + to_string(layer);
     switch (editState) {
     case RayEditState::selectType:
@@ -247,26 +247,26 @@ int RayEditor::routeInput(KeyPresses keysDown) {
     handleCameraControls(keysDown);
     displayText();
     switch (editState) {
-    case RayEditState::selectType:
-        setType(keysDown);
-        break;
-    case RayEditState::name:
-        handleNameInput(keysDown);
-        break;
-    case RayEditState::layer:
-        editLayer(keysDown);
-        break;
-    case RayEditState::move:
-        move(keysDown);
-        break;
-    case RayEditState::stretch:
-        stretch(keysDown);
-        break;
-    case RayEditState::select:
-        select(keysDown);
-        break;
-    default:
-        break;
+        case RayEditState::selectType:
+            setType(keysDown);
+            break;
+        case RayEditState::name:
+            handleNameInput(keysDown);
+            break;
+        case RayEditState::layer:
+            editLayer(keysDown);
+            break;
+        case RayEditState::move:
+            move(keysDown);
+            break;
+        case RayEditState::stretch:
+            stretch(keysDown);
+            break;
+        case RayEditState::select:
+            select(keysDown);
+            break;
+        default:
+            break;
     }
     return 0;
 }

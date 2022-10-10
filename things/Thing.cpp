@@ -37,9 +37,10 @@ void Thing::destroy() {
     Thing::destroyThing(name);
 }
 
-void Thing::rename(string newName) {
+string Thing::rename(string newName) {
     Thing::things.erase(name);
     _save_name_and_save_in_map(newName);
+    return this->name;
 }
 
 

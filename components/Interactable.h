@@ -1,6 +1,6 @@
 #ifndef INTERACTABLE_H
 #define INTERACTABLE_H
-#include "Event.h"
+#include "events/Event.h"
 #include "./Collidable.h"
 
 struct EventCollidable : public Collidable {
