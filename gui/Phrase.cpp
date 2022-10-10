@@ -42,8 +42,8 @@ void Phrase::reset() {
     queue<string>().swap(lines);
     queue<string>().swap(hiddenLines);
 
-    utils::limit(gridLimits.x, 1, (box.w / (phraseScale * LETTER_WIDTH)) - 2);
-    utils::limit(gridLimits.y, 1, (box.h / (phraseScale * LETTER_HEIGHT)) - 1);
+    utils::limit(gridLimits.x, 1, (box.w / (phraseScale * LETTER_WIDTH)) - 4);
+    utils::limit(gridLimits.y, 1, (box.h / (phraseScale * LETTER_HEIGHT)) - 2);
 
     // Very happy case: all text fits on one line
     if (text.length() <= gridLimits.x)
@@ -271,7 +271,7 @@ SDL_Rect& Phrase::getBox() {
 }
 
 void Phrase::setGridLimits(DirectionMap dM) {
-    if (dM.up && gridLimits.y <= (box.h / (phraseScale * LETTER_HEIGHT)) - 1) {
+    if (dM.up && gridLimits.y <= (box.h / (phraseScale * LETTER_HEIGHT)) - 2) {
         gridLimits.y++;
         reset();
     }
@@ -283,7 +283,7 @@ void Phrase::setGridLimits(DirectionMap dM) {
         gridLimits.x--;
         reset();
     }
-    if (dM.right && gridLimits.x <= (box.w / (phraseScale * LETTER_WIDTH)) - 2) {
+    if (dM.right && gridLimits.x <= (box.w / (phraseScale * LETTER_WIDTH)) - 4) {
         gridLimits.x++;
         reset();
     }

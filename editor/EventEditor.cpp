@@ -320,7 +320,7 @@ void EventEditor::enterMessage (KeyPresses keysDown) {
     }
     if (keysDown.start && input.size() > 0) {
         // previewPhrase = new Phrase(Point(100,100), Point(300, 70), ScrollType::preview, input);
-        previewPhrase = new Phrase(Point(100,100), Point(300, 70), ScrollType::preview, utils::LOREM_IPSUM);
+        previewPhrase = new Phrase(Point(120,320), Point(400, 90), ScrollType::preview, utils::LOREM_IPSUM);
         UIRenderer::addPhrase(previewPhrase);
         changeState(EventEditState::editBox);
     }
