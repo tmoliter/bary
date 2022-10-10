@@ -20,6 +20,7 @@ namespace eventMap {
     string namePlusEvent(string thing, string collidable, CollidableType type);
 
     int attachEvent(string event, string thing, string collidable, CollidableType type);
+    void removeCollidableEvent(pair<string, string> collidablePair, CollidableType type);
 };
 
 #endif
