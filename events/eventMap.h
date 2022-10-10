@@ -16,6 +16,7 @@ namespace eventMap {
     void buildEventMap();
     void load_events();
 
+    void updateThingName (string oldName, string newName);
     string namePlusEvent(string thing, string collidable, CollidableType type);
 
     int attachEvent(string event, string thing, string collidable, CollidableType type);

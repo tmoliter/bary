@@ -281,8 +281,9 @@ void MapBuilder::meat(KeyPresses keysDown) {
         if (listenForTextInput(keysDown))
             return;
         if(keysDown.start) {
+            string oldName = currentThing->name;
             if (input.length() > 0)
-                currentThing->rename(input);
+                eventMap::updateThingName(oldName, currentThing->rename(input));
             changeState(EditorState::commandInput);
         }
     }

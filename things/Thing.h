@@ -43,7 +43,7 @@ class Thing {
         // Maybe something like map<Thing*, Point&>
 
         virtual void destroy();
-        void rename(string newName);
+        string rename(string newName);
         Point getCenter();
         void manuallyControl(KeyPresses keysDown);
         

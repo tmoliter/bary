@@ -36,6 +36,18 @@ void eventMap::load_events() {
         attachEvent(eventName, thingCollidablePair.first, thingCollidablePair.second, CollidableType::interactable);
 };
 
+void eventMap::updateThingName (string oldName, string newName) {
+    vector<pair<string,string>> toDelete;
+    for (auto const& [collidablePair, eventName] : triggerToEventName) {
+        if (collidablePair.first == oldName) {
+            triggerToEventName[make_pair(newName, collidablePair.second)] = eventName;
+            toDelete.push_back(collidablePair);
+        }
+    }
+    for (auto deletion : toDelete)
+        triggerToEventName.erase(deletion);
+}
+
 string eventMap::namePlusEvent(string thing, string collidable, CollidableType type) {
     string name = collidable;
     pair<string,string> collidableNames = make_pair(thing, collidable);
