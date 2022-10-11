@@ -22,7 +22,6 @@ Phrase::Phrase(Point p, Point pixelSize, ScrollType type, string t, Point gL, in
         SDL_FreeSurface(temp);
     }
     box = SDL_Rect { p.x, p.y, pixelSize.x, pixelSize.y };
-    reset();
 }
 
 Phrase::Phrase(const Phrase& ph) :     
@@ -35,7 +34,6 @@ Phrase::Phrase(const Phrase& ph) :
     leftPad(ph.leftPad),
     topPad(ph.topPad),
     gridLimits(ph.gridLimits) {
-    reset();
 }
 
 void Phrase::reset() {

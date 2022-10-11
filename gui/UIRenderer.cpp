@@ -5,6 +5,7 @@ UIRenderer *UIRenderer::u = new UIRenderer();
 
 void UIRenderer::addPhrase(Phrase *p) {
     u->phrases.push_back(p);
+    p->reset();
 };
 
 void UIRenderer::addText(Text *t) {
