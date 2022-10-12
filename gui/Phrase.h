@@ -22,7 +22,6 @@ enum class PhrasePhase {
     standby,
     appear,
     textDisplay,
-    disappear
 };
 
 class Phrase {
