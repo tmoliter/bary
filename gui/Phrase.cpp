@@ -2,6 +2,8 @@
 
 using namespace std;
 
+int Phrase::currentID = 0;
+
 Phrase::Phrase(Point p, Point pixelSize, ScrollType type, string t, Point gL, int pS, int d) :
     autoDestroy(true),
     phraseScale(pS),
@@ -10,7 +12,9 @@ Phrase::Phrase(Point p, Point pixelSize, ScrollType type, string t, Point gL, in
     text(t),
     leftPad(0),
     topPad(0),
-    gridLimits(gL) {
+    gridLimits(gL),
+    state(PhrasePhase::standby) {
+    id = "phrase " + to_string(currentID++);
     if (!font) {
         SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
         font = SDL_CreateTextureFromSurface(renderer, temp);
@@ -22,7 +26,6 @@ Phrase::Phrase(Point p, Point pixelSize, ScrollType type, string t, Point gL, in
         SDL_FreeSurface(temp);
     }
     box = SDL_Rect { p.x, p.y, pixelSize.x, pixelSize.y };
-    reset();
 }
 
 Phrase::Phrase(const Phrase& ph) :     
@@ -34,8 +37,9 @@ Phrase::Phrase(const Phrase& ph) :
     text(ph.text),
     leftPad(ph.leftPad),
     topPad(ph.topPad),
-    gridLimits(ph.gridLimits) {
-    reset();
+    gridLimits(ph.gridLimits),
+    state(PhrasePhase::standby) {
+    id = "phrase " + to_string(currentID++);
 }
 
 void Phrase::reset() {
@@ -130,6 +134,8 @@ void Phrase::reset() {
     advanceStart = -1;
     fullyDisplayed = false;
     complete = false;
+    state = PhrasePhase::appear;
+    Timer::startOrIgnore(id);
 }
 
 void Phrase::advance() {
@@ -148,9 +154,23 @@ bool Phrase::isComplete() {
 }
 
 int Phrase::progDisplay() {
-    if(complete)
+    if(complete || state == PhrasePhase::standby)
         return 0;
     SDL_Rect sourceRect = SDL_Rect { 0, 0, 640, 480 };
+    if (state == PhrasePhase::appear) {
+        if (scrollType != ScrollType::preview) {
+            int time = (float)Timer::timeSince(id);
+            popBubble(sourceRect, time);
+            if (time >= 15) {
+                state = PhrasePhase::textDisplay;
+                Timer::destroy(id);
+                return 0;
+            }
+            return 0;
+        } else {
+            state = PhrasePhase::textDisplay;
+        }
+    }
     SDL_RenderCopy(renderer, defaultSpeechBubble, &sourceRect, &box);
     queue<string> tmpLines = lines;
     int linesSize = tmpLines.size();
@@ -159,7 +179,6 @@ int Phrase::progDisplay() {
     string line;
 
     if (scrollType == ScrollType::preview) {
-        // This shits fucked up, debug me
         for (i = 0; i < linesSize; i++) {
             line = tmpLines.front();
             for (j = 0; j < line.size(); j++) {
@@ -248,6 +267,32 @@ int Phrase::progDisplay() {
         complete = true;
     
     return 1;
+}
+
+void Phrase::popBubble(SDL_Rect sourceRect, float time) {
+    float xF, yF, width, height;
+    if (time <= 12) {
+        xF = box.x + (box.w * .5 * ((10 - time) / 10));
+        yF = box.y + (box.h * .5 * ((10 - time) / 10));
+        width = box.w * (time / 10);
+        height = box.h * (time / 10);
+    } else if (time <= 13) {
+        xF = box.x + (box.w * .5 * ((10 - 11) / 10));
+        yF = box.y + (box.h * .5 * ((10 - 11) / 10));
+        width = box.w * (11 / 10);
+        height = box.h * (11 / 10);
+    } else {
+        xF = box.x + (box.w * .5 * ((time - 2 - 13) / 10));
+        yF = box.y + (box.h * .5 * ((time - 2 - 13) / 10));
+        width = box.w * (11 / (time - 4));
+        height = box.h * (11 / (time - 4));
+    }
+    int w = round(width);
+    int h = round(height);
+    int x = round(xF);
+    int y = round(yF);
+    SDL_Rect renderRect = SDL_Rect { x, y, w, h };
+    SDL_RenderCopy(renderer, defaultSpeechBubble, &sourceRect, &renderRect);
 }
 
 void Phrase::renderLetter(int lineNumber, int charPosition, int asciiValue, int occlusion, int raise) {

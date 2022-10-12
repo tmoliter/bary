@@ -36,16 +36,16 @@ void FieldPlayer::init() {
 void FieldPlayer::getRay(Ray &r) {
     switch (currentDirection) {
         case (Direction::up):
-            r = Ray(position.x, position.y, position.x, position.y - 8);
+            r = Ray(position.x, position.y, position.x, position.y - 16);
             break;
         case (Direction::down):
-            r = Ray(position.x, position.y, position.x, position.y + 8);
+            r = Ray(position.x, position.y, position.x, position.y + 16);
             break;
         case (Direction::left):
-            r = Ray(position.x, position.y, position.x - 8, position.y);
+            r = Ray(position.x, position.y, position.x - 16, position.y);
             break;
         case (Direction::right):
-            r = Ray(position.x, position.y, position.x + 8, position.y);
+            r = Ray(position.x, position.y, position.x + 16, position.y);
             break;
         default:
             r = Ray(position.x, position.y, position.x, position.y);
