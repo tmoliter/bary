@@ -60,6 +60,7 @@ class Phrase {
         static int currentID;
 
     private:
+        void popBubble(SDL_Rect sourceRect, float time);
         void renderLetter(int lineNumber, int position, int asciiValue, int occlusion, int raise);
 };
 

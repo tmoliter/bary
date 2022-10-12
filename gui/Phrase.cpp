@@ -159,31 +159,8 @@ int Phrase::progDisplay() {
     SDL_Rect sourceRect = SDL_Rect { 0, 0, 640, 480 };
     if (state == PhrasePhase::appear) {
         if (scrollType != ScrollType::preview) {
-            int timeI = Timer::timeSince(id);
-            float time = (float)timeI;
-            float xF, yF, width, height;
-            if (time <= 12) {
-                xF = box.x + (box.w * (float).5 * (((float)10 - time) / (float)10));
-                yF = box.y + (box.h * (float).5 * (((float)10 - time) / (float)10));
-                width = box.w * (time / (float)10);
-                height = box.h * (time / (float)10);
-            } else if (time <= 13) {
-                xF = box.x + (box.w * (float).5 * (((float)10 - (float)11) / (float)10));
-                yF = box.y + (box.h * (float).5 * (((float)10 - (float)11) / (float)10));
-                width = box.w * (11 / (float)10);
-                height = box.h * (11 / (float)10);
-            } else {
-                xF = box.x + (box.w * (float).5 * ((time - (float)2 - (float)13) / (float)10));
-                yF = box.y + (box.h * (float).5 * ((time - (float)2 - (float)13) / (float)10));
-                width = box.w * ((float)11 / (time - (float)4));
-                height = box.h * ((float)11 / (time - (float)4));
-            }
-            int w = round(width);
-            int h = round(height);
-            int x = round(xF);
-            int y = round(yF);
-            SDL_Rect renderRect = SDL_Rect { x, y, w, h };
-            SDL_RenderCopy(renderer, defaultSpeechBubble, &sourceRect, &renderRect);
+            int time = (float)Timer::timeSince(id);
+            popBubble(sourceRect, time);
             if (time >= 15) {
                 state = PhrasePhase::textDisplay;
                 Timer::destroy(id);
@@ -290,6 +267,32 @@ int Phrase::progDisplay() {
         complete = true;
     
     return 1;
+}
+
+void Phrase::popBubble(SDL_Rect sourceRect, float time) {
+    float xF, yF, width, height;
+    if (time <= 12) {
+        xF = box.x + (box.w * .5 * ((10 - time) / 10));
+        yF = box.y + (box.h * .5 * ((10 - time) / 10));
+        width = box.w * (time / 10);
+        height = box.h * (time / 10);
+    } else if (time <= 13) {
+        xF = box.x + (box.w * .5 * ((10 - 11) / 10));
+        yF = box.y + (box.h * .5 * ((10 - 11) / 10));
+        width = box.w * (11 / 10);
+        height = box.h * (11 / 10);
+    } else {
+        xF = box.x + (box.w * .5 * ((time - 2 - 13) / 10));
+        yF = box.y + (box.h * .5 * ((time - 2 - 13) / 10));
+        width = box.w * (11 / (time - 4));
+        height = box.h * (11 / (time - 4));
+    }
+    int w = round(width);
+    int h = round(height);
+    int x = round(xF);
+    int y = round(yF);
+    SDL_Rect renderRect = SDL_Rect { x, y, w, h };
+    SDL_RenderCopy(renderer, defaultSpeechBubble, &sourceRect, &renderRect);
 }
 
 void Phrase::renderLetter(int lineNumber, int charPosition, int asciiValue, int occlusion, int raise) {
