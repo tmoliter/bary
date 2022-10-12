@@ -167,16 +167,16 @@ int Phrase::progDisplay() {
                 yF = box.y + (box.h * (float).5 * (((float)10 - time) / (float)10));
                 width = box.w * (time / (float)10);
                 height = box.h * (time / (float)10);
-            } else if (time <= 14) {
-                xF = box.x + (box.w * (float).5 * (((float)10 - (float)12) / (float)10));
-                yF = box.y + (box.h * (float).5 * (((float)10 - (float)12) / (float)10));
-                width = box.w * (12 / (float)10);
-                height = box.h * (12 / (float)10);
+            } else if (time <= 13) {
+                xF = box.x + (box.w * (float).5 * (((float)10 - (float)11) / (float)10));
+                yF = box.y + (box.h * (float).5 * (((float)10 - (float)11) / (float)10));
+                width = box.w * (11 / (float)10);
+                height = box.h * (11 / (float)10);
             } else {
-                xF = box.x + (box.w * (float).5 * ((time - (float)2 - (float)15) / (float)10));
-                yF = box.y + (box.h * (float).5 * ((time - (float)2 - (float)15) / (float)10));
-                width = box.w * ((float)12 / (time - (float)5));
-                height = box.h * ((float)12 / (time - (float)5));
+                xF = box.x + (box.w * (float).5 * ((time - (float)2 - (float)13) / (float)10));
+                yF = box.y + (box.h * (float).5 * ((time - (float)2 - (float)13) / (float)10));
+                width = box.w * ((float)11 / (time - (float)4));
+                height = box.h * ((float)11 / (time - (float)4));
             }
             int w = round(width);
             int h = round(height);
@@ -184,7 +184,7 @@ int Phrase::progDisplay() {
             int y = round(yF);
             SDL_Rect renderRect = SDL_Rect { x, y, w, h };
             SDL_RenderCopy(renderer, defaultSpeechBubble, &sourceRect, &renderRect);
-            if (time >= 17) {
+            if (time >= 15) {
                 state = PhrasePhase::textDisplay;
                 Timer::destroy(id);
                 return 0;
