@@ -146,12 +146,6 @@ void RealThing::removeTrigger(string name) {
 // Pass in incoming Thing name here to ignore collisions
 int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) {
     switch (collidableType) {
-        case (CollidableType::obstruction):
-            for (auto const& [layer, o] : obstructions){
-            if(o->isColliding(incoming, incomingLayer))
-                return 1;
-            }
-            break;
         case (CollidableType::interactable):
             for (auto const& [name, in] : interactables){
                 if(in->isColliding(incoming, incomingLayer)) {
@@ -176,6 +170,12 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
                     tr->event->begin();
                     return 0;
                 }
+            }
+            break;
+        case (CollidableType::obstruction):
+            for (auto const& [layer, o] : obstructions){
+            if(o->isColliding(incoming, incomingLayer))
+                return 1;
             }
             break;
         }
