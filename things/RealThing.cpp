@@ -149,12 +149,13 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
         case (CollidableType::interactable):
             for (auto const& [name, in] : interactables){
                 if(in->isColliding(incoming, incomingLayer)) {
-                    if(in->timesTriggered++ == in->maxTriggers || !in->event) {
+                    if(in->timesTriggered++ == in->maxTriggers) {
                         delete in;
                         interactables.erase(name);
                         return 0;
                     }
-                    in->event->begin();
+                    if (in->event)
+                        in->event->begin();
                     return 1;
                 }
             }
@@ -162,12 +163,13 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
         case (CollidableType::trigger):
             for (auto const& [name, tr] : triggers){
                 if(tr->isColliding(incoming, incomingLayer)) {
-                    if(tr->timesTriggered++ == tr->maxTriggers || !tr->event) {
+                    if(tr->timesTriggered++ == tr->maxTriggers) {
                         triggers.erase(name);
                         delete tr;
                         return 0;
                     }
-                    tr->event->begin();
+                    if (tr->event)
+                        tr->event->begin();
                     return 0;
                 }
             }

@@ -5,8 +5,8 @@
 #include "events/SimpleMessage.h"
 
 struct Door : public RealThing {
-    Door();
-    ~Door();
+    Door(Point p);
+    // ~Door();
 
     bool opened, locked;
     SimpleMessage lockedMessage;

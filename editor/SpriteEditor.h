@@ -27,6 +27,8 @@ class SpriteEditor {
         SpriteEditState editState, cameraPrevState;
         Text *text;
 
+        bool foundSprite;
+
         int editSpeed;
 
         int nextMode();
@@ -44,6 +46,8 @@ class SpriteEditor {
         void grow (KeyPresses keysDown);
         void editRenderOffset(KeyPresses keysDown);
         void editLayer(KeyPresses keysDown);
+
+        static int checkPath(string input);
 };
 
 #endif

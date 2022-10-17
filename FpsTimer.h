@@ -53,7 +53,7 @@ void FpsTimer::endFrameAndWait(int &frameCount, ProfileData &profileData) {
         std::cout << "e: " << profileData.e << std::endl;
         std::cout << "total: " << elapsedMS << std::endl <<std::endl;
     }
-    // SDL_Delay(floor(16.666f - elapsedMS));
+    SDL_Delay(floor(16.666f - elapsedMS));
 }
 
 #endif
