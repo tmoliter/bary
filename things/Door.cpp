@@ -32,3 +32,13 @@ void Door::close() {
     sprites[1]->active = false;
     sprites[0]->active = true;
 }
+
+void Door::preview() {
+    opened = true;
+    sprites[1]->active = true;
+    sprites[0]->active = true;
+    interactables.begin()->second->active = true;
+    triggers.begin()->second->active = true;
+    obstructions.begin()->second->active = true;
+    removeHighlight();
+}

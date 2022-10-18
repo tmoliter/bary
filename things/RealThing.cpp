@@ -132,6 +132,11 @@ void RealThing::RemoveSprite(Sprite* sprite) {
     sprites.erase(remove(sprites.begin(), sprites.end(), sprite), sprites.end());
 }
 
+void RealThing::removeObstruction(int layer) {
+    delete obstructions[layer];
+    obstructions.erase(layer);
+};
+
 void RealThing::removeInteractable(string name) {
     delete interactables[name];
     interactables.erase(name);
@@ -141,6 +146,24 @@ void RealThing::removeInteractable(string name) {
 void RealThing::removeTrigger(string name) {
     delete triggers[name];
     triggers.erase(name);
+};
+
+void RealThing::removeAllCollidables() {
+    map<int, Obstruction*>::iterator oItr = obstructions.begin();
+    while (oItr != obstructions.end()) {
+        delete oItr->second;
+        oItr = obstructions.erase(oItr);
+    }
+    map<string, Interactable*>::iterator inItr = interactables.begin();
+    while (inItr != interactables.end()) {
+        delete inItr->second;
+        inItr = interactables.erase(inItr);
+    }
+    map<string, Trigger*>::iterator trItr = triggers.begin();
+    while (trItr != triggers.end()) {
+        delete trItr->second;
+        trItr = triggers.erase(trItr);
+    }
 };
 
 // Pass in incoming Thing name here to ignore collisions
@@ -183,11 +206,6 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
         }
     return 0;
 }
-
-void RealThing::removeObstruction(int layer) {
-    delete obstructions[layer];
-    obstructions.erase(layer);
-};
 
 void RealThing::showObstructionLines(int layer) {
     for (auto const& [l, o] : obstructions) {

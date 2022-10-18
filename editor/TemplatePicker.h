@@ -11,7 +11,7 @@ enum class Template {
 
 struct TemplatePicker {
     TemplatePicker(Point p);
-    // TemplatePicker(Door *door);
+    TemplatePicker(Door *door);
     // ~TemplatePicker();
 
     Point newThingPosition;

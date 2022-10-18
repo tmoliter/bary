@@ -5,11 +5,12 @@ SpriteEditor::SpriteEditor(Sprite *s) :
     editSpeed(1), 
     editState(SpriteEditState::move), 
     cameraPrevState(SpriteEditState::move),
-    foundSprite(false) {
+    foundSprite(false),
+    snapCamera(false) {
     
     oldFocus = Thing::things[Camera::getFocusName()];
     focus = new Thing(Point(sprite->x, sprite->y), "sprite focus");
-    Camera::panTo(focus->name);
+    Camera::panTo(focus->name, snapCamera);
 
     text = new Text(Point(sprite->x, sprite->y), "");
     UIRenderer::addText(text);
@@ -17,7 +18,7 @@ SpriteEditor::SpriteEditor(Sprite *s) :
 
 SpriteEditor::~SpriteEditor() {
     UIRenderer::removeText(text);
-    Camera::panTo(oldFocus->name);
+    Camera::panTo(oldFocus->name, snapCamera);
     delete focus;
 };
 

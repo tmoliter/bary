@@ -66,7 +66,7 @@ class Camera {
 
         inline static Camera *c;
 
-        static void panTo(string thingName);
+        static void panTo(string thingName, bool snap = false);
         static int fadeIn(int m);
         static int fadeOut(int m);
         static void warpIn(int m);

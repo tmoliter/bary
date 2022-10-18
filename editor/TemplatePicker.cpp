@@ -4,6 +4,10 @@ TemplatePicker::TemplatePicker(Point p) : newThingPosition(p), templ(Template::n
     doorEditor = new DoorEditor(p);
 }
 
+TemplatePicker::TemplatePicker(Door *door) : newThingPosition(door->position), templ(Template::door) {
+    doorEditor = new DoorEditor(door);
+}
+
 int TemplatePicker::chooseTemplate(KeyPresses keysDown) {
     if (doorEditor->routeInput(keysDown)) {
         delete doorEditor;

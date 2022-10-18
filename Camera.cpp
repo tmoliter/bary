@@ -105,9 +105,14 @@ int Camera::parse_camera(ifstream &mapData) {
     return 1;
 }
 
-void Camera::panTo(string thingName) {
-    if (c)
-        GhostFocus::create(c->focus, thingName, c->focusMode == FocusMode::point);
+void Camera::panTo(string thingName, bool snap) {
+    if (!c)
+        return;
+    if (snap) {
+        c->focus = Thing::things[thingName];
+        return;
+    }
+    GhostFocus::create(c->focus, thingName, c->focusMode == FocusMode::point);
 }
 
 int Camera::fadeIn(int m) {

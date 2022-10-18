@@ -13,6 +13,7 @@ struct Door : public RealThing {
     
     void open();
     void close();
+    void preview();
 
     virtual int checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType);
 };

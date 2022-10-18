@@ -17,6 +17,7 @@ enum class DoorEditState {
 
 struct DoorEditor {
     DoorEditor(Point p);
+    DoorEditor(Door *door);
     ~DoorEditor();
 
     string input;
@@ -26,6 +27,7 @@ struct DoorEditor {
     Door *door;
     Text *text;
 
+    void changeState(DoorEditState newState);
     void updateText();
 
     int nextMode();

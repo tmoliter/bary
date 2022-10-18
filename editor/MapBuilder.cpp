@@ -6,6 +6,11 @@ MapBuilder::MapBuilder() : input(""), lastPath(""), selectedSprite(-1) {
     mapBuilder = this;
     commandText = nullptr;
     cross = nullptr;
+    spriteEditor = nullptr;
+    rayEditor = nullptr;
+    eventEditor = nullptr;
+    templatePicker = nullptr;
+
 
     helpText = new Text(Point(16, 16), "");
     UIRenderer::addText(helpText);
@@ -105,7 +110,8 @@ void MapBuilder::changeState(EditorState newState) {
         case EditorState::thingFromTemplate:
             helpText->clearText();
             endTextInput();
-            templatePicker = new TemplatePicker(currentThing->position);
+            if (!templatePicker)
+                templatePicker = new TemplatePicker(currentThing->position);
             state = EditorState::thingFromTemplate;
             break;
     }
@@ -206,9 +212,10 @@ void MapBuilder::meat(KeyPresses keysDown) {
                 if (t != dotThing) {
                     Door* door = dynamic_cast<Door*>(t);
                     if (door) {
-                        // create templatePicker and pass in door object to specific constructor
-                        // that will bring us striaght to DoorEditor
-                        // return;
+                        templatePicker = new TemplatePicker(door);
+                        changeState(EditorState::thingFromTemplate);
+                        Camera::panTo(door->name);
+                        return;
                     }
                     RealThing* match = dynamic_cast<RealThing*>(t);
                     if (match) {
@@ -337,6 +344,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
     if(state == EditorState::spriteEdit) {
         if(spriteEditor->routeInput(keysDown)) {
             delete spriteEditor;
+            spriteEditor = nullptr;
             currentThing->calculateHeight();
             changeState(EditorState::pathInput);
         }
@@ -345,6 +353,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
     if(state == EditorState::rayEdit) {
         if(rayEditor->routeInput(keysDown)) {
             delete rayEditor;
+            rayEditor = nullptr;
             changeState(EditorState::commandInput);
             updateLines();
         }
@@ -353,6 +362,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
     if(state == EditorState::eventEdit) {
         if(eventEditor->routeInput(keysDown)) {
             delete eventEditor;
+            eventEditor = nullptr;
             changeState(EditorState::commandInput);
         }
     }
@@ -360,6 +370,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
     if(state == EditorState::thingFromTemplate) {
         if(templatePicker->chooseTemplate(keysDown)) {
             delete templatePicker;
+            templatePicker = nullptr;
             changeState(EditorState::commandInput);
         }
     }

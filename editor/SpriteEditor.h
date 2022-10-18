@@ -28,6 +28,7 @@ class SpriteEditor {
         Text *text;
 
         bool foundSprite;
+        bool snapCamera;
 
         int editSpeed;
 
