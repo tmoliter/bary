@@ -38,6 +38,7 @@ sheetWidth(sprite.sheetWidth),
 sheetHeight(sprite.sheetHeight) {
     id = currentID++;
     sprites[id] = this;
+    textures[d.path].first++;
 }
 
 Sprite::~Sprite() {
