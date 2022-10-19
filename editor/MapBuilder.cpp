@@ -6,6 +6,11 @@ MapBuilder::MapBuilder() : input(""), lastPath(""), selectedSprite(-1) {
     mapBuilder = this;
     commandText = nullptr;
     cross = nullptr;
+    spriteEditor = nullptr;
+    rayEditor = nullptr;
+    eventEditor = nullptr;
+    templatePicker = nullptr;
+
 
     helpText = new Text(Point(16, 16), "");
     UIRenderer::addText(helpText);
@@ -28,45 +33,45 @@ MapBuilder::MapBuilder() : input(""), lastPath(""), selectedSprite(-1) {
 void MapBuilder::changeState(EditorState newState) {
     string prefix = currentThing != dotThing ? currentThing->name + ": " : "";
     switch (newState) {
-        case freeMove:
+        case EditorState::freeMove:
             helpText->setText("Free Move");
             endTextInput();
             focusDot();
             Sprite::removeHighlight();
             state = EditorState::freeMove;
             break;
-        case play:
+        case EditorState::play:
             helpText->setText("Play");
             endTextInput();
             currentThing = new FieldPlayer(dotThing->position, "test player", "./assets/sheets/SDL_TestSS.png");
             Camera::panTo(currentThing->name);
             state = EditorState::play;
             break;
-        case thingMove:
+        case EditorState::thingMove:
             helpText->setText(prefix + "Thing Move");
             endTextInput();
             Camera::panTo(currentThing->name);
             state = EditorState::thingMove;
             break;
-        case commandInput:
+        case EditorState::commandInput:
             helpText->setText(prefix + "Enter Command");
             beginTextInput();
-            commandList->setText("COMMANDS:` sprite` ray` free");
+            commandList->setText("COMMANDS:` sprite` ray` free` template");
             if (currentThing != dotThing) {
                 commandList->setText(commandList->text + "` rename` move` event` edit sprite` delete");
                 currentThing->removeHighlight();
             } else {
-                commandList->setText(commandList->text + "` play");
+                commandList->setText(commandList->text + "` play`");
             }
             state = EditorState::commandInput;
             break;
-        case renameThing:
+        case EditorState::renameThing:
             helpText->setText(prefix + "Enter New Name");
             beginTextInput();
             Sprite::highlightThing(currentThing->name);
             state = EditorState::renameThing;
             break;
-        case pathInput:
+        case EditorState::pathInput:
             helpText->setText(prefix + "Enter Sprite Path");
             beginTextInput();
             input = lastPath;
@@ -75,19 +80,19 @@ void MapBuilder::changeState(EditorState newState) {
                 currentThing->highlightSprite(nullptr);
             state = EditorState::pathInput;
             break;
-        case spriteSelect:
+        case EditorState::spriteSelect:
             helpText->setText(prefix + "Select/Delete Sprite ");
             endTextInput();
             selectedSprite = 0;
             currentThing->highlightSprite(currentThing->sprites[selectedSprite]);
             state = EditorState::spriteSelect;
             break;
-        case spriteEdit:
+        case EditorState::spriteEdit:
             helpText->setText(prefix + "Sprite Edit Mode");
             endTextInput();
             state = EditorState::spriteEdit;
             break;
-        case rayEdit:
+        case EditorState::rayEdit:
             createOrSelectThing();
             prefix = currentThing->name + ": ";
             helpText->setText(prefix + "Ray Edit Mode");
@@ -95,12 +100,19 @@ void MapBuilder::changeState(EditorState newState) {
             rayEditor = new RayEditor(currentThing);
             state = EditorState::rayEdit;
             break;
-        case eventEdit:
+        case EditorState::eventEdit:
             prefix = currentThing->name + ": ";
             helpText->setText(prefix + "Event Edit Mode");
             endTextInput();
             eventEditor = new EventEditor(currentThing);
             state = EditorState::eventEdit;
+            break;
+        case EditorState::thingFromTemplate:
+            helpText->clearText();
+            endTextInput();
+            if (!templatePicker)
+                templatePicker = new TemplatePicker(currentThing->position);
+            state = EditorState::thingFromTemplate;
             break;
     }
     updateLines();
@@ -198,6 +210,13 @@ void MapBuilder::meat(KeyPresses keysDown) {
             vector<Thing*> collisions = Thing::findThingsByPoint(dotThing->position);
             for (auto t : collisions) {
                 if (t != dotThing) {
+                    Door* door = dynamic_cast<Door*>(t);
+                    if (door) {
+                        templatePicker = new TemplatePicker(door);
+                        changeState(EditorState::thingFromTemplate);
+                        Camera::panTo(door->name);
+                        return;
+                    }
                     RealThing* match = dynamic_cast<RealThing*>(t);
                     if (match) {
                         currentThing = match;
@@ -227,6 +246,10 @@ void MapBuilder::meat(KeyPresses keysDown) {
             }
             if (input == "ray") {
                 changeState(EditorState::rayEdit);
+                return;
+            }
+            if (input == "template") {
+                changeState(EditorState::thingFromTemplate);
                 return;
             }
             if (currentThing != dotThing) {
@@ -302,7 +325,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
         if (keysDown.ok) {
             spriteEditor = new SpriteEditor(currentThing->sprites[selectedSprite]);
             selectedSprite = -1;
-            changeState(spriteEdit);
+            changeState(EditorState::spriteEdit);
             return;
         }
         if (keysDown.menu2 && currentThing->sprites.size() > 1) {
@@ -313,7 +336,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
         }
         if (keysDown.cancel) {
             selectedSprite = -1;
-            changeState(commandInput);
+            changeState(EditorState::commandInput);
             return;
         }
     }
@@ -321,6 +344,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
     if(state == EditorState::spriteEdit) {
         if(spriteEditor->routeInput(keysDown)) {
             delete spriteEditor;
+            spriteEditor = nullptr;
             currentThing->calculateHeight();
             changeState(EditorState::pathInput);
         }
@@ -329,6 +353,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
     if(state == EditorState::rayEdit) {
         if(rayEditor->routeInput(keysDown)) {
             delete rayEditor;
+            rayEditor = nullptr;
             changeState(EditorState::commandInput);
             updateLines();
         }
@@ -337,18 +362,24 @@ void MapBuilder::meat(KeyPresses keysDown) {
     if(state == EditorState::eventEdit) {
         if(eventEditor->routeInput(keysDown)) {
             delete eventEditor;
+            eventEditor = nullptr;
+            changeState(EditorState::commandInput);
+        }
+    }
+
+    if(state == EditorState::thingFromTemplate) {
+        if(templatePicker->chooseTemplate(keysDown)) {
+            delete templatePicker;
+            templatePicker = nullptr;
             changeState(EditorState::commandInput);
         }
     }
 }
 
+
+// Might want to refactor this to happen inside spriteEditor somehow
 int MapBuilder::addSprite() {
-    string possiblePath = string(BASE_PATH) + "assets/" + input;
-    if(filesystem::path(possiblePath).extension() != ".png")
-        return 0;
-    const char* cPossiblePath = possiblePath.c_str();
-    ifstream f(cPossiblePath);
-    if(!f.good())
+    if(!SpriteEditor::checkPath(input))
         return 0;
     lastPath = input;
     createOrSelectThing();

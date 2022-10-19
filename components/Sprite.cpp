@@ -26,6 +26,21 @@ active(false) {
     active = true;
 }
 
+Sprite::Sprite(Sprite &sprite) :
+x(sprite.x), 
+y(sprite.y), 
+thingName(sprite.thingName), 
+d(sprite.d),
+alpha(sprite.alpha),
+active(sprite.active),
+texture(sprite.texture),
+sheetWidth(sprite.sheetWidth),
+sheetHeight(sprite.sheetHeight) {
+    id = currentID++;
+    sprites[id] = this;
+    textures[d.path].first++;
+}
+
 Sprite::~Sprite() {
     textures[d.path].first--;
     if (textures[d.path].first < 1) {

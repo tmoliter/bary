@@ -8,17 +8,14 @@
 #include "editor/SpriteEditor.h"
 #include "editor/RayEditor.h"
 #include "editor/EventEditor.h"
+#include "editor/TemplatePicker.h"
 #include "gui/Text.h"
 #include "gui/UIRenderer.h"
 
 using namespace std;
 
 
-// TODO: EVENT BUILDER (new class) (enter thing name [do we dedupe and expand suffixes?] -> choose trig/inter -> choose from list -> choose named event or simple message)
-// TODO: "play" COMMAND (makes a FieldPlayer and focuses them, but still allows pressing START -> START deletes FieldPlayer and returns to freemove)
-
-
-enum EditorState {
+enum class EditorState {
     freeMove,
     play,
     thingMove,
@@ -29,6 +26,7 @@ enum EditorState {
     spriteEdit,
     rayEdit,
     eventEdit,
+    thingFromTemplate
 };
 
 class MapBuilder {
@@ -47,6 +45,7 @@ class MapBuilder {
 
         RayEditor *rayEditor;
         EventEditor *eventEditor;
+        TemplatePicker *templatePicker;
 
         void changeState(EditorState newState);
         void createOrSelectThing();

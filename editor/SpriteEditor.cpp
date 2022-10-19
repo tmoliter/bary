@@ -4,12 +4,13 @@ SpriteEditor::SpriteEditor(Sprite *s) :
     sprite(s), 
     editSpeed(1), 
     editState(SpriteEditState::move), 
-    cameraPrevState(SpriteEditState::move) {
-    SpriteData sd;
+    cameraPrevState(SpriteEditState::move),
+    foundSprite(false),
+    snapCamera(false) {
     
     oldFocus = Thing::things[Camera::getFocusName()];
     focus = new Thing(Point(sprite->x, sprite->y), "sprite focus");
-    Camera::panTo(focus->name);
+    Camera::panTo(focus->name, snapCamera);
 
     text = new Text(Point(sprite->x, sprite->y), "");
     UIRenderer::addText(text);
@@ -17,7 +18,7 @@ SpriteEditor::SpriteEditor(Sprite *s) :
 
 SpriteEditor::~SpriteEditor() {
     UIRenderer::removeText(text);
-    Camera::panTo(oldFocus->name);
+    Camera::panTo(oldFocus->name, snapCamera);
     delete focus;
 };
 
@@ -213,4 +214,15 @@ void SpriteEditor::editRenderOffset (KeyPresses keysDown) {
         sprite->d.renderOffset += editSpeed;
     if(keysDown.down || keysDown.debug_down)
         sprite->d.renderOffset -= editSpeed;
+}
+
+int SpriteEditor::checkPath(string input) {
+    string possiblePath = string(BASE_PATH) + "assets/" + input;
+    if(filesystem::path(possiblePath).extension() != ".png")
+        return 0;
+    const char* cPossiblePath = possiblePath.c_str();
+    ifstream f(cPossiblePath);
+    if(!f.good())
+        return 0;
+    return 1;
 }

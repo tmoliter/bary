@@ -43,11 +43,13 @@ class RealThing : public Thing {
         Obstruction* addObstruction(int layer);
 
         void RemoveSprite(Sprite* sprite);
+        void removeObstruction(int layer);
         void removeInteractable(string name);
         void removeTrigger(string name);
-        void removeObstruction(int layer);
 
-        int checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType);
+        void removeAllCollidables();
+
+        virtual int checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType);
 
         void showObstructionLines(int layer = -1001);
         void showInteractableLines(int layer = -1001, string name = "");

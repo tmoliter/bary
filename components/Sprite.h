@@ -26,6 +26,7 @@ struct SpriteData {
 
 struct Sprite {
     Sprite(int &x, int &y, string &tN, SpriteData sd);
+    Sprite(Sprite &sprite);
     ~Sprite();
     bool active;
     int id, &x, &y;

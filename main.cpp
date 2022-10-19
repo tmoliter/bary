@@ -48,11 +48,14 @@ int main(int argc, char* args[]) {
     while (true){
         t.startFrame();
         KeyPresses keysDown = in.getInput();  
+        t.timeElapsed(&p.a);
         if (keysDown.quit)
             break;
+        t.timeElapsed(&p.b);
         
         if(MapBuilder::mapBuilder)
             MapBuilder::mapBuilder->meat(keysDown);
+        t.timeElapsed(&p.c);
         switch(gameState) {
             case (GameState::FieldUI):
                 Event::meat(keysDown);
@@ -60,14 +63,16 @@ int main(int argc, char* args[]) {
             case (GameState::FieldFree):
             default:
                 Thing::meatThings(keysDown);
+                t.timeElapsed(&p.d);
                 break;
         }
 
         Camera::c->render();
 
         UIRenderer::render();
+        t.timeElapsed(&p.e);
 
-        t.endFrameAndWait(frameCount);
+        t.endFrameAndWait(frameCount, p);
         SDL_SetRenderDrawColor(renderer, 0,0,0,255);
         SDL_RenderPresent(renderer);
         Thing::destroyThings();

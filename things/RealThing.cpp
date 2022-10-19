@@ -132,6 +132,11 @@ void RealThing::RemoveSprite(Sprite* sprite) {
     sprites.erase(remove(sprites.begin(), sprites.end(), sprite), sprites.end());
 }
 
+void RealThing::removeObstruction(int layer) {
+    delete obstructions[layer];
+    obstructions.erase(layer);
+};
+
 void RealThing::removeInteractable(string name) {
     delete interactables[name];
     interactables.erase(name);
@@ -143,24 +148,37 @@ void RealThing::removeTrigger(string name) {
     triggers.erase(name);
 };
 
+void RealThing::removeAllCollidables() {
+    map<int, Obstruction*>::iterator oItr = obstructions.begin();
+    while (oItr != obstructions.end()) {
+        delete oItr->second;
+        oItr = obstructions.erase(oItr);
+    }
+    map<string, Interactable*>::iterator inItr = interactables.begin();
+    while (inItr != interactables.end()) {
+        delete inItr->second;
+        inItr = interactables.erase(inItr);
+    }
+    map<string, Trigger*>::iterator trItr = triggers.begin();
+    while (trItr != triggers.end()) {
+        delete trItr->second;
+        trItr = triggers.erase(trItr);
+    }
+};
+
 // Pass in incoming Thing name here to ignore collisions
 int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) {
     switch (collidableType) {
-        case (CollidableType::obstruction):
-            for (auto const& [layer, o] : obstructions){
-            if(o->isColliding(incoming, incomingLayer))
-                return 1;
-            }
-            break;
         case (CollidableType::interactable):
             for (auto const& [name, in] : interactables){
                 if(in->isColliding(incoming, incomingLayer)) {
-                    if(in->timesTriggered++ == in->maxTriggers || !in->event) {
+                    if(in->timesTriggered++ == in->maxTriggers) {
                         delete in;
                         interactables.erase(name);
                         return 0;
                     }
-                    in->event->begin();
+                    if (in->event)
+                        in->event->begin();
                     return 1;
                 }
             }
@@ -168,24 +186,26 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
         case (CollidableType::trigger):
             for (auto const& [name, tr] : triggers){
                 if(tr->isColliding(incoming, incomingLayer)) {
-                    if(tr->timesTriggered++ == tr->maxTriggers || !tr->event) {
+                    if(tr->timesTriggered++ == tr->maxTriggers) {
                         triggers.erase(name);
                         delete tr;
                         return 0;
                     }
-                    tr->event->begin();
+                    if (tr->event)
+                        tr->event->begin();
                     return 0;
                 }
+            }
+            break;
+        case (CollidableType::obstruction):
+            for (auto const& [layer, o] : obstructions){
+            if(o->isColliding(incoming, incomingLayer))
+                return 1;
             }
             break;
         }
     return 0;
 }
-
-void RealThing::removeObstruction(int layer) {
-    delete obstructions[layer];
-    obstructions.erase(layer);
-};
 
 void RealThing::showObstructionLines(int layer) {
     for (auto const& [l, o] : obstructions) {
