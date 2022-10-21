@@ -14,6 +14,43 @@ RealThing::RealThing(RealThingData bD) : Thing(bD) {
 RealThing::RealThing(Point p) : Thing(p) {};
 RealThing::RealThing(Point p, string name) : Thing(p, name) {};
 
+RealThing::RealThing(RealThing &oldThing) : Thing(oldThing) {
+    for (auto s : oldThing.sprites)
+        sprites.push_back(new Sprite(*s));
+    for (auto const& [layer, oldO] : oldThing.obstructions) {
+        Obstruction *o = new Obstruction(*oldO);
+        o->parentPos = position;
+        o->thingName = name;
+        obstructions[layer] = o;
+    }
+    for (auto const& [oldInName, oldIn] : oldThing.interactables) {
+        Interactable *in = new Interactable(*oldIn);
+        in->parentPos = position;
+        int i = 2;
+        string tmpName = oldInName;
+        while (interactables.count(tmpName)) {
+            tmpName = tmpName + to_string(i);
+            i++;
+        }
+        in->name = tmpName; 
+        in->thingName = name;
+        interactables[in->name] = in;
+    }
+    for (auto const& [oldInName, oldTr] : oldThing.triggers) {
+        Trigger *tr = new Trigger(*oldTr);
+        tr->parentPos = position;
+        int i = 2;
+        string tmpName = oldInName;
+        while (interactables.count(tmpName)) {
+            tmpName = tmpName + to_string(i);
+            i++;
+        }
+        tr->name = tmpName; 
+        tr->thingName = name;
+        triggers[tr->name] = tr;
+    }
+}
+
 RealThing::~RealThing() {
     for (auto s : sprites)
         delete s;

@@ -19,6 +19,17 @@ parentPos(pP),
 thingName(tN),
 linesVisible(false) {}
 
+Collidable::Collidable (Collidable &oldCollidable) : 
+layer(oldCollidable.layer),
+active(oldCollidable.active),
+parentPos(oldCollidable.parentPos),
+thingName(oldCollidable.thingName),
+linesVisible(oldCollidable.linesVisible),
+lineType(oldCollidable.lineType) {
+    for (auto r : oldCollidable.rays)
+        rays.push_back(new Ray(*r));
+}
+
 Collidable::~Collidable() {
     for (auto r : rays) {
         UIRenderer::removeLine(r);

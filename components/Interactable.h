@@ -7,9 +7,10 @@ struct EventCollidable : public Collidable {
     EventCollidable(Point &pP, string &tN, string n, CollidableData cd, Event *e = nullptr, int maxTriggers = -1);
     EventCollidable(Point &pP, string &tN, string n, vector<Ray*> r, int l, Event *e = nullptr, int maxTriggers = -1);
     EventCollidable(Point &pP, string &tN, string n, Event *e = nullptr, int maxTriggers = -1);
+    EventCollidable(EventCollidable &oldEC);
     ~EventCollidable();
     int timesTriggered, maxTriggers;
-    string name;
+    string name; // Note: Names should be unique to parent Thing.
     Event* event;
 };
 

@@ -6,7 +6,6 @@
 
 struct Door : public RealThing {
     Door(Point p);
-    // ~Door();
 
     bool opened, locked;
     SimpleMessage lockedMessage;

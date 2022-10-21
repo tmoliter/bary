@@ -14,20 +14,24 @@ void Thing::_save_name_and_save_in_map(string n) {
 
 Thing::Thing(ThingData td) : 
     position(td.x, td.y) {
-        _save_name_and_save_in_map(td.name);
-    }
+    _save_name_and_save_in_map(td.name);
+}
 
 Thing::Thing(Point p, string name) : 
     position(p.x,p.y),
     name(name) {
-        _save_name_and_save_in_map(name);
+    _save_name_and_save_in_map(name);
 }
 
 
 Thing::Thing(Point p) : 
     position(p.x,p.y) {
-        _save_name_and_save_in_map("AnonymousThing");
+    _save_name_and_save_in_map("AnonymousThing");
 }
+
+Thing::Thing(Thing &oldThing): position(oldThing.position), bounds(oldThing.bounds) {
+    _save_name_and_save_in_map(oldThing.name + " (Copy)");
+};
 
 Thing::~Thing() {
     things.erase(name);

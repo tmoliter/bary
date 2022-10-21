@@ -31,7 +31,8 @@ class Thing {
         Thing(ThingData td);
         Thing(Point p, string name);
         Thing(Point p);
-        virtual ~Thing();
+        Thing(Thing &oldthing);
+        ~Thing();
 
         // Note for Door, etc.:
         // Have a vector of Thing pointers called dependencies
