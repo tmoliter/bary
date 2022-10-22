@@ -311,6 +311,10 @@ void RealThing::removeHighlight() {
         s->alpha = 255;
 }
 
+Thing* RealThing::copyInPlace() {
+    return new RealThing(*this);
+}
+
 // STATIC
 
 void RealThing::showAllLines() {

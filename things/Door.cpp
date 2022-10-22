@@ -42,3 +42,7 @@ void Door::preview() {
     obstructions.begin()->second->active = true;
     removeHighlight();
 }
+
+Thing* Door::copyInPlace() {
+    return new Door(*this);
+}

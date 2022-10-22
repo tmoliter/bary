@@ -27,6 +27,7 @@ class Thing {
         Point position;
         Bounds bounds;
         string name;
+        vector<Thing*> subThings;
 
         Thing(ThingData td);
         Thing(Point p, string name);
@@ -43,13 +44,16 @@ class Thing {
         // in addition to a list of Point &references or something if we think we want to optimize
         // Maybe something like map<Thing*, Point&>
 
-        virtual void destroy();
+        virtual Thing* copyInPlace();
+
         string rename(string newName);
         Point getCenter();
+
         void manuallyControl(KeyPresses keysDown);
+    
+        virtual void destroy();
         
         virtual void meat() {};
-
         virtual void meat(KeyPresses keysDown) {};
 
         inline static map<string, Thing*> things;

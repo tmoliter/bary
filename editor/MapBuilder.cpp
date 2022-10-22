@@ -260,6 +260,8 @@ void MapBuilder::meat(KeyPresses keysDown) {
                 }
                 if (input == "copy") {
                     RealThing *newThing = new RealThing(*currentThing);
+                    for (auto t : currentThing->subThings)
+                        newThing->subThings.push_back(t->copyInPlace());
                     currentThing = newThing;
                     changeState(EditorState::thingMove);
                     return;
