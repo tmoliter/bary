@@ -3,10 +3,15 @@
 using namespace std;
 
 void Thing::_save_name_and_save_in_map(string n) {
-    name = n;
-    int i = 2;
+    int i;
+    for (i = 0; i < n.length(); i++)
+        if (isdigit(n[i]))
+            break;
+    string baseName = n.substr(0, i);
+    i = 1;
+    name = baseName;
     while(Thing::things.count(name)) {
-        name = n + to_string(i);
+        name = baseName + to_string(i);
         i++;
     }
     Thing::things[name] = this;
@@ -29,8 +34,9 @@ Thing::Thing(Point p) :
     _save_name_and_save_in_map("AnonymousThing");
 }
 
-Thing::Thing(Thing &oldThing): position(oldThing.position), bounds(oldThing.bounds) {
-    _save_name_and_save_in_map(oldThing.name + " (Copy)");
+Thing::Thing(Thing &oldThing) : position(oldThing.position), bounds(oldThing.bounds) {
+    string n = oldThing.name;
+    _save_name_and_save_in_map(n);
 };
 
 Thing::~Thing() {
@@ -82,9 +88,11 @@ int Thing::parse_thing_datum(ifstream &mapData, ThingData &newTD) {
 
 void Thing::meatThings(KeyPresses keysDown) {
     for (auto const& [id, thing] : Thing::things){
+        cout << id + " (" + thing->name + ") " + to_string(thing->position.x) + "/" + to_string(thing->position.y) << endl;
         thing->meat(keysDown);
         thing->meat();
     }
+    cout << endl << endl;
 }
 
 void Thing::destroyThings() {

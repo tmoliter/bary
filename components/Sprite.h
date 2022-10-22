@@ -25,12 +25,14 @@ struct SpriteData {
 };
 
 struct Sprite {
-    Sprite(int &x, int &y, string &tN, SpriteData sd);
+    Sprite(Point &pos, string &tN, SpriteData sd);
     Sprite(Sprite &sprite);
+    Sprite(Sprite &sprite, Point &pos, string &tN);
     ~Sprite();
     bool active;
-    int id, &x, &y;
+    int id;
     int alpha, sheetHeight, sheetWidth;
+    Point &position;
     SpriteData d;
     string &thingName;
     SDL_Texture* texture;

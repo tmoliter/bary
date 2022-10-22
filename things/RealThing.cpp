@@ -6,7 +6,7 @@ using namespace std;
 
 RealThing::RealThing(RealThingData bD) : Thing(bD) {
     for (auto sd : bD.spriteDataVector)
-        AddSprite(new Sprite(position.x,position.y,name,sd));
+        AddSprite(sd);
     for (auto cd : bD.obstructionData)
         addObstruction(cd.rays, cd.layer);
 };
@@ -15,40 +15,42 @@ RealThing::RealThing(Point p) : Thing(p) {};
 RealThing::RealThing(Point p, string name) : Thing(p, name) {};
 
 RealThing::RealThing(RealThing &oldThing) : Thing(oldThing) {
-    for (auto s : oldThing.sprites)
-        sprites.push_back(new Sprite(*s));
-    for (auto const& [layer, oldO] : oldThing.obstructions) {
-        Obstruction *o = new Obstruction(*oldO);
-        o->parentPos = position;
-        o->thingName = name;
-        obstructions[layer] = o;
+    for (auto oldS : oldThing.sprites) {
+        Sprite *s = new Sprite(*oldS, position, name);
+        sprites.push_back(s);
     }
-    for (auto const& [oldInName, oldIn] : oldThing.interactables) {
-        Interactable *in = new Interactable(*oldIn);
-        in->parentPos = position;
-        int i = 2;
-        string tmpName = oldInName;
-        while (interactables.count(tmpName)) {
-            tmpName = tmpName + to_string(i);
-            i++;
-        }
-        in->name = tmpName; 
-        in->thingName = name;
-        interactables[in->name] = in;
-    }
-    for (auto const& [oldInName, oldTr] : oldThing.triggers) {
-        Trigger *tr = new Trigger(*oldTr);
-        tr->parentPos = position;
-        int i = 2;
-        string tmpName = oldInName;
-        while (interactables.count(tmpName)) {
-            tmpName = tmpName + to_string(i);
-            i++;
-        }
-        tr->name = tmpName; 
-        tr->thingName = name;
-        triggers[tr->name] = tr;
-    }
+    // for (auto const& [layer, oldO] : oldThing.obstructions) {
+    //     Obstruction *o = new Obstruction(*oldO);
+    //     o->parentPos = position;
+    //     o->thingName = name;
+    //     obstructions[layer] = o;
+    // }
+    // for (auto const& [oldInName, oldIn] : oldThing.interactables) {
+    //     Interactable *in = new Interactable(*oldIn);
+    //     in->parentPos = position;
+    //     int i = 2;
+    //     string tmpName = oldInName;
+    //     while (interactables.count(tmpName)) {
+    //         tmpName = tmpName + to_string(i);
+    //         i++;
+    //     }
+    //     in->name = tmpName; 
+    //     in->thingName = name;
+    //     interactables[in->name] = in;
+    // }
+    // for (auto const& [oldInName, oldTr] : oldThing.triggers) {
+    //     Trigger *tr = new Trigger(*oldTr);
+    //     tr->parentPos = position;
+    //     int i = 2;
+    //     string tmpName = oldInName;
+    //     while (interactables.count(tmpName)) {
+    //         tmpName = tmpName + to_string(i);
+    //         i++;
+    //     }
+    //     tr->name = tmpName; 
+    //     tr->thingName = name;
+    //     triggers[tr->name] = tr;
+    // }
 }
 
 RealThing::~RealThing() {
@@ -93,19 +95,16 @@ void RealThing::calculateHeight() {
     }
 }
 
-Sprite* RealThing::AddSprite(Sprite* sprite) {
-    sprite->x = position.x;
-    sprite->y = position.y;
-    sprite->thingName = name;
-    sprites.push_back(sprite);
+Sprite* RealThing::AddSprite(SpriteData SD) {
+    sprites.push_back(new Sprite(position, name, SD));
     calculateHeight();
-    return sprite;
+    return sprites.back();
 }
 
 Sprite* RealThing::AddRawSprite(string path) {
     SpriteData sd;
     sd.path = path.c_str();
-    return AddSprite(new Sprite(position.x, position.y, name, sd));
+    return AddSprite(sd);
 }
 
 Interactable* RealThing::addInteractable(string iName, vector<Ray*> rays, int layer, Event* event) {

@@ -36,7 +36,7 @@ class RealThing : public Thing {
 
         void calculateHeight();
 
-        Sprite* AddSprite(Sprite* sprite);
+        Sprite* AddSprite(SpriteData SD);
         Sprite* AddRawSprite(string path);
 
         Interactable* addInteractable(string iName, vector<Ray*> rays, int layer, Event* event = nullptr);

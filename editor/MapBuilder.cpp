@@ -19,14 +19,7 @@ MapBuilder::MapBuilder() : input(""), lastPath(""), selectedSprite(-1) {
     UIRenderer::addText(commandList);
     
     currentThing = dotThing = new RealThing(Point(0,0), "EditorDot");
-    SpriteData dotSD;
-    dotSD.path = "assets/debug/onePixel.png";
-    dotThing->AddSprite(new Sprite(
-        dotThing->position.x, 
-        dotThing->position.y, 
-        dotThing->name, 
-        dotSD
-    ));
+    dotThing->AddRawSprite("assets/debug/onePixel.png");
     changeState(EditorState::freeMove);
 }
 
@@ -58,7 +51,7 @@ void MapBuilder::changeState(EditorState newState) {
             beginTextInput();
             commandList->setText("COMMANDS:` sprite` ray` free` template");
             if (currentThing != dotThing) {
-                commandList->setText(commandList->text + "` rename` move` event` edit sprite` delete");
+                commandList->setText(commandList->text + "` rename` move` event` edit sprite` copy` delete");
                 currentThing->removeHighlight();
             } else {
                 commandList->setText(commandList->text + "` play`");
@@ -126,7 +119,7 @@ void MapBuilder::createOrSelectThing() {
         SpriteData sd;
         sd.path = "./assets/debug/9x9cross.png";
         sd.layer = 100;
-        cross = new Sprite(currentThing->position.x, currentThing->position.y, currentThing->name, sd);
+        cross = new Sprite(currentThing->position, currentThing->name, sd);
         cross->centerOffset();
     }
 }
@@ -267,6 +260,12 @@ void MapBuilder::meat(KeyPresses keysDown) {
                 }
                 if (input == "edit sprite") {
                     changeState(EditorState::spriteSelect);
+                    return;
+                }
+                if (input == "copy") {
+                    RealThing *newThing = new RealThing(*currentThing);
+                    currentThing = newThing;
+                    changeState(EditorState::thingMove);
                     return;
                 }
                 if (input == "delete") {
