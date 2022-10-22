@@ -49,12 +49,12 @@ void MapBuilder::changeState(EditorState newState) {
         case EditorState::commandInput:
             helpText->setText(prefix + "Enter Command");
             beginTextInput();
-            commandList->setText("COMMANDS:` sprite` ray` free` template");
+            commandList->setText("COMMANDS:` sprite` ray` free");
             if (currentThing != dotThing) {
                 commandList->setText(commandList->text + "` rename` move` event` edit sprite` copy` delete");
                 currentThing->removeHighlight();
             } else {
-                commandList->setText(commandList->text + "` play`");
+                commandList->setText(commandList->text + "` play` template");
             }
             state = EditorState::commandInput;
             break;
@@ -241,10 +241,6 @@ void MapBuilder::meat(KeyPresses keysDown) {
                 changeState(EditorState::rayEdit);
                 return;
             }
-            if (input == "template") {
-                changeState(EditorState::thingFromTemplate);
-                return;
-            }
             if (currentThing != dotThing) {
                 if (input == "rename") {
                     changeState(EditorState::renameThing);
@@ -278,6 +274,10 @@ void MapBuilder::meat(KeyPresses keysDown) {
             else {
                 if (input == "play") {
                     changeState(EditorState::play);
+                    return;
+                }
+                if (input == "template") {
+                    changeState(EditorState::thingFromTemplate);
                     return;
                 }
             }
