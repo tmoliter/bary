@@ -19,14 +19,7 @@ MapBuilder::MapBuilder() : input(""), lastPath(""), selectedSprite(-1) {
     UIRenderer::addText(commandList);
     
     currentThing = dotThing = new RealThing(Point(0,0), "EditorDot");
-    SpriteData dotSD;
-    dotSD.path = "assets/debug/onePixel.png";
-    dotThing->AddSprite(new Sprite(
-        dotThing->position.x, 
-        dotThing->position.y, 
-        dotThing->name, 
-        dotSD
-    ));
+    dotThing->AddRawSprite("assets/debug/onePixel.png");
     changeState(EditorState::freeMove);
 }
 
@@ -56,12 +49,12 @@ void MapBuilder::changeState(EditorState newState) {
         case EditorState::commandInput:
             helpText->setText(prefix + "Enter Command");
             beginTextInput();
-            commandList->setText("COMMANDS:` sprite` ray` free` template");
+            commandList->setText("COMMANDS:` sprite` ray` free");
             if (currentThing != dotThing) {
-                commandList->setText(commandList->text + "` rename` move` event` edit sprite` delete");
+                commandList->setText(commandList->text + "` rename` move` event` edit sprite` copy` delete");
                 currentThing->removeHighlight();
             } else {
-                commandList->setText(commandList->text + "` play`");
+                commandList->setText(commandList->text + "` play` template");
             }
             state = EditorState::commandInput;
             break;
@@ -126,7 +119,7 @@ void MapBuilder::createOrSelectThing() {
         SpriteData sd;
         sd.path = "./assets/debug/9x9cross.png";
         sd.layer = 100;
-        cross = new Sprite(currentThing->position.x, currentThing->position.y, currentThing->name, sd);
+        cross = new Sprite(currentThing->position, currentThing->name, sd);
         cross->centerOffset();
     }
 }
@@ -248,10 +241,6 @@ void MapBuilder::meat(KeyPresses keysDown) {
                 changeState(EditorState::rayEdit);
                 return;
             }
-            if (input == "template") {
-                changeState(EditorState::thingFromTemplate);
-                return;
-            }
             if (currentThing != dotThing) {
                 if (input == "rename") {
                     changeState(EditorState::renameThing);
@@ -269,6 +258,12 @@ void MapBuilder::meat(KeyPresses keysDown) {
                     changeState(EditorState::spriteSelect);
                     return;
                 }
+                if (input == "copy") {
+                    RealThing *newThing = new RealThing(*currentThing);
+                    currentThing = newThing;
+                    changeState(EditorState::thingMove);
+                    return;
+                }
                 if (input == "delete") {
                     delete currentThing;
                     currentThing = dotThing;
@@ -279,6 +274,10 @@ void MapBuilder::meat(KeyPresses keysDown) {
             else {
                 if (input == "play") {
                     changeState(EditorState::play);
+                    return;
+                }
+                if (input == "template") {
+                    changeState(EditorState::thingFromTemplate);
                     return;
                 }
             }

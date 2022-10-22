@@ -6,13 +6,24 @@ using namespace std;
 
 RealThing::RealThing(RealThingData bD) : Thing(bD) {
     for (auto sd : bD.spriteDataVector)
-        AddSprite(new Sprite(position.x,position.y,name,sd));
+        AddSprite(sd);
     for (auto cd : bD.obstructionData)
         addObstruction(cd.rays, cd.layer);
 };
 
 RealThing::RealThing(Point p) : Thing(p) {};
 RealThing::RealThing(Point p, string name) : Thing(p, name) {};
+
+RealThing::RealThing(RealThing &oldThing) : Thing(oldThing) {
+    for (auto oldS : oldThing.sprites)
+        sprites.push_back(new Sprite(*oldS, position, name));
+    for (auto const& [layer, oldO] : oldThing.obstructions)
+        obstructions[layer] = new Obstruction(*oldO, position, name);
+    for (auto const& [oldInName, oldIn] : oldThing.interactables)
+        interactables[oldInName] = new Interactable(*oldIn, position, name);
+    for (auto const& [oldTrName, oldTr] : oldThing.triggers)
+        triggers[oldTrName] = new Trigger(*oldTr, position, name);
+}
 
 RealThing::~RealThing() {
     for (auto s : sprites)
@@ -56,19 +67,16 @@ void RealThing::calculateHeight() {
     }
 }
 
-Sprite* RealThing::AddSprite(Sprite* sprite) {
-    sprite->x = position.x;
-    sprite->y = position.y;
-    sprite->thingName = name;
-    sprites.push_back(sprite);
+Sprite* RealThing::AddSprite(SpriteData SD) {
+    sprites.push_back(new Sprite(position, name, SD));
     calculateHeight();
-    return sprite;
+    return sprites.back();
 }
 
 Sprite* RealThing::AddRawSprite(string path) {
     SpriteData sd;
     sd.path = path.c_str();
-    return AddSprite(new Sprite(position.x, position.y, name, sd));
+    return AddSprite(sd);
 }
 
 Interactable* RealThing::addInteractable(string iName, vector<Ray*> rays, int layer, Event* event) {

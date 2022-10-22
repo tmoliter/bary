@@ -42,7 +42,7 @@ void DoorEditor::changeState(DoorEditState newState) {
             if (door->sprites.size() > 1) {
                 s = door->sprites[1];
             } else if (door->sprites.size() > 0) {
-                s = door->AddSprite(new Sprite(*door->sprites[0]));
+                s = door->AddSprite(door->sprites[0]->d);
             } else {
                 gameState = GameState::TextInput;
                 break;

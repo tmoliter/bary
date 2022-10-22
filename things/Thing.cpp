@@ -3,10 +3,15 @@
 using namespace std;
 
 void Thing::_save_name_and_save_in_map(string n) {
-    name = n;
-    int i = 2;
+    int i;
+    for (i = 0; i < n.length(); i++)
+        if (isdigit(n[i]))
+            break;
+    string baseName = n.substr(0, i);
+    i = 1;
+    name = baseName;
     while(Thing::things.count(name)) {
-        name = n + to_string(i);
+        name = baseName + to_string(i);
         i++;
     }
     Thing::things[name] = this;
@@ -14,20 +19,25 @@ void Thing::_save_name_and_save_in_map(string n) {
 
 Thing::Thing(ThingData td) : 
     position(td.x, td.y) {
-        _save_name_and_save_in_map(td.name);
-    }
+    _save_name_and_save_in_map(td.name);
+}
 
 Thing::Thing(Point p, string name) : 
     position(p.x,p.y),
     name(name) {
-        _save_name_and_save_in_map(name);
+    _save_name_and_save_in_map(name);
 }
 
 
 Thing::Thing(Point p) : 
     position(p.x,p.y) {
-        _save_name_and_save_in_map("AnonymousThing");
+    _save_name_and_save_in_map("AnonymousThing");
 }
+
+Thing::Thing(Thing &oldThing) : position(oldThing.position), bounds(oldThing.bounds) {
+    string n = oldThing.name;
+    _save_name_and_save_in_map(n);
+};
 
 Thing::~Thing() {
     things.erase(name);

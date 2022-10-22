@@ -14,14 +14,27 @@ EventCollidable::EventCollidable(Point &pP, string &tN, string n, Event *e, int 
         event->references++;
 }
 
-EventCollidable::EventCollidable(Point &pP, string &tN, string n, vector<Ray*> r, int l, Event *e, int mT) : Collidable(pP,tN), name(n), timesTriggered(0), maxTriggers(mT) {
+EventCollidable::EventCollidable(Point &pP, string &tN, string n, vector<Ray*> r, int l, Event *e, int mT) : 
+    Collidable(pP,tN), name(n), 
+    timesTriggered(0), 
+    maxTriggers(mT)
+    {
     event = e;
     if (event)
         event->references++;
-    layer = layer;
+    layer = l;
     rays = r;
     if (event)
         event->references++;
+}
+
+EventCollidable::EventCollidable(EventCollidable &oldEC, Point &pP, string &tN) : Collidable(oldEC, pP, tN) {
+    if (oldEC.thingName == tN)
+        throw exception();
+    event = oldEC.event;
+    if (event)
+        event->references++;
+    name = oldEC.name;
 }
 
 EventCollidable::~EventCollidable() {

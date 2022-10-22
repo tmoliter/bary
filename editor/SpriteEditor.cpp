@@ -9,10 +9,10 @@ SpriteEditor::SpriteEditor(Sprite *s) :
     snapCamera(false) {
     
     oldFocus = Thing::things[Camera::getFocusName()];
-    focus = new Thing(Point(sprite->x, sprite->y), "sprite focus");
+    focus = new Thing(Point(sprite->position), "sprite focus");
     Camera::panTo(focus->name, snapCamera);
 
-    text = new Text(Point(sprite->x, sprite->y), "");
+    text = new Text(Point(sprite->position), "");
     UIRenderer::addText(text);
 };
 

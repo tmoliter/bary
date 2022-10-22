@@ -2,13 +2,12 @@
 
 using namespace std;
 
-Sprite::Sprite (int &x, int &y, string &tN, SpriteData sd) : 
-x(x), 
-y(y), 
-thingName(tN), 
-d(sd),
-alpha(255),
-active(false) {
+Sprite::Sprite (Point &pos, string &tN, SpriteData sd) : 
+    position(pos),
+    thingName(tN), 
+    d(sd),
+    alpha(255),
+    active(false) {
     id = currentID++;
     sprites[id] = this;
     if(!textures.count(sd.path)) {
@@ -27,15 +26,28 @@ active(false) {
 }
 
 Sprite::Sprite(Sprite &sprite) :
-x(sprite.x), 
-y(sprite.y), 
-thingName(sprite.thingName), 
-d(sprite.d),
-alpha(sprite.alpha),
-active(sprite.active),
-texture(sprite.texture),
-sheetWidth(sprite.sheetWidth),
-sheetHeight(sprite.sheetHeight) {
+    position(sprite.position),
+    thingName(sprite.thingName), 
+    d(sprite.d),
+    alpha(sprite.alpha),
+    active(sprite.active),
+    texture(sprite.texture),
+    sheetWidth(sprite.sheetWidth),
+    sheetHeight(sprite.sheetHeight) {
+    id = currentID++;
+    sprites[id] = this;
+    textures[d.path].first++;
+}
+
+Sprite::Sprite(Sprite &sprite, Point &pos, string &tN) :
+    position(pos),
+    thingName(tN), 
+    d(sprite.d),
+    alpha(sprite.alpha),
+    active(sprite.active),
+    texture(sprite.texture),
+    sheetWidth(sprite.sheetWidth),
+    sheetHeight(sprite.sheetHeight) {
     id = currentID++;
     sprites[id] = this;
     textures[d.path].first++;
@@ -72,8 +84,8 @@ void Sprite::frontAndCenter() {
 }
 
 Point Sprite::getScreenPos(Point camPosition) {
-    int renderX = ((x - camPosition.x) + d.xOffset) * SCALE;
-    int renderY = ((y - camPosition.y) + d.yOffset) * SCALE;
+    int renderX = ((position.x - camPosition.x) + d.xOffset) * SCALE;
+    int renderY = ((position.y - camPosition.y) + d.yOffset) * SCALE;
     return Point(renderX, renderY);
 }
 
@@ -119,8 +131,8 @@ int Sprite::currentID = 0;
 bool _comparePosition (Sprite* a, Sprite* b) {
     if (a->d.layer == b->d.layer)
         return (
-            a->y + a->d.height + a->d.yOffset - a->d.renderOffset < 
-            b->y + b->d.height + b->d.yOffset - b->d.renderOffset
+            a->position.y + a->d.height + a->d.yOffset - a->d.renderOffset < 
+            b->position.y + b->d.height + b->d.yOffset - b->d.renderOffset
         );
     return a->d.layer < b->d.layer;
 }

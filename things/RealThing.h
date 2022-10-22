@@ -16,23 +16,27 @@ struct RealThingData : ThingData {
     vector<CollidableData> obstructionData;
 };
 
+// NEXT THING: COPY SIMPLE MESSAGES (or don't) AND DOORS
+
 class RealThing : public Thing {
     public:
         RealThing(RealThingData fpD);
         RealThing(Point p, string name);
         RealThing(Point p);
+        RealThing(RealThing &oldThing);
         ~RealThing();
 
         void _save_name_and_save_in_map(string n);
 
         vector<Sprite*> sprites;
+
         map<int, Obstruction*> obstructions;
         map<string, Interactable*> interactables;
         map<string, Trigger*> triggers;
 
         void calculateHeight();
 
-        Sprite* AddSprite(Sprite* sprite);
+        Sprite* AddSprite(SpriteData SD);
         Sprite* AddRawSprite(string path);
 
         Interactable* addInteractable(string iName, vector<Ray*> rays, int layer, Event* event = nullptr);
