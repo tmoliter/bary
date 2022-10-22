@@ -88,11 +88,9 @@ int Thing::parse_thing_datum(ifstream &mapData, ThingData &newTD) {
 
 void Thing::meatThings(KeyPresses keysDown) {
     for (auto const& [id, thing] : Thing::things){
-        cout << id + " (" + thing->name + ") " + to_string(thing->position.x) + "/" + to_string(thing->position.y) << endl;
         thing->meat(keysDown);
         thing->meat();
     }
-    cout << endl << endl;
 }
 
 void Thing::destroyThings() {

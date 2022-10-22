@@ -15,42 +15,14 @@ RealThing::RealThing(Point p) : Thing(p) {};
 RealThing::RealThing(Point p, string name) : Thing(p, name) {};
 
 RealThing::RealThing(RealThing &oldThing) : Thing(oldThing) {
-    for (auto oldS : oldThing.sprites) {
-        Sprite *s = new Sprite(*oldS, position, name);
-        sprites.push_back(s);
-    }
-    // for (auto const& [layer, oldO] : oldThing.obstructions) {
-    //     Obstruction *o = new Obstruction(*oldO);
-    //     o->parentPos = position;
-    //     o->thingName = name;
-    //     obstructions[layer] = o;
-    // }
-    // for (auto const& [oldInName, oldIn] : oldThing.interactables) {
-    //     Interactable *in = new Interactable(*oldIn);
-    //     in->parentPos = position;
-    //     int i = 2;
-    //     string tmpName = oldInName;
-    //     while (interactables.count(tmpName)) {
-    //         tmpName = tmpName + to_string(i);
-    //         i++;
-    //     }
-    //     in->name = tmpName; 
-    //     in->thingName = name;
-    //     interactables[in->name] = in;
-    // }
-    // for (auto const& [oldInName, oldTr] : oldThing.triggers) {
-    //     Trigger *tr = new Trigger(*oldTr);
-    //     tr->parentPos = position;
-    //     int i = 2;
-    //     string tmpName = oldInName;
-    //     while (interactables.count(tmpName)) {
-    //         tmpName = tmpName + to_string(i);
-    //         i++;
-    //     }
-    //     tr->name = tmpName; 
-    //     tr->thingName = name;
-    //     triggers[tr->name] = tr;
-    // }
+    for (auto oldS : oldThing.sprites)
+        sprites.push_back(new Sprite(*oldS, position, name));
+    for (auto const& [layer, oldO] : oldThing.obstructions)
+        obstructions[layer] = new Obstruction(*oldO, position, name);
+    for (auto const& [oldInName, oldIn] : oldThing.interactables)
+        interactables[oldInName] = new Interactable(*oldIn, position, name);
+    for (auto const& [oldTrName, oldTr] : oldThing.triggers)
+        triggers[oldTrName] = new Trigger(*oldTr, position, name);
 }
 
 RealThing::~RealThing() {

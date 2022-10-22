@@ -24,7 +24,7 @@ struct CollidableData {
 struct Collidable {
     Collidable (Point &pP, string &tN, CollidableData cd);
     Collidable (Point &pP, string &tN);
-    Collidable (Collidable &oldCollidable);
+    Collidable (Collidable &oldCollidable, Point &pP, string &tN);
     ~Collidable();
     Point &parentPos;
     string &thingName;

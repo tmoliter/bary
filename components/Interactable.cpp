@@ -28,11 +28,13 @@ EventCollidable::EventCollidable(Point &pP, string &tN, string n, vector<Ray*> r
         event->references++;
 }
 
-EventCollidable::EventCollidable(EventCollidable &oldEC) : Collidable(oldEC) {
+EventCollidable::EventCollidable(EventCollidable &oldEC, Point &pP, string &tN) : Collidable(oldEC, pP, tN) {
+    if (oldEC.thingName == tN)
+        throw exception();
     event = oldEC.event;
     if (event)
         event->references++;
-    name = oldEC.name + " (Copy)";
+    name = oldEC.name;
 }
 
 EventCollidable::~EventCollidable() {

@@ -19,11 +19,11 @@ parentPos(pP),
 thingName(tN),
 linesVisible(false) {}
 
-Collidable::Collidable (Collidable &oldCollidable) : 
+Collidable::Collidable (Collidable &oldCollidable, Point &pP, string &tN) : 
+thingName(tN),
+parentPos(pP),
 layer(oldCollidable.layer),
 active(oldCollidable.active),
-parentPos(oldCollidable.parentPos),
-thingName(oldCollidable.thingName),
 linesVisible(oldCollidable.linesVisible),
 lineType(oldCollidable.lineType) {
     for (auto r : oldCollidable.rays)
