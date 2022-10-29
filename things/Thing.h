@@ -35,15 +35,6 @@ class Thing {
         Thing(Thing &oldthing);
         ~Thing();
 
-        // Note for Door, etc.:
-        // Have a vector of Thing pointers called dependencies
-        // When we create a Door, we pass in its parent's name, if any, 
-        // and call Thing::things[parentName]->addDependency().
-        // When a Thing is deleted or moved in any way, all of its dependencies must follow suit.
-        // We might also store this relationship in a static graph of pointers,
-        // in addition to a list of Point &references or something if we think we want to optimize
-        // Maybe something like map<Thing*, Point&>
-
         virtual Thing* copyInPlace();
 
         string rename(string newName);
