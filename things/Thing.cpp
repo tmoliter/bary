@@ -41,6 +41,8 @@ Thing::Thing(Thing &oldThing) : position(oldThing.position), bounds(oldThing.bou
 
 Thing::~Thing() {
     things.erase(name);
+    for (auto t : subThings)
+        delete t;
 }
 
 
