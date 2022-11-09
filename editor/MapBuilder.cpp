@@ -203,6 +203,8 @@ void MapBuilder::meat(KeyPresses keysDown) {
             vector<Thing*> collisions = Thing::findThingsByPoint(dotThing->position);
             for (auto t : collisions) {
                 if (t != dotThing) {
+                    // Here we'd always pass the thing into "TemplatePicker"
+                    // and there we can decide what kind of thing it is and what to do
                     Door* door = dynamic_cast<Door*>(t);
                     if (door) {
                         templatePicker = new TemplatePicker(door);
@@ -229,6 +231,9 @@ void MapBuilder::meat(KeyPresses keysDown) {
             return;
         if (keysDown.start) {
             commandList->clearText();
+            // Maybe "sprite" and "ray" should not be top level commands,
+            // but instead "thing" should open up "TemplatePicker"
+            // with a new thing
             if (input == "sprite") {
                 changeState(EditorState::pathInput);
                 return;
@@ -242,6 +247,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
                 return;
             }
             if (currentThing != dotThing) {
+                // None of these should live here
                 if (input == "rename") {
                     changeState(EditorState::renameThing);
                     return;
