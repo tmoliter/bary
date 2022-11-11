@@ -41,10 +41,13 @@ Thing::Thing(Thing &oldThing) : position(oldThing.position), bounds(oldThing.bou
 
 Thing::~Thing() {
     things.erase(name);
+    for (auto t : subThings)
+        delete t;
 }
 
-void Thing::destroy() {
-    Thing::destroyThing(name);
+
+Thing* Thing::copyInPlace() {
+    return new Thing(*this);
 }
 
 string Thing::rename(string newName) {
@@ -75,6 +78,12 @@ void Thing::manuallyControl(KeyPresses keysDown) {
         position.x--;
     if (keysDown.debug_right)
         position.x++;
+    for (auto t : subThings)
+        t->manuallyControl(keysDown);
+}
+
+void Thing::destroy() {
+    Thing::destroyThing(name);
 }
 
 // STATIC

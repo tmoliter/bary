@@ -70,6 +70,7 @@ class RealThing : public Thing {
         void highlightSprite(Sprite* sprite);
         void removeHighlight();
 
+        virtual Thing* copyInPlace();
 
         static void showAllLines();
         static void hideAllLines();

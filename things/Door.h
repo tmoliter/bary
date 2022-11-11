@@ -10,11 +10,13 @@ struct Door : public RealThing {
     bool opened, locked;
     SimpleMessage lockedMessage;
     
+    virtual int checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType);
+
     void open();
     void close();
     void preview();
 
-    virtual int checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType);
+    virtual Thing* copyInPlace();
 };
 
 #endif
