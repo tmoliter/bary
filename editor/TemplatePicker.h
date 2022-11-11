@@ -12,6 +12,7 @@ enum class Template {
 struct TemplatePicker {
     TemplatePicker(Point p);
     TemplatePicker(Door *door);
+    TemplatePicker(RealThing *rt);
     // ~TemplatePicker();
 
     Point newThingPosition;
@@ -20,6 +21,7 @@ struct TemplatePicker {
     string input;
     Text *text;
 
+    // ThingEditor *thingEditor;
     DoorEditor *doorEditor;
 
     int chooseTemplate(KeyPresses keysDown);

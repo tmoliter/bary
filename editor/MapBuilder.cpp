@@ -203,17 +203,16 @@ void MapBuilder::meat(KeyPresses keysDown) {
             vector<Thing*> collisions = Thing::findThingsByPoint(dotThing->position);
             for (auto t : collisions) {
                 if (t != dotThing) {
-                    // Here we'd always pass the thing into "TemplatePicker"
-                    // and there we can decide what kind of thing it is and what to do
-                    Door* door = dynamic_cast<Door*>(t);
-                    if (door) {
-                        templatePicker = new TemplatePicker(door);
-                        changeState(EditorState::thingFromTemplate);
-                        Camera::panTo(door->name);
-                        return;
-                    }
                     RealThing* match = dynamic_cast<RealThing*>(t);
                     if (match) {
+                        templatePicker = new TemplatePicker(match);
+                        if(templatePicker->templ != Template::none) {
+                            changeState(EditorState::thingFromTemplate);
+                            Camera::panTo(match->name);
+                            return;
+                        }
+                        delete templatePicker;
+                        templatePicker = NULL;
                         currentThing = match;
                         createOrSelectThing();
                         Camera::panTo(currentThing->name);
