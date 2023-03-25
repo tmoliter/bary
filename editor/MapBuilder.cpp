@@ -212,7 +212,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
                             return;
                         }
                         delete templatePicker;
-                        templatePicker = NULL;
+                        templatePicker = nullptr;
                         currentThing = match;
                         createOrSelectThing();
                         Camera::panTo(currentThing->name);
