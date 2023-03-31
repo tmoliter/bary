@@ -50,7 +50,6 @@ void ThingEditor::changeState(ThingEditState newState) {
             commandLine = new CommandLine({
                 "Sprite Path"
             }, true);
-            commandLine->setHistory(spritePathHistory);
             break;
         case ThingEditState::spriteEdit:
             helpText->setText(thing->name + ": Sprite Edit Mode");
@@ -151,7 +150,6 @@ int ThingEditor::meat(KeyPresses keysDown) {
             return 0;
 
         if (addSprite()) {
-            spritePathHistory = commandLine->getHistory();
             delete commandLine;
             changeState(ThingEditState::spriteEdit);
             return 0;

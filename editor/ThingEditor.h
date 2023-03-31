@@ -29,7 +29,6 @@ class ThingEditor {
         RealThing *thing;
         ThingEditState state;
         string input;
-        vector<string> spritePathHistory;
         Text *helpText;
 
         int selectedSprite;
