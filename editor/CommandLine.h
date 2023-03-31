@@ -10,14 +10,23 @@
 using namespace std;
 
 struct CommandLine {
-    CommandLine(vector<string> c);
+    CommandLine(vector<string> c, bool oTM);
     ~CommandLine();
 
+    bool openTextMode;
+
     vector<string> commands;
+    vector<string> history;
     string input, lastPath;
     Text *commandText, *helpText, *commandList;
+
+    string popInput();
+
+    void setHistory(vector<string> historyCommands);
+    vector<string> getHistory();
+    void clearHistory();
  
-    string handleInput(KeyPresses keysDown);
+    int handleInput(KeyPresses keysDown);
 };
 
 #endif

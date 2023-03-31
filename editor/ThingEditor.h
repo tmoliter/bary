@@ -18,7 +18,6 @@ enum class ThingEditState {
     spriteEdit,
     rayEdit,
     eventEdit,
-    thingFromTemplate
 };
 
 
@@ -29,11 +28,11 @@ class ThingEditor {
 
         RealThing *thing;
         ThingEditState state;
-        string input, lastPath;
-        Text *commandText, *helpText, *commandList;
+        string input;
+        vector<string> spritePathHistory;
+        Text *helpText;
 
         int selectedSprite;
-        Sprite *cross;
 
         CommandLine *commandLine;
         SpriteEditor *spriteEditor;
@@ -41,14 +40,8 @@ class ThingEditor {
         EventEditor *eventEditor;
 
         void changeState(ThingEditState newState);
-        void focusDot();
-        void updateLines();
 
-        void beginTextInput();
-        void endTextInput();
-
-        int listenForTextInput(KeyPresses keysDown);
-        void meat(KeyPresses keysDown);
+        int meat(KeyPresses keysDown);
 
         int addSprite();
 };
