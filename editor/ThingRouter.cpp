@@ -119,7 +119,7 @@ int ThingRouter::editThing(KeyPresses keysDown) {
     if (type == ThingType::door) {
         if (doorEditor->routeInput(keysDown)) {
             delete doorEditor;
-            thingEditor = nullptr;
+            doorEditor = nullptr;
             return 1;
         }
     }

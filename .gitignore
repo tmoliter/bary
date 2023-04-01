@@ -36,6 +36,8 @@ bary
 # VSCode
 .vscode
 
+# Mac
+*.plist
 .DS_Store
 
 working_files

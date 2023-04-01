@@ -27,8 +27,6 @@ struct CommandLine {
 
     int handleInput(KeyPresses keysDown);
 
-    // THE FUTURE: history should be a static inline Array of 10 rather than storing it per
-    // object and passing it around
     inline static deque<string> history;
 };
 
