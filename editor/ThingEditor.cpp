@@ -1,14 +1,13 @@
 #include "ThingEditor.h"
 
-ThingEditor::ThingEditor() {
-    thing = new RealThing(Point(0,0));
-    changeState(ThingEditState::commandInput);
-    commandLine = nullptr;
-    spriteEditor = nullptr;
-    rayEditor = nullptr;
-    eventEditor = nullptr;
-    helpText = new Text(Point(16, 16), "");
-    UIRenderer::addText(helpText);
+ThingEditor::ThingEditor(Point p) {
+    thing = new RealThing(p);
+    init();
+}
+
+ThingEditor::ThingEditor(RealThing *rt) {
+    thing = rt;
+    init();
 }
 
 ThingEditor::~ThingEditor() {
@@ -24,9 +23,19 @@ ThingEditor::~ThingEditor() {
     RealThing::showAllLines();
 }
 
+void ThingEditor::init() {
+    Camera::panTo(thing->name);
+    commandLine = nullptr;
+    spriteEditor = nullptr;
+    rayEditor = nullptr;
+    eventEditor = nullptr;
+    helpText = new Text(Point(192, 16), "");
+    UIRenderer::addText(helpText);
+    changeState(ThingEditState::commandInput);
+}
+
 void ThingEditor::changeState(ThingEditState newState) {
     switch (newState) {
-        input = "";
         helpText->setText("");
         Sprite::highlightThing(thing->name);
         case ThingEditState::commandInput:
@@ -37,14 +46,13 @@ void ThingEditor::changeState(ThingEditState newState) {
                 "event",
                 "rename",
                 "copy",
-                "delete"
+                "delete",
                 "free",
             }, false);
             break;
         case ThingEditState::move:
             helpText->setText(thing->name + ": Thing Move");
             Camera::panTo(thing->name);
-            state = ThingEditState::move;
             break;
         case ThingEditState::pathInput:
             commandLine = new CommandLine({
@@ -53,32 +61,27 @@ void ThingEditor::changeState(ThingEditState newState) {
             break;
         case ThingEditState::spriteEdit:
             helpText->setText(thing->name + ": Sprite Edit Mode");
-            state = ThingEditState::spriteEdit;
             break;
         case ThingEditState::spriteSelect:
             helpText->setText(thing->name + + "Select/Delete Sprite ");
             selectedSprite = 0;
             thing->highlightSprite(thing->sprites[selectedSprite]);
-            state = ThingEditState::spriteSelect;
             break;
         case ThingEditState::rayEdit:
             helpText->setText(thing->name + ": Ray Edit Mode");
             rayEditor = new RayEditor(thing);
-            state = ThingEditState::rayEdit;
             break;
         case ThingEditState::eventEdit:
             helpText->setText(thing->name + ": Event Edit Mode");
             eventEditor = new EventEditor(thing);
-            state = ThingEditState::eventEdit;
             break;
         case ThingEditState::rename:
             commandLine = new CommandLine({
                 "Rename Thing"
             }, true);
-            state = ThingEditState::rename;
             break;
         default:
-            return;
+            break;
     }
     state = newState;
 }
@@ -97,10 +100,11 @@ int ThingEditor::meat(KeyPresses keysDown) {
         if (!commandLine->handleInput(keysDown))
             return 0;
 
-        input = commandLine->handleInput(keysDown);
+        string input = commandLine->popInput();
         if (input == "")
             return 0;
         delete commandLine;
+        commandLine = nullptr;
         if (input == "move") {
             changeState(ThingEditState::move);
             return 0;
@@ -195,6 +199,7 @@ int ThingEditor::meat(KeyPresses keysDown) {
             changeState(ThingEditState::commandInput);
             return 0;
         }
+        return 0;
     }
 
     if(state == ThingEditState::rayEdit) {
@@ -204,6 +209,7 @@ int ThingEditor::meat(KeyPresses keysDown) {
             changeState(ThingEditState::commandInput);
             RealThing::hideAllLines();
             thing->showLines();
+            return 0;
         }
     }
 
@@ -212,6 +218,7 @@ int ThingEditor::meat(KeyPresses keysDown) {
             delete eventEditor;
             eventEditor = nullptr;
             changeState(ThingEditState::commandInput);
+            return 0;
         }
     }
 
@@ -219,17 +226,18 @@ int ThingEditor::meat(KeyPresses keysDown) {
         if (!commandLine->handleInput(keysDown))
             return 0;
 
-        input = commandLine->popInput();
+        string input = commandLine->popInput();
         string oldName = thing->name;
         if (input.length() > 0)
             eventMap::updateThingName(oldName, thing->rename(input));
         changeState(ThingEditState::commandInput);
+        return 0;
     }
-
+    return 0;
 }
 
 int ThingEditor::addSprite() {
-    input = commandLine->popInput();
+    string input = commandLine->popInput();
     if(!SpriteEditor::checkPath(input))
         return 0;
     string path = "./assets/" + input;

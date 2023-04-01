@@ -14,6 +14,8 @@ struct CommandLine {
     CommandLine(vector<string> c, bool oTM);
     ~CommandLine();
 
+    void init(vector<string> c, bool oTM);
+
     bool openTextMode;
 
     vector<string> commands;

@@ -39,6 +39,10 @@ KeyPresses& Input::getInput () {
                     keysDown.start = true;
                 if (int(c) == SDLK_BACKSPACE)
                     keysDown.del = true;
+                if (int(c) == SDLK_UP)
+                    keysDown.debug_up = true;
+                if (int(c) == SDLK_DOWN)
+                    keysDown.debug_down = true;
             }
             else if (input.type == SDL_TEXTINPUT) {
                 char c = input.text.text[0];

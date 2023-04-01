@@ -8,7 +8,8 @@
 #include "editor/SpriteEditor.h"
 #include "editor/RayEditor.h"
 #include "editor/EventEditor.h"
-#include "editor/TemplatePicker.h"
+#include "editor/ThingRouter.h"
+#include "editor/ThingEditor.h"
 #include "gui/Text.h"
 #include "gui/UIRenderer.h"
 
@@ -18,15 +19,8 @@ using namespace std;
 enum class EditorState {
     freeMove,
     play,
-    thingMove,
     commandInput,
-    renameThing,
-    pathInput,
-    spriteSelect,
-    spriteEdit,
-    rayEdit,
-    eventEdit,
-    thingFromTemplate
+    thingEdit,
 };
 
 class MapBuilder {
@@ -36,26 +30,23 @@ class MapBuilder {
         RealThing *dotThing, *currentThing;
 
         EditorState state;
-        string input, lastPath;
-        Text *commandText, *helpText, *commandList;
+        Text *helpText;
 
         int selectedSprite;
         SpriteEditor *spriteEditor;
         Sprite *cross;
 
+        CommandLine *commandLine;
+
         RayEditor *rayEditor;
         EventEditor *eventEditor;
-        TemplatePicker *templatePicker;
+        ThingRouter *thingRouter;
 
         void changeState(EditorState newState);
         void createOrSelectThing();
         void focusDot();
         void updateLines();
 
-        void beginTextInput();
-        void endTextInput();
-
-        int listenForTextInput(KeyPresses keysDown);
         void meat(KeyPresses keysDown);
 
         int addSprite();

@@ -1,5 +1,5 @@
-#ifndef MAP_BUILDER_H
-#define MAP_BUILDER_H
+#ifndef THING_EDITOR_H
+#define THING_EDITOR_H
 #include <iostream>
 #include <string>
 #include "globals.h"
@@ -23,12 +23,14 @@ enum class ThingEditState {
 
 class ThingEditor {
     public:
-        ThingEditor();
+        ThingEditor(Point p);
+        ThingEditor(RealThing *rt);
         ~ThingEditor();
+
+        void init();
 
         RealThing *thing;
         ThingEditState state;
-        string input;
         Text *helpText;
 
         int selectedSprite;

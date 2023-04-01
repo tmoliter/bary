@@ -1,37 +1,39 @@
 #include "CommandLine.h"
 
 CommandLine::CommandLine(vector<string> c, bool oTM) : commands(c), openTextMode(oTM), historyPosition(-1) {
-    gameState = GameState::TextInput;
-    commandText = new Text(Point(32, 64), "");
-    if (openTextMode) {
-        helpText = new Text(Point(32, 32), "Open Text Entry: ");
-        string cL = "";
-        // Commands here can be any additional information about what is being entered
-        for (auto s : commands)
-            cL = cL + s + "`";
-        commandList = new Text(Point(32, 32), cL);
-        UIRenderer::addText(commandText);
-        return;
-    }
-    helpText = new Text(Point(32, 32), "Enter Command: ");
-    string cL = "Commands:";
-    for (auto s : commands)
-        cL = cL + "` " + s;
-    commandList = new Text(Point(32, 32), cL);
+    init(c, oTM);
+    UIRenderer::addText(commandList);
     UIRenderer::addText(commandText);
+    UIRenderer::addText(helpText);
 }
 
 CommandLine::~CommandLine() {
     gameState = GameState::FieldFree;
     input.clear();
-    if (commandText == nullptr)
-        return;
     UIRenderer::removeText(commandText);
     UIRenderer::removeText(helpText);
     UIRenderer::removeText(commandList);
-    commandText = nullptr;
 }
 
+void CommandLine::init(vector<string> c, bool oTM) {
+    commands = c;
+    openTextMode = oTM;
+    input = "";
+    gameState = GameState::TextInput;
+    commandText = new Text(Point(48, 48), "");
+    string cL;
+    if (openTextMode) {
+        helpText = new Text(Point(32, 32), "Open Text Entry: ");
+        cL = "";
+        // "Commands" in 'openTextMode' can be any additional information about what is being entered
+    } else {
+        helpText = new Text(Point(32, 32), "Enter Command: ");
+        cL = "Commands:";
+    }
+    for (auto s : commands)
+        cL = cL + "` " + s;
+    commandList = new Text(Point(SCREEN_WIDTH - 172, 16), cL);
+}
 
 int CommandLine::handleInput(KeyPresses keysDown) {
     if (keysDown.textInput) {
@@ -44,21 +46,24 @@ int CommandLine::handleInput(KeyPresses keysDown) {
         commandText->setText(input);
         return 0;
     }
-    if (keysDown.up && history.size() - 1 > historyPosition) {
+    if (keysDown.debug_up && ((int)history.size() - 1 > historyPosition)) {
         input = history[++historyPosition];
+        commandText->setText(input);
+        return 0;
     }
-    if (keysDown.down && historyPosition > -1) {
-        if (--historyPosition > -1)
+    if (keysDown.debug_down && historyPosition > -1) {
+        if (--historyPosition > -1) {
             input = history[historyPosition];
-        else
+            commandText->setText(input);
+        } else {
             input = "";
+            commandText->setText(input);
+        }
+        return 0;
     }
     if (keysDown.start) {
-        string submitted = input;
-        input.clear();
-        commandText->setText(input);
-        if (openTextMode || count(commands.begin(), commands.end(), submitted)) {
-            history.push_front(submitted);
+        if (openTextMode || count(commands.begin(), commands.end(), input)) {
+            history.push_front(input);
             if (history.size() > 15)
                 history.pop_back();
             return 1;
