@@ -1,71 +1,90 @@
 #include "CommandLine.h"
 
-CommandLine::CommandLine(vector<string> c, bool oTM) : commands(c), openTextMode(oTM), historyPosition(-1) {
-    init(c, oTM);
+CommandLine::CommandLine(vector<string> coms, bool oTM) : commands(coms), openTextMode(oTM), historyPosition(-1) {
+    commandText = new Text(Point(48, 48), "");
+    helpText = new Text(Point(32, 32), "");
+    commandList = new Text(Point(SCREEN_WIDTH - 172, 16), "");
     UIRenderer::addText(commandList);
     UIRenderer::addText(commandText);
     UIRenderer::addText(helpText);
 }
 
 CommandLine::~CommandLine() {
-    gameState = GameState::FieldFree;
-    input.clear();
     UIRenderer::removeText(commandText);
     UIRenderer::removeText(helpText);
     UIRenderer::removeText(commandList);
 }
 
-void CommandLine::init(vector<string> c, bool oTM) {
-    commands = c;
-    openTextMode = oTM;
-    input = "";
+void CommandLine::init() {
+    c = new CommandLine({}, false);
+}
+
+void CommandLine::kill() {
+    delete c;
+    c = nullptr;
+}
+
+
+void CommandLine::refresh(vector<string> coms, bool oTM) {
+    c->historyPosition = -1;
+    c->commands = coms;
+    c->openTextMode = oTM;
+    c->input = "";
+    c->commandText->setText("");
     gameState = GameState::TextInput;
-    commandText = new Text(Point(48, 48), "");
     string cL;
-    if (openTextMode) {
-        helpText = new Text(Point(32, 32), "Open Text Entry: ");
+    if (c->openTextMode) {
+        c->helpText->setText("Open Text Entry: ");
         cL = "";
         // "Commands" in 'openTextMode' can be any additional information about what is being entered
     } else {
-        helpText = new Text(Point(32, 32), "Enter Command: ");
+        c->helpText->setText("Enter Command: ");
         cL = "Commands:";
     }
-    for (auto s : commands)
+    for (auto s : c->commands)
         cL = cL + "` " + s;
-    commandList = new Text(Point(SCREEN_WIDTH - 172, 16), cL);
+    c->commandList->setText(cL);
+}
+
+void CommandLine::breakdown() {
+    gameState = GameState::FieldFree;
+    c->input.clear();
+    c->commandText->setText("");
+    c->helpText->setText("");
+    c->commandList->setText("");
 }
 
 int CommandLine::handleInput(KeyPresses keysDown) {
     if (keysDown.textInput) {
-        input.push_back(keysDown.textInput);
-        commandText->setText(input);
+        c->input.push_back(keysDown.textInput);
+        c->commandText->setText(c->input);
         return 0;
     }
-    if (keysDown.del && input.length() > 0){
-        input.pop_back();
-        commandText->setText(input);
+    if (keysDown.del && c->input.length() > 0){
+        c->input.pop_back();
+        c->commandText->setText(c->input);
         return 0;
     }
-    if (keysDown.debug_up && ((int)history.size() - 1 > historyPosition)) {
-        input = history[++historyPosition];
-        commandText->setText(input);
+    if (keysDown.debug_up && ((int)c->history.size() - 1 > c->historyPosition)) {
+        c->input = c->history[++c->historyPosition];
+        c->commandText->setText(c->input);
         return 0;
     }
-    if (keysDown.debug_down && historyPosition > -1) {
-        if (--historyPosition > -1) {
-            input = history[historyPosition];
-            commandText->setText(input);
+    if (keysDown.debug_down && c->historyPosition > -1) {
+        if (--c->historyPosition > -1) {
+            c->input = c->history[c->historyPosition];
+            c->commandText->setText(c->input);
         } else {
-            input = "";
-            commandText->setText(input);
+            c->input = "";
+            c->commandText->setText(c->input);
         }
         return 0;
     }
     if (keysDown.start) {
-        if (openTextMode || count(commands.begin(), commands.end(), input)) {
-            history.push_front(input);
-            if (history.size() > 15)
-                history.pop_back();
+        if (c->openTextMode || count(c->commands.begin(), c->commands.end(), c->input)) {
+            c->history.push_front(c->input);
+            if (c->history.size() > 15)
+                c->history.pop_back();
             return 1;
         }
     }
@@ -73,7 +92,7 @@ int CommandLine::handleInput(KeyPresses keysDown) {
 }
 
 string CommandLine::popInput() {
-    string tmp = input;
-    input.clear();
+    string tmp = c->input;
+    c->input.clear();
     return tmp;
 }

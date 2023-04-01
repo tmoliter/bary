@@ -36,8 +36,6 @@ class MapBuilder {
         SpriteEditor *spriteEditor;
         Sprite *cross;
 
-        CommandLine *commandLine;
-
         RayEditor *rayEditor;
         EventEditor *eventEditor;
         ThingRouter *thingRouter;

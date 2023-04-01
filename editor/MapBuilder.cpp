@@ -9,7 +9,8 @@ MapBuilder::MapBuilder() : selectedSprite(-1) {
     rayEditor = nullptr;
     eventEditor = nullptr;
     thingRouter = nullptr;
-    commandLine = nullptr;
+
+    CommandLine::init();
 
     // Maybe we can pass this down into Editors to share? Maybe that's dumb.
     helpText = new Text(Point(16, 16), "");
@@ -37,7 +38,7 @@ void MapBuilder::changeState(EditorState newState) {
             break;
         case EditorState::commandInput:
             helpText->setText("");
-            commandLine = new CommandLine({"play", "new thing"}, false);
+            CommandLine::refresh({"play", "new thing"}, false);
             state = EditorState::commandInput;
             break;
         case EditorState::thingEdit:
@@ -104,16 +105,17 @@ void MapBuilder::meat(KeyPresses keysDown) {
 
 
     if (state == EditorState::commandInput) {
-        if (!commandLine->handleInput(keysDown))
+        if (!CommandLine::handleInput(keysDown))
             return;
-        string input = commandLine->popInput();
+        string input = CommandLine::popInput();
+        if (input == "")
+            return;
+        CommandLine::breakdown();
         if (input == "play") {
-            delete commandLine;
             changeState(EditorState::play);
             return;
         }
         if (input == "new thing") {
-            delete commandLine;
             changeState(EditorState::thingEdit);
             return;
         }

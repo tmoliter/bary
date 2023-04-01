@@ -35,10 +35,10 @@ void ThingRouter::determineType() {
 void ThingRouter::changeState(ThingRouterState newState) {
     switch (newState) {
         case ThingRouterState::chooseThingType:
-            commandLine = new CommandLine({"thing", "door", "free"}, false);
+            CommandLine::refresh({"thing", "door", "free"}, false);
             break;
         case ThingRouterState::editOrCreateSub:
-            commandLine = new CommandLine({"edit", "subthings", "free"}, false);
+            CommandLine::refresh({"edit", "subthings", "free"}, false);
             break;
         case ThingRouterState::edit:
             break;
@@ -58,8 +58,6 @@ int ThingRouter::routeInput(KeyPresses keysDown) {
     }
     if (state == ThingRouterState::editOrCreateSub){
         if (chooseEditAction(keysDown)) {
-            delete commandLine;
-            commandLine = nullptr;
             changeState(ThingRouterState::edit);
             return 0;
         }
@@ -71,19 +69,17 @@ int ThingRouter::routeInput(KeyPresses keysDown) {
 }
 
 int ThingRouter::chooseNewThingType(KeyPresses keysDown) {
-    if (!commandLine->handleInput(keysDown))
+    if (!CommandLine::handleInput(keysDown))
         return 0;
-    string input = commandLine->popInput();
+    string input = CommandLine::popInput();
     if (input == "thing") {
-        delete commandLine;
-        commandLine = nullptr;
+        CommandLine::breakdown();
         thingEditor = new ThingEditor(newThingPosition);
         type = ThingType::thing;
         return 1;
     }
     if (input == "door") {
-        delete commandLine;
-        commandLine = nullptr;
+        CommandLine::breakdown();
         doorEditor = new DoorEditor(newThingPosition);
         type = ThingType::door;
         return 1;
@@ -96,9 +92,9 @@ int ThingRouter::chooseNewThingType(KeyPresses keysDown) {
 }
 
 int ThingRouter::chooseEditAction(KeyPresses keysDown) {
-    if (!commandLine->handleInput(keysDown))
+    if (!CommandLine::handleInput(keysDown))
         return 0;
-    string input = commandLine->popInput();
+    string input = CommandLine::popInput();
     if (input == "edit") {
         determineType();
         changeState(ThingRouterState::edit);

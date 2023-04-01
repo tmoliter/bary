@@ -35,7 +35,6 @@ class ThingEditor {
 
         int selectedSprite;
 
-        CommandLine *commandLine;
         SpriteEditor *spriteEditor;
         RayEditor *rayEditor;
         EventEditor *eventEditor;

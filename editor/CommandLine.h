@@ -11,23 +11,27 @@
 using namespace std;
 
 struct CommandLine {
-    CommandLine(vector<string> c, bool oTM);
+    CommandLine(vector<string> coms, bool oTM);
     ~CommandLine();
 
-    void init(vector<string> c, bool oTM);
+
+    static void init();
+    static void kill();
+    static void refresh(vector<string> c, bool oTM);
+    static void breakdown();
 
     bool openTextMode;
-
     vector<string> commands;
     int historyPosition;
     string input, lastPath;
     Text *commandText, *helpText, *commandList;
 
-    string popInput();
+    static string popInput();
 
-    int handleInput(KeyPresses keysDown);
+    static int handleInput(KeyPresses keysDown);
 
-    inline static deque<string> history;
+    deque<string> history;
+    inline static CommandLine *c = nullptr;
 };
 
 #endif

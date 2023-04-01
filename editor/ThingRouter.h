@@ -33,7 +33,6 @@ struct ThingRouter {
     Text *text;
     RealThing *realThing;
 
-    CommandLine *commandLine;
     ThingEditor *thingEditor;
     DoorEditor *doorEditor;
 

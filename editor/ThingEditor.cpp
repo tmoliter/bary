@@ -15,7 +15,6 @@ ThingEditor::~ThingEditor() {
     // or expand it to also check for rays and events
     if (thing->sprites.size() < 1)
         delete thing;
-    delete commandLine;
     delete spriteEditor;
     delete rayEditor;
     delete eventEditor;
@@ -25,7 +24,6 @@ ThingEditor::~ThingEditor() {
 
 void ThingEditor::init() {
     Camera::panTo(thing->name);
-    commandLine = nullptr;
     spriteEditor = nullptr;
     rayEditor = nullptr;
     eventEditor = nullptr;
@@ -35,11 +33,12 @@ void ThingEditor::init() {
 }
 
 void ThingEditor::changeState(ThingEditState newState) {
+    helpText->setText("");
+    Sprite::highlightThing(thing->name);
+    CommandLine::breakdown();
     switch (newState) {
-        helpText->setText("");
-        Sprite::highlightThing(thing->name);
         case ThingEditState::commandInput:
-            commandLine = new CommandLine({
+            CommandLine::refresh({
                 "new sprite",
                 "edit sprite", 
                 "ray",
@@ -49,13 +48,14 @@ void ThingEditor::changeState(ThingEditState newState) {
                 "delete",
                 "free",
             }, false);
+            helpText->setText(thing->name);
             break;
         case ThingEditState::move:
             helpText->setText(thing->name + ": Thing Move");
             Camera::panTo(thing->name);
             break;
         case ThingEditState::pathInput:
-            commandLine = new CommandLine({
+            CommandLine::refresh({
                 "Sprite Path"
             }, true);
             break;
@@ -76,7 +76,7 @@ void ThingEditor::changeState(ThingEditState newState) {
             eventEditor = new EventEditor(thing);
             break;
         case ThingEditState::rename:
-            commandLine = new CommandLine({
+            CommandLine::refresh({
                 "Rename Thing"
             }, true);
             break;
@@ -97,14 +97,12 @@ int ThingEditor::meat(KeyPresses keysDown) {
     }
 
     if (state == ThingEditState::commandInput) {
-        if (!commandLine->handleInput(keysDown))
+        if (!CommandLine::handleInput(keysDown))
             return 0;
 
-        string input = commandLine->popInput();
+        string input = CommandLine::popInput();
         if (input == "")
             return 0;
-        delete commandLine;
-        commandLine = nullptr;
         if (input == "move") {
             changeState(ThingEditState::move);
             return 0;
@@ -150,11 +148,10 @@ int ThingEditor::meat(KeyPresses keysDown) {
     }
 
     if (state == ThingEditState::pathInput) {
-        if (!commandLine->handleInput(keysDown))
+        if (!CommandLine::handleInput(keysDown))
             return 0;
 
         if (addSprite()) {
-            delete commandLine;
             changeState(ThingEditState::spriteEdit);
             return 0;
         }
@@ -223,10 +220,10 @@ int ThingEditor::meat(KeyPresses keysDown) {
     }
 
     if (state == ThingEditState::rename) {
-        if (!commandLine->handleInput(keysDown))
+        if (!CommandLine::handleInput(keysDown))
             return 0;
 
-        string input = commandLine->popInput();
+        string input = CommandLine::popInput();
         string oldName = thing->name;
         if (input.length() > 0)
             eventMap::updateThingName(oldName, thing->rename(input));
@@ -237,7 +234,7 @@ int ThingEditor::meat(KeyPresses keysDown) {
 }
 
 int ThingEditor::addSprite() {
-    string input = commandLine->popInput();
+    string input = CommandLine::popInput();
     if(!SpriteEditor::checkPath(input))
         return 0;
     string path = "./assets/" + input;
