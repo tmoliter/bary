@@ -6,7 +6,7 @@ SpriteEditor::SpriteEditor(Sprite *s) :
     editState(SpriteEditState::move), 
     cameraPrevState(SpriteEditState::move),
     foundSprite(false),
-    snapCamera(false) {
+    snapCamera(true) {
     
     oldFocus = Thing::things[Camera::getFocusName()];
     focus = new Thing(Point(sprite->position), "sprite focus");

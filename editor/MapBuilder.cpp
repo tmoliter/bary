@@ -33,7 +33,7 @@ void MapBuilder::changeState(EditorState newState) {
         case EditorState::play:
             helpText->setText("Play");
             currentThing = new FieldPlayer(dotThing->position, "test player", "./assets/sheets/SDL_TestSS.png");
-            Camera::panTo(currentThing->name);
+            Camera::panTo(currentThing->name, true);
             state = EditorState::play;
             break;
         case EditorState::commandInput:
@@ -52,7 +52,7 @@ void MapBuilder::changeState(EditorState newState) {
 
 void MapBuilder::focusDot() {
     currentThing = dotThing;
-    Camera::panTo(currentThing->name);
+    Camera::panTo(currentThing->name, true);
     if (cross == nullptr)
         return;
     delete cross;
@@ -125,7 +125,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
         if(thingRouter->routeInput(keysDown)) {
             delete thingRouter;
             thingRouter = nullptr;
-            changeState(EditorState::commandInput);
+            changeState(EditorState::freeMove);
         }
     }
 }

@@ -12,7 +12,7 @@ ThingRouter::ThingRouter(RealThing *rt) : realThing(rt), state(ThingRouterState:
     thingEditor = nullptr;
     Sprite::highlightThing(rt->name);
     changeState(ThingRouterState::editOrCreateSub);
-    Camera::panTo(rt->name);
+    Camera::panTo(rt->name, true);
 }
 
 ThingRouter::~ThingRouter(){

@@ -13,7 +13,7 @@ ThingEditor::ThingEditor(RealThing *rt) {
 ThingEditor::~ThingEditor() {
     // Once we have a way to select spriteless things, we should remove this conditional
     // or expand it to also check for rays and events
-    if (thing->sprites.size() < 1)
+    if (thing != nullptr && thing->sprites.size() < 1)
         delete thing;
     delete spriteEditor;
     delete rayEditor;
@@ -23,7 +23,7 @@ ThingEditor::~ThingEditor() {
 }
 
 void ThingEditor::init() {
-    Camera::panTo(thing->name);
+    Camera::panTo(thing->name, true);
     spriteEditor = nullptr;
     rayEditor = nullptr;
     eventEditor = nullptr;
@@ -52,7 +52,7 @@ void ThingEditor::changeState(ThingEditState newState) {
             break;
         case ThingEditState::move:
             helpText->setText(thing->name + ": Thing Move");
-            Camera::panTo(thing->name);
+            Camera::panTo(thing->name, true);
             break;
         case ThingEditState::pathInput:
             CommandLine::refresh({
@@ -138,7 +138,9 @@ int ThingEditor::meat(KeyPresses keysDown) {
             return 0;
         }
         if (input == "delete") {
+            CommandLine::breakdown();
             delete thing;
+            thing = nullptr;
             return 1;
         }
         if (input == "free") {
