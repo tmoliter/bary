@@ -144,6 +144,7 @@ int ThingEditor::meat(KeyPresses keysDown) {
             return 1;
         }
         if (input == "free") {
+            CommandLine::breakdown();
             return 1;
         }
         return 0;

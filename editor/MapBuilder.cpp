@@ -38,12 +38,11 @@ void MapBuilder::changeState(EditorState newState) {
             break;
         case EditorState::commandInput:
             helpText->setText("");
-            CommandLine::refresh({"play", "new thing"}, false);
+            CommandLine::refresh({"play", "new thing", "free"}, false);
             state = EditorState::commandInput;
             break;
         case EditorState::thingEdit:
             helpText->clearText();
-            thingRouter = new ThingRouter(currentThing->position);
             state = EditorState::thingEdit;
             break;
     }
@@ -93,6 +92,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
             for (auto t : collisions) {
                 if (t != dotThing) {
                     RealThing* match = dynamic_cast<RealThing*>(t);
+                    // TODO should actually make a vector out of ALL matches and pass them in so we can choose which one we want to deal with
                     if (match) {
                         thingRouter = new ThingRouter(match);
                         changeState(EditorState::thingEdit);
@@ -115,7 +115,12 @@ void MapBuilder::meat(KeyPresses keysDown) {
             changeState(EditorState::play);
             return;
         }
+        if (input == "free") {
+            changeState(EditorState::freeMove);
+            return;
+        }
         if (input == "new thing") {
+            thingRouter = new ThingRouter(currentThing->position);
             changeState(EditorState::thingEdit);
             return;
         }

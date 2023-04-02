@@ -27,6 +27,7 @@ void ThingRouter::determineType() {
         type = ThingType::door;
         return;
     }
+    // Repeat "door" pattern for other template thing types, fall back to ThingEditor
     thingEditor = new ThingEditor(realThing);
     type = ThingType::thing;
 }
@@ -47,22 +48,10 @@ void ThingRouter::changeState(ThingRouterState newState) {
 }
 
 int ThingRouter::routeInput(KeyPresses keysDown) {
-    if (state == ThingRouterState::chooseThingType){
-        if (chooseNewThingType(keysDown) > 0) {
-            if (type == ThingType::none)
-                return 1;
-            changeState(ThingRouterState::edit);
-            return 0;
-        }
-        return 0;
-    }
-    if (state == ThingRouterState::editOrCreateSub){
-        if (chooseEditAction(keysDown)) {
-            changeState(ThingRouterState::edit);
-            return 0;
-        }
-        return 0;
-    }
+    if (state == ThingRouterState::chooseThingType)
+        return chooseNewThingType(keysDown);
+    if (state == ThingRouterState::editOrCreateSub)
+        return chooseEditAction(keysDown);
     if (state == ThingRouterState::edit)
         return editThing(keysDown);
     return 0;
@@ -76,16 +65,18 @@ int ThingRouter::chooseNewThingType(KeyPresses keysDown) {
         CommandLine::breakdown();
         thingEditor = new ThingEditor(newThingPosition);
         type = ThingType::thing;
-        return 1;
+        changeState(ThingRouterState::edit);
+        return 0;
     }
     if (input == "door") {
         CommandLine::breakdown();
         doorEditor = new DoorEditor(newThingPosition);
         type = ThingType::door;
-        return 1;
+        changeState(ThingRouterState::edit);
+        return 0;
     }
     if (input == "free") {
-        type = ThingType::none;
+        CommandLine::breakdown();
         return 1;
     }
     return 0;
@@ -98,6 +89,14 @@ int ThingRouter::chooseEditAction(KeyPresses keysDown) {
     if (input == "edit") {
         determineType();
         changeState(ThingRouterState::edit);
+        return 0;
+    }
+    if (input == "subthing") {
+        // Do stuff
+        return 0;
+    }
+    if (input == "free") {
+        CommandLine::breakdown();
         return 1;
     }
     return 0;

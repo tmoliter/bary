@@ -6,7 +6,6 @@
 using namespace std;
 
 enum class ThingType {
-    none,
     thing,
     door
 };
