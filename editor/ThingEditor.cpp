@@ -39,6 +39,7 @@ void ThingEditor::changeState(ThingEditState newState) {
     switch (newState) {
         case ThingEditState::commandInput:
             CommandLine::refresh({
+                "move",
                 "new sprite",
                 "edit sprite", 
                 "ray",

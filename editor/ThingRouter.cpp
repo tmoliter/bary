@@ -4,18 +4,21 @@ ThingRouter::ThingRouter(Point p) : state(ThingRouterState::chooseThingType), ne
     doorEditor = nullptr;
     thingEditor = nullptr;
     realThing = nullptr;
+    cross = nullptr;
     changeState(ThingRouterState::chooseThingType);
 }
 
 ThingRouter::ThingRouter(RealThing *rt) : realThing(rt), state(ThingRouterState::editOrCreateSub), newThingPosition(rt->position) {
     doorEditor = nullptr;
     thingEditor = nullptr;
+    cross = nullptr;
     Sprite::highlightThing(rt->name);
     changeState(ThingRouterState::editOrCreateSub);
     Camera::panTo(rt->name, true);
 }
 
 ThingRouter::~ThingRouter(){
+    destroyCross();
     delete thingEditor;
     delete doorEditor;
 }
@@ -32,16 +35,35 @@ void ThingRouter::determineType() {
     type = ThingType::thing;
 }
 
+void ThingRouter::createCross() {
+    if (cross == nullptr && realThing != nullptr) {
+        SpriteData sd;
+        sd.path = "./assets/debug/9x9cross.png";
+        sd.layer = 100;
+        cross = new Sprite(realThing->position, realThing->name, sd);
+        cross->centerOffset();
+    }
+}
+
+void ThingRouter::destroyCross() {
+    if (cross != nullptr) {
+        delete cross;
+        cross = nullptr;
+    }
+}
 
 void ThingRouter::changeState(ThingRouterState newState) {
     switch (newState) {
         case ThingRouterState::chooseThingType:
+            destroyCross();
             CommandLine::refresh({"thing", "door", "free"}, false);
             break;
         case ThingRouterState::editOrCreateSub:
+            destroyCross();
             CommandLine::refresh({"edit", "subthings", "free"}, false);
             break;
         case ThingRouterState::edit:
+            createCross();
             break;
     }
     state = newState;
@@ -64,6 +86,7 @@ int ThingRouter::chooseNewThingType(KeyPresses keysDown) {
     if (input == "thing") {
         CommandLine::breakdown();
         thingEditor = new ThingEditor(newThingPosition);
+        realThing = thingEditor->thing;
         type = ThingType::thing;
         changeState(ThingRouterState::edit);
         return 0;
@@ -71,6 +94,7 @@ int ThingRouter::chooseNewThingType(KeyPresses keysDown) {
     if (input == "door") {
         CommandLine::breakdown();
         doorEditor = new DoorEditor(newThingPosition);
+        realThing = doorEditor->door;
         type = ThingType::door;
         changeState(ThingRouterState::edit);
         return 0;

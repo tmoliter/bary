@@ -31,11 +31,15 @@ struct ThingRouter {
     string input;
     Text *text;
     RealThing *realThing;
+    Sprite *cross;
 
     ThingEditor *thingEditor;
     DoorEditor *doorEditor;
 
     void determineType();
+
+    void createCross();
+    void destroyCross();
 
     void changeState(ThingRouterState newState);
 
