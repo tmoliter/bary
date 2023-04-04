@@ -147,6 +147,8 @@ void DoorEditor::updateText() {
 
 
 void DoorEditor::handleTextInput(KeyPresses keysDown) {
+    // When we do the next "template" type thing, we should encapsulate this logic and consolidate it for
+    // ThingEditor, DoorEditor, and future editors. We should make use of CommandLine
     if (keysDown.textInput) {
         input.push_back(keysDown.textInput);
         updateText();
