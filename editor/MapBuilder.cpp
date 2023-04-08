@@ -1,4 +1,5 @@
 #include "MapBuilder.h"
+#include <SDL2/SDL_mixer.h>
 
 MapBuilder *MapBuilder::mapBuilder = nullptr;
 
@@ -69,6 +70,9 @@ void MapBuilder::updateLines() {
 
 void MapBuilder::meat(KeyPresses keysDown) {
     DirectionMap dM;
+    if (keysDown.debug_left) {
+        Mix_SetMusicPosition(30.3943);
+    }
     if (state == EditorState::freeMove) {
         currentThing->manuallyControl(keysDown);
         if(keysDown.start) {
