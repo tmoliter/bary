@@ -10,15 +10,7 @@ Sprite::Sprite (Point &pos, string &tN, SpriteData sd) :
     active(false) {
     id = currentID++;
     sprites[id] = this;
-    if(!textures.count(sd.path)) {
-        SDL_Surface* temp = IMG_Load(d.path.c_str());
-        textures[d.path].second = SDL_CreateTextureFromSurface(renderer, temp);
-        textures[d.path].first = 1;
-        SDL_FreeSurface(temp);
-    } else {
-        textures[d.path].first++;
-    }
-    texture = textures[d.path].second;
+    texture = resourceDepository::getTexture(sd.path);
     SDL_QueryTexture(texture, NULL, NULL, &sheetWidth, &sheetHeight);
     d.width = sd.width > 0 ? sd.width : sheetWidth;
     d.height = sd.height > 0 ? sd.height : sheetHeight;
@@ -54,11 +46,7 @@ Sprite::Sprite(Sprite &sprite, Point &pos, string &tN) :
 }
 
 Sprite::~Sprite() {
-    textures[d.path].first--;
-    if (textures[d.path].first < 1) {
-        SDL_DestroyTexture(texture);
-        textures.erase(d.path);
-    }
+    resourceDepository::releaseTexture(d.path);
     sprites.erase(id);
 }
 

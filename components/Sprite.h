@@ -9,6 +9,7 @@
 #include "globals.h"
 #include "Ray.h"
 #include "utils.h"
+#include "resourceDepository.h"
 
 using namespace std;
 
