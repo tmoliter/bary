@@ -1,7 +1,6 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
 #include <algorithm>
 #include <vector>
 #include "globals.h"
@@ -13,7 +12,13 @@
 
 using namespace std;
 
-#define SLIPPERY "assets/music/Slippery-Bad-Guy.mp3"
+#define SONG "assets/music/boss-battle.mp3"
+
+void loopSong() {
+    cout << "HEY" << endl;
+    Mix_PlayMusic(music, 0);
+    Mix_SetMusicPosition(11.576);
+}
 
 int main(int argc, char* args[]) {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
@@ -31,16 +36,16 @@ int main(int argc, char* args[]) {
         fprintf(stderr, "Unable to open audio: %s\n", SDL_GetError());
         exit(-1);
     }
+    music = Mix_LoadMUS(SONG);
 
-    Mix_Music* mm = Mix_LoadMUS(SLIPPERY);
-
-    if(Mix_PlayMusic(mm, 0) == -1)
+    if(Mix_PlayMusic(music, 0) == -1)
         {
             printf(" sound could not be played!\n"
                     "SDL_Error: %s\n", SDL_GetError());
-            Mix_FreeMusic(mm);
+            Mix_FreeMusic(music);
             return 0;
         }
+    Mix_HookMusicFinished(loopSong);
 
     SDL_Window* window = SDL_CreateWindow(
             "Bary",

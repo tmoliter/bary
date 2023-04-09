@@ -70,9 +70,6 @@ void MapBuilder::updateLines() {
 
 void MapBuilder::meat(KeyPresses keysDown) {
     DirectionMap dM;
-    if (keysDown.debug_left) {
-        Mix_SetMusicPosition(30.3943);
-    }
     if (state == EditorState::freeMove) {
         currentThing->manuallyControl(keysDown);
         if(keysDown.start) {
