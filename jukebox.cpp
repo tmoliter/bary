@@ -9,9 +9,8 @@ SongDetails::SongDetails(string n, string path, double l) : name(n), loopBeginni
 }
 
 
-SongDetails* jukebox::initializeSong(string name, int& success) {
+SongDetails* jukebox::initializeSong(string name) {
     if (name == "Boss Battle") {
-        success = 1;
         return new SongDetails(
             "Boss Battle",
             "assets/music/boss-battle.mp3",
@@ -21,53 +20,51 @@ SongDetails* jukebox::initializeSong(string name, int& success) {
     return nullptr;
 }
 
-void jukebox::playSong(string name, bool loop, bool load) {
-    if (load)
-        loadSong(name);
-    stop(false);
+void jukebox::playSong(string name, bool loop) {
+    loadSong(name);
+    stop();
     if (songs.count(name) < 1)
         return;
-    currentSong = songs[name].second;
+    currentSong = songs[name];
     Mix_PlayMusic(currentSong->music, 0);
-    if (loop) {
-        double x = 0;
+    if (loop)
         Mix_HookMusicFinished([]() {
             Mix_PlayMusic(currentSong->music, 0);
             Mix_SetMusicPosition(currentSong->loopBeginning);
         });
-    }
 }
 
-void jukebox::stop(bool release) {
+void jukebox::stop() {
     if (currentSong == nullptr)
         return;
     Mix_HookMusicFinished(NULL);
     Mix_HaltMusic();
-    if (release)
-        releaseSong(currentSong->name);
     currentSong = nullptr;
 }
 
 void jukebox::loadSong(string name) {
-    if(!songs.count(name)) {
-        int songExists = 0;
-        songs[name].second = initializeSong(name, songExists);
-        if (songExists == 0) {
-            songs.erase(name);
-            return;
-        }
-        songs[name].first = 1;
+    if(songs.count(name))
         return;
-    }
-    songs[name].first++;
+    SongDetails* song = initializeSong(name);
+    if (song == nullptr)
+        return;
+    songs[name] = song;
 }
 
+
 void jukebox::releaseSong(string name) {
-    if (songs.count(name) < 1)
+    if (!songs.count(name))
         return;
-    if (--songs[name].first < 1) {
-        Mix_FreeMusic(songs[name].second->music);
-        delete songs[name].second;
-        songs.erase(name);
-    }
+    Mix_FreeMusic(songs[name]->music);
+    delete songs[name];
+    songs.erase(name);
+}
+
+void jukebox::releaseAll() {
+   map<string, SongDetails*>::iterator itr = songs.begin();
+   while (itr != songs.end()) {
+        Mix_FreeMusic(itr->second->music);
+        delete itr->second;
+        itr = songs.erase(itr);
+   }
 }

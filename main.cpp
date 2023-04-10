@@ -30,7 +30,7 @@ int main(int argc, char* args[]) {
         exit(-1);
     }
 
-    jukebox::playSong("Boss Battle", true, true);
+    jukebox::playSong("Boss Battle", true);
 
     SDL_Window* window = SDL_CreateWindow(
             "Bary",
@@ -95,7 +95,7 @@ int main(int argc, char* args[]) {
         SDL_RenderPresent(renderer);
         Thing::destroyThings();
     }
-    jukebox::stop(true);
+    jukebox::stop();
     Thing::destroyThings();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

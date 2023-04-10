@@ -1,5 +1,4 @@
 #include "MapBuilder.h"
-#include <SDL2/SDL_mixer.h>
 
 MapBuilder *MapBuilder::mapBuilder = nullptr;
 

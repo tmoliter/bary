@@ -15,12 +15,16 @@ struct SongDetails {
 
 namespace jukebox {
     inline SongDetails *currentSong = nullptr;
-    inline map<string, pair<int, SongDetails*>> songs;
-    SongDetails* initializeSong(string name, int& success);
+
+    inline map<string, SongDetails*> songs;
+
+    SongDetails* initializeSong(string name);
     void loadSong(string name);
     void releaseSong(string name);
-    void playSong(string name, bool loop, bool load);
-    void stop(bool release);
+
+    void playSong(string name, bool loop);
+    void stop();
+
     void releaseAll();
 }
 
