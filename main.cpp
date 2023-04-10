@@ -9,16 +9,9 @@
 #include "MapParser.h"
 #include "gui/UIRenderer.h"
 #include "events/eventMap.h"
+#include "jukebox.h"
 
 using namespace std;
-
-#define SONG "assets/music/boss-battle.mp3"
-
-void loopSong() {
-    cout << "HEY" << endl;
-    Mix_PlayMusic(music, 0);
-    Mix_SetMusicPosition(11.576);
-}
 
 int main(int argc, char* args[]) {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
@@ -36,16 +29,8 @@ int main(int argc, char* args[]) {
         fprintf(stderr, "Unable to open audio: %s\n", SDL_GetError());
         exit(-1);
     }
-    music = Mix_LoadMUS(SONG);
 
-    if(Mix_PlayMusic(music, 0) == -1)
-        {
-            printf(" sound could not be played!\n"
-                    "SDL_Error: %s\n", SDL_GetError());
-            Mix_FreeMusic(music);
-            return 0;
-        }
-    Mix_HookMusicFinished(loopSong);
+    jukebox::playSong("Boss Battle", true, true);
 
     SDL_Window* window = SDL_CreateWindow(
             "Bary",
@@ -78,11 +63,13 @@ int main(int argc, char* args[]) {
     
     while (true){
         t.startFrame();
-        KeyPresses keysDown = in.getInput();  
         t.timeElapsed(&p.a);
+        // TODO Should make Timer a singleton somehow so that we can time deeper down
+        // and figure out why we're always stalling in `getInput()`
+        KeyPresses keysDown = in.getInput();
+        t.timeElapsed(&p.b);
         if (keysDown.quit)
             break;
-        t.timeElapsed(&p.b);
         
         if(MapBuilder::mapBuilder)
             MapBuilder::mapBuilder->meat(keysDown);
@@ -108,6 +95,7 @@ int main(int argc, char* args[]) {
         SDL_RenderPresent(renderer);
         Thing::destroyThings();
     }
+    jukebox::stop(true);
     Thing::destroyThings();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

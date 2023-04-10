@@ -30,6 +30,4 @@ inline GameState gameState;
 
 inline static SDL_Texture *font = nullptr;
 
-inline static Mix_Music* music;
-
 #endif
