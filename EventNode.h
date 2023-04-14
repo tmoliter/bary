@@ -3,7 +3,7 @@
 #include <string>
 #include <queue>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include "resourceDepository.h"
 #include "globals.h"
 #include "./gui/Phrase.h"
 #include "./gui/UIRenderer.h"
@@ -17,13 +17,16 @@ struct EventNode {
 
     EventNode **nextNode;
     Phrase *phrase;
+    Mix_Chunk *sound;
     int (*enterAction)(void);
     int (*exitAction)(void);
     int (*nextNodeCB)(EventNode*&);
 
-    int getNextNode(EventNode *&node);
+    void addSound(string path);
     void loadPhrase();
     int hold(KeyPresses keysDown);
+    
+    int getNextNode(EventNode *&node);
 };
 
 #endif
