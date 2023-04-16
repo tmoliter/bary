@@ -5,17 +5,37 @@ EventNode::EventNode(EventNode **nn, Phrase *ph, int (*ent)(void), int (*ex)(voi
     phrase(ph),
     enterAction(ent),
     exitAction(ex),
-    nextNodeCB(nextCB) {};
+    nextNodeCB(nextCB) {
+        sound = nullptr;
+    };
 
 EventNode::~EventNode() {
-    delete *nextNode;
-    delete nextNode;
+    if(nextNode != nullptr) {
+        delete *nextNode;
+        delete nextNode;
+    }
+    if (sound != nullptr) {
+        resourceDepository::releaseChunk(sound->name);
+        delete sound;
+    }
     delete phrase;
 }
 
+void EventNode::addSound(string name) {
+    if (sound != nullptr) {
+        resourceDepository::releaseChunk(sound->name);
+        delete sound;
+        sound = nullptr;
+    }
+    sound = resourceDepository::getChunk(name);
+}
+
 void EventNode::loadPhrase() {
+    if (sound != nullptr) {
+        Mix_PlayChannel(-1, sound->sound, 0);
+    }
     if(phrase != nullptr) {
-        phrase-> autoDestroy = false;
+        phrase->autoDestroy = false;
         UIRenderer::addPhrase(phrase);
     }
 }

@@ -38,7 +38,7 @@ void ThingRouter::determineType() {
 void ThingRouter::createCross() {
     if (cross == nullptr && realThing != nullptr) {
         SpriteData sd;
-        sd.path = "./assets/debug/9x9cross.png";
+        sd.textureName = "editorCross";
         sd.layer = 100;
         cross = new Sprite(realThing->position, realThing->name, sd);
         cross->centerOffset();
@@ -56,11 +56,11 @@ void ThingRouter::changeState(ThingRouterState newState) {
     switch (newState) {
         case ThingRouterState::chooseThingType:
             destroyCross();
-            CommandLine::refresh({"thing", "door", "free"}, false);
+            CommandLine::refresh({"thing", "door", "free"}, CLIMode::typeCommand);
             break;
         case ThingRouterState::editOrCreateSub:
             destroyCross();
-            CommandLine::refresh({"edit", "subthings", "free"}, false);
+            CommandLine::refresh({"edit", "subthings", "free"}, CLIMode::typeCommand);
             break;
         case ThingRouterState::edit:
             createCross();

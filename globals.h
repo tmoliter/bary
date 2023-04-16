@@ -1,6 +1,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 
 inline int frameCount = 0;
 
@@ -28,6 +29,5 @@ enum class GameState {
 inline GameState gameState;
 
 inline static SDL_Texture *font = nullptr;
-
 
 #endif

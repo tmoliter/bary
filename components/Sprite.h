@@ -9,6 +9,7 @@
 #include "globals.h"
 #include "Ray.h"
 #include "utils.h"
+#include "resourceDepository.h"
 
 using namespace std;
 
@@ -21,7 +22,7 @@ struct SpriteData {
     int sourceY = 0;
     int width = 0;
     int height = 0;
-    string path = "";
+    string textureName = "";
 };
 
 struct Sprite {

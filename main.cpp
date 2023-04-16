@@ -9,13 +9,29 @@
 #include "MapParser.h"
 #include "gui/UIRenderer.h"
 #include "events/eventMap.h"
+#include "jukebox.h"
 
 using namespace std;
 
 int main(int argc, char* args[]) {
-    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     IMG_Init(IMG_INIT_PNG);
     SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
+
+    if( Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 512) < 0 )
+    {
+        fprintf(stderr, "Unable to open audio: %s\n", SDL_GetError());
+        exit(-1);
+    }
+
+    if( Mix_AllocateChannels(4) < 0 )
+    {
+        fprintf(stderr, "Unable to open audio: %s\n", SDL_GetError());
+        exit(-1);
+    }
+
+    jukebox::playSong("Boss Battle", true);
+
     SDL_Window* window = SDL_CreateWindow(
             "Bary",
             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
@@ -47,11 +63,13 @@ int main(int argc, char* args[]) {
     
     while (true){
         t.startFrame();
-        KeyPresses keysDown = in.getInput();  
         t.timeElapsed(&p.a);
+        // TODO Should make Timer a singleton somehow so that we can time deeper down
+        // and figure out why we're always stalling in `getInput()`
+        KeyPresses keysDown = in.getInput();
+        t.timeElapsed(&p.b);
         if (keysDown.quit)
             break;
-        t.timeElapsed(&p.b);
         
         if(MapBuilder::mapBuilder)
             MapBuilder::mapBuilder->meat(keysDown);
@@ -77,12 +95,14 @@ int main(int argc, char* args[]) {
         SDL_RenderPresent(renderer);
         Thing::destroyThings();
     }
+    jukebox::stop();
     Thing::destroyThings();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 
     delete Camera::c;
 
+    Mix_CloseAudio();
     IMG_Quit();
     SDL_Quit();
     return 0;

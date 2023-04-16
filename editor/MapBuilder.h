@@ -41,13 +41,10 @@ class MapBuilder {
         ThingRouter *thingRouter;
 
         void changeState(EditorState newState);
-        void createOrSelectThing();
         void focusDot();
         void updateLines();
 
         void meat(KeyPresses keysDown);
-
-        int addSprite();
 
         static MapBuilder *mapBuilder;
 };

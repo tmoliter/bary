@@ -73,9 +73,9 @@ Sprite* RealThing::AddSprite(SpriteData SD) {
     return sprites.back();
 }
 
-Sprite* RealThing::AddRawSprite(string path) {
+Sprite* RealThing::AddRawSprite(string textureName) {
     SpriteData sd;
-    sd.path = path.c_str();
+    sd.textureName = textureName;
     return AddSprite(sd);
 }
 

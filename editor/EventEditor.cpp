@@ -6,6 +6,7 @@ input(""),
 eventName(""),
 collidable(make_pair("",nullptr)),
 previewPhrase(nullptr),
+soundName(""),
 collidableType(CollidableType::interactable), 
 eventType(EventType::simpleMessage),
 boxState(BoxEditState::resize) {
@@ -89,6 +90,12 @@ int EventEditor::changeState(EventEditState nextState) {
         case EventEditState::enterMessage:
             gameState = GameState::TextInput;
             editState = nextState;
+            text->lineLength = 30;
+            updateDisplay();
+            return 0;
+        case EventEditState::enterSoundName:
+            gameState = GameState::TextInput;
+            editState = nextState;
             updateDisplay();
             return 0;
         case EventEditState::editBox:
@@ -144,17 +151,11 @@ void EventEditor::updateDisplay() {
             break;
         case EventEditState::enterMessage:
             text->clearText();
-            displayText =  "Enter message for collidable '" + collidable.first + "':";
-            maxLine = 30;
-            size = input.size();
-            magnitude = size / maxLine;
-            remainder = size % maxLine;
-            for (int i = 0; i <= magnitude; i++) {
-                if (i < magnitude)
-                    displayText = displayText + "` " + input.substr(i * maxLine, maxLine);
-                else
-                    displayText = displayText + "` " + input.substr(i * maxLine, (i * maxLine) + remainder);
-            } 
+            displayText =  "Enter message for collidable '" + collidable.first + "':` " + input;
+            break;
+        case EventEditState::enterSoundName:
+            text->clearText();
+            displayText =  "Enter sound path or press return to continue for collidable '" + collidable.first + "':` " + input;
             break;
         case EventEditState::editBox:
             text->clearText();
@@ -194,6 +195,9 @@ int EventEditor::routeInput(KeyPresses keysDown) {
         break;
     case EventEditState::choosePredefined:
         choosePredefined(keysDown);
+        break;
+    case EventEditState::enterSoundName:
+        enterSoundName(keysDown);
         break;
     case EventEditState::enterMessage:
         enterMessage(keysDown);
@@ -258,7 +262,7 @@ void EventEditor::selectEventType (KeyPresses keysDown) {
     if (keysDown.ok) {
         switch (eventType) {
             case EventType::simpleMessage:
-                changeState(EventEditState::enterMessage);
+                changeState(EventEditState::enterSoundName);
                 return;
             case EventType::predefined:
                 changeState(EventEditState::choosePredefined);
@@ -308,6 +312,21 @@ void EventEditor::choosePredefined (KeyPresses keysDown) {
     }
 }
 
+void EventEditor::enterSoundName (KeyPresses keysDown) {
+    if (keysDown.textInput){
+        input.push_back(keysDown.textInput);
+        updateDisplay();
+    }
+    if (keysDown.del && input.length() > 0){
+        input.pop_back();
+        updateDisplay();
+    }
+    if (keysDown.start) {
+        soundName = input;
+        input.clear();
+        changeState(EventEditState::enterMessage);
+    }
+}
 
 void EventEditor::enterMessage (KeyPresses keysDown) {
     if (keysDown.textInput){
@@ -322,6 +341,7 @@ void EventEditor::enterMessage (KeyPresses keysDown) {
         previewPhrase = new Phrase(Point(120,320), Point(400, 90), ScrollType::preview, input);
         UIRenderer::addPhrase(previewPhrase);
         changeState(EventEditState::editBox);
+        text->resetLineLength();
     }
 }
 
@@ -414,7 +434,7 @@ void EventEditor::editBox(KeyPresses keysDown) {
                 else
                     delete ec->event;
             } else
-                ec->event = new SimpleMessage(newPhrase);
+                ec->event = new SimpleMessage(newPhrase, soundName);
             changeState(EventEditState::messageSuccess);
             return;
         }

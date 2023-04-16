@@ -16,7 +16,7 @@ class FieldPlayer : public RealThing {
     public:
         Walk* walk;
         FieldPlayer(FieldPlayerData fpD);
-        FieldPlayer(Point p, string name, string spritePath);
+        FieldPlayer(Point p, string name, string textureName);
         ~FieldPlayer();
 
         Direction currentDirection;

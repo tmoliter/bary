@@ -17,7 +17,7 @@ MapBuilder::MapBuilder() : selectedSprite(-1) {
     UIRenderer::addText(helpText);
     
     currentThing = dotThing = new RealThing(Point(0,0), "EditorDot");
-    dotThing->AddRawSprite("assets/debug/onePixel.png");
+    dotThing->AddRawSprite("singlepixel");
     changeState(EditorState::freeMove);
 }
 
@@ -32,13 +32,13 @@ void MapBuilder::changeState(EditorState newState) {
             break;
         case EditorState::play:
             helpText->setText("Play");
-            currentThing = new FieldPlayer(dotThing->position, "test player", "./assets/sheets/SDL_TestSS.png");
+            currentThing = new FieldPlayer(dotThing->position, "test player", "zinnia");
             Camera::panTo(currentThing->name, true);
             state = EditorState::play;
             break;
         case EditorState::commandInput:
             helpText->setText("");
-            CommandLine::refresh({"play", "new thing", "free"}, false);
+            CommandLine::refresh({"play", "new thing", "free"}, CLIMode::typeCommand);
             state = EditorState::commandInput;
             break;
         case EditorState::thingEdit:

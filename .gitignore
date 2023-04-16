@@ -38,6 +38,6 @@ bary
 
 # Mac
 *.plist
-.DS_Store
+*.DS_Store*
 
 working_files
