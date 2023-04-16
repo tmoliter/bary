@@ -56,11 +56,11 @@ void ThingRouter::changeState(ThingRouterState newState) {
     switch (newState) {
         case ThingRouterState::chooseThingType:
             destroyCross();
-            CommandLine::refresh({"thing", "door", "free"}, false);
+            CommandLine::refresh({"thing", "door", "free"}, CLIMode::typeCommand);
             break;
         case ThingRouterState::editOrCreateSub:
             destroyCross();
-            CommandLine::refresh({"edit", "subthings", "free"}, false);
+            CommandLine::refresh({"edit", "subthings", "free"}, CLIMode::typeCommand);
             break;
         case ThingRouterState::edit:
             createCross();

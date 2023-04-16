@@ -38,7 +38,7 @@ void MapBuilder::changeState(EditorState newState) {
             break;
         case EditorState::commandInput:
             helpText->setText("");
-            CommandLine::refresh({"play", "new thing", "free"}, false);
+            CommandLine::refresh({"play", "new thing", "free"}, CLIMode::typeCommand);
             state = EditorState::commandInput;
             break;
         case EditorState::thingEdit:

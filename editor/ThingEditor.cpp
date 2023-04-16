@@ -48,7 +48,7 @@ void ThingEditor::changeState(ThingEditState newState) {
                 "copy",
                 "delete",
                 "free",
-            }, false);
+            }, CLIMode::typeCommand);
             helpText->setText(thing->name);
             break;
         case ThingEditState::move:
@@ -58,7 +58,7 @@ void ThingEditor::changeState(ThingEditState newState) {
         case ThingEditState::pathInput:
             CommandLine::refresh({
                 "Sprite Path"
-            }, true);
+            }, CLIMode::openText);
             break;
         case ThingEditState::spriteEdit:
             helpText->setText(thing->name + ": Sprite Edit Mode");
@@ -79,7 +79,7 @@ void ThingEditor::changeState(ThingEditState newState) {
         case ThingEditState::rename:
             CommandLine::refresh({
                 "Rename Thing"
-            }, true);
+            }, CLIMode::openText);
             break;
         default:
             break;

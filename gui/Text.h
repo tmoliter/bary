@@ -12,13 +12,16 @@ class Text {
     public:
         Point position;
         string text;
+        int lineLength;
 
-        Text(Point p, string t);
+        Text(Point p, string t, int lL = -1);
 
         void render();
         void setText(string newCopy);
         void clearText();
         void setPos(Point p);
+
+        void resetLineLength();
 
     private:
         void renderLetter(int lineNumber, int position, int asciiValue, int occlusion, int raise);

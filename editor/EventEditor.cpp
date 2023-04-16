@@ -90,6 +90,7 @@ int EventEditor::changeState(EventEditState nextState) {
         case EventEditState::enterMessage:
             gameState = GameState::TextInput;
             editState = nextState;
+            text->lineLength = 30;
             updateDisplay();
             return 0;
         case EventEditState::enterSoundPath:
@@ -150,17 +151,7 @@ void EventEditor::updateDisplay() {
             break;
         case EventEditState::enterMessage:
             text->clearText();
-            displayText =  "Enter message for collidable '" + collidable.first + "':";
-            maxLine = 30;
-            size = input.size();
-            magnitude = size / maxLine;
-            remainder = size % maxLine;
-            for (int i = 0; i <= magnitude; i++) {
-                if (i < magnitude)
-                    displayText = displayText + "` " + input.substr(i * maxLine, maxLine);
-                else
-                    displayText = displayText + "` " + input.substr(i * maxLine, (i * maxLine) + remainder);
-            } 
+            displayText =  "Enter message for collidable '" + collidable.first + "':` " + input;
             break;
         case EventEditState::enterSoundPath:
             text->clearText();
@@ -349,6 +340,7 @@ void EventEditor::enterMessage (KeyPresses keysDown) {
         previewPhrase = new Phrase(Point(120,320), Point(400, 90), ScrollType::preview, input);
         UIRenderer::addPhrase(previewPhrase);
         changeState(EventEditState::editBox);
+        text->resetLineLength();
     }
 }
 
