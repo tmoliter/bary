@@ -1,6 +1,6 @@
 #include "jukebox.h"
 
-SongDetails::SongDetails(string n, string path, double l) : name(n), loopBeginning(l) {
+Song::Song(string n, string path, double l) : name(n), loopBeginning(l) {
     if (name == "") {
         music = nullptr;
         return;
@@ -9,9 +9,9 @@ SongDetails::SongDetails(string n, string path, double l) : name(n), loopBeginni
 }
 
 
-SongDetails* jukebox::initializeSong(string name) {
+Song* jukebox::initializeSong(string name) {
     if (name == "Boss Battle") {
-        return new SongDetails(
+        return new Song(
             "Boss Battle",
             "assets/music/boss-battle.mp3",
             11.576
@@ -45,9 +45,13 @@ void jukebox::stop() {
 void jukebox::loadSong(string name) {
     if(songs.count(name))
         return;
-    SongDetails* song = initializeSong(name);
+    Song* song = initializeSong(name);
     if (song == nullptr)
         return;
+    if (song->music == nullptr) {
+        delete song;
+        return;
+    }
     songs[name] = song;
 }
 
@@ -61,7 +65,7 @@ void jukebox::releaseSong(string name) {
 }
 
 void jukebox::releaseAll() {
-   map<string, SongDetails*>::iterator itr = songs.begin();
+   map<string, Song*>::iterator itr = songs.begin();
    while (itr != songs.end()) {
         Mix_FreeMusic(itr->second->music);
         delete itr->second;

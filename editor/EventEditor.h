@@ -23,7 +23,7 @@ enum class EventEditState {
     chooseCollidable,
     selectEventType,
     enterMessage,
-    enterSoundPath,
+    enterSoundName,
     editBox,
     messageSuccess,
     choosePredefined,
@@ -41,7 +41,7 @@ class EventEditor {
         EventEditor(RealThing *p);
         ~EventEditor();
 
-        string input, eventName, soundPath;
+        string input, eventName, soundName;
         Text *text;
 
         RealThing* parent;
@@ -66,7 +66,7 @@ class EventEditor {
         void chooseCollidable (KeyPresses keysDown);
         void choosePredefined (KeyPresses keysDown);
         void enterMessage (KeyPresses keysDown);
-        void enterSoundPath (KeyPresses keysDown);
+        void enterSoundName (KeyPresses keysDown);
         void editBox (KeyPresses keysDown);
 };
 

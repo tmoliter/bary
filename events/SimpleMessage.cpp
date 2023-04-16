@@ -1,11 +1,11 @@
 #include "events/SimpleMessage.h"
 
-SimpleMessage::SimpleMessage(Phrase* ph, string soundPath) : Event() {
+SimpleMessage::SimpleMessage(Phrase* ph, string soundName) : Event() {
     if (ph)
-        addPhrase(ph);
+        addPhrase(ph, soundName);
 }
 
-void SimpleMessage::addPhrase(Phrase* ph, string soundPath) {
+void SimpleMessage::addPhrase(Phrase* ph, string soundName) {
     if (nodes.size() > 0) {
         addChild(nodes.back(), new EventNode(
         nullptr, 
@@ -17,6 +17,6 @@ void SimpleMessage::addPhrase(Phrase* ph, string soundPath) {
         ph
         ));
     }
-    if (soundPath != "")
-        nodes.back()->addSound(soundPath);
+    if (soundName != "")
+        nodes.back()->addSound(soundName);
 }

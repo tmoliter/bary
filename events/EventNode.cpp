@@ -10,24 +10,29 @@ EventNode::EventNode(EventNode **nn, Phrase *ph, int (*ent)(void), int (*ex)(voi
     };
 
 EventNode::~EventNode() {
-    delete *nextNode;
-    delete nextNode;
+    if(nextNode != nullptr) {
+        delete *nextNode;
+        delete nextNode;
+    }
+    if (sound != nullptr) {
+        resourceDepository::releaseChunk(sound->name);
+        delete sound;
+    }
     delete phrase;
-    resourceDepository::releaseChunk("assets/sfx/fart.mp3");
 }
 
-void EventNode::addSound(string path) {
-    // if (sound != nullptr) {
-        // need a wrapper around "sound" to store the path so that we can easily release
-        // resourceDepository::releaseChunk()
-        // sound = nullptr;
-    // }
-    sound = resourceDepository::getChunk(path);
+void EventNode::addSound(string name) {
+    if (sound != nullptr) {
+        resourceDepository::releaseChunk(sound->name);
+        delete sound;
+        sound = nullptr;
+    }
+    sound = resourceDepository::getChunk(name);
 }
 
 void EventNode::loadPhrase() {
     if (sound != nullptr) {
-        Mix_PlayChannel(-1, sound, 0);
+        Mix_PlayChannel(-1, sound->sound, 0);
     }
     if(phrase != nullptr) {
         phrase->autoDestroy = false;

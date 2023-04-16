@@ -5,8 +5,8 @@
 #include <vector>
 
 struct SimpleMessage : public Event {
-    SimpleMessage(Phrase *ph = nullptr, string soundPath = "");
-    void addPhrase(Phrase *ph, string soundPath = "");
+    SimpleMessage(Phrase *ph = nullptr, string soundName = "");
+    void addPhrase(Phrase *ph, string soundName = "");
 };
 
 #endif

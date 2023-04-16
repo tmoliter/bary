@@ -6,19 +6,19 @@
 
 using namespace std;
 
-struct SongDetails {
-    SongDetails(string n, string path, double l);
+struct Song {
+    Song(string n, string path, double l);
     string name;
     double loopBeginning;
     Mix_Music* music;
 };
 
 namespace jukebox {
-    inline SongDetails *currentSong = nullptr;
+    inline Song *currentSong = nullptr;
 
-    inline map<string, SongDetails*> songs;
+    inline map<string, Song*> songs;
 
-    SongDetails* initializeSong(string name);
+    Song* initializeSong(string name);
     void loadSong(string name);
     void releaseSong(string name);
 

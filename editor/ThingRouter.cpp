@@ -38,7 +38,7 @@ void ThingRouter::determineType() {
 void ThingRouter::createCross() {
     if (cross == nullptr && realThing != nullptr) {
         SpriteData sd;
-        sd.path = "./assets/debug/9x9cross.png";
+        sd.textureName = "editorCross";
         sd.layer = 100;
         cross = new Sprite(realThing->position, realThing->name, sd);
         cross->centerOffset();

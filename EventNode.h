@@ -17,12 +17,12 @@ struct EventNode {
 
     EventNode **nextNode;
     Phrase *phrase;
-    Mix_Chunk *sound;
+    Sfx *sound;
     int (*enterAction)(void);
     int (*exitAction)(void);
     int (*nextNodeCB)(EventNode*&);
 
-    void addSound(string path);
+    void addSound(string name);
     void loadPhrase();
     int hold(KeyPresses keysDown);
     

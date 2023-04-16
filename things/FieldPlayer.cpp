@@ -10,8 +10,8 @@ FieldPlayer::FieldPlayer(FieldPlayerData fpD) : RealThing(fpD) {
     init();
 }
 
-FieldPlayer::FieldPlayer(Point p, string name, string spritePath) : RealThing(p,name) {
-    AddRawSprite(spritePath);
+FieldPlayer::FieldPlayer(Point p, string name, string textureName) : RealThing(p,name) {
+    AddRawSprite(textureName);
     init();
 }
 

@@ -10,7 +10,7 @@ Sprite::Sprite (Point &pos, string &tN, SpriteData sd) :
     active(false) {
     id = currentID++;
     sprites[id] = this;
-    texture = resourceDepository::getTexture(sd.path);
+    texture = resourceDepository::getTexture(sd.textureName);
     SDL_QueryTexture(texture, NULL, NULL, &sheetWidth, &sheetHeight);
     d.width = sd.width > 0 ? sd.width : sheetWidth;
     d.height = sd.height > 0 ? sd.height : sheetHeight;
@@ -28,7 +28,6 @@ Sprite::Sprite(Sprite &sprite) :
     sheetHeight(sprite.sheetHeight) {
     id = currentID++;
     sprites[id] = this;
-    textures[d.path].first++;
 }
 
 Sprite::Sprite(Sprite &sprite, Point &pos, string &tN) :
@@ -42,11 +41,10 @@ Sprite::Sprite(Sprite &sprite, Point &pos, string &tN) :
     sheetHeight(sprite.sheetHeight) {
     id = currentID++;
     sprites[id] = this;
-    textures[d.path].first++;
 }
 
 Sprite::~Sprite() {
-    resourceDepository::releaseTexture(d.path);
+    resourceDepository::releaseTexture(d.textureName);
     sprites.erase(id);
 }
 
@@ -78,7 +76,7 @@ Point Sprite::getScreenPos(Point camPosition) {
 }
 
 void Sprite::render(SDL_Renderer *renderer, Point camPosition) {
-    if (!active)
+    if (!active || texture == NULL)
         return;
     Point renderPos = getScreenPos(camPosition);
     SDL_Rect renderRect = { renderPos.x, renderPos.y, d.width * SCALE, d.height * SCALE };
@@ -144,7 +142,7 @@ int Sprite::parse_sprite_datum(ifstream &mapData, SpriteData &newSD){
         &newSD.xOffset,
         &newSD.yOffset
     }, mapData);
-    utils::parse_strings(vector<string*> { &newSD.path }, mapData);
+    utils::parse_strings(vector<string*> { &newSD.textureName }, mapData);
     return 1;
 }
 

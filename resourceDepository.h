@@ -9,15 +9,34 @@
 
 using namespace std;
 
+struct Texture {
+    Texture(string n, string path);
+    string name;
+    SDL_Texture* texture;
+};
+
+
+struct Sfx {
+    Sfx(string n, string path);
+    string name;
+    Mix_Chunk* sound;
+};
+
+
 namespace resourceDepository {
-    inline map<string, pair<int, SDL_Texture*>> textures;
-    inline map<string, pair<int, Mix_Chunk*>> chunks;
+    inline map<string, pair<int, Texture*>> textures;
+    inline map<string, pair<int, Sfx*>> chunks;
 
-    SDL_Texture* getTexture(string path);
-    void releaseTexture(string path);
+    Sfx* initializeSfx(string name);
+    Texture* initializeTexture(string name);
 
-    Mix_Chunk* getChunk(string path);
-    void releaseChunk(string path);
+    // Maybe have prefetch functions that take a list of names and loads all of them, and releases them after
+
+    SDL_Texture* getTexture(string name);
+    void releaseTexture(string name);
+
+    Sfx* getChunk(string name);
+    void releaseChunk(string name);
 };
 
 #endif
