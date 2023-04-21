@@ -32,7 +32,7 @@ namespace resourceDepository {
 
     // Maybe have prefetch functions that take a list of names and loads all of them, and releases them after
 
-    SDL_Texture* getTexture(string name);
+    Texture* getTexture(string name);
     void releaseTexture(string name);
 
     Sfx* getChunk(string name);

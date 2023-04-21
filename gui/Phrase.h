@@ -55,7 +55,6 @@ class Phrase {
         SDL_Rect& getBox();
         void setGridLimits(DirectionMap dM);
 
-        static inline SDL_Texture *defaultSpeechBubble = nullptr;
         static int currentID;
 
     private:

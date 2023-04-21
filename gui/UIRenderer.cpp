@@ -12,6 +12,10 @@ void UIRenderer::addText(Text *t) {
     u->texts.push_back(t);
 };
 
+void UIRenderer::addMenu(Menu *m) {
+    u->menus.push_back(m);
+};
+
 void UIRenderer::addLine(int &parentX, int &parentY, Ray* ray, LineType type) {
     u->lines.push_back(new Line(parentX, parentY, ray, type));
 }
@@ -36,9 +40,13 @@ void UIRenderer::renderPhrases() {
 }
 
 void UIRenderer::renderTexts() {
-    for (auto t : u->texts) {
+    for (auto t : u->texts)
         t->render();
-    }
+}
+
+void UIRenderer::renderMenus() {
+    for (auto m : u->menus)
+        m->render();
 }
 
 bool _compareType (Line* a, Line* b) {
@@ -61,6 +69,9 @@ void UIRenderer::renderLines() {
 
 void UIRenderer::render() {
     renderLines();
+    // Maybe all these should inherit from a common parent that stores a layer int,
+    // so we can sort and then render them without always rendering ALL phrases over ALL menus, etc.
+    renderMenus();
     renderPhrases();
     renderTexts();
 }
@@ -86,6 +97,11 @@ void UIRenderer::removePhrase(Phrase *p) {
 void UIRenderer::removeText(Text *t) {
     delete t;
     u->texts.erase(remove(u->texts.begin(), u->texts.end(), t), u->texts.end());
+}
+
+void UIRenderer::removeMenu(Menu *m) {
+    delete m;
+    u->menus.erase(remove(u->menus.begin(), u->menus.end(), m), u->menus.end());
 }
 
 void UIRenderer::changeLineType(Ray *r, LineType lineType) {

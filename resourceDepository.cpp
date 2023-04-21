@@ -38,14 +38,14 @@ Sfx* resourceDepository::initializeSfx(string name) {
     return nullptr;
 }
 
-SDL_Texture* resourceDepository::getTexture(string name) {
+Texture* resourceDepository::getTexture(string name) {
     if(!textures.count(name)) {
         textures[name].second = initializeTexture(name);
         textures[name].first = 1;
     } else {
         textures[name].first++;
     }
-    return textures[name].second->texture;
+    return textures[name].second;
 }
 
 void resourceDepository::releaseTexture(string name) {
