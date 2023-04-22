@@ -10,9 +10,9 @@
 
 using namespace std;
 
-struct Menu {
-    Menu(vector<string> o, Point p, int mH = -1, int cPc = -1, bool a = true);
-    ~Menu();
+struct MenuDisplay {
+    MenuDisplay(vector<string> o, Point p, int mH = -1, int cPc = -1, bool a = true);
+    ~MenuDisplay();
 
     bool active;
     int currentSelection, maxRows, charsPerColumn;

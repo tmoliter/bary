@@ -1,6 +1,6 @@
-#include "Menu.h"
+#include "MenuDisplay.h"
 
-Menu::Menu(vector<string> o, Point p, int mH, int cPc, bool a) : options(o), position(p), currentSelection(0), active(a) {
+MenuDisplay::MenuDisplay(vector<string> o, Point p, int mH, int cPc, bool a) : options(o), position(p), currentSelection(0), active(a) {
     if (!font) {
         SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
         font = SDL_CreateTextureFromSurface(renderer, temp);
@@ -17,11 +17,11 @@ Menu::Menu(vector<string> o, Point p, int mH, int cPc, bool a) : options(o), pos
     setActive(a);
 }
 
-Menu::~Menu() {
+MenuDisplay::~MenuDisplay() {
     clearLists();
 }
 
-void Menu::createLists() {
+void MenuDisplay::createLists() {
     clearLists();
     int i = 0;
     string tmp = "";
@@ -39,13 +39,13 @@ void Menu::createLists() {
     }
 }
 
-void Menu::clearLists() {
+void MenuDisplay::clearLists() {
     for (auto c : columns)
         delete c;
     columns.clear();
 }
 
-void Menu::render() {
+void MenuDisplay::render() {
     Point positionWithPadding = Point(position.x - LETTER_HEIGHT, position.y - LETTER_HEIGHT);
     int xPadding = LETTER_WIDTH * 2;
     int yPadding = LETTER_HEIGHT;
@@ -60,7 +60,7 @@ void Menu::render() {
         c->render();
 }
 
-void Menu::resetColumnWidth() {
+void MenuDisplay::resetColumnWidth() {
    charsPerColumn = -1;
    for (auto o : options) {
         int len = o.length();
@@ -69,17 +69,17 @@ void Menu::resetColumnWidth() {
    }
 }
 
-void Menu::resetColumnWidth(int newCharsPerColumn) {
+void MenuDisplay::resetColumnWidth(int newCharsPerColumn) {
     resetColumnWidth();
     if (newCharsPerColumn > charsPerColumn)
         charsPerColumn = newCharsPerColumn;
 }
 
-void Menu::resetHeight() {
+void MenuDisplay::resetHeight() {
     maxRows = (SCREEN_HEIGHT - position.y) / LETTER_HEIGHT;
 }
 
-void Menu::resetHeight(int newMaxHeight) {
+void MenuDisplay::resetHeight(int newMaxHeight) {
     if (newMaxHeight < LETTER_HEIGHT) {
         resetHeight();
         return;
@@ -87,7 +87,7 @@ void Menu::resetHeight(int newMaxHeight) {
     maxRows = newMaxHeight / LETTER_HEIGHT;
 }
 
-void Menu::setActive(bool a) {
+void MenuDisplay::setActive(bool a) {
     if (a)
         gameState = GameState::FieldUI;
     else

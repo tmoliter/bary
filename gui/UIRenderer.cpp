@@ -12,7 +12,7 @@ void UIRenderer::addText(Text *t) {
     u->texts.push_back(t);
 };
 
-void UIRenderer::addMenu(Menu *m) {
+void UIRenderer::addMenuDisplay(MenuDisplay *m) {
     u->menus.push_back(m);
 };
 
@@ -44,7 +44,7 @@ void UIRenderer::renderTexts() {
         t->render();
 }
 
-void UIRenderer::renderMenus() {
+void UIRenderer::renderMenuDisplays() {
     for (auto m : u->menus)
         m->render();
 }
@@ -71,7 +71,7 @@ void UIRenderer::render() {
     renderLines();
     // Maybe all these should inherit from a common parent that stores a layer int,
     // so we can sort and then render them without always rendering ALL phrases over ALL menus, etc.
-    renderMenus();
+    renderMenuDisplays();
     renderPhrases();
     renderTexts();
 }
@@ -99,7 +99,7 @@ void UIRenderer::removeText(Text *t) {
     u->texts.erase(remove(u->texts.begin(), u->texts.end(), t), u->texts.end());
 }
 
-void UIRenderer::removeMenu(Menu *m) {
+void UIRenderer::removeMenuDisplay(MenuDisplay *m) {
     delete m;
     u->menus.erase(remove(u->menus.begin(), u->menus.end(), m), u->menus.end());
 }

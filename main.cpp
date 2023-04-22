@@ -60,7 +60,7 @@ int main(int argc, char* args[]) {
     ProfileData p;
 
     RealThing::showAllLines();
-    UIRenderer::addMenu(new Menu({"blah", "some shit", "ok", "another one", "whatever"}, Point(40, 50), 3 * LETTER_HEIGHT));
+    UIRenderer::addMenuDisplay(new MenuDisplay({"blah", "some shit", "ok", "another one", "whatever"}, Point(40, 50), 3 * LETTER_HEIGHT));
     
     while (true){
         t.startFrame();
