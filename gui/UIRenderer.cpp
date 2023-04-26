@@ -50,13 +50,16 @@ void UIRenderer::renderMenuDisplays() {
 }
 
 bool _compareType (Line* a, Line* b) {
+    // TODO Order the enum and use static int cast and compare
     if (a->type == LineType::highlight)
         return false;
     if (b->type == LineType::highlight)
         return true;
     if (a->type == LineType::editing)
         return true;
-    if (a->type == LineType::obstruction && b->type != LineType::editing)
+    if (b->type == LineType::editing)
+        return false;
+    if (a->type == LineType::obstruction)
         return true;
     return false;
 }

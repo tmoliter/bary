@@ -27,7 +27,9 @@ struct MenuDisplay {
     SDL_Rect bubbleSourceRect = { 0, 0, 640, 480 };
     SDL_Rect arrowSourceRect = { LETTER_WIDTH * 23, LETTER_HEIGHT * 3, LETTER_WIDTH, LETTER_HEIGHT };
 
-    int handleInput(KeyPresses keysDown);
+    // string helpText
+    // we need to be able to define a constant sized box for the menu as well as
+    // a constant sized box for any help text that we define.
 
     void createLists();
     void clearLists();
