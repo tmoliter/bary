@@ -3,7 +3,6 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <SDL2/SDL_mixer.h>
 
 using namespace std;
 
@@ -44,6 +43,8 @@ enum class PlayerCharacter {
 };
 
 enum class InventoryItem {
+    // Default
+    null,
     // Money
     Dollar,
     // Consumable Foods
@@ -57,6 +58,7 @@ enum class InventoryItem {
 };
 
 enum class ItemType {
+    null,
     money,
     consumable,
     armor,

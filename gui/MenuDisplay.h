@@ -42,8 +42,6 @@ struct MenuDisplay {
 
     void setActive(bool a);
 
-    // Should the UIRenderer render the arrow, actually? Or find some other re-usable way so we don't have to re-implement for other pointy things
-
     string getChoice();
 };
 

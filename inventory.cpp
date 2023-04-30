@@ -1,8 +1,9 @@
 #include "inventory.h"
 
-bool _compareItems (Item a, Item b) {
-    if( static_cast<int>(b.itemType) < static_cast<int>(a.itemType))
+bool _compareItems (pair<Item, int> a, pair<Item, int> b) {
+    if( static_cast<int>(b.first.itemType) < static_cast<int>(a.first.itemType))
         return true;
+    return false;
 }
 
 vector<pair<Item, int>> inventory::getInventory(PlayerCharacter pc) {
@@ -14,12 +15,16 @@ vector<pair<Item, int>> inventory::getInventory(PlayerCharacter pc) {
 }
 
 ConsumableEffect inventory::consumeOne(PlayerCharacter pc, InventoryItem ii) {
-    Item* item = &getItemData(ii);
+    Item* item = new Item(getItemData(ii));
     Consumable* consumable = dynamic_cast<Consumable*>(item);
-    if (!consumable)
+    if (!consumable) {
+        delete item;
         return ConsumableEffect( 0, 0, {}, {}, "" );
+    }
+    ConsumableEffect effect = consumable->effect;
+    delete consumable;
     int remainder = removeOne(pc, ii);
-    if (remainder < 0)
+    if (remainder < 0) 
         return ConsumableEffect( 0, 0, {}, {}, "" );
     return consumable->effect;
 }
@@ -70,6 +75,9 @@ Item inventory::getItemData(InventoryItem itemName) {
                     "feels pretty good, but a little woozy"
                 )
             );
+        default:
+            break;
         // TODO rest of items from Unity-Sandbox
     }
+    return Item(ItemType::null, InventoryItem::null,"","");
 }
