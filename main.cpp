@@ -60,7 +60,8 @@ int main(int argc, char* args[]) {
     ProfileData p;
 
     RealThing::showAllLines();
-    UIRenderer::addMenuDisplay(new MenuDisplay({"blah", "some shit", "ok", "another one", "whatever"}, Point(40, 50), 3 * LETTER_HEIGHT));
+    MenuDisplay* men = new MenuDisplay({"blahp", "bitch", "pitch", "bloop", "ploot", "plopt", "plimp","poopi","poppo","plopt", "plimp","poopi","poppo"}, Point(40, 50), 4 * LETTER_HEIGHT, 20 * LETTER_WIDTH, 5);
+    UIRenderer::addMenuDisplay(men);
     
     while (true){
         t.startFrame();
@@ -72,19 +73,29 @@ int main(int argc, char* args[]) {
         if (keysDown.quit)
             break;
         
-        if(MapBuilder::mapBuilder)
-            MapBuilder::mapBuilder->meat(keysDown);
+        // if(MapBuilder::mapBuilder)
+        //     MapBuilder::mapBuilder->meat(keysDown);
         t.timeElapsed(&p.c);
-        switch(gameState) {
-            case (GameState::FieldUI):
-                Event::meat(keysDown);
-                break;
-            case (GameState::FieldFree):
-            default:
-                Thing::meatThings(keysDown);
+        // switch(gameState) {
+        //     case (GameState::FieldUI):
+        //         Event::meat(keysDown);
+        //         break;
+        //     case (GameState::FieldFree):
+        //     default:
+        //         Thing::meatThings(keysDown);
                 t.timeElapsed(&p.d);
-                break;
-        }
+        //         break;
+        // }
+        Direction d = Direction::none;
+        if(keysDown.debug_up)
+            d = Direction::up;
+        if(keysDown.debug_down)
+            d = Direction::down;
+        if(keysDown.debug_left)
+            d = Direction::left;
+        if(keysDown.debug_right)
+            d = Direction::right;
+        men->moveSelection(d);
 
         Camera::c->render();
 
