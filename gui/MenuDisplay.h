@@ -11,11 +11,11 @@
 using namespace std;
 
 struct MenuDisplay {
-    MenuDisplay(vector<string> o, Point p, int h, int w, int cPc = -1, bool a = true);
+    MenuDisplay(vector<string> o, Point p, int h, int w, int mC, bool a = true);
     ~MenuDisplay();
 
     bool active;
-    int currentSelection, charsPerColumn, height, width, maxRows, maxColumns;
+    int currentSelection, charsPerColumn, height, width, maxRows, maxColumns, xPadding, yPadding;
 
     // optional background
 
@@ -47,9 +47,6 @@ struct MenuDisplay {
 
     void setHeight(int newHeight);
     void setWidth(int newWidth);
-
-    void setColumnWidth();
-    void setColumnWidth(int newCharsPerColumn);
 
     void moveSelection(Direction direction);
     int getCurrentPage();

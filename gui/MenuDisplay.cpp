@@ -1,6 +1,6 @@
 #include "MenuDisplay.h"
 
-MenuDisplay::MenuDisplay(vector<string> o, Point p, int h, int w, int cPc, bool a) : allOptions(o), position(p), currentSelection(0), active(a) {
+MenuDisplay::MenuDisplay(vector<string> o, Point p, int h, int w, int mC, bool a) : allOptions(o), position(p), maxColumns(mC), currentSelection(0), active(a) {
     if (!font) {
         SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
         font = SDL_CreateTextureFromSurface(renderer, temp);
@@ -11,8 +11,7 @@ MenuDisplay::MenuDisplay(vector<string> o, Point p, int h, int w, int cPc, bool 
         defaultSpeechBubble = SDL_CreateTextureFromSurface(renderer, temp);
         SDL_FreeSurface(temp);
     }
-    // These need to happen first, and setColumnWidth() has to be first of all
-    setColumnWidth(cPc);
+    // These need to happen first
     setHeight(h);
     setWidth(w);
 
@@ -54,7 +53,7 @@ void MenuDisplay::createLists() {
             string option = options[j];
             tmp = tmp + option.substr(0, charsPerColumn) + "`";
         }
-        columns.push_back(new Text(Point(position.x + totalArrowPadding + columnOffset, position.y), tmp));
+        columns.push_back(new Text(Point(position.x + xPadding + totalArrowPadding + columnOffset, position.y + yPadding), tmp));
         tmp = "";
     }
 }
@@ -107,14 +106,13 @@ int MenuDisplay::getCurrentPage() {
 }
 
 void MenuDisplay::render() {
-    Point positionWithPadding = Point(position.x - (LETTER_WIDTH / 2), position.y - (LETTER_HEIGHT / 2));
-    SDL_Rect bubbleRenderRect = { positionWithPadding.x, positionWithPadding.y, width, height };
+    SDL_Rect bubbleRenderRect = { position.x, position.y, width, height };
     SDL_RenderCopy(renderer, defaultSpeechBubble, &bubbleSourceRect, &bubbleRenderRect);
 
     int currentColumn = currentSelection % maxColumns;
     int xOffset = ((currentColumn * (charsPerColumn + 2)) + 1) * LETTER_WIDTH;
     int yOffset = ((currentSelection / maxColumns) % maxRows) * LETTER_HEIGHT;
-    SDL_Rect arrowRenderRect = { position.x + xOffset, position.y + yOffset, LETTER_WIDTH, LETTER_HEIGHT };
+    SDL_Rect arrowRenderRect = { position.x + xPadding + xOffset, position.y + yPadding + yOffset, LETTER_WIDTH, LETTER_HEIGHT };
     SDL_RenderCopy(renderer, font, &rightArrow, &arrowRenderRect);
 
     for (auto c : columns)
@@ -122,46 +120,35 @@ void MenuDisplay::render() {
 
     if (frameCount % 30 < 15 || paginatedOptions.size() < 2)
         return;
-    int halfwayX = position.x + ((width - position.x) / 2);
+    int halfwayX = position.x + (width/ 2) - (LETTER_WIDTH / 2);
     if (getCurrentPage() < paginatedOptions.size() - 1) {
-        SDL_Rect arrowRenderRect = { halfwayX, position.y + height - (LETTER_HEIGHT + (LETTER_HEIGHT / 2)), LETTER_WIDTH, LETTER_HEIGHT };
+        SDL_Rect arrowRenderRect = { halfwayX, position.y + height - LETTER_HEIGHT - (yPadding / 4), LETTER_WIDTH, LETTER_HEIGHT };
         SDL_RenderCopy(renderer, font, &downArrow, &arrowRenderRect);
     }
     if (getCurrentPage() > 0) {
-        SDL_Rect arrowRenderRect = { halfwayX, position.y - (LETTER_HEIGHT / 2), LETTER_WIDTH, LETTER_HEIGHT };
+        SDL_Rect arrowRenderRect = { halfwayX, position.y + (yPadding / 4), LETTER_WIDTH, LETTER_HEIGHT };
         SDL_RenderCopy(renderer, font, &upArrow, &arrowRenderRect);
     }
 }
 
-void MenuDisplay::setColumnWidth() {
-   charsPerColumn = -1;
-   for (auto o : allOptions) {
-        int len = o.length();
-        if (len > charsPerColumn)
-            charsPerColumn = len;
-   }
-}
-
-void MenuDisplay::setColumnWidth(int newCharsPerColumn) {
-    if (newCharsPerColumn < 1) {
-        setColumnWidth();
-        return;
-    }
-    charsPerColumn = newCharsPerColumn;
-}
-
 void MenuDisplay::setHeight(int newHeight) {
-    int yPadding = LETTER_HEIGHT;
-    int useableHeight = newHeight - yPadding;
-    height = useableHeight - (useableHeight % LETTER_HEIGHT) + yPadding;
+    height = newHeight;
+
+    int defaultPadding = LETTER_HEIGHT;
+    yPadding = defaultPadding + ((height % defaultPadding) / 2);
+    int useableHeight = height - (yPadding * 2);
     maxRows = useableHeight / LETTER_HEIGHT;
 }
 
 void MenuDisplay::setWidth(int newWidth) {
-    int xPadding = LETTER_WIDTH * 2;
-    int useableWidth = newWidth - xPadding;
-    width = useableWidth - (useableWidth % LETTER_WIDTH) + xPadding;
-    maxColumns = useableWidth / ((charsPerColumn + 2) * LETTER_WIDTH);
+    width = newWidth;
+
+    int defaultPadding = LETTER_WIDTH;
+    xPadding = defaultPadding + ((width % defaultPadding) / 2);
+    int useableWidth = width - (xPadding * 2);
+    int whitespacePerColumn = 2 * LETTER_WIDTH;
+    int letterSpacePerColumn = (useableWidth / maxColumns) - whitespacePerColumn;
+    charsPerColumn = letterSpacePerColumn / LETTER_WIDTH;
 }
 
 void MenuDisplay::setActive(bool a) {

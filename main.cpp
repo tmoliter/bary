@@ -60,7 +60,7 @@ int main(int argc, char* args[]) {
     ProfileData p;
 
     RealThing::showAllLines();
-    MenuDisplay* men = new MenuDisplay({"blahp", "bitch", "pitch", "bloop", "ploot", "plopt", "plimp","poopi","poppo","plopt", "plimp","poopi","poppo"}, Point(40, 50), 4 * LETTER_HEIGHT, 20 * LETTER_WIDTH, 5);
+    MenuDisplay* men = new MenuDisplay({"Mung Bean Juice", "Dollars", "Other Stuff", "Ping Pong Paddle", "Gong", "Who Knows", "Some Garbage","Key to My Butt","Something Else","Poop", "Dog Toy","Bundle of Sticks","Uncle John's Wig"}, Point(64, 48), 60, 340, 2);
     UIRenderer::addMenuDisplay(men);
     
     while (true){
