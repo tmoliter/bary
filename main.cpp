@@ -52,15 +52,19 @@ int main(int argc, char* args[]) {
 
     gameState = GameState::FieldFree;
 
-    // if (fullMapPath == string(BASE_PATH) + "maps/map2.txt")
-    //     eventMap::load_events();
+    if (fullMapPath == string(BASE_PATH) + "maps/map2.txt")
+        eventMap::load_events();
 
     Input in;
     FpsTimer t;
     ProfileData p;
 
     RealThing::showAllLines();
-    MenuDisplay* men = new MenuDisplay({"Mung Bean Juice", "Dollars", "Other Stuff", "Ping Pong Paddle", "Gong", "Who Knows", "Some Garbage","Key to My Butt","Something Else","Poop", "Dog Toy","Bundle of Sticks","Uncle John's Wig"}, Point(64, 48), 60, 340, 2);
+
+    /* MENU TESTING*/
+    MenuDisplay* men = new MenuDisplay({"Mung Bean Juice", "Dollars", "Other Stuff", "Ping Pong Paddle", "Gong", "Who Knows", "Some Garbage","Key to My Butt","Something Else","Poop", "Dog Toy","Bundle of Sticks","Uncle John's Wig"}, Point(64, 100), 340, 60, 2);
+    men->addBox("pinkbox", {0, 0, 340, 120});
+    men->addHeader("pinkinventoryheader", {0, 0, 340, 40});
     UIRenderer::addMenuDisplay(men);
     
     while (true){
@@ -73,9 +77,10 @@ int main(int argc, char* args[]) {
         if (keysDown.quit)
             break;
         
+        /* NORMAL LOOP */
         // if(MapBuilder::mapBuilder)
         //     MapBuilder::mapBuilder->meat(keysDown);
-        t.timeElapsed(&p.c);
+        // t.timeElapsed(&p.c);
         // switch(gameState) {
         //     case (GameState::FieldUI):
         //         Event::meat(keysDown);
@@ -83,9 +88,11 @@ int main(int argc, char* args[]) {
         //     case (GameState::FieldFree):
         //     default:
         //         Thing::meatThings(keysDown);
-                t.timeElapsed(&p.d);
+                // t.timeElapsed(&p.d);
         //         break;
         // }
+
+        /* MENU TESTING */
         Direction d = Direction::none;
         if(keysDown.debug_up)
             d = Direction::up;

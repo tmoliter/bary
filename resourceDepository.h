@@ -39,4 +39,15 @@ namespace resourceDepository {
     void releaseChunk(string name);
 };
 
+struct Image {
+    Image(string textureName, SDL_Rect sR) : sourceRect(sR) {
+        texture = resourceDepository::getTexture(textureName);
+    }
+    ~Image() {
+        resourceDepository::releaseTexture(texture->name);
+    }
+    Texture* texture;
+    SDL_Rect sourceRect;
+};
+
 #endif

@@ -1,16 +1,19 @@
 #include "MenuDisplay.h"
 
-MenuDisplay::MenuDisplay(vector<string> o, Point p, int h, int w, int mC, bool a) : allOptions(o), position(p), maxColumns(mC), currentSelection(0), active(a) {
+MenuDisplay::MenuDisplay(vector<string> o, Point p, int w, int h, int mC, bool a) : 
+    allOptions(o), 
+    position(p), 
+    maxColumns(mC), 
+    currentSelection(0), 
+    active(a) 
+{
     if (!font) {
         SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
         font = SDL_CreateTextureFromSurface(renderer, temp);
         SDL_FreeSurface(temp);
     }
-    if (!defaultSpeechBubble) {
-        SDL_Surface* temp = IMG_Load("assets/speechBubbles/defaultSpeechBubble.png");
-        defaultSpeechBubble = SDL_CreateTextureFromSurface(renderer, temp);
-        SDL_FreeSurface(temp);
-    }
+    box = nullptr;
+    header = nullptr;
     // These need to happen first
     setHeight(h);
     setWidth(w);
@@ -26,6 +29,8 @@ MenuDisplay::MenuDisplay(vector<string> o, Point p, int h, int w, int mC, bool a
 
 MenuDisplay::~MenuDisplay() {
     clearLists();
+    delete box;
+    delete header;
 }
 
 void MenuDisplay::buildPages() {
@@ -106,18 +111,37 @@ int MenuDisplay::getCurrentPage() {
 }
 
 void MenuDisplay::render() {
-    SDL_Rect bubbleRenderRect = { position.x, position.y, width, height };
-    SDL_RenderCopy(renderer, defaultSpeechBubble, &bubbleSourceRect, &bubbleRenderRect);
+    renderHeader();
+    renderBox();
+    for (auto c : columns)
+        c->render();
+    renderArrow();
+    renderPageIndicators();
+}
 
+void MenuDisplay::renderHeader() {
+    if (header == nullptr)
+        return;
+    SDL_Rect renderRect = { position.x, position.y - header->sourceRect.h, header->sourceRect.w, header->sourceRect.h };
+    SDL_RenderCopy(renderer, header->texture->texture, &header->sourceRect, &renderRect);
+}
+
+void MenuDisplay::renderBox() {
+    if (box == nullptr)
+        return;
+    SDL_Rect renderRect = { position.x, position.y, width, height };
+    SDL_RenderCopy(renderer, box->texture->texture, &box->sourceRect, &renderRect);
+}
+
+void MenuDisplay::renderArrow() {
     int currentColumn = currentSelection % maxColumns;
     int xOffset = ((currentColumn * (charsPerColumn + 2)) + 1) * LETTER_WIDTH;
     int yOffset = ((currentSelection / maxColumns) % maxRows) * LETTER_HEIGHT;
     SDL_Rect arrowRenderRect = { position.x + xPadding + xOffset, position.y + yPadding + yOffset, LETTER_WIDTH, LETTER_HEIGHT };
     SDL_RenderCopy(renderer, font, &rightArrow, &arrowRenderRect);
+}
 
-    for (auto c : columns)
-        c->render();
-
+void MenuDisplay::renderPageIndicators() {
     if (frameCount % 30 < 15 || paginatedOptions.size() < 2)
         return;
     int halfwayX = position.x + (width/ 2) - (LETTER_WIDTH / 2);
@@ -151,6 +175,15 @@ void MenuDisplay::setWidth(int newWidth) {
     charsPerColumn = letterSpacePerColumn / LETTER_WIDTH;
 }
 
+void MenuDisplay::addBox(string textureName, SDL_Rect sourcRect) {
+    box = new Image(textureName, sourcRect);
+}
+
+void MenuDisplay::addHeader(string textureName, SDL_Rect sourcRect) {
+    header = new Image(textureName, sourcRect);
+}
+
+// GameState should be managed higher up somewhere
 void MenuDisplay::setActive(bool a) {
     if (a)
         gameState = GameState::FieldUI;

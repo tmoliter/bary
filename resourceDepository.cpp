@@ -29,6 +29,10 @@ Texture* resourceDepository::initializeTexture(string name) {
         return new Texture("editorCross", "assets/debug/9x9cross.png");
     if (name == "singlepixel")
         return new Texture("singlepixel", "assets/debug/onePixel.png");
+    if (name == "pinkbox")
+        return new Texture("pinkbox", "assets/menus/blankPink.png");
+    if (name == "pinkinventoryheader")
+        return new Texture("pinkbox", "assets/menus/pinkInventoryHeader.png");
     return nullptr;
 }
 
