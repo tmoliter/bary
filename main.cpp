@@ -30,7 +30,7 @@ int main(int argc, char* args[]) {
         exit(-1);
     }
 
-    jukebox::playSong("Boss Battle", true);
+    // jukebox::playSong("Boss Battle", true);
 
     SDL_Window* window = SDL_CreateWindow(
             "Bary",
@@ -62,10 +62,8 @@ int main(int argc, char* args[]) {
     RealThing::showAllLines();
 
     /* MENU TESTING*/
-    MenuDisplay* men = new MenuDisplay({"Mung Bean Juice", "Dollars", "Other Stuff", "Ping Pong Paddle", "Gong", "Who Knows", "Some Garbage","Key to My Butt","Something Else","Poop", "Dog Toy","Bundle of Sticks","Uncle John's Wig"}, Point(64, 100), 340, 60, 2);
-    men->addBox("pinkbox", {0, 0, 340, 120});
-    men->addHeader("pinkinventoryheader", {0, 0, 340, 40});
-    UIRenderer::addMenuDisplay(men);
+    MenuDisplay* men = nullptr;
+    /* END MENU TESTING*/
     
     while (true){
         t.startFrame();
@@ -76,33 +74,42 @@ int main(int argc, char* args[]) {
         t.timeElapsed(&p.b);
         if (keysDown.quit)
             break;
-        
-        /* NORMAL LOOP */
-        // if(MapBuilder::mapBuilder)
-        //     MapBuilder::mapBuilder->meat(keysDown);
-        // t.timeElapsed(&p.c);
-        // switch(gameState) {
-        //     case (GameState::FieldUI):
-        //         Event::meat(keysDown);
-        //         break;
-        //     case (GameState::FieldFree):
-        //     default:
-        //         Thing::meatThings(keysDown);
-                // t.timeElapsed(&p.d);
-        //         break;
-        // }
 
         /* MENU TESTING */
-        Direction d = Direction::none;
-        if(keysDown.debug_up)
-            d = Direction::up;
-        if(keysDown.debug_down)
-            d = Direction::down;
-        if(keysDown.debug_left)
-            d = Direction::left;
-        if(keysDown.debug_right)
-            d = Direction::right;
-        men->moveSelection(d);
+        if (keysDown.debug_1) {
+            if (men == nullptr) {
+                men = new MenuDisplay({"Mung Bean Juice", "Dollars", "Other Stuff", "Ping Pong Paddle", "Gong", "Who Knows", "Some Garbage","Key to My Butt","Something Else","Poop", "Dog Toy","Bundle of Sticks","Uncle John's Wig"}, Point(64, 100), 340, 60, 2);
+                men->addBox("pinkbox", {0, 0, 340, 120});
+                men->addHeader("pinkinventoryheader", {0, 0, 340, 40});
+                UIRenderer::addMenuDisplay(men);
+            } else {
+                UIRenderer::removeMenuDisplay(men);
+                men = nullptr;
+            }
+        }
+        if (men != nullptr) {
+            men->processInput(keysDown);
+        }
+        /* END MENU TESTING */
+
+        
+        /* NORMAL LOOP (DISABLE FOR MENU TESTING) */
+        if (men == nullptr) {
+            if(MapBuilder::mapBuilder)
+                MapBuilder::mapBuilder->meat(keysDown);
+            t.timeElapsed(&p.c);
+            switch(gameState) {
+                case (GameState::FieldUI):
+                    Event::meat(keysDown);
+                    break;
+                case (GameState::FieldFree):
+                default:
+                    Thing::meatThings(keysDown);
+                    t.timeElapsed(&p.d);
+                    break;
+            }
+        }
+        /* END NORMAL LOOP DISABLED FOR MENU TESTING */
 
         Camera::c->render();
 

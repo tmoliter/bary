@@ -13,7 +13,7 @@ Song* jukebox::initializeSong(string name) {
     if (name == "Boss Battle") {
         return new Song(
             "Boss Battle",
-            "assets/music/boss-battle.mp3XXX",
+            "assets/music/boss-battle.mp3",
             11.576
         );
     }

@@ -18,7 +18,7 @@ MenuDisplay::MenuDisplay(vector<string> o, Point p, int w, int h, int mC, bool a
     setHeight(h);
     setWidth(w);
 
-    // This might get called again in a "updateOptions" fucntion later
+    // This might get called again in a "updateOptions" function later
     buildPages();
 
     // This gets called whenever we change pages as well
@@ -67,6 +67,19 @@ void MenuDisplay::clearLists() {
     for (auto c : columns)
         delete c;
     columns.clear();
+}
+
+void MenuDisplay::processInput(KeyPresses keysDown) {
+    Direction d = Direction::none;
+    if(keysDown.debug_up)
+        d = Direction::up;
+    if(keysDown.debug_down)
+        d = Direction::down;
+    if(keysDown.debug_left)
+        d = Direction::left;
+    if(keysDown.debug_right)
+        d = Direction::right;
+    moveSelection(d);
 }
 
 void MenuDisplay::moveSelection(Direction direction) {

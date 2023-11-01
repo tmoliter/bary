@@ -70,6 +70,7 @@ void FieldPlayer::meat(KeyPresses keysDown) {
 
     Ray ray;
     getRay(ray);
+    // This can totally be hoisted if it makes more sense, but maybe not?
     RealThing::checkAllTriggers(ray, sprite->d.layer);
     if(keysDown.ok && gameState == GameState::FieldFree) {
         RealThing::checkAllInteractables(ray, sprite->d.layer);
@@ -85,11 +86,14 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     if (keysDown.debug_down)
         walk->changeSpeed(true);
 
+    // There's no real reason that any of this should live in field player. In face,
+    // Field player could only be responsible for literally moving around and
+    // not running into things
     if (keysDown.menu1)
         Camera::fadeIn(3);
     if (keysDown.menu2)
         Camera::fadeOut(3);
-    /* END DEBUG MODE CONTROLS */        
+    /* END DEBUG MODE CONTROLS */
 };
 
 int FieldPlayer::parse_player_datum(ifstream &mapData, FieldPlayerData &newTD) {

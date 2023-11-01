@@ -118,26 +118,23 @@ int EventEditor::changeState(EventEditState nextState) {
 void EventEditor::updateDisplay() {
     string displayText, prefix;
     int maxLine, size, magnitude, remainder;
+    text->clearText();
     switch (editState) {
         case EventEditState::selectCollidableType:
-            text->clearText();
             displayText = "Select collidable type:` " + 
                 string(collidableType == CollidableType::interactable ? "interactable" : "trigger");
             break;
         case EventEditState::chooseCollidable:
-            text->clearText();
             displayText =  "Enter collidable name` " + input + "`  List:";
             for (auto name : availableCollidables) {
                 displayText = displayText + "`  " + eventMap::namePlusEvent(parent->name, name, collidableType);
             }
             break;
         case EventEditState::selectEventType:
-            text->clearText();
             displayText =  "Select event type for collidable " + collidable.first + 
                 string(eventType == EventType::predefined ? + ":` predefined" : ":` simple message" );
             break;
         case EventEditState::choosePredefined:
-            text->clearText();
             displayText =  "Enter event name from list for collidable '" + 
                 collidable.first + "'` "
                 + input + "`  List:";
@@ -146,19 +143,15 @@ void EventEditor::updateDisplay() {
                     displayText = displayText + "`  " + name;
             break;
         case EventEditState::predefinedSuccess:
-            text->clearText();
             displayText =  "Successfully added event '" + eventName + "' to collidable '" + collidable.first + "'!";
             break;
         case EventEditState::enterMessage:
-            text->clearText();
             displayText =  "Enter message for collidable '" + collidable.first + "':` " + input;
             break;
         case EventEditState::enterSoundName:
-            text->clearText();
             displayText =  "Enter sound path or press return to continue for collidable '" + collidable.first + "':` " + input;
             break;
         case EventEditState::editBox:
-            text->clearText();
             switch (boxState) {
                 case BoxEditState::resize:
                     displayText = "Resize phrase box";
@@ -172,7 +165,6 @@ void EventEditor::updateDisplay() {
             }
             break;
         case EventEditState::messageSuccess:
-            text->clearText();
             displayText =  "Successfully added Simple Message to collidable '" + collidable.first + "'!";
             break;
         default:

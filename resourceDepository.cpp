@@ -32,7 +32,7 @@ Texture* resourceDepository::initializeTexture(string name) {
     if (name == "pinkbox")
         return new Texture("pinkbox", "assets/menus/blankPink.png");
     if (name == "pinkinventoryheader")
-        return new Texture("pinkbox", "assets/menus/pinkInventoryHeader.png");
+        return new Texture("pinkboxheader", "assets/menus/pinkInventoryHeader.png");
     return nullptr;
 }
 

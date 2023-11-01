@@ -38,6 +38,7 @@ struct MenuDisplay {
     void createLists();
     void clearLists();
 
+    void processInput(KeyPresses keysDown);
     void moveSelection(Direction direction);
     int getCurrentPage();
     string getCurrentSelection();
