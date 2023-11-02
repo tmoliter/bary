@@ -14,10 +14,12 @@ class Text {
         string text;
         int lineLength;
 
+        Text() : text(""), lineLength(-1) {};
         Text(Point p, string t, int lL = -1);
 
         void render();
         void setText(string newCopy);
+        void setLineLengthFromPixelWidth(int pixelWidth);
         void clearText();
         void setPos(Point p);
 

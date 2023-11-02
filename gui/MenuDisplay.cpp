@@ -1,11 +1,12 @@
 #include "MenuDisplay.h"
 
-MenuDisplay::MenuDisplay(vector<string> o, Point p, int w, int h, int mC, bool a) : 
+MenuDisplay::MenuDisplay(vector<Option> o, Point p, int w, int h, int mC, bool a) : 
     allOptions(o), 
     position(p), 
     maxColumns(mC), 
     currentSelection(0), 
-    active(a) 
+    active(a)
+    // flavorText(Text(Point(),""))./bar
 {
     if (!font) {
         SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
@@ -14,6 +15,7 @@ MenuDisplay::MenuDisplay(vector<string> o, Point p, int w, int h, int mC, bool a
     }
     box = nullptr;
     header = nullptr;
+    flavorBox = nullptr;
     // These need to happen first
     setHeight(h);
     setWidth(w);
@@ -24,6 +26,9 @@ MenuDisplay::MenuDisplay(vector<string> o, Point p, int w, int h, int mC, bool a
     // This gets called whenever we change pages as well
     createLists();
 
+    flavorText.setPos(Point(position.x + xPadding, position.y + height + yPadding));
+    flavorText.setText(allOptions[0].flavorText);
+    flavorText.setLineLengthFromPixelWidth(width - (xPadding * 2));
     setActive(a);
 }
 
@@ -47,7 +52,7 @@ void MenuDisplay::buildPages() {
 void MenuDisplay::createLists() {
     clearLists();
     int i,j;
-    vector<string> options = paginatedOptions[getCurrentPage()];
+    vector<Option> options = paginatedOptions[getCurrentPage()];
 
     for (i = 0; i < options.size() && i < maxColumns; i++) {
         string tmp = "";
@@ -55,7 +60,7 @@ void MenuDisplay::createLists() {
         int columnOffset = i * charsPerColumn * LETTER_WIDTH;
         j = i;
         for (j = i; j < options.size(); j += maxColumns) {
-            string option = options[j];
+            string option = options[j].selectionText;
             tmp = tmp + option.substr(0, charsPerColumn) + "`";
         }
         columns.push_back(new Text(Point(position.x + xPadding + totalArrowPadding + columnOffset, position.y + yPadding), tmp));
@@ -110,11 +115,12 @@ void MenuDisplay::moveSelection(Direction direction) {
         case Direction::none:
             return;
     }
+    flavorText.setText(getCurrentSelection().flavorText);
     if (originPage != getCurrentPage())
         createLists();
 }
 
-string MenuDisplay::getCurrentSelection() {
+Option MenuDisplay::getCurrentSelection() {
     return allOptions[currentSelection];
 }
 
@@ -130,6 +136,7 @@ void MenuDisplay::render() {
         c->render();
     renderArrow();
     renderPageIndicators();
+    renderFlavorBox();
 }
 
 void MenuDisplay::renderHeader() {
@@ -144,6 +151,14 @@ void MenuDisplay::renderBox() {
         return;
     SDL_Rect renderRect = { position.x, position.y, width, height };
     SDL_RenderCopy(renderer, box->texture->texture, &box->sourceRect, &renderRect);
+}
+
+void MenuDisplay::renderFlavorBox() {
+    if (flavorBox == nullptr || box == nullptr || flavorText.text == "")
+        return;
+    SDL_Rect renderRect = { position.x, position.y + height, flavorBox->sourceRect.w, flavorBox->sourceRect.h };
+    SDL_RenderCopy(renderer, flavorBox->texture->texture, &flavorBox->sourceRect, &renderRect);
+    flavorText.render();
 }
 
 void MenuDisplay::renderArrow() {
@@ -194,6 +209,10 @@ void MenuDisplay::addBox(string textureName, SDL_Rect sourcRect) {
 
 void MenuDisplay::addHeader(string textureName, SDL_Rect sourcRect) {
     header = new Image(textureName, sourcRect);
+}
+
+void MenuDisplay::addFlavorBox(string textureName, SDL_Rect sourcRect) {
+    flavorBox = new Image(textureName, sourcRect);
 }
 
 // GameState should be managed higher up somewhere
