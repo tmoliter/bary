@@ -6,7 +6,6 @@ MenuDisplay::MenuDisplay(vector<Option> o, Point p, int w, int h, int mC, bool a
     maxColumns(mC), 
     currentSelection(0), 
     active(a)
-    // flavorText(Text(Point(),""))./bar
 {
     if (!font) {
         SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
