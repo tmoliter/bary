@@ -7,6 +7,7 @@
 #include "gui/Text.h"
 #include "gui/UIRenderer.h"
 #include "gui/Line.h"
+#include "gui/MenuDisplay.h"
 #include "events/eventMap.h"
 #include "events/SimpleMessage.h"
 
@@ -47,6 +48,8 @@ class EventEditor {
         RealThing* parent;
         pair<string, EventCollidable*> collidable;
         Phrase* previewPhrase;
+        
+        MenuDisplay* menu;
 
         vector<string> availableCollidables;
 

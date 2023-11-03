@@ -47,6 +47,10 @@ void Text::setText(string t) {
     text = t;
 }
 
+void Text::setLineLengthFromPixelWidth(int pixelWidth) {
+    lineLength = pixelWidth / LETTER_WIDTH;
+}
+
 void Text::clearText() {
     text.clear();
 }

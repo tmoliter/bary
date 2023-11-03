@@ -10,7 +10,7 @@ Sprite::Sprite (Point &pos, string &tN, SpriteData sd) :
     active(false) {
     id = currentID++;
     sprites[id] = this;
-    texture = resourceDepository::getTexture(sd.textureName);
+    texture = resourceDepository::getTexture(sd.textureName)->texture;
     SDL_QueryTexture(texture, NULL, NULL, &sheetWidth, &sheetHeight);
     d.width = sd.width > 0 ? sd.width : sheetWidth;
     d.height = sd.height > 0 ? sd.height : sheetHeight;

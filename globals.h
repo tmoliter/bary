@@ -28,6 +28,8 @@ enum class GameState {
 };
 inline GameState gameState;
 
+// These need their own namespace and ways of using other fonts/bubbles
 inline static SDL_Texture *font = nullptr;
+static inline SDL_Texture *defaultSpeechBubble = nullptr;
 
 #endif

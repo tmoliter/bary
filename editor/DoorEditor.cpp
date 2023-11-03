@@ -157,8 +157,8 @@ void DoorEditor::handleTextInput(KeyPresses keysDown) {
         input.pop_back();
         updateText();
     }
-    if (keysDown.start && SpriteEditor::checkPath(input)) {
-        spriteEditor = new SpriteEditor(door->AddRawSprite("./assets/" + input));
+    if (keysDown.start) {
+        spriteEditor = new SpriteEditor(door->AddRawSprite(input));
         spriteEditor->snapCamera = true;
         Sprite* s = spriteEditor->sprite;
         door->highlightSprite(s);

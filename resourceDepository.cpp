@@ -29,6 +29,12 @@ Texture* resourceDepository::initializeTexture(string name) {
         return new Texture("editorCross", "assets/debug/9x9cross.png");
     if (name == "singlepixel")
         return new Texture("singlepixel", "assets/debug/onePixel.png");
+    if (name == "pinkbox")
+        return new Texture("pinkbox", "assets/menus/blankPink.png");
+    if (name == "pinkinventoryheader")
+        return new Texture("pinkboxheader", "assets/menus/pinkInventoryHeader.png");
+    if (name == "pinkinventoryfooter")
+        return new Texture("pinkboxfooter", "assets/menus/pinkInventoryFooter.png");
     return nullptr;
 }
 
@@ -38,14 +44,14 @@ Sfx* resourceDepository::initializeSfx(string name) {
     return nullptr;
 }
 
-SDL_Texture* resourceDepository::getTexture(string name) {
+Texture* resourceDepository::getTexture(string name) {
     if(!textures.count(name)) {
         textures[name].second = initializeTexture(name);
         textures[name].first = 1;
     } else {
         textures[name].first++;
     }
-    return textures[name].second->texture;
+    return textures[name].second;
 }
 
 void resourceDepository::releaseTexture(string name) {

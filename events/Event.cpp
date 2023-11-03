@@ -1,4 +1,4 @@
-  #include "events/Event.h"
+  #include "Event.h"
 
 Event::Event() : references(0) {
     stage = EventStage::pending;
