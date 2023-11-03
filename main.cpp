@@ -33,11 +33,11 @@ int main(int argc, char* args[]) {
     // jukebox::playSong("Boss Battle", true);
 
     SDL_Window* window = SDL_CreateWindow(
-            "Bary",
-            SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-            fullscreen_mode ? 0 : SCREEN_WIDTH, fullscreen_mode ? 0 :SCREEN_HEIGHT,
-            fullscreen_mode ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_SHOWN
-            );
+        "Bary",
+        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+        fullscreen_mode ? 0 : SCREEN_WIDTH, fullscreen_mode ? 0 :SCREEN_HEIGHT,
+        fullscreen_mode ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_SHOWN
+    );
 
     renderer = SDL_CreateRenderer(window, -1, 0);
     if (fullscreen_mode) {
