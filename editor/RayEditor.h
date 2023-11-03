@@ -32,7 +32,7 @@ class RayEditor {
         Text *text;
 
         RealThing *parent;
-        Thing *focus, *oldFocus;
+        RealThing *focus, *oldFocus;
         Collidable* selected;
 
         RayEditState editState, cameraPrevState;

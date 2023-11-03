@@ -88,7 +88,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
 
     if (state == EditorState::freeMove) {
         if (keysDown.ok) {
-            vector<Thing*> collisions = Thing::findThingsByPoint(dotThing->position);
+            vector<RealThing*> collisions = RealThing::findThingsByPoint(dotThing->position);
             for (auto t : collisions) {
                 if (t != dotThing) {
                     RealThing* match = dynamic_cast<RealThing*>(t);

@@ -8,6 +8,7 @@
 #include <string>
 #include "globals.h"
 #include "utils.h"
+#include "./things/RealThing.h"
 #include "./things/GhostFocus.h"
 #include "./components/Sprite.h"
 
@@ -31,7 +32,7 @@ class Camera {
         SDL_Texture* bgTexture;
         int fadeStart, warpStart;
     public:
-        Thing* focus;
+        RealThing* focus;
         SDL_Renderer* renderer;
         FxStatus fadeStatus, warpStatus;
         FocusMode focusMode;
@@ -53,7 +54,7 @@ class Camera {
         scaledScreenHeight(SCREEN_HEIGHT / SCALE) {
             c = this;
         };
-        void init(Thing *f);
+        void init(RealThing *f);
 
         void setPosition();
         void render();

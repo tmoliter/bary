@@ -23,7 +23,7 @@ class SpriteEditor {
         ~SpriteEditor();
 
         Sprite *sprite;
-        Thing *focus, *oldFocus;
+        RealThing *focus, *oldFocus;
         SpriteEditState editState, cameraPrevState;
         Text *text;
 

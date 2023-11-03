@@ -8,8 +8,8 @@ SpriteEditor::SpriteEditor(Sprite *s) :
     foundSprite(false),
     snapCamera(true) {
     
-    oldFocus = Thing::things[Camera::getFocusName()];
-    focus = new Thing(Point(sprite->position), "sprite focus");
+    oldFocus = RealThing::things[Camera::getFocusName()];
+    focus = new RealThing(Point(sprite->position), "sprite focus");
     Camera::panTo(focus->name, snapCamera);
 
     text = new Text(Point(sprite->position), "");

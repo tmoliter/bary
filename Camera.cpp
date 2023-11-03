@@ -23,7 +23,7 @@ void Camera::setPosition() {
         sourceRect.y = fp.y - half_height;
 }
 
-void Camera::init(Thing *f) {
+void Camera::init(RealThing *f) {
     focus = f;
     // This is kind of a hacky way to set focus mode for the map editor
     focusMode = f->name == "EditorDot" ? FocusMode::point : FocusMode::center;
@@ -107,7 +107,7 @@ void Camera::panTo(string thingName, bool snap) {
     if (!c)
         return;
     if (snap) {
-        c->focus = Thing::things[thingName];
+        c->focus = RealThing::things[thingName];
         return;
     }
     GhostFocus::create(c->focus, thingName, c->focusMode == FocusMode::point);

@@ -3,16 +3,16 @@
 
 #include <iostream>
 #include <vector>
-#include "Thing.h"
+#include "RealThing.h"
 #include "globals.h"
 
 using namespace std;
 
-class GhostFocus : public Thing {
+class GhostFocus : public RealThing {
     public:
-        Thing* target;
-        Thing*& focus;
-        GhostFocus(Thing *&f, string targetName, bool usePos = false);
+        RealThing* target;
+        RealThing*& focus;
+        GhostFocus(RealThing *&f, string targetName, bool usePos = false);
 
         bool usePosition;
 
@@ -24,7 +24,7 @@ class GhostFocus : public Thing {
         void pan();
 
         static GhostFocus *g;
-        static int create(Thing *&f, string targetName, bool usePos = false);
+        static int create(RealThing *&f, string targetName, bool usePos = false);
 };
 
 #endif

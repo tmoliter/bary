@@ -4,23 +4,70 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include "things/Thing.h"
+#include <algorithm>
 #include "components/Sprite.h"
 #include "components/Obstruction.h"
 #include "components/Interactable.h"
 
+// dubiously from Thing.h
+#include <string>
+#include <map>
+#include <vector>
+#include <algorithm>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL.h>
+#include "../Input.h"
+#include "../globals.h"
+#include "../Ray.h"
+
 using namespace std;
 
-struct RealThingData : ThingData {
+struct RealThingData {
+    // ported from ThingData
+    string name;
+    int x;
+    int y;
+
     vector<SpriteData> spriteDataVector;
     vector<CollidableData> obstructionData;
 };
 
 // NEXT THING: COPY SIMPLE MESSAGES (or don't) AND DOORS
 
-class RealThing : public Thing {
+class RealThing {
     public:
-        RealThing(RealThingData fpD);
+        // Class Members PORTED FROM Thing.h
+        Point position;
+        Bounds bounds;
+        string name;
+        vector<RealThing*> subThings;
+
+        string rename(string newName);
+        Point getCenter();
+
+        void manuallyControl(KeyPresses keysDown);
+
+        virtual void destroy();
+
+        virtual void meat() {};
+        virtual void meat(KeyPresses keysDown) {};
+
+        // Static Members PORTED FROM Thing.h
+
+        inline static map<string, RealThing*> things;
+        inline static vector<string> thingsToDestroy;
+
+        static int parse_thing_datum(ifstream &mapData, RealThingData &newTD);
+
+        static void meatThings(KeyPresses keysDown);
+        static void destroyThings();
+        static void destroyThing(string n);
+        static void destroyAllThings();
+
+        static vector<RealThing*> findThingsByPoint(Point p);
+
+        // EXISTED BEFORE
+        RealThing(RealThingData tD);
         RealThing(Point p, string name);
         RealThing(Point p);
         RealThing(RealThing &oldThing);
@@ -70,7 +117,7 @@ class RealThing : public Thing {
         void highlightSprite(Sprite* sprite);
         void removeHighlight();
 
-        virtual Thing* copyInPlace();
+        virtual RealThing* copyInPlace();
 
         static void showAllLines();
         static void hideAllLines();

@@ -13,8 +13,8 @@ RayEditor::RayEditor(RealThing *p) :
     ray = new Ray(Point(0,0), Point(0,0));
     UIRenderer::addLine(parent->position.x, parent->position.y, ray, LineType::editing);
     
-    oldFocus = Thing::things[Camera::getFocusName()];
-    focus = new Thing(Point(parent->position.x, parent->position.y), "ray focus");
+    oldFocus = RealThing::things[Camera::getFocusName()];
+    focus = new RealThing(Point(parent->position.x, parent->position.y), "ray focus");
     Camera::panTo(focus->name, true);
 
     text = new Text(Point(LETTER_WIDTH * 2, LETTER_HEIGHT * 4), "");

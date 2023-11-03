@@ -16,7 +16,7 @@ struct Door : public RealThing {
     void close();
     void preview();
 
-    virtual Thing* copyInPlace();
+    virtual RealThing* copyInPlace();
 };
 
 #endif

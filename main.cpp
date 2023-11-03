@@ -121,7 +121,7 @@ int main(int argc, char* args[]) {
                     break;
                 case (GameState::FieldFree):
                 default:
-                    Thing::meatThings(keysDown);
+                    RealThing::meatThings(keysDown);
                     t.timeElapsed(&p.d);
                     break;
             }
@@ -136,10 +136,10 @@ int main(int argc, char* args[]) {
         t.endFrameAndWait(frameCount, p);
         SDL_SetRenderDrawColor(renderer, 0,0,0,255);
         SDL_RenderPresent(renderer);
-        Thing::destroyThings();
+        RealThing::destroyThings();
     }
     jukebox::stop();
-    Thing::destroyThings();
+    RealThing::destroyThings();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 

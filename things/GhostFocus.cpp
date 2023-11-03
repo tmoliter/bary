@@ -4,16 +4,16 @@
 
 using namespace std;
 
-GhostFocus::GhostFocus(Thing *&f, string targetName, bool usePos) : usePosition(usePos), Thing(usePos ? f->position : f->getCenter(), "GhostFocus"), focus(f) {
+GhostFocus::GhostFocus(RealThing *&f, string targetName, bool usePos) : usePosition(usePos), RealThing(usePos ? f->position : f->getCenter(), "GhostFocus"), focus(f) {
     g = this;
     focus = this;
-    target = Thing::things[targetName];
+    target = RealThing::things[targetName];
 }
 
 void GhostFocus::destroy() {
     focus = target;
     GhostFocus::g = nullptr;
-    Thing::destroy();
+    RealThing::destroy();
 }
 
 void GhostFocus::meat() {
@@ -51,7 +51,7 @@ void GhostFocus::pan() {
 
 GhostFocus* GhostFocus::g = nullptr;
 
-int GhostFocus::create(Thing *&f, string targetName, bool usePos) {
+int GhostFocus::create(RealThing *&f, string targetName, bool usePos) {
     if (!g) {
         new GhostFocus(f, targetName, usePos);
         return 1;

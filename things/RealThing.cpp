@@ -1,20 +1,27 @@
-#include <../include/SDL2/SDL_image.h>
-#include <iostream>
 #include "RealThing.h"
 
 using namespace std;
 
-RealThing::RealThing(RealThingData bD) : Thing(bD) {
-    for (auto sd : bD.spriteDataVector)
+RealThing::RealThing(RealThingData tD) : position(tD.x, tD.y) {
+    _save_name_and_save_in_map(tD.name);
+    for (auto sd : tD.spriteDataVector)
         AddSprite(sd);
-    for (auto cd : bD.obstructionData)
+    for (auto cd : tD.obstructionData)
         addObstruction(cd.rays, cd.layer);
-};
+}
 
-RealThing::RealThing(Point p) : Thing(p) {};
-RealThing::RealThing(Point p, string name) : Thing(p, name) {};
+RealThing::RealThing(Point p) : position(p.x,p.y) {
+    _save_name_and_save_in_map("AnonymousThing");
+}
+RealThing::RealThing(Point p, string name) : 
+    position(p.x,p.y),
+    name(name) {
+    _save_name_and_save_in_map(name);
+}
 
-RealThing::RealThing(RealThing &oldThing) : Thing(oldThing) {
+RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(oldThing.bounds) {
+    string n = oldThing.name;
+    _save_name_and_save_in_map(n);
     for (auto oldS : oldThing.sprites)
         sprites.push_back(new Sprite(*oldS, position, name));
     for (auto const& [layer, oldO] : oldThing.obstructions)
@@ -34,15 +41,29 @@ RealThing::~RealThing() {
         delete in;
     for (auto const& [name, tr] : triggers)
         delete tr;
+    for (auto t : subThings)
+        delete t;
+    things.erase(name); // This came before deleting subThings in original Thing.cpp, beware if bug arises
 };
 
 void RealThing::_save_name_and_save_in_map(string n) {
-    Thing::_save_name_and_save_in_map(n);
-    for (auto s : sprites)
+    int i;
+    for (i = 0; i < n.length(); i++)
+        if (isdigit(n[i]))
+            break;
+    string baseName = n.substr(0, i);
+    i = 1;
+    name = baseName;
+    while(RealThing::things.count(name)) {
+        name = baseName + to_string(i);
+        i++;
+    }
+    RealThing::things[name] = this;
+    for (auto s : sprites) // REFACTOR Sprite shouldn't have to care about this
         s->thingName = name;
 }
 
-void RealThing::calculateHeight() {
+void RealThing::calculateHeight() { // Do we need to save this to bounds and risk it being out of date? Do some code reading
     if (sprites.size() == 1) {
         Sprite* sprite = sprites.back();
         bounds.right = sprite->d.width + sprite->d.xOffset;
@@ -295,8 +316,6 @@ vector<string> RealThing::findAndShowTriggerLines(string beginning) {
     return matches;
 }
 
-
-
 void RealThing::highlightSprite(Sprite* sprite) {
     for (auto s : sprites) {
         if (s != sprite)
@@ -311,57 +330,132 @@ void RealThing::removeHighlight() {
         s->alpha = 255;
 }
 
-Thing* RealThing::copyInPlace() {
+RealThing* RealThing::copyInPlace() {
     return new RealThing(*this);
+}
+
+// Ported Over from Thing.cpp
+string RealThing::rename(string newName) {
+    RealThing::things.erase(name);
+    _save_name_and_save_in_map(newName);
+    return this->name;
+}
+
+Point RealThing::getCenter() {
+    return Point(((2 * position.x) + bounds.right + bounds.left) / 2, ((2 * position.y) + bounds.bottom + bounds.top) / 2);
+}
+
+void RealThing::manuallyControl(KeyPresses keysDown) {
+    if (keysDown.up) 
+        position.y-=3;
+    if (keysDown.down)
+        position.y+=3;
+    if (keysDown.left)
+        position.x-=3;
+    if (keysDown.right)
+        position.x+=3;
+    if (keysDown.debug_up) 
+        position.y--;
+    if (keysDown.debug_down)
+        position.y++;
+    if (keysDown.debug_left)
+        position.x--;
+    if (keysDown.debug_right)
+        position.x++;
+    for (auto t : subThings)
+        t->manuallyControl(keysDown);
+}
+
+
+void RealThing::destroy() {
+    RealThing::destroyThing(name);
+}
+
+// STATIC PORTED OVER FROM Thing.cpp
+
+int RealThing::parse_thing_datum(ifstream &mapData, RealThingData &newTD) {
+    mapData.get();
+    utils::parse_strings(vector <string*> { &newTD.name }, mapData);
+    utils::parse_ints(vector <int*> { &newTD.x, &newTD.y }, mapData);
+    return 1;
+}
+
+void RealThing::meatThings(KeyPresses keysDown) {
+    for (auto const& [id, thing] : RealThing::things){
+        thing->meat(keysDown);
+        thing->meat();
+    }
+}
+
+void RealThing::destroyThings() {
+    for (auto killMe : thingsToDestroy) {
+        RealThing* thing = RealThing::things[killMe];
+        delete thing;
+    }
+    thingsToDestroy.clear();
+}
+
+void RealThing::destroyAllThings() {
+   map<string, RealThing*>::iterator itr = RealThing::things.begin();
+   while (itr != RealThing::things.end()) {
+        delete itr->second;
+        itr = RealThing::things.erase(itr);
+   }
+}
+
+void RealThing::destroyThing(string n) {
+    thingsToDestroy.push_back(n);
+}
+
+vector<RealThing*> RealThing::findThingsByPoint(Point p) {
+    vector<RealThing*> matches;
+    for (auto const& [id, thing] : RealThing::things) {
+        if (pointIsInside(p, thing->position, thing->bounds))
+            matches.push_back(thing);
+    }
+    return matches;
 }
 
 // STATIC
 
 void RealThing::showAllLines() {
-    for (auto const& [id, t] : Thing::things) {
-        RealThing* rt = dynamic_cast<RealThing*>(t);
-        if (rt)
-            rt->showLines();
+    for (auto const& [id, t] : RealThing::things) {
+        t->showLines();
     }
 }
 
 void RealThing::hideAllLines() {
-    for (auto const& [id, t] : Thing::things) {
-        RealThing* rt = dynamic_cast<RealThing*>(t);
-        if (rt)
-            rt->hideLines();
+    for (auto const& [id, t] : RealThing::things) {
+        t->hideLines();
     }
 }
 
 int RealThing::checkAllObstructions (Ray incoming, int incomingLayer) {
-    for (auto const& [n, t] : Thing::things) {
-        RealThing* rt = dynamic_cast<RealThing*>(t);
-        if (rt && rt->checkForCollidables(incoming, incomingLayer, CollidableType::obstruction))
+    for (auto const& [n, t] : RealThing::things) {
+        if (t->checkForCollidables(incoming, incomingLayer, CollidableType::obstruction))
             return 1;
     }
     return 0;
 }
 
 int RealThing::checkAllInteractables (Ray incoming, int incomingLayer) {
-    for (auto const& [name, t] : Thing::things) {
-        RealThing* rt = dynamic_cast<RealThing*>(t);
-        if (rt && rt->checkForCollidables(incoming, incomingLayer, CollidableType::interactable))
+    for (auto const& [name, t] : RealThing::things) {
+        if (t->checkForCollidables(incoming, incomingLayer, CollidableType::interactable))
             return 1;
     }
     return 0;
 }
 
 int RealThing::checkAllTriggers (Ray incoming, int incomingLayer) {
-    for (auto const& [name, t] : Thing::things) {
-        RealThing* rt = dynamic_cast<RealThing*>(t);
-        if (rt && rt->checkForCollidables(incoming, incomingLayer, CollidableType::trigger))
+    for (auto const& [name, t] : RealThing::things) {
+        if (t->checkForCollidables(incoming, incomingLayer, CollidableType::trigger))
             return 1;
     }
     return 0;
 }
 
 int RealThing::parse_building_datum(ifstream &mapData, RealThingData &newTD) {
-    Thing::parse_thing_datum(mapData, newTD);
+    RealThing::parse_thing_datum(mapData, newTD);
     char next = mapData.peek();
     while(next != '\n' && next != EOF) {
         if(next == 'S'){
@@ -389,5 +483,5 @@ int RealThing::parse_building_datum(ifstream &mapData, RealThingData &newTD) {
 }
 
 RealThing* RealThing::findRealThing (string name) {
-    return dynamic_cast<RealThing*>(Thing::things[name]);
+    return dynamic_cast<RealThing*>(RealThing::things[name]);
 }
