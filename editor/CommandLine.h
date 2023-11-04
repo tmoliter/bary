@@ -4,8 +4,6 @@
 #include <string>
 #include <deque>
 #include <algorithm>
-#include "globals.h"
-#include "gui/Text.h"
 #include "gui/UIRenderer.h"
 
 using namespace std;

@@ -1,14 +1,5 @@
-#include <SDL2/SDL.h>
-#include <iostream>
-#include <SDL2/SDL_image.h>
-#include <algorithm>
-#include <vector>
-#include "globals.h"
-#include "FocusTracker.h"
 #include "FpsTimer.h"
 #include "MapParser.h"
-#include "gui/UIRenderer.h"
-#include "events/eventMap.h"
 #include "jukebox.h"
 
 using namespace std;

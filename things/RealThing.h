@@ -5,20 +5,11 @@
 #include <vector>
 #include <map>
 #include <algorithm>
-#include "components/Sprite.h"
 #include "components/Obstruction.h"
 #include "components/Interactable.h"
 
 // dubiously from Thing.h
 #include <string>
-#include <map>
-#include <vector>
-#include <algorithm>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL.h>
-#include "../Input.h"
-#include "../globals.h"
-#include "../Ray.h"
 
 using namespace std;
 

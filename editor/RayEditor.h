@@ -1,12 +1,7 @@
 #ifndef RAY_EDITOR_H
 #define RAY_EDITOR_H
-#include "Input.h"
 #include "FocusTracker.h"
-#include "things/RealThing.h"
 #include "events/eventMap.h"
-#include "gui/Text.h"
-#include "gui/UIRenderer.h"
-#include "gui/Line.h"
 
 using namespace std;
 

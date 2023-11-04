@@ -1,10 +1,6 @@
 #ifndef SPRITE_EDITOR_H
 #define SPRITE_EDITOR_H
-#include "Input.h"
-#include "components/Sprite.h"
 #include "FocusTracker.h"
-#include "gui/Text.h"
-#include "gui/UIRenderer.h"
 
 using namespace std;
 

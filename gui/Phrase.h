@@ -2,10 +2,8 @@
 #define PHRASE_H
 #include <string>
 #include <queue>
-#include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <cmath>
-#include "globals.h"
 #include "Ray.h"
 #include "Timer.h"
 

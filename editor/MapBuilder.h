@@ -2,15 +2,7 @@
 #define MAP_BUILDER_H
 #include <iostream>
 #include <string>
-#include "globals.h"
-#include "things/FieldPlayer.h"
-#include "editor/SpriteEditor.h"
-#include "editor/RayEditor.h"
-#include "editor/EventEditor.h"
 #include "editor/ThingRouter.h"
-#include "editor/ThingEditor.h"
-#include "gui/Text.h"
-#include "gui/UIRenderer.h"
 
 using namespace std;
 

@@ -2,9 +2,7 @@
 #define RESOURCE_DEPOSITORY_H
 #include <map>
 #include <iostream>
-#include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
 #include "globals.h"
 
 using namespace std;

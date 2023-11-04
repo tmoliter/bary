@@ -4,8 +4,6 @@
 #include <vector>
 #include <string>
 #include "./burgEvents.h"
-#include "events/Event.h"
-#include "components/Collidable.h"
 
 using namespace std;
 
