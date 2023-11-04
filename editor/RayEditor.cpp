@@ -13,9 +13,9 @@ RayEditor::RayEditor(RealThing *p) :
     ray = new Ray(Point(0,0), Point(0,0));
     UIRenderer::addLine(parent->position.x, parent->position.y, ray, LineType::editing);
     
-    oldFocus = Thing::things[Camera::getFocusName()];
-    focus = new Thing(Point(parent->position.x, parent->position.y), "ray focus");
-    Camera::panTo(focus->name, true);
+    oldFocus = RealThing::things[FocusTracker::ftracker->getFocusName()];
+    focus = new RealThing(Point(parent->position.x, parent->position.y), "ray focus");
+    FocusTracker::panTo(focus->name, true);
 
     text = new Text(Point(LETTER_WIDTH * 2, LETTER_HEIGHT * 4), "");
     UIRenderer::addText(text);
@@ -24,7 +24,7 @@ RayEditor::RayEditor(RealThing *p) :
 RayEditor::~RayEditor() {
     UIRenderer::removeText(text);
     UIRenderer::removeLine(ray);
-    Camera::panTo(oldFocus->name, true);
+    FocusTracker::panTo(oldFocus->name, true);
     delete ray;
     delete focus;
 };

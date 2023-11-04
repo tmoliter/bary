@@ -3,7 +3,6 @@
 #include <iostream>
 #include <string>
 #include "globals.h"
-#include "Camera.h"
 #include "things/FieldPlayer.h"
 #include "editor/SpriteEditor.h"
 #include "editor/RayEditor.h"

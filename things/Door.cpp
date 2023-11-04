@@ -43,6 +43,6 @@ void Door::preview() {
     removeHighlight();
 }
 
-Thing* Door::copyInPlace() {
+RealThing* Door::copyInPlace() {
     return new Door(*this);
 }

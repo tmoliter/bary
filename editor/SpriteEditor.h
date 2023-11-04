@@ -2,7 +2,7 @@
 #define SPRITE_EDITOR_H
 #include "Input.h"
 #include "components/Sprite.h"
-#include "Camera.h"
+#include "FocusTracker.h"
 #include "gui/Text.h"
 #include "gui/UIRenderer.h"
 
@@ -23,7 +23,7 @@ class SpriteEditor {
         ~SpriteEditor();
 
         Sprite *sprite;
-        Thing *focus, *oldFocus;
+        RealThing *focus, *oldFocus;
         SpriteEditState editState, cameraPrevState;
         Text *text;
 

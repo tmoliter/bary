@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <vector>
 #include "globals.h"
-#include "Camera.h"
+#include "FocusTracker.h"
 #include "FpsTimer.h"
 #include "MapParser.h"
 #include "gui/UIRenderer.h"
@@ -64,7 +64,7 @@ int main(int argc, char* args[]) {
     /* MENU TESTING*/
     MenuDisplay* men = nullptr;
     /* END MENU TESTING*/
-    
+
     while (true){
         t.startFrame();
         t.timeElapsed(&p.a);
@@ -121,14 +121,16 @@ int main(int argc, char* args[]) {
                     break;
                 case (GameState::FieldFree):
                 default:
-                    Thing::meatThings(keysDown);
+                    RealThing::meatThings(keysDown);
                     t.timeElapsed(&p.d);
                     break;
             }
         }
         /* END NORMAL LOOP DISABLED FOR MENU TESTING */
 
+        FocusTracker::ftracker->setCameraFocalPoint();
         Camera::c->render();
+        Sprite::renderSprites(renderer, Camera::c->getSourceRectCoords());
 
         UIRenderer::render();
         t.timeElapsed(&p.e);
@@ -136,10 +138,10 @@ int main(int argc, char* args[]) {
         t.endFrameAndWait(frameCount, p);
         SDL_SetRenderDrawColor(renderer, 0,0,0,255);
         SDL_RenderPresent(renderer);
-        Thing::destroyThings();
+        RealThing::destroyThings();
     }
     jukebox::stop();
-    Thing::destroyThings();
+    RealThing::destroyThings();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 

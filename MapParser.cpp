@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Thing *parse_thing(ifstream &mapData) {
+RealThing *parse_thing(ifstream &mapData) {
     char next;
     mapData.get(next);
     if(next == 'X') {
@@ -15,9 +15,9 @@ Thing *parse_thing(ifstream &mapData) {
         return m->currentThing;
     }
     if(next == 'T') {
-        ThingData newTD;
-        Thing::parse_thing_datum(mapData, newTD);
-        return new Thing(newTD);
+        RealThingData newTD;
+        RealThing::parse_thing_datum(mapData, newTD);
+        return new RealThing(newTD);
     }
     if(next == 'P') {
         FieldPlayerData newTD;
@@ -35,10 +35,12 @@ Thing *parse_thing(ifstream &mapData) {
 void parse_map(const char *mapPath) {
     ifstream mapData;
     mapData.open(mapPath);
-    Thing* focus = parse_thing(mapData);
+    RealThing* focus = parse_thing(mapData);
     new Camera(renderer);
+    new FocusTracker();
     Camera::parse_camera(mapData);
-    Camera::c->init(focus);
+    FocusTracker::ftracker->setFocus(focus);
+    Camera::c->init();
     while (mapData.get() == '\n') {
         parse_thing(mapData);
     };

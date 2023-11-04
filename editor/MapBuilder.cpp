@@ -33,7 +33,7 @@ void MapBuilder::changeState(EditorState newState) {
         case EditorState::play:
             helpText->setText("Play");
             currentThing = new FieldPlayer(dotThing->position, "test player", "zinnia");
-            Camera::panTo(currentThing->name, true);
+            FocusTracker::panTo(currentThing->name, true);
             state = EditorState::play;
             break;
         case EditorState::commandInput:
@@ -51,7 +51,7 @@ void MapBuilder::changeState(EditorState newState) {
 
 void MapBuilder::focusDot() {
     currentThing = dotThing;
-    Camera::panTo(currentThing->name, true);
+    FocusTracker::panTo(currentThing->name, true);
     if (cross == nullptr)
         return;
     delete cross;
@@ -88,7 +88,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
 
     if (state == EditorState::freeMove) {
         if (keysDown.ok) {
-            vector<Thing*> collisions = Thing::findThingsByPoint(dotThing->position);
+            vector<RealThing*> collisions = RealThing::findThingsByPoint(dotThing->position);
             for (auto t : collisions) {
                 if (t != dotThing) {
                     RealThing* match = dynamic_cast<RealThing*>(t);
