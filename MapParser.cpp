@@ -37,8 +37,10 @@ void parse_map(const char *mapPath) {
     mapData.open(mapPath);
     RealThing* focus = parse_thing(mapData);
     new Camera(renderer);
+    new FocusTracker();
     Camera::parse_camera(mapData);
-    Camera::c->init(focus);
+    FocusTracker::ftracker->setFocus(focus);
+    Camera::c->init();
     while (mapData.get() == '\n') {
         parse_thing(mapData);
     };

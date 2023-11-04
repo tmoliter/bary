@@ -6,27 +6,26 @@ void Camera::setPosition() {
     setWarpLevel();
     int half_width =  sourceRect.w / 2;
     int half_height = sourceRect.h / 2;
-    Point fp = focusMode == FocusMode::center ? focus->getCenter() : focus->position;
 
-    if (fp.x < half_width)
+    if (focalPoint.x < half_width)
         sourceRect.x = 0;
-    else if (fp.x > bgWidth - half_width)
+    else if (focalPoint.x > bgWidth - half_width)
         sourceRect.x = bgWidth - (half_width* 2);
     else
-        sourceRect.x = fp.x - half_width;
+        sourceRect.x = focalPoint.x - half_width;
 
-    if (fp.y < half_height)
+    if (focalPoint.y < half_height)
         sourceRect.y = 0;
-    else if (fp.y > bgHeight - half_height)
+    else if (focalPoint.y > bgHeight - half_height)
         sourceRect.y = bgHeight - (half_height * 2);
     else
-        sourceRect.y = fp.y - half_height;
+        sourceRect.y = focalPoint.y - half_height;
+}
+Point Camera::getSourceRectCoords() {
+    return Point(sourceRect.x, sourceRect.y);
 }
 
-void Camera::init(RealThing *f) {
-    focus = f;
-    // This is kind of a hacky way to set focus mode for the map editor
-    focusMode = f->name == "EditorDot" ? FocusMode::point : FocusMode::center;
+void Camera::init() {
     SDL_Surface* temp = IMG_Load(path);
     bgTexture = SDL_CreateTextureFromSurface(renderer, temp);
     SDL_FreeSurface(temp);
@@ -44,7 +43,6 @@ void Camera::render() {
         return;
     SDL_RenderClear(renderer);
     SDL_RenderCopy(renderer, bgTexture, &sourceRect, &renderRect);
-    Sprite::renderSprites(renderer, Point(sourceRect.x,sourceRect.y));
     handleFade();
 }
 
@@ -103,16 +101,6 @@ int Camera::parse_camera(ifstream &mapData) {
     return 1;
 }
 
-void Camera::panTo(string thingName, bool snap) {
-    if (!c)
-        return;
-    if (snap) {
-        c->focus = RealThing::things[thingName];
-        return;
-    }
-    GhostFocus::create(c->focus, thingName, c->focusMode == FocusMode::point);
-}
-
 int Camera::fadeIn(int m) {
     if(c->fadeStatus == FxStatus::unapplied)
         return 1;
@@ -151,10 +139,6 @@ void Camera::warpOut(int m) {
     }
 }
 
-string Camera::getFocusName() {
-    return c->focus->name;
-}
-
 Point Camera::getPos() {
     return Point(c->sourceRect.x, c->sourceRect.y);
 }
@@ -169,8 +153,4 @@ Ray Camera::worldToScreen(Ray r) {
     Point renderA = worldToScreen(r.a);
     Point renderB = worldToScreen(r.b);
     return Ray(renderA, renderB);
-}
-
-void Camera::setFocusMode(FocusMode newMode) {
-    c->focusMode = newMode;
 }

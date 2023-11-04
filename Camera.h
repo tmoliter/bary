@@ -8,8 +8,6 @@
 #include <string>
 #include "globals.h"
 #include "utils.h"
-#include "./things/RealThing.h"
-#include "./things/GhostFocus.h"
 #include "./components/Sprite.h"
 
 using namespace std;
@@ -21,21 +19,15 @@ enum class FxStatus {
     unapplied
 };
 
-enum class FocusMode {
-    center,
-    point
-};
-
 class Camera {
     private:
         SDL_Rect renderRect, sourceRect;
         SDL_Texture* bgTexture;
         int fadeStart, warpStart;
     public:
-        RealThing* focus;
         SDL_Renderer* renderer;
+        Point focalPoint;
         FxStatus fadeStatus, warpStatus;
-        FocusMode focusMode;
         int 
             bgWidth, bgHeight, 
             scaledScreenWidth, scaledScreenHeight,  
@@ -45,6 +37,7 @@ class Camera {
 
         Camera(SDL_Renderer* r) : 
         renderer(r),
+        focalPoint(Point(0,0)),
         initialized(false),
         warpStatus(FxStatus::unapplied),
         fadeStatus(FxStatus::applied),
@@ -54,9 +47,10 @@ class Camera {
         scaledScreenHeight(SCREEN_HEIGHT / SCALE) {
             c = this;
         };
-        void init(RealThing *f);
+        void init();
 
         void setPosition();
+        Point getSourceRectCoords();
         void render();
 
 
@@ -67,15 +61,12 @@ class Camera {
 
         inline static Camera *c;
 
-        static void panTo(string thingName, bool snap = false);
         static int fadeIn(int m);
         static int fadeOut(int m);
         static void warpIn(int m);
         static void warpOut(int m);
 
-        static string getFocusName();
         static Point getPos();
-        static void setFocusMode(FocusMode newMode);
 
         static Point worldToScreen(Point p);
         static Ray worldToScreen(Ray r);

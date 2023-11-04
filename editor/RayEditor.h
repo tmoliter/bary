@@ -1,7 +1,7 @@
 #ifndef RAY_EDITOR_H
 #define RAY_EDITOR_H
 #include "Input.h"
-#include "Camera.h"
+#include "FocusTracker.h"
 #include "things/RealThing.h"
 #include "events/eventMap.h"
 #include "gui/Text.h"

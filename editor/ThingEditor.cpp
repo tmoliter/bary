@@ -23,7 +23,7 @@ ThingEditor::~ThingEditor() {
 }
 
 void ThingEditor::init() {
-    Camera::panTo(thing->name, true);
+    FocusTracker::panTo(thing->name, true);
     spriteEditor = nullptr;
     rayEditor = nullptr;
     eventEditor = nullptr;
@@ -53,7 +53,7 @@ void ThingEditor::changeState(ThingEditState newState) {
             break;
         case ThingEditState::move:
             helpText->setText(thing->name + ": Thing Move");
-            Camera::panTo(thing->name, true);
+            FocusTracker::panTo(thing->name, true);
             break;
         case ThingEditState::pathInput:
             CommandLine::refresh({

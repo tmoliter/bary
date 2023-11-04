@@ -8,9 +8,9 @@ SpriteEditor::SpriteEditor(Sprite *s) :
     foundSprite(false),
     snapCamera(true) {
     
-    oldFocus = RealThing::things[Camera::getFocusName()];
+    oldFocus = RealThing::things[FocusTracker::ftracker->getFocusName()];
     focus = new RealThing(Point(sprite->position), "sprite focus");
-    Camera::panTo(focus->name, snapCamera);
+    FocusTracker::panTo(focus->name, snapCamera);
 
     text = new Text(Point(sprite->position), "");
     UIRenderer::addText(text);
@@ -18,7 +18,7 @@ SpriteEditor::SpriteEditor(Sprite *s) :
 
 SpriteEditor::~SpriteEditor() {
     UIRenderer::removeText(text);
-    Camera::panTo(oldFocus->name, snapCamera);
+    FocusTracker::panTo(oldFocus->name, snapCamera);
     delete focus;
 };
 
