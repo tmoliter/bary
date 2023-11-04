@@ -1,14 +1,11 @@
 #ifndef UI_MANAGER_H
 #define UI_MANAGER_H
-#include <SDL2/SDL.h>
 #include <map>
 #include <vector>
 #include <string>
 #include "./Phrase.h"
-#include "./Text.h"
 #include "./Line.h"
 #include "./MenuDisplay.h"
-#include "../Camera.h"
 
 using namespace std;
 

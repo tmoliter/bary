@@ -4,11 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <../include/SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include "globals.h"
 #include "Ray.h"
-#include "utils.h"
 #include "resourceDepository.h"
 
 using namespace std;

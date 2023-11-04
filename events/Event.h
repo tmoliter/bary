@@ -3,9 +3,6 @@
 #include <string>
 #include <queue>
 #include <vector>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include "globals.h"
 #include "./EventNode.h"
 
 using namespace std;

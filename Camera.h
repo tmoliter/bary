@@ -1,11 +1,8 @@
 #ifndef BACKGROUND_H
 #define BACKGROUND_H
 
-#include <SDL2/SDL_image.h>
-#include <iostream>
 #include <fstream>
 #include <string>
-#include "globals.h"
 #include "./components/Sprite.h"
 
 using namespace std;

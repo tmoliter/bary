@@ -2,12 +2,7 @@
 #define EVENT_NODE_H
 #include <string>
 #include <queue>
-#include <SDL2/SDL.h>
-#include "resourceDepository.h"
-#include "globals.h"
-#include "../gui/Phrase.h"
 #include "../gui/UIRenderer.h"
-#include "Input.h"
 
 using namespace std;
 

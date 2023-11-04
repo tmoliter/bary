@@ -2,7 +2,6 @@
 #define RAY_EDITOR_H
 #include "FocusTracker.h"
 #include "events/eventMap.h"
-#include "gui/UIRenderer.h"
 
 using namespace std;
 

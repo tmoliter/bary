@@ -1,6 +1,5 @@
 #ifndef FOCUS_TRACKER_H
 #define FOCUS_TRACKER_H
-#include "Camera.h"
 #include "things/RealThing.h"
 
 enum class FocusMode {

@@ -2,7 +2,6 @@
 #define THING_EDITOR_H
 #include <iostream>
 #include <string>
-#include "globals.h"
 #include "editor/SpriteEditor.h"
 #include "editor/RayEditor.h"
 #include "editor/EventEditor.h"

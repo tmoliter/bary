@@ -4,7 +4,6 @@
 #include <iostream>
 #include "../components/Walk.h"
 #include "things/RealThing.h"
-#include "Camera.h"
 
 struct FieldPlayerData : RealThingData {
 };

@@ -1,9 +1,5 @@
-#include <algorithm>
-#include <vector>
-#include "globals.h"
 #include "FpsTimer.h"
 #include "MapParser.h"
-#include "events/eventMap.h"
 #include "jukebox.h"
 
 using namespace std;

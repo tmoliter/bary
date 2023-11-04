@@ -3,7 +3,6 @@
 #include <string>
 #include <cstring>
 #include <fstream>
-#include "./things/FieldPlayer.h"
 #include "editor/MapBuilder.h"
 
 using namespace std;

@@ -1,6 +1,4 @@
 #include "FieldPlayer.h"
-#include <../include/SDL2/SDL_image.h>
-#include <iostream>
 
 using namespace std;
 
@@ -89,10 +87,10 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     // There's no real reason that any of this should live in field player. In face,
     // Field player could only be responsible for literally moving around and
     // not running into things
-    if (keysDown.menu1)
-        Camera::fadeIn(3);
-    if (keysDown.menu2)
-        Camera::fadeOut(3);
+    // if (keysDown.menu1)
+    //     Camera::fadeIn(3);
+    // if (keysDown.menu2)
+    //     Camera::fadeOut(3);
     /* END DEBUG MODE CONTROLS */
 };
 
