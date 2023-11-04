@@ -2,8 +2,7 @@
 #define FIELD_PLAYER_H
 
 #include <iostream>
-#include "../components/Walk.h"
-#include "things/RealThing.h"
+#include "components/Walk.h"
 
 struct FieldPlayerData : RealThingData {
 };

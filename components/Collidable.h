@@ -4,7 +4,6 @@
 #include <string>
 #include <fstream>
 #include "gui/UIRenderer.h"
-#include "gui/Line.h"
 
 using namespace std;
 

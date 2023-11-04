@@ -2,7 +2,6 @@
 #define MAP_BUILDER_H
 #include <iostream>
 #include <string>
-#include "things/FieldPlayer.h"
 #include "editor/ThingRouter.h"
 
 using namespace std;

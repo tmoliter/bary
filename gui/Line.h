@@ -1,7 +1,6 @@
 #ifndef LINE_H
 #define LINE_H
 #include <vector>
-#include "globals.h"
 #include "Camera.h"
 
 using namespace std;
