@@ -5,7 +5,6 @@
 #include <vector>
 #include "Input.h"
 #include "resourceDepository.h"
-#include "Ray.h"
 #include "./Text.h"
 
 using namespace std;

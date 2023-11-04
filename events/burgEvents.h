@@ -3,7 +3,6 @@
 #include "./eventActions.h"
 #include "things/RealThing.h"
 #include "components/Interactable.h"
-#include "Ray.h"
 
 namespace burgEvents {
     Event* testEvent();

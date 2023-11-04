@@ -4,8 +4,6 @@
 #include <map>
 #include <vector>
 #include <string>
-#include <SDL2/SDL_image.h>
-#include "globals.h"
 #include "./Phrase.h"
 #include "./Text.h"
 #include "./Line.h"

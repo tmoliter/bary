@@ -2,7 +2,6 @@
 #define WALK_H
 
 #include <vector>
-#include <../include/SDL2/SDL.h>
 #include "things/RealThing.h"
 
 class Walk {

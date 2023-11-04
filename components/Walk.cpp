@@ -1,7 +1,5 @@
-#include "globals.h"
 #include "Walk.h"
-#include <SDL2/SDL.h>
-#include <iostream>
+
 
 using namespace std;
 

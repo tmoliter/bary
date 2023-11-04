@@ -4,9 +4,7 @@
 #include <cstring>
 #include <fstream>
 #include "./things/FieldPlayer.h"
-#include "./things/RealThing.h"
 #include "editor/MapBuilder.h"
-#include "./FocusTracker.h"
 
 using namespace std;
 

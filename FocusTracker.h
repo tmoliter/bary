@@ -35,12 +35,12 @@ struct FocusTracker {
     static void panTo(string thingName, bool snap) {
         if (ftracker == nullptr)
             return;
-        // if (snap) {
+        // if (!snap) {
+        //     // Do some smooth panning shit and maybe lock input or something
         //     c->focus = RealThing::things[thingName];
         //     return;
         // }
         ftracker->setFocus(RealThing::things[thingName]); // Always snap for now
-        // GhostFocus::create(c->focus, thingName, c->focusMode == FocusMode::point);
     }
 
     inline static FocusTracker *ftracker;

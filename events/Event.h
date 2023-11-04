@@ -7,7 +7,6 @@
 #include <SDL2/SDL_image.h>
 #include "globals.h"
 #include "./EventNode.h"
-#include "Input.h"
 
 using namespace std;
 

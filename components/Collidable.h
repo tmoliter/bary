@@ -3,7 +3,6 @@
 #include <vector>
 #include <string>
 #include <fstream>
-#include "Ray.h"
 #include "gui/UIRenderer.h"
 #include "gui/Line.h"
 

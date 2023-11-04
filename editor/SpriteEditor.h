@@ -4,7 +4,6 @@
 #include "components/Sprite.h"
 #include "FocusTracker.h"
 #include "gui/Text.h"
-#include "gui/UIRenderer.h"
 
 using namespace std;
 
