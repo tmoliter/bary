@@ -6,6 +6,7 @@
 // https://stackoverflow.com/questions/21616320/getting-linker-error-when-trying-to-import-lua-headers-into-c-project
 // https://tuttlem.github.io/2014/01/08/getting-started-with-lua-using-c.html
 // https://daley-paley.medium.com/super-simple-example-of-adding-lua-to-c-710730e9528a
+// https://www.youtube.com/watch?v=4l5HdmPoynw&t=759s
 // include Lua headers
 extern "C" {
     #include <lua.h>
@@ -13,50 +14,55 @@ extern "C" {
     #include <lauxlib.h>
 }
 
-
-// *** define C++ function ***
-static int MyCppFunction(lua_State* L) // Lua callable functions must be this format
-{
-    const int num = (int)lua_tonumber(L,1); // get first param from stack
-    const char* str = lua_tostring(L,2); // get second param from stack
-    std::cout << "Hello from C++!" << std::endl;
-    std::cout << "num = " << num << ", str = " << str << std::endl;
-    return 0; // how many params we're passing to Lua
-}
-
 using namespace std;
 
-int main(int argc, char* args[]) {
-
-    string cmd = "a = 7 + 11";
-    lua_State* L = luaL_newstate();
-
-    int r = luaL_dostring(L, cmd.c_str());
+/* USEFUL LUA FUNCTIONS THAT SHOULD BE MOVED ELSEWHERE */
+bool CheckLua(lua_State* L, int r) {
     if (r == LUA_OK) {
-        lua_getglobal(L, "a");
-        if (lua_isnumber(L, -1)) {
-            float a_in_cpp = (float)lua_tonumber(L, -1);
-            cout << a_in_cpp << endl;
-            cout << "SUCCESS" << endl;
-        } else {
-            cout << "NaN" << endl;
-        }
-    } else {
-        string errmsg = lua_tostring(L, -1);
-        cout << errmsg << endl;
+        return true;
     }
+    string errmsg = lua_tostring(L, -1);
+    cout << errmsg << endl;
+    return false;
+}
 
-    // lua_State* L = luaL_newstate(); // create a new lua instance
-    // luaL_openlibs(L); // give lua access to basic libraries
-    // lua_register(L, "CallMyCppFunction", MyCppFunction); // register our C++ function with Lua
-    // luaL_dofile(L, "main.lua"); // loads the Lua script
-    
-    // // *** call Lua function from C++ ***
-    // lua_getglobal(L, "MyLuaFunction"); // find the Lua function
-    // lua_pushnumber(L, 73); // push number as first param
-    // lua_pushstring(L, "From C++ to Lua"); // push string as second param
-    // lua_pcall(L, 2, 0, 0); // call the function passing 2 params
+bool GetLuaStringFromTable(lua_State *L, string key, string &value) {
+    if (lua_istable(L, -1)) {
+        lua_pushstring(L, key.c_str());
+        lua_gettable(L, -2);
+        if (!lua_isstring(L, -1)) {
+            cout << key << " is not a string" << endl;
+            return false;
+        }
+        value = lua_tostring(L, -1);
+        lua_pop(L, 1);
+        return true;
+    }
+    cout << "PROBLEM" << endl;
+    return false;
+}
 
+bool GetLuaIntFromTable(lua_State *L, string key, int &value) {
+    if (lua_istable(L, -1)) {
+        lua_pushstring(L, key.c_str());
+        lua_gettable(L, -2);
+        if (!lua_isnumber(L, -1)) {
+            cout << key << " is not a number" << endl;
+            return false;
+        }
+        value = lua_tointeger(L, -1);
+        lua_pop(L, 1);
+        return true;
+    }
+    cout << "PROBLEM" << endl;
+    return false;
+}
+/* END USEFUL LUA FUNCTIONS THAT SHOULD BE MOVED ELSEWHERE */
+
+
+SpriteData sd; // FOR LUA TESTING
+
+int main(int argc, char* args[]) {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     IMG_Init(IMG_INIT_PNG);
     SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
@@ -107,6 +113,29 @@ int main(int argc, char* args[]) {
     /* MENU TESTING*/
     MenuDisplay* men = nullptr;
     /* END MENU TESTING*/
+
+    /* LUA TESTING */
+    lua_State* L = luaL_newstate();
+    if (CheckLua(L, luaL_dofile(L, "timmytesty.lua"))) {
+        lua_getglobal(L, "sprite");
+        GetLuaIntFromTable(L, "height", sd.height);
+        GetLuaIntFromTable(L, "width", sd.width);
+        GetLuaIntFromTable(L, "layer", sd.layer);
+        GetLuaIntFromTable(L, "renderOffset", sd.renderOffset);
+        GetLuaIntFromTable(L, "xOffset", sd.xOffset);
+        GetLuaIntFromTable(L, "yOffset", sd.yOffset);
+        GetLuaStringFromTable(L, "textureName", sd.textureName);
+        lua_pop(L, 1);
+    } else {
+        string errmsg = lua_tostring(L, -1);
+        cout << errmsg << endl;
+    }
+    lua_close(L);
+    Point pos = Point(50, 50);
+    string fakeName = "fake";
+    Sprite* testysprite = new Sprite(pos, fakeName, sd);
+    testysprite->active = true;
+    /* END LUA TESTING */
 
     while (true){
         t.startFrame();
@@ -188,6 +217,7 @@ int main(int argc, char* args[]) {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 
+    delete testysprite;
     delete Camera::c;
 
     Mix_CloseAudio();
