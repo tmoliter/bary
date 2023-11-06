@@ -2,9 +2,61 @@
 #include "MapParser.h"
 #include "jukebox.h"
 
+
+// https://stackoverflow.com/questions/21616320/getting-linker-error-when-trying-to-import-lua-headers-into-c-project
+// https://tuttlem.github.io/2014/01/08/getting-started-with-lua-using-c.html
+// https://daley-paley.medium.com/super-simple-example-of-adding-lua-to-c-710730e9528a
+// include Lua headers
+extern "C" {
+    #include <lua.h>
+    #include <lualib.h>
+    #include <lauxlib.h>
+}
+
+
+// *** define C++ function ***
+static int MyCppFunction(lua_State* L) // Lua callable functions must be this format
+{
+    const int num = (int)lua_tonumber(L,1); // get first param from stack
+    const char* str = lua_tostring(L,2); // get second param from stack
+    std::cout << "Hello from C++!" << std::endl;
+    std::cout << "num = " << num << ", str = " << str << std::endl;
+    return 0; // how many params we're passing to Lua
+}
+
 using namespace std;
 
 int main(int argc, char* args[]) {
+
+    string cmd = "a = 7 + 11";
+    lua_State* L = luaL_newstate();
+
+    int r = luaL_dostring(L, cmd.c_str());
+    if (r == LUA_OK) {
+        lua_getglobal(L, "a");
+        if (lua_isnumber(L, -1)) {
+            float a_in_cpp = (float)lua_tonumber(L, -1);
+            cout << a_in_cpp << endl;
+            cout << "SUCCESS" << endl;
+        } else {
+            cout << "NaN" << endl;
+        }
+    } else {
+        string errmsg = lua_tostring(L, -1);
+        cout << errmsg << endl;
+    }
+
+    // lua_State* L = luaL_newstate(); // create a new lua instance
+    // luaL_openlibs(L); // give lua access to basic libraries
+    // lua_register(L, "CallMyCppFunction", MyCppFunction); // register our C++ function with Lua
+    // luaL_dofile(L, "main.lua"); // loads the Lua script
+    
+    // // *** call Lua function from C++ ***
+    // lua_getglobal(L, "MyLuaFunction"); // find the Lua function
+    // lua_pushnumber(L, 73); // push number as first param
+    // lua_pushstring(L, "From C++ to Lua"); // push string as second param
+    // lua_pcall(L, 2, 0, 0); // call the function passing 2 params
+
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     IMG_Init(IMG_INIT_PNG);
     SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
