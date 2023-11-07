@@ -48,8 +48,6 @@ class RealThing {
         inline static map<string, RealThing*> things;
         inline static vector<string> thingsToDestroy;
 
-        static int parse_thing_datum(ifstream &mapData, RealThingData &newTD);
-
         static void meatThings(KeyPresses keysDown);
         static void destroyThings();
         static void destroyThing(string n);
@@ -118,8 +116,8 @@ class RealThing {
         static int checkAllTriggers (Ray incoming, int incomingLayer);
 
         static RealThing *findRealThing(string name);
-        static int parse_building_datum(ifstream &mapData, RealThingData &newTD);
 
+        static void buildThingFromGlobal(string fileName);
 };
 
 #endif

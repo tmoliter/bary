@@ -131,21 +131,6 @@ void Sprite::renderSprites(SDL_Renderer *renderer, Point camPosition) {
         s->render(renderer, camPosition);
 }
 
-int Sprite::parse_sprite_datum(ifstream &mapData, SpriteData &newSD){
-    utils::parse_ints(vector<int*> { 
-        &newSD.layer,
-        &newSD.renderOffset,
-        &newSD.width,
-        &newSD.height,
-        &newSD.sourceX,
-        &newSD.sourceY,
-        &newSD.xOffset,
-        &newSD.yOffset
-    }, mapData);
-    utils::parse_strings(vector<string*> { &newSD.textureName }, mapData);
-    return 1;
-}
-
 void Sprite::highlightSprite(Sprite* sprite) {
     for (auto const& [id, s] : sprites)
         if (s != sprite)

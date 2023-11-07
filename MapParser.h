@@ -7,7 +7,6 @@
 
 using namespace std;
 
-RealThing *parse_thing(ifstream &mapData);
-void parse_map(const char *mapPath);
+void parse_map();
 
 #endif

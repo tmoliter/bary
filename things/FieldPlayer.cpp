@@ -93,8 +93,3 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     //     Camera::fadeOut(3);
     /* END DEBUG MODE CONTROLS */
 };
-
-int FieldPlayer::parse_player_datum(ifstream &mapData, FieldPlayerData &newTD) {
-    RealThing::parse_building_datum(mapData, newTD);
-    return 1;
-}
