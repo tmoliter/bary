@@ -37,12 +37,14 @@ void Camera::init() {
     initialized = true;
 }
 
-void Camera::render() {
-    setPosition();
+void Camera::renderBackground() {
     if (!initialized)
         return;
-    SDL_RenderClear(renderer);
+    setPosition();
     SDL_RenderCopy(renderer, bgTexture, &sourceRect, &renderRect);
+}
+
+void Camera::renderAfterEffects() {
     handleFade();
 }
 

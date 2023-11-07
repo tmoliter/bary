@@ -121,11 +121,13 @@ int main(int argc, char* args[]) {
             }
         }
 
+        SDL_RenderClear(renderer);
         FocusTracker::ftracker->setCameraFocalPoint();
-        Camera::c->render();
+        Camera::c->renderBackground();
         Sprite::renderSprites(renderer, Camera::c->getSourceRectCoords());
-
         UIRenderer::render();
+        Camera::c->renderAfterEffects();
+
         t.timeElapsed(&p.e);
 
         t.endFrameAndWait(frameCount, p);

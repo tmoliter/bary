@@ -16,7 +16,7 @@ MapBuilder::MapBuilder() : selectedSprite(-1) {
     helpText = new Text(Point(16, 16), "");
     UIRenderer::addText(helpText);
     
-    currentThing = dotThing = new RealThing(Point(0,0), "EditorDot");
+    currentThing = dotThing = new RealThing(Point(600,600), "EditorDot");
     dotThing->AddRawSprite("singlepixel");
     changeState(EditorState::freeMove);
 }
