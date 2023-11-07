@@ -17,8 +17,8 @@ namespace luaUtils {
     bool PushStringToTable(lua_State* L , int key , std::string value, int tableIndex = -1);
     bool PushIntToTable(lua_State* L , std::string key , int value, int tableIndex = -1);
     bool PushIntToTable(lua_State* L , int key , int value, int tableIndex = -1);
-    bool PushTableToTable(lua_State* L , std::string key , int tableIndex = -1);
-    bool PushTableToTable(lua_State* L , int key , int tableIndex = -1);
+    bool PushTableToTable(lua_State* L , std::string key , int targetTableIndex = -1);
+    bool PushTableToTable(lua_State* L , int key , int targetTableIndex = -1);
 
     void dumpstack (lua_State *L);
 }

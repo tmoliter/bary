@@ -119,7 +119,7 @@ class RealThing {
 
         static RealThing *findRealThing(string name);
 
-        static void buildThingFromGlobal(string fileName);
+        static void buildThingFromGlobal(lua_State* L);
         static vector<RealThingData> getAllThingData();
 
 };

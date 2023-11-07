@@ -1,1 +1,0 @@
-allThings = { "Sailor Shack",} 

@@ -102,23 +102,27 @@ bool luaUtils::PushIntToTable(lua_State* L , int key , int value, int tableIndex
 
 bool luaUtils::PushTableToTable(lua_State* L , std::string key , int tableIndex) {
     if (!lua_istable(L, tableIndex)) {
-      std::cout << "PROBLEM" << std::endl;
+      std::cout << "target table not table" << std::endl;
       return false;
     }
     lua_pushstring(L, key.c_str());
     lua_newtable(L);
     lua_settable(L, tableIndex - 2);
+    lua_pushstring(L, key.c_str());
+    lua_gettable(L, tableIndex - 1);
     return true;
 }
 
 bool luaUtils::PushTableToTable(lua_State* L , int key , int tableIndex) {
     if (!lua_istable(L, tableIndex)) {
-      std::cout << "PROBLEM" << std::endl;
+      std::cout << "target table not table" << std::endl;
       return false;
     }
     lua_pushinteger(L, key);
     lua_newtable(L);
     lua_settable(L, tableIndex - 2);
+    lua_pushinteger(L, key);
+    lua_gettable(L, tableIndex - 1);
     return true;
 }
 

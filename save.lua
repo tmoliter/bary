@@ -5,7 +5,7 @@ function dump(t)
       if type(o) == 'table' then
          local s = '{ '
          for k,v in pairs(o) do
-            if type(k) ~= 'number' then k = '["' .. k .. '"] = ' else k = "" end
+            if type(k) ~= 'number' then k = ' ' .. k .. ' = ' else k = "" end
             if type(v) == 'string' then v = '"' .. v .. '"' end
             s = s .. k .. getDumpString(v) .. ','
          end
@@ -14,6 +14,6 @@ function dump(t)
          return tostring(o)
       end
    end
-   io.output("test.lua")
+   io.output("savedMap.lua")
    io.write("allThings = " .. getDumpString(t))
 end
