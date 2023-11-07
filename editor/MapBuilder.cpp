@@ -145,7 +145,7 @@ void MapBuilder::save() {
     lua_State* L = luaL_newstate();
     luaL_openlibs(L);
 
-    if (CheckLua(L, luaL_dofile(L, "save.lua"))) {
+    if (CheckLua(L, luaL_dofile(L, "scripts/save.lua"))) {
         lua_getglobal(L, "dump");
         if (lua_isfunction(L, -1)) {
             lua_newtable(L);

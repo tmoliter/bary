@@ -21,7 +21,7 @@ bool luaUtils::GetLuaStringFromTable(lua_State *L, std::string key, std::string 
         lua_pop(L, 1);
         return true;
     }
-    std::cout << "PROBLEM" << std::endl;
+    std::cout << "PROBLEM : " << key << std::endl;
     return false;
 }
 
@@ -37,7 +37,23 @@ bool luaUtils::GetLuaIntFromTable(lua_State *L, std::string key, int &value, int
         lua_pop(L, 1);
         return true;
     }
-    std::cout << "PROBLEM" << std::endl;
+    std::cout << "PROBLEM : " << key << std::endl;
+    return false;
+}
+
+bool luaUtils::GetLuaBoolFromTable(lua_State *L, std::string key, bool &value, int tableIndex) {
+    if (lua_istable(L, tableIndex)) {
+        lua_pushstring(L, key.c_str());
+        lua_gettable(L, tableIndex - 1);
+        if (!lua_isboolean(L, -1)) {
+            std::cout << key << " is not a bool" << std::endl;
+            return false;
+        }
+        value = lua_toboolean(L, -1);
+        lua_pop(L, 1);
+        return true;
+    }
+    std::cout << "PROBLEM : " << key << std::endl;
     return false;
 }
 
@@ -51,14 +67,14 @@ bool luaUtils::GetTableOnStackFromTable(lua_State *L, std::string key, int table
         }
         return true;
     }
-    std::cout << "PROBLEM" << std::endl;
+    std::cout << "PROBLEM : " << key << std::endl;
     return false;
 }
 
 
 bool luaUtils::PushStringToTable(lua_State* L , std::string key , std::string value, int tableIndex) {
     if (!lua_istable(L, tableIndex)) {
-      std::cout << "PROBLEM" << std::endl;
+      std::cout << "PROBLEM : " << key << std::endl;
       return false;
     }
     lua_pushstring(L, key.c_str());
@@ -69,7 +85,7 @@ bool luaUtils::PushStringToTable(lua_State* L , std::string key , std::string va
 
 bool luaUtils::PushStringToTable(lua_State* L , int key , std::string value, int tableIndex) {
     if (!lua_istable(L, tableIndex)) {
-      std::cout << "PROBLEM" << std::endl;
+      std::cout << "PROBLEM : " << key << std::endl;
       return false;
     }
     lua_pushinteger(L, key);
@@ -80,7 +96,7 @@ bool luaUtils::PushStringToTable(lua_State* L , int key , std::string value, int
 
 bool luaUtils::PushIntToTable(lua_State* L , std::string key , int value, int tableIndex) {
     if (!lua_istable(L, tableIndex)) {
-      std::cout << "PROBLEM" << std::endl;
+      std::cout << "PROBLEM : " << key << std::endl;
       return false;
     }
     lua_pushstring(L, key.c_str());
@@ -91,7 +107,7 @@ bool luaUtils::PushIntToTable(lua_State* L , std::string key , int value, int ta
 
 bool luaUtils::PushIntToTable(lua_State* L , int key , int value, int tableIndex) {
     if (!lua_istable(L, tableIndex)) {
-      std::cout << "PROBLEM" << std::endl;
+      std::cout << "PROBLEM : " << key << std::endl;
       return false;
     }
     lua_pushinteger(L, key);

@@ -11,7 +11,7 @@ collidableType(CollidableType::interactable),
 eventType(EventType::simpleMessage),
 boxState(BoxEditState::resize) {
     parent->showInteractableLines();
-    text = new Text(Point(LETTER_WIDTH * 2, LETTER_HEIGHT * 4), "");
+    text = new Text(Point(settings.LETTER_WIDTH * 2, settings.LETTER_HEIGHT * 4), "");
     UIRenderer::addText(text);
     changeState(EventEditState::selectCollidableType);
 };
@@ -352,7 +352,7 @@ void EventEditor::editBox(KeyPresses keysDown) {
             return;
         }
         SDL_Rect &box = previewPhrase->getBox();
-        if((keysDown.up || keysDown.debug_up) && box.h >= LETTER_HEIGHT + 2) {
+        if((keysDown.up || keysDown.debug_up) && box.h >= settings.LETTER_HEIGHT + 2) {
             box.h--;
             changed = true;
         }
@@ -360,7 +360,7 @@ void EventEditor::editBox(KeyPresses keysDown) {
             box.h++;
             changed = true;
         }
-        if ((keysDown.left || keysDown.debug_left) && box.w >= LETTER_WIDTH + 2) {
+        if ((keysDown.left || keysDown.debug_left) && box.w >= settings.LETTER_WIDTH + 2) {
             box.w--;
             changed = true;
         }

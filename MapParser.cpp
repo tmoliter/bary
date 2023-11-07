@@ -12,7 +12,7 @@ void parse_map() {
     Camera::c->init();
 
     lua_State* L = luaL_newstate();
-    if (CheckLua(L, luaL_dofile(L, "savedMap.lua"))) {
+    if (CheckLua(L, luaL_dofile(L, "storage/maps/burg.lua"))) {
         lua_getglobal(L, "allThings");
         if(!lua_isnil(L, -1)) {
             lua_pushnil(L);

@@ -14,6 +14,7 @@ function dump(t)
          return tostring(o)
       end
    end
-   io.output("savedMap.lua")
+   print("Map Data Computed")
+   io.output("storage/maps/burg.lua")
    io.write("allThings = " .. getDumpString(t))
 end

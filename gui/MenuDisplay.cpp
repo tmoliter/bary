@@ -55,8 +55,8 @@ void MenuDisplay::createLists() {
 
     for (i = 0; i < options.size() && i < maxColumns; i++) {
         string tmp = "";
-        int totalArrowPadding = ((i + 1) * 2) * LETTER_WIDTH;
-        int columnOffset = i * charsPerColumn * LETTER_WIDTH;
+        int totalArrowPadding = ((i + 1) * 2) * settings.LETTER_WIDTH;
+        int columnOffset = i * charsPerColumn * settings.LETTER_WIDTH;
         j = i;
         for (j = i; j < options.size(); j += maxColumns) {
             string option = options[j].selectionText;
@@ -162,22 +162,22 @@ void MenuDisplay::renderFlavorBox() {
 
 void MenuDisplay::renderArrow() {
     int currentColumn = currentSelection % maxColumns;
-    int xOffset = ((currentColumn * (charsPerColumn + 2)) + 1) * LETTER_WIDTH;
-    int yOffset = ((currentSelection / maxColumns) % maxRows) * LETTER_HEIGHT;
-    SDL_Rect arrowRenderRect = { position.x + xPadding + xOffset, position.y + yPadding + yOffset, LETTER_WIDTH, LETTER_HEIGHT };
+    int xOffset = ((currentColumn * (charsPerColumn + 2)) + 1) * settings.LETTER_WIDTH;
+    int yOffset = ((currentSelection / maxColumns) % maxRows) * settings.LETTER_HEIGHT;
+    SDL_Rect arrowRenderRect = { position.x + xPadding + xOffset, position.y + yPadding + yOffset, settings.LETTER_WIDTH, settings.LETTER_HEIGHT };
     SDL_RenderCopy(renderer, font, &rightArrow, &arrowRenderRect);
 }
 
 void MenuDisplay::renderPageIndicators() {
     if (frameCount % 30 < 15 || paginatedOptions.size() < 2)
         return;
-    int halfwayX = position.x + (width/ 2) - (LETTER_WIDTH / 2);
+    int halfwayX = position.x + (width/ 2) - (settings.LETTER_WIDTH / 2);
     if (getCurrentPage() < paginatedOptions.size() - 1) {
-        SDL_Rect arrowRenderRect = { halfwayX, position.y + height - LETTER_HEIGHT - (yPadding / 4), LETTER_WIDTH, LETTER_HEIGHT };
+        SDL_Rect arrowRenderRect = { halfwayX, position.y + height - settings.LETTER_HEIGHT - (yPadding / 4), settings.LETTER_WIDTH, settings.LETTER_HEIGHT };
         SDL_RenderCopy(renderer, font, &downArrow, &arrowRenderRect);
     }
     if (getCurrentPage() > 0) {
-        SDL_Rect arrowRenderRect = { halfwayX, position.y + (yPadding / 4), LETTER_WIDTH, LETTER_HEIGHT };
+        SDL_Rect arrowRenderRect = { halfwayX, position.y + (yPadding / 4), settings.LETTER_WIDTH, settings.LETTER_HEIGHT };
         SDL_RenderCopy(renderer, font, &upArrow, &arrowRenderRect);
     }
 }
@@ -185,21 +185,21 @@ void MenuDisplay::renderPageIndicators() {
 void MenuDisplay::setHeight(int newHeight) {
     height = newHeight;
 
-    int defaultPadding = LETTER_HEIGHT;
+    int defaultPadding = settings.LETTER_HEIGHT;
     yPadding = defaultPadding + ((height % defaultPadding) / 2);
     int useableHeight = height - (yPadding * 2);
-    maxRows = useableHeight / LETTER_HEIGHT;
+    maxRows = useableHeight / settings.LETTER_HEIGHT;
 }
 
 void MenuDisplay::setWidth(int newWidth) {
     width = newWidth;
 
-    int defaultPadding = LETTER_WIDTH;
+    int defaultPadding = settings.LETTER_WIDTH;
     xPadding = defaultPadding + ((width % defaultPadding) / 2);
     int useableWidth = width - (xPadding * 2);
-    int whitespacePerColumn = 2 * LETTER_WIDTH;
+    int whitespacePerColumn = 2 * settings.LETTER_WIDTH;
     int letterSpacePerColumn = (useableWidth / maxColumns) - whitespacePerColumn;
-    charsPerColumn = letterSpacePerColumn / LETTER_WIDTH;
+    charsPerColumn = letterSpacePerColumn / settings.LETTER_WIDTH;
 }
 
 void MenuDisplay::addBox(string textureName, SDL_Rect sourcRect) {

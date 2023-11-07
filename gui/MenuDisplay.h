@@ -36,9 +36,9 @@ struct MenuDisplay {
     Text flavorText;
 
     // SDL_Rect bubbleSourceRect = { 0, 0, 640, 480 };
-    SDL_Rect rightArrow = { LETTER_WIDTH * 0, LETTER_HEIGHT * 4, LETTER_WIDTH, LETTER_HEIGHT };
-    SDL_Rect upArrow = { LETTER_WIDTH * 2, LETTER_HEIGHT * 4, LETTER_WIDTH, LETTER_HEIGHT };
-    SDL_Rect downArrow = { LETTER_WIDTH * 3, LETTER_HEIGHT * 4, LETTER_WIDTH, LETTER_HEIGHT };
+    SDL_Rect rightArrow = { settings.LETTER_WIDTH * 0, settings.LETTER_HEIGHT * 4, settings.LETTER_WIDTH, settings.LETTER_HEIGHT };
+    SDL_Rect upArrow = { settings.LETTER_WIDTH * 2, settings.LETTER_HEIGHT * 4, settings.LETTER_WIDTH, settings.LETTER_HEIGHT };
+    SDL_Rect downArrow = { settings.LETTER_WIDTH * 3, settings.LETTER_HEIGHT * 4, settings.LETTER_WIDTH, settings.LETTER_HEIGHT };
 
 
     // void addFlavor(vector<string> newFlavor);

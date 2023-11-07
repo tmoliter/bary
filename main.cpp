@@ -32,13 +32,13 @@ int main(int argc, char* args[]) {
     SDL_Window* window = SDL_CreateWindow(
         "Bary",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        fullscreen_mode ? 0 : SCREEN_WIDTH, fullscreen_mode ? 0 :SCREEN_HEIGHT,
-        fullscreen_mode ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_SHOWN
+        settings.FULLSCREEN_MODE ? 0 : settings.SCREEN_WIDTH, settings.FULLSCREEN_MODE ? 0 :settings.SCREEN_HEIGHT,
+        settings.FULLSCREEN_MODE ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_SHOWN
     );
 
     renderer = SDL_CreateRenderer(window, -1, 0);
-    if (fullscreen_mode) {
-        SDL_RenderSetLogicalSize(renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
+    if (settings.FULLSCREEN_MODE) {
+        SDL_RenderSetLogicalSize(renderer, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT);
         SDL_RenderSetIntegerScale(renderer, SDL_TRUE);
     }
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
