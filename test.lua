@@ -1,0 +1,1 @@
+allThings = { [1] = AnonymousThing1,[2] = Sailor Shack,[0] = AnonymousThing,} 

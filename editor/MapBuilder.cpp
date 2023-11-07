@@ -38,7 +38,7 @@ void MapBuilder::changeState(EditorState newState) {
             break;
         case EditorState::commandInput:
             helpText->setText("");
-            CommandLine::refresh({"play", "new thing", "free"}, CLIMode::typeCommand);
+            CommandLine::refresh({"play", "new thing", "free", "save"}, CLIMode::typeCommand);
             state = EditorState::commandInput;
             break;
         case EditorState::thingEdit:
@@ -124,6 +124,11 @@ void MapBuilder::meat(KeyPresses keysDown) {
             changeState(EditorState::thingEdit);
             return;
         }
+        if (input == "save") {
+            save();
+            changeState(EditorState::freeMove);
+            return;
+        }
     }
 
     if(state == EditorState::thingEdit) {
@@ -133,4 +138,25 @@ void MapBuilder::meat(KeyPresses keysDown) {
             changeState(EditorState::freeMove);
         }
     }
+}
+
+void MapBuilder::save() {
+    vector<RealThingData> allThingData = RealThing::getAllThingData();
+    lua_State* L = luaL_newstate();
+    luaL_openlibs(L);
+
+    if (CheckLua(L, luaL_dofile(L, "save.lua"))) {
+        lua_getglobal(L, "dump");
+        if (lua_isfunction(L, -1)) {
+            lua_newtable(L);
+            for (int i = 0; i < allThingData.size(); i++) {
+                PushStringToTable(L, i, allThingData[i].name);
+            }
+            dumpstack(L);
+            if (CheckLua(L, lua_pcall(L, 1, 0, 0))) {
+                cout << "MADE IT" << endl;
+            }
+        }
+    }
+    lua_close(L);
 }

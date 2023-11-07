@@ -106,6 +106,8 @@ class RealThing {
         void highlightSprite(Sprite* sprite);
         void removeHighlight();
 
+        RealThingData getData();
+
         virtual RealThing* copyInPlace();
 
         static void showAllLines();
@@ -118,6 +120,8 @@ class RealThing {
         static RealThing *findRealThing(string name);
 
         static void buildThingFromGlobal(string fileName);
+        static vector<RealThingData> getAllThingData();
+
 };
 
 #endif

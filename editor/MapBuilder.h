@@ -5,6 +5,7 @@
 #include "editor/ThingRouter.h"
 
 using namespace std;
+using namespace luaUtils;
 
 
 enum class EditorState {
@@ -34,6 +35,7 @@ class MapBuilder {
         void changeState(EditorState newState);
         void focusDot();
         void updateLines();
+        void save();
 
         void meat(KeyPresses keysDown);
 

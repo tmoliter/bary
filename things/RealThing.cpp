@@ -411,6 +411,27 @@ vector<RealThing*> RealThing::findThingsByPoint(Point p) {
     return matches;
 }
 
+RealThingData RealThing::getData() {
+    RealThingData td;
+    td.name = name;
+    td.x = position.x;
+    td.y = position.y;
+    for (auto s : sprites) {
+        td.spriteDataVector.push_back(SpriteData());
+        SpriteData& sd = td.spriteDataVector.back();
+        sd = s->d;
+    }
+    for (auto const& [l, o] : obstructions) {
+        td.obstructionData.push_back(CollidableData());
+        CollidableData& cd = td.obstructionData.back();
+        cd.layer = o->layer;
+        for (auto r : o->rays) {
+            cd.rays.push_back(Ray(*r));
+        }
+    }
+    return td;
+}
+
 // STATIC
 
 void RealThing::showAllLines() {
@@ -454,14 +475,14 @@ RealThing* RealThing::findRealThing (string name) {
 }
 
 void RealThing::buildThingFromGlobal(string fileName) {
-    RealThingData td;
     lua_State* L = luaL_newstate();
+    RealThingData td;
     if (CheckLua(L, luaL_dofile(L, fileName.c_str()))) {
         lua_getglobal(L, "thing");
         GetLuaIntFromTable(L, "x", td.x);
         GetLuaIntFromTable(L, "y", td.y);
         GetLuaStringFromTable(L, "name", td.name);
-        PushTableFromTable(L, "spriteDataVector");
+        GetTableOnStackFromTable(L, "spriteDataVector");
         if(!lua_isnil(L, -1)) {
             lua_pushnil(L);
             while (lua_next(L, -2)) {
@@ -480,14 +501,14 @@ void RealThing::buildThingFromGlobal(string fileName) {
             }
         }
         lua_pop(L, 1);
-        PushTableFromTable(L, "obstructionData");
+        GetTableOnStackFromTable(L, "obstructionData");
         if(!lua_isnil(L, -1)) {
             lua_pushnil(L);
             while (lua_next(L, -2)) {
                 td.obstructionData.push_back(CollidableData());
                 CollidableData &newObstructionData = td.obstructionData.back();
                 GetLuaIntFromTable(L, "layer", newObstructionData.layer);
-                PushTableFromTable(L, "rays");
+                GetTableOnStackFromTable(L, "rays");
                 lua_pushnil(L);
                 while (lua_next(L, -2)) {
                     newObstructionData.rays.push_back(Ray());
@@ -509,4 +530,16 @@ void RealThing::buildThingFromGlobal(string fileName) {
     }
     new RealThing(td);
     lua_close(L);
+}
+
+vector<RealThingData> RealThing::getAllThingData() {
+    vector<RealThingData> allData;
+    for (auto const& [i, t] : things) {
+        if (t->name == "EditorDot")
+            continue;
+        if (t->name == "test player")
+            continue;
+        allData.push_back(t->getData());
+    }
+    return allData;
 }
