@@ -454,20 +454,19 @@ RealThing* RealThing::findRealThing (string name) {
 }
 
 void RealThing::buildThingFromGlobal(string fileName) {
-    RealThingData td; // FOR LUA TESTING
+    RealThingData td;
     lua_State* L = luaL_newstate();
     if (CheckLua(L, luaL_dofile(L, fileName.c_str()))) {
         lua_getglobal(L, "thing");
         GetLuaIntFromTable(L, "x", td.x);
         GetLuaIntFromTable(L, "y", td.y);
         GetLuaStringFromTable(L, "name", td.name);
-        vector<SpriteData> spriteDataVector;
         PushTableFromTable(L, "spriteDataVector");
         if(!lua_isnil(L, -1)) {
             lua_pushnil(L);
             while (lua_next(L, -2)) {
-                spriteDataVector.push_back(SpriteData());
-                SpriteData &newSpriteData = spriteDataVector.back();
+                td.spriteDataVector.push_back(SpriteData());
+                SpriteData &newSpriteData = td.spriteDataVector.back();
                 GetLuaIntFromTable(L, "height", newSpriteData.height);
                 GetLuaIntFromTable(L, "width", newSpriteData.width);
                 GetLuaIntFromTable(L, "layer", newSpriteData.layer);
@@ -480,7 +479,29 @@ void RealThing::buildThingFromGlobal(string fileName) {
                 lua_pop(L, 1);
             }
         }
-        td.spriteDataVector = spriteDataVector;
+        lua_pop(L, 1);
+        PushTableFromTable(L, "obstructionData");
+        if(!lua_isnil(L, -1)) {
+            lua_pushnil(L);
+            while (lua_next(L, -2)) {
+                td.obstructionData.push_back(CollidableData());
+                CollidableData &newObstructionData = td.obstructionData.back();
+                GetLuaIntFromTable(L, "layer", newObstructionData.layer);
+                PushTableFromTable(L, "rays");
+                lua_pushnil(L);
+                while (lua_next(L, -2)) {
+                    newObstructionData.rays.push_back(Ray());
+                    Ray& newRay = newObstructionData.rays.back();
+                    GetLuaIntFromTable(L, "aX", newRay.a.x);
+                    GetLuaIntFromTable(L, "aY", newRay.a.y);
+                    GetLuaIntFromTable(L, "bX", newRay.b.x);
+                    GetLuaIntFromTable(L, "bY", newRay.b.y);
+                    lua_pop(L, 1);
+                }
+                lua_pop(L, 2);
+            }
+            lua_pop(L, 1);
+        }
         lua_pop(L, -1);
     } else {
         string errmsg = lua_tostring(L, -1);
