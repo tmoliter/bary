@@ -50,9 +50,6 @@ struct Sprite {
     static void highlightSprite(Sprite* sprite);
     static void highlightThing(string thingName);
     static void removeHighlight();
-
-
-    static int parse_sprite_datum(ifstream &mapData, SpriteData &newSD);
 };
 
 #endif

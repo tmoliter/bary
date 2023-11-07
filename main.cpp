@@ -2,6 +2,12 @@
 #include "MapParser.h"
 #include "jukebox.h"
 
+extern "C" {
+    #include <lua.h>
+    #include <lualib.h>
+    #include <lauxlib.h>
+}
+
 using namespace std;
 
 int main(int argc, char* args[]) {
@@ -37,14 +43,13 @@ int main(int argc, char* args[]) {
     }
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
-    string fullMapPath(string(BASE_PATH) + "maps/edit.txt");
-    parse_map(fullMapPath.c_str());
-    eventMap::buildEventMap();
+    parse_map();
 
     gameState = GameState::FieldFree;
 
-    if (fullMapPath == string(BASE_PATH) + "maps/map2.txt")
-        eventMap::load_events();
+    // eventMap::buildEventMap();
+    // if (fullMapPath == string(BASE_PATH) + "maps/map2.txt")
+    //     eventMap::load_events();
 
     Input in;
     FpsTimer t;
@@ -100,8 +105,6 @@ int main(int argc, char* args[]) {
         }
         /* END MENU TESTING */
 
-        
-        /* NORMAL LOOP (DISABLE FOR MENU TESTING) */
         if (men == nullptr) {
             if(MapBuilder::mapBuilder)
                 MapBuilder::mapBuilder->meat(keysDown);
@@ -117,7 +120,6 @@ int main(int argc, char* args[]) {
                     break;
             }
         }
-        /* END NORMAL LOOP DISABLED FOR MENU TESTING */
 
         FocusTracker::ftracker->setCameraFocalPoint();
         Camera::c->render();

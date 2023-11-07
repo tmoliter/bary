@@ -23,8 +23,6 @@ class FieldPlayer : public RealThing {
         void getRay(Ray &r);
 
         void meat(KeyPresses keysDown);
-
-        static int parse_player_datum(ifstream &mapData, FieldPlayerData &newTD);
         
         static FieldPlayer *player;
 };

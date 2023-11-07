@@ -87,20 +87,6 @@ void Camera::setWarpLevel() {
 
 // STATIC
 
-int Camera::parse_camera(ifstream &mapData) {
-    char current;
-    string value = "";
-    mapData.get();
-    while (mapData.get(current)) {
-        if(current == ',') {
-            Camera::c->path = strdup(value.c_str());
-            return 1;
-        }
-        value.push_back(current);
-    }
-    return 1;
-}
-
 int Camera::fadeIn(int m) {
     if(c->fadeStatus == FxStatus::unapplied)
         return 1;

@@ -1,6 +1,7 @@
 #include "RealThing.h"
 
 using namespace std;
+using namespace luaUtils;
 
 RealThing::RealThing(RealThingData tD) : position(tD.x, tD.y) {
     _save_name_and_save_in_map(tD.name);
@@ -90,6 +91,7 @@ void RealThing::calculateHeight() { // Do we need to save this to bounds and ris
 
 Sprite* RealThing::AddSprite(SpriteData SD) {
     sprites.push_back(new Sprite(position, name, SD));
+    sprites.back()->active = true; // This was added to test lua loading, might have side effects
     calculateHeight();
     return sprites.back();
 }
@@ -373,13 +375,6 @@ void RealThing::destroy() {
 
 // STATIC PORTED OVER FROM Thing.cpp
 
-int RealThing::parse_thing_datum(ifstream &mapData, RealThingData &newTD) {
-    mapData.get();
-    utils::parse_strings(vector <string*> { &newTD.name }, mapData);
-    utils::parse_ints(vector <int*> { &newTD.x, &newTD.y }, mapData);
-    return 1;
-}
-
 void RealThing::meatThings(KeyPresses keysDown) {
     for (auto const& [id, thing] : RealThing::things){
         thing->meat(keysDown);
@@ -454,34 +449,43 @@ int RealThing::checkAllTriggers (Ray incoming, int incomingLayer) {
     return 0;
 }
 
-int RealThing::parse_building_datum(ifstream &mapData, RealThingData &newTD) {
-    RealThing::parse_thing_datum(mapData, newTD);
-    char next = mapData.peek();
-    while(next != '\n' && next != EOF) {
-        if(next == 'S'){
-            mapData.get();
-            mapData.get();
-            SpriteData newSD;
-            Sprite::parse_sprite_datum(mapData,newSD);
-            newTD.spriteDataVector.push_back(newSD);
-            next = mapData.peek();
-            continue;
-        }
-        if(next == 'O'){
-            mapData.get();
-            mapData.get();
-            CollidableData newCD;
-            Collidable::parse_collidable_datum(mapData,newCD);
-            newTD.obstructionData.push_back(newCD);
-            next = mapData.peek();
-            continue;
-        }
-        return 0;
-    }
-
-    return 1;
+RealThing* RealThing::findRealThing (string name) {
+    return RealThing::things[name];
 }
 
-RealThing* RealThing::findRealThing (string name) {
-    return dynamic_cast<RealThing*>(RealThing::things[name]);
+void RealThing::buildThingFromGlobal(string fileName) {
+    RealThingData td; // FOR LUA TESTING
+    lua_State* L = luaL_newstate();
+    if (CheckLua(L, luaL_dofile(L, fileName.c_str()))) {
+        lua_getglobal(L, "thing");
+        GetLuaIntFromTable(L, "x", td.x);
+        GetLuaIntFromTable(L, "y", td.y);
+        GetLuaStringFromTable(L, "name", td.name);
+        vector<SpriteData> spriteDataVector;
+        PushTableFromTable(L, "spriteDataVector");
+        if(!lua_isnil(L, -1)) {
+            lua_pushnil(L);
+            while (lua_next(L, -2)) {
+                spriteDataVector.push_back(SpriteData());
+                SpriteData &newSpriteData = spriteDataVector.back();
+                GetLuaIntFromTable(L, "height", newSpriteData.height);
+                GetLuaIntFromTable(L, "width", newSpriteData.width);
+                GetLuaIntFromTable(L, "layer", newSpriteData.layer);
+                GetLuaIntFromTable(L, "renderOffset", newSpriteData.renderOffset);
+                GetLuaIntFromTable(L, "xOffset", newSpriteData.xOffset);
+                GetLuaIntFromTable(L, "yOffset", newSpriteData.yOffset);
+                GetLuaIntFromTable(L, "sourceX", newSpriteData.sourceX);
+                GetLuaIntFromTable(L, "sourceY", newSpriteData.sourceY);
+                GetLuaStringFromTable(L, "textureName", newSpriteData.textureName);
+                lua_pop(L, 1);
+            }
+        }
+        td.spriteDataVector = spriteDataVector;
+        lua_pop(L, -1);
+    } else {
+        string errmsg = lua_tostring(L, -1);
+        cout << errmsg << endl;
+    }
+    new RealThing(td);
+    lua_close(L);
 }

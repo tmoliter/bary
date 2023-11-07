@@ -39,8 +39,6 @@ struct Collidable {
     void hideLines();
 
     bool isColliding(Ray &incoming, int incomingLayer);
-
-    static int parse_collidable_datum(ifstream &mapData, CollidableData &newCD);
 };
 
 #endif

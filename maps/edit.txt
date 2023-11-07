@@ -1,2 +1,0 @@
-X,
-./assets/backgrounds/Burg.png,

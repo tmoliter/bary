@@ -1,7 +1,6 @@
 #ifndef EVENT_EDITOR_H
 #define EVENT_EDITOR_H
 #include "util.h"
-#include "things/RealThing.h"
 #include "events/eventMap.h"
 #include "events/SimpleMessage.h"
 

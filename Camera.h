@@ -65,8 +65,6 @@ class Camera {
 
         static Point worldToScreen(Point p);
         static Ray worldToScreen(Ray r);
-
-        static int parse_camera(ifstream &mapData);
 };
 
 #endif
