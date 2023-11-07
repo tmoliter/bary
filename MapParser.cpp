@@ -11,8 +11,6 @@ void parse_map() {
     Camera::c->path = "./assets/backgrounds/Burg.png";
     Camera::c->init();
 
-
-
     lua_State* L = luaL_newstate();
     if (CheckLua(L, luaL_dofile(L, "savedMap.lua"))) {
         lua_getglobal(L, "allThings");

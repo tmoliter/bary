@@ -169,6 +169,7 @@ void MapBuilder::save() {
                     PushIntToTable(L, "width", allThingData[i].spriteDataVector[j].width);
                     PushIntToTable(L, "height", allThingData[i].spriteDataVector[j].height);
                     PushStringToTable(L, "textureName", allThingData[i].spriteDataVector[j].textureName);
+                    lua_pop(L, 1);
                 }
                 lua_pop(L, 1);
                 PushTableToTable(L, "obstructionData");
