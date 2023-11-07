@@ -118,12 +118,12 @@ Trigger* RealThing::addTrigger(string iName, vector<Ray*> rays, int layer, Event
     return tr;
 }
 
-Obstruction* RealThing::addObstruction(vector<Ray*> rays, int layer) {
+Obstruction* RealThing::addObstruction(vector<Ray> rays, int layer) {
     Obstruction* o;
     if (obstructions.count(layer)) {
         o = obstructions[layer];
         for (auto r : rays)
-            o->addRay(r);
+            o->addRay(new Ray(r));
     }
     else {
         o = new Obstruction(position, name, rays, layer);
@@ -411,6 +411,27 @@ vector<RealThing*> RealThing::findThingsByPoint(Point p) {
     return matches;
 }
 
+RealThingData RealThing::getData() {
+    RealThingData td;
+    td.name = name;
+    td.x = position.x;
+    td.y = position.y;
+    for (auto s : sprites) {
+        td.spriteDataVector.push_back(SpriteData());
+        SpriteData& sd = td.spriteDataVector.back();
+        sd = s->d;
+    }
+    for (auto const& [l, o] : obstructions) {
+        td.obstructionData.push_back(CollidableData());
+        CollidableData& cd = td.obstructionData.back();
+        cd.layer = o->layer;
+        for (auto r : o->rays) {
+            cd.rays.push_back(Ray(*r));
+        }
+    }
+    return td;
+}
+
 // STATIC
 
 void RealThing::showAllLines() {
@@ -453,39 +474,64 @@ RealThing* RealThing::findRealThing (string name) {
     return RealThing::things[name];
 }
 
-void RealThing::buildThingFromGlobal(string fileName) {
-    RealThingData td; // FOR LUA TESTING
-    lua_State* L = luaL_newstate();
-    if (CheckLua(L, luaL_dofile(L, fileName.c_str()))) {
-        lua_getglobal(L, "thing");
-        GetLuaIntFromTable(L, "x", td.x);
-        GetLuaIntFromTable(L, "y", td.y);
-        GetLuaStringFromTable(L, "name", td.name);
-        vector<SpriteData> spriteDataVector;
-        PushTableFromTable(L, "spriteDataVector");
-        if(!lua_isnil(L, -1)) {
+void RealThing::buildThingFromGlobal(lua_State* L) {
+    RealThingData td;
+    GetLuaIntFromTable(L, "x", td.x);
+    GetLuaIntFromTable(L, "y", td.y);
+    GetLuaStringFromTable(L, "name", td.name);
+    GetTableOnStackFromTable(L, "spriteDataVector");
+    if(!lua_isnil(L, -1)) {
+        lua_pushnil(L);
+        while (lua_next(L, -2)) {
+            td.spriteDataVector.push_back(SpriteData());
+            SpriteData &newSpriteData = td.spriteDataVector.back();
+            GetLuaIntFromTable(L, "height", newSpriteData.height);
+            GetLuaIntFromTable(L, "width", newSpriteData.width);
+            GetLuaIntFromTable(L, "layer", newSpriteData.layer);
+            GetLuaIntFromTable(L, "renderOffset", newSpriteData.renderOffset);
+            GetLuaIntFromTable(L, "xOffset", newSpriteData.xOffset);
+            GetLuaIntFromTable(L, "yOffset", newSpriteData.yOffset);
+            GetLuaIntFromTable(L, "sourceX", newSpriteData.sourceX);
+            GetLuaIntFromTable(L, "sourceY", newSpriteData.sourceY);
+            GetLuaStringFromTable(L, "textureName", newSpriteData.textureName);
+            lua_pop(L, 1);
+        }
+    }
+    lua_pop(L, 1);
+    GetTableOnStackFromTable(L, "obstructionData");
+    if(!lua_isnil(L, -1)) {
+        lua_pushnil(L);
+        while (lua_next(L, -2)) {
+            td.obstructionData.push_back(CollidableData());
+            CollidableData &newObstructionData = td.obstructionData.back();
+            GetLuaIntFromTable(L, "layer", newObstructionData.layer);
+            GetTableOnStackFromTable(L, "rays");
             lua_pushnil(L);
             while (lua_next(L, -2)) {
-                spriteDataVector.push_back(SpriteData());
-                SpriteData &newSpriteData = spriteDataVector.back();
-                GetLuaIntFromTable(L, "height", newSpriteData.height);
-                GetLuaIntFromTable(L, "width", newSpriteData.width);
-                GetLuaIntFromTable(L, "layer", newSpriteData.layer);
-                GetLuaIntFromTable(L, "renderOffset", newSpriteData.renderOffset);
-                GetLuaIntFromTable(L, "xOffset", newSpriteData.xOffset);
-                GetLuaIntFromTable(L, "yOffset", newSpriteData.yOffset);
-                GetLuaIntFromTable(L, "sourceX", newSpriteData.sourceX);
-                GetLuaIntFromTable(L, "sourceY", newSpriteData.sourceY);
-                GetLuaStringFromTable(L, "textureName", newSpriteData.textureName);
+                newObstructionData.rays.push_back(Ray());
+                Ray& newRay = newObstructionData.rays.back();
+                GetLuaIntFromTable(L, "aX", newRay.a.x);
+                GetLuaIntFromTable(L, "aY", newRay.a.y);
+                GetLuaIntFromTable(L, "bX", newRay.b.x);
+                GetLuaIntFromTable(L, "bY", newRay.b.y);
                 lua_pop(L, 1);
             }
+            lua_pop(L, 2);
         }
-        td.spriteDataVector = spriteDataVector;
-        lua_pop(L, -1);
-    } else {
-        string errmsg = lua_tostring(L, -1);
-        cout << errmsg << endl;
+        lua_pop(L, 1);
     }
+    lua_pop(L, 1);
     new RealThing(td);
-    lua_close(L);
+}
+
+vector<RealThingData> RealThing::getAllThingData() {
+    vector<RealThingData> allData;
+    for (auto const& [i, t] : things) {
+        if (t->name == "EditorDot")
+            continue;
+        if (t->name == "test player")
+            continue;
+        allData.push_back(t->getData());
+    }
+    return allData;
 }

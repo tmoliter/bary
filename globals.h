@@ -2,24 +2,44 @@
 #define CONSTANTS_H
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
+#include "luaUtils.h"
 
 inline int frameCount = 0;
 
 inline char* BASE_PATH = SDL_GetBasePath();
 
-inline constexpr int SCALE = 1;
-inline constexpr int SCREEN_WIDTH = 640;
-inline constexpr int SCREEN_HEIGHT = 480;
-inline SDL_Rect* RESOLUTION = new SDL_Rect {0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
+inline struct Settings {
+    Settings()
+    {
+        lua_State* L = luaL_newstate();
+        if (luaUtils::CheckLua(L, luaL_dofile(L, "config/settings.lua"))) {
+            std::cout << "Loading settings..." << std::endl;
+            lua_getglobal(L, "globals");
+            luaUtils::GetLuaIntFromTable(L, "SCALE", SCALE);
+            luaUtils::GetLuaIntFromTable(L, "SCREEN_WIDTH", SCREEN_WIDTH);
+            luaUtils::GetLuaIntFromTable(L, "SCREEN_HEIGHT", SCREEN_HEIGHT);
+            luaUtils::GetLuaBoolFromTable(L, "FULLSCREEN_MODE", FULLSCREEN_MODE);
+            luaUtils::GetLuaIntFromTable(L, "LETTER_WIDTH", LETTER_WIDTH);
+            luaUtils::GetLuaIntFromTable(L, "LETTER_HEIGHT", LETTER_HEIGHT);
+            luaUtils::GetLuaIntFromTable(L, "LETTERS_PER_FONT_ROW", LETTERS_PER_FONT_ROW);
+            SDL_Rect* RESOLUTION = new SDL_Rect {0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
+        } else {
+            std::cout << "couldn't find config/globals.lua" << std::endl;
+        }
+        
+    }
+    int SCALE;
+    int SCREEN_WIDTH;
+    int SCREEN_HEIGHT;
+    int LETTER_WIDTH;
+    int LETTER_HEIGHT;
+    int LETTERS_PER_FONT_ROW;
+    bool FULLSCREEN_MODE;
+    SDL_Rect* RESOLUTION;
+} settings;
 
 inline SDL_Window* window;
 inline SDL_Renderer* renderer;
-
-inline constexpr bool fullscreen_mode = false;
-
-inline constexpr int LETTER_WIDTH = 8;
-inline constexpr int LETTER_HEIGHT = 12;
-inline constexpr int LETTERS_PER_FONT_ROW = 24;
 
 enum class GameState {
     FieldFree,

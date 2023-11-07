@@ -30,13 +30,13 @@ void Text::render() {
             line++;
         }
         int adjustedFontValue = int(text[i]) - 32;
-        int fontX = (adjustedFontValue % LETTERS_PER_FONT_ROW) * LETTER_WIDTH;
-        int fontY = (adjustedFontValue / LETTERS_PER_FONT_ROW) * LETTER_HEIGHT;
-        SDL_Rect sourceRect = { fontX, fontY, LETTER_WIDTH, LETTER_HEIGHT};
+        int fontX = (adjustedFontValue % settings.LETTERS_PER_FONT_ROW) * settings.LETTER_WIDTH;
+        int fontY = (adjustedFontValue / settings.LETTERS_PER_FONT_ROW) * settings.LETTER_HEIGHT;
+        SDL_Rect sourceRect = { fontX, fontY, settings.LETTER_WIDTH, settings.LETTER_HEIGHT};
 
-        int xPosition = position.x + ((i - totalLettersAfterPrevLine) * LETTER_WIDTH);
-        int yPosition = position.y + (line * LETTER_HEIGHT);
-        SDL_Rect renderRect = { xPosition, yPosition, LETTER_WIDTH, LETTER_HEIGHT };
+        int xPosition = position.x + ((i - totalLettersAfterPrevLine) * settings.LETTER_WIDTH);
+        int yPosition = position.y + (line * settings.LETTER_HEIGHT);
+        SDL_Rect renderRect = { xPosition, yPosition, settings.LETTER_WIDTH, settings.LETTER_HEIGHT };
 
         SDL_RenderCopy(renderer, font, &sourceRect, &renderRect);
         currentLinesLettercount++;
@@ -48,7 +48,7 @@ void Text::setText(string t) {
 }
 
 void Text::setLineLengthFromPixelWidth(int pixelWidth) {
-    lineLength = pixelWidth / LETTER_WIDTH;
+    lineLength = pixelWidth / settings.LETTER_WIDTH;
 }
 
 void Text::clearText() {
@@ -61,5 +61,5 @@ void Text::setPos(Point p) {
 }
 
 void Text::resetLineLength() {
-    lineLength = (SCREEN_WIDTH / LETTER_WIDTH) - (position.x / LETTER_WIDTH);
+    lineLength = (settings.SCREEN_WIDTH / settings.LETTER_WIDTH) - (position.x / settings.LETTER_WIDTH);
 }

@@ -70,8 +70,8 @@ void Sprite::frontAndCenter() {
 }
 
 Point Sprite::getScreenPos(Point camPosition) {
-    int renderX = ((position.x - camPosition.x) + d.xOffset) * SCALE;
-    int renderY = ((position.y - camPosition.y) + d.yOffset) * SCALE;
+    int renderX = ((position.x - camPosition.x) + d.xOffset) * settings.SCALE;
+    int renderY = ((position.y - camPosition.y) + d.yOffset) * settings.SCALE;
     return Point(renderX, renderY);
 }
 
@@ -79,7 +79,7 @@ void Sprite::render(SDL_Renderer *renderer, Point camPosition) {
     if (!active || texture == NULL)
         return;
     Point renderPos = getScreenPos(camPosition);
-    SDL_Rect renderRect = { renderPos.x, renderPos.y, d.width * SCALE, d.height * SCALE };
+    SDL_Rect renderRect = { renderPos.x, renderPos.y, d.width * settings.SCALE, d.height * settings.SCALE };
     SDL_Rect sourceRect = { d.sourceX, d.sourceY, d.width, d.height };
     SDL_SetTextureAlphaMod(texture, alpha);
     SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);

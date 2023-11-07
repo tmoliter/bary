@@ -92,7 +92,7 @@ void SpriteEditor::frontAndCenter(KeyPresses keysDown) {
 
 void SpriteEditor::displayText() {
     Point spritePos = sprite->getScreenPos(Camera::getPos());
-    text->setPos(Point(spritePos.x, spritePos.y - (LETTER_HEIGHT * 2)));
+    text->setPos(Point(spritePos.x, spritePos.y - (settings.LETTER_HEIGHT * 2)));
 
     string displayText;
     switch (editState) {

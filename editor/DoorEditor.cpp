@@ -3,7 +3,7 @@
 DoorEditor::DoorEditor(Point p) : state(DoorEditState::closedSprite), input("") {
     spriteEditor = nullptr;
     rayEditor = nullptr;
-    text = new Text(Point(LETTER_WIDTH * 2, LETTER_HEIGHT * 2), "");
+    text = new Text(Point(settings.LETTER_WIDTH * 2, settings.LETTER_HEIGHT * 2), "");
     UIRenderer::addText(text);
     door = new Door(p);
     changeState(DoorEditState::closedSprite);
@@ -12,7 +12,7 @@ DoorEditor::DoorEditor(Point p) : state(DoorEditState::closedSprite), input("") 
 DoorEditor::DoorEditor(Door *door) : door(door), state(DoorEditState::closedSprite), input("") {
     spriteEditor = nullptr;
     rayEditor = nullptr;
-    text = new Text(Point(LETTER_WIDTH * 2, LETTER_HEIGHT * 2), "");
+    text = new Text(Point(settings.LETTER_WIDTH * 2, settings.LETTER_HEIGHT * 2), "");
     UIRenderer::addText(text);
     door->preview();
     changeState(DoorEditState::closedSprite);

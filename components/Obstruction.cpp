@@ -10,8 +10,9 @@ Obstruction::Obstruction(Point &pP, string &tN, int l) : Collidable(pP,tN) {
     lineType = LineType::obstruction;
 }
 
-Obstruction::Obstruction(Point &pP, string &tN, vector<Ray*> r, int l) : Collidable(pP,tN) {
-    rays = r;
+Obstruction::Obstruction(Point &pP, string &tN, vector<Ray> r, int l) : Collidable(pP,tN) {
+    for (auto ray : r)
+        this->addRay(new Ray(ray));
     layer = l;
     lineType = LineType::obstruction;
 }

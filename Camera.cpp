@@ -31,7 +31,7 @@ void Camera::init() {
     SDL_FreeSurface(temp);
     SDL_QueryTexture(bgTexture, NULL, NULL, &bgWidth, &bgHeight);
     sourceRect = { 0 , 0, scaledScreenWidth, scaledScreenHeight };
-    renderRect = { 0 , 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+    renderRect = { 0 , 0, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT };
     fadeStart = warpStart = frameCount;
     fadeStatus = FxStatus::unapplying;
     initialized = true;
@@ -50,7 +50,7 @@ void Camera::handleFade() {
     if(fadeStatus == FxStatus::unapplying || fadeStatus == FxStatus::applying)
         setOverlay();
     if(fadeStatus != FxStatus::unapplied)
-        SDL_RenderFillRect(renderer, RESOLUTION);
+        SDL_RenderFillRect(renderer, settings.RESOLUTION);
 };
 
 void Camera::setOverlay() {
@@ -130,8 +130,8 @@ Point Camera::getPos() {
 }
 
 Point Camera::worldToScreen(Point p) {
-    int renderX = (p.x - c->sourceRect.x) * SCALE;
-    int renderY = (p.y - c->sourceRect.y) * SCALE;
+    int renderX = (p.x - c->sourceRect.x) * settings.SCALE;
+    int renderY = (p.y - c->sourceRect.y) * settings.SCALE;
     return Point(renderX, renderY);
 }
 

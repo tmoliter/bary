@@ -77,7 +77,7 @@ class RealThing {
 
         Interactable* addInteractable(string iName, vector<Ray*> rays, int layer, Event* event = nullptr);
         Trigger* addTrigger(string iName, vector<Ray*> rays, int layer, Event* event = nullptr);
-        Obstruction* addObstruction(vector<Ray*> rays, int layer);
+        Obstruction* addObstruction(vector<Ray> rays, int layer);
         Interactable* addInteractable(string iName);
         Trigger* addTrigger(string iName);
         Obstruction* addObstruction(int layer);
@@ -106,6 +106,8 @@ class RealThing {
         void highlightSprite(Sprite* sprite);
         void removeHighlight();
 
+        RealThingData getData();
+
         virtual RealThing* copyInPlace();
 
         static void showAllLines();
@@ -117,7 +119,9 @@ class RealThing {
 
         static RealThing *findRealThing(string name);
 
-        static void buildThingFromGlobal(string fileName);
+        static void buildThingFromGlobal(lua_State* L);
+        static vector<RealThingData> getAllThingData();
+
 };
 
 #endif

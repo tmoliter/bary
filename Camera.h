@@ -38,8 +38,8 @@ class Camera {
         fadeStatus(FxStatus::applied),
         fadeMultiplier(2),
         warpMultiplier(1),
-        scaledScreenWidth(SCREEN_WIDTH / SCALE),
-        scaledScreenHeight(SCREEN_HEIGHT / SCALE) {
+        scaledScreenWidth(settings.SCREEN_WIDTH / settings.SCALE),
+        scaledScreenHeight(settings.SCREEN_HEIGHT / settings.SCALE) {
             c = this;
         };
         void init();

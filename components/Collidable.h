@@ -16,7 +16,7 @@ enum class CollidableType {
 
 struct CollidableData {
     int layer = 0;
-    vector<Ray*> rays;
+    vector<Ray> rays;
 };
 
 struct Collidable {

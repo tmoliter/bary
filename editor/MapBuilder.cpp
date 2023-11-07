@@ -38,7 +38,7 @@ void MapBuilder::changeState(EditorState newState) {
             break;
         case EditorState::commandInput:
             helpText->setText("");
-            CommandLine::refresh({"play", "new thing", "free"}, CLIMode::typeCommand);
+            CommandLine::refresh({"play", "new thing", "free", "save"}, CLIMode::typeCommand);
             state = EditorState::commandInput;
             break;
         case EditorState::thingEdit:
@@ -124,6 +124,11 @@ void MapBuilder::meat(KeyPresses keysDown) {
             changeState(EditorState::thingEdit);
             return;
         }
+        if (input == "save") {
+            save();
+            changeState(EditorState::freeMove);
+            return;
+        }
     }
 
     if(state == EditorState::thingEdit) {
@@ -133,4 +138,67 @@ void MapBuilder::meat(KeyPresses keysDown) {
             changeState(EditorState::freeMove);
         }
     }
+}
+
+void MapBuilder::save() {
+    vector<RealThingData> allThingData = RealThing::getAllThingData();
+    lua_State* L = luaL_newstate();
+    luaL_openlibs(L);
+
+    if (CheckLua(L, luaL_dofile(L, "scripts/save.lua"))) {
+        lua_getglobal(L, "dump");
+        if (lua_isfunction(L, -1)) {
+            lua_newtable(L);
+            for (int i = 0; i < allThingData.size(); i++) {
+                PushTableToTable(L, i);
+                PushStringToTable(L, "name", allThingData[i].name);
+                PushIntToTable(L, "x", allThingData[i].x);
+                PushIntToTable(L, "y", allThingData[i].y);
+                PushTableToTable(L, "spriteDataVector");
+                for (int j = 0; j < allThingData[i].spriteDataVector.size(); j++) {
+                    if (!PushTableToTable(L, j)) {
+                        cout << "Failed!" << endl;
+                        continue;
+                    };
+                    PushIntToTable(L, "layer", allThingData[i].spriteDataVector[j].layer);
+                    PushIntToTable(L, "renderOffset", allThingData[i].spriteDataVector[j].renderOffset);
+                    PushIntToTable(L, "xOffset", allThingData[i].spriteDataVector[j].xOffset);
+                    PushIntToTable(L, "yOffset", allThingData[i].spriteDataVector[j].yOffset);
+                    PushIntToTable(L, "sourceX", allThingData[i].spriteDataVector[j].sourceX);
+                    PushIntToTable(L, "sourceY", allThingData[i].spriteDataVector[j].sourceY);
+                    PushIntToTable(L, "width", allThingData[i].spriteDataVector[j].width);
+                    PushIntToTable(L, "height", allThingData[i].spriteDataVector[j].height);
+                    PushStringToTable(L, "textureName", allThingData[i].spriteDataVector[j].textureName);
+                    lua_pop(L, 1);
+                }
+                lua_pop(L, 1);
+                PushTableToTable(L, "obstructionData");
+                for (int j = 0; j < allThingData[i].obstructionData.size(); j++) {
+                    if (!PushTableToTable(L, j)) {
+                        cout << "Failed!" << endl;
+                        continue;
+                    };
+                    PushIntToTable(L, "layer", allThingData[i].obstructionData[j].layer);
+                    PushTableToTable(L, "rays");
+                    for (int h = 0; h < allThingData[i].obstructionData[j].rays.size(); h++) {
+                        if (!PushTableToTable(L, h)) {
+                            cout << "Failed!" << endl;
+                            continue;
+                        };
+                        PushIntToTable(L, "aX", allThingData[i].obstructionData[j].rays[h].a.x);
+                        PushIntToTable(L, "aY", allThingData[i].obstructionData[j].rays[h].a.y);
+                        PushIntToTable(L, "bX", allThingData[i].obstructionData[j].rays[h].b.x);
+                        PushIntToTable(L, "bY", allThingData[i].obstructionData[j].rays[h].b.y);
+                        lua_pop(L, 1);
+                    }
+                    lua_pop(L, 2);
+                }
+                lua_pop(L, 2);
+            }
+            if (CheckLua(L, lua_pcall(L, 1, 0, 0))) {
+                cout << "SAVED" << endl;
+            }
+        }
+    }
+    lua_close(L);
 }

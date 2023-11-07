@@ -46,8 +46,8 @@ void Phrase::reset() {
     queue<string>().swap(lines);
     queue<string>().swap(hiddenLines);
 
-    utils::limit(gridLimits.x, 1, (box.w / (phraseScale * LETTER_WIDTH)) - 4);
-    utils::limit(gridLimits.y, 1, (box.h / (phraseScale * LETTER_HEIGHT)) - 2);
+    utils::limit(gridLimits.x, 1, (box.w / (phraseScale * settings.LETTER_WIDTH)) - 4);
+    utils::limit(gridLimits.y, 1, (box.h / (phraseScale * settings.LETTER_HEIGHT)) - 2);
 
     // Very happy case: all text fits on one line
     if (text.length() <= gridLimits.x)
@@ -127,8 +127,8 @@ void Phrase::reset() {
     }
     totalLines = lines.size() + hiddenLines.size();
 
-    leftPad = (box.w - (phraseScale * gridLimits.x * LETTER_WIDTH)) / 2;
-    topPad = (box.h - (phraseScale * lines.size() * LETTER_HEIGHT)) / 2;
+    leftPad = (box.w - (phraseScale * gridLimits.x * settings.LETTER_WIDTH)) / 2;
+    topPad = (box.h - (phraseScale * lines.size() * settings.LETTER_HEIGHT)) / 2;
 
     progStart = -1;
     advanceStart = -1;
@@ -209,7 +209,7 @@ int Phrase::progDisplay() {
             occlusion = 0;
         for (j = 0; j < line.size(); j++) {
             if (charsToDisplay < 1){
-                if(advanceProgress >= LETTER_HEIGHT)
+                if(advanceProgress >= settings.LETTER_HEIGHT)
                     advanceStart++;
                 return 1;
             }
@@ -227,7 +227,7 @@ int Phrase::progDisplay() {
     }
 
     // One line's worth of scrolling has completed
-    if(advanceProgress >= LETTER_HEIGHT) {
+    if(advanceProgress >= settings.LETTER_HEIGHT) {
         int lastLineLength;
         lastLineLength = lines.front().length();
         lines.pop();
@@ -241,13 +241,13 @@ int Phrase::progDisplay() {
                 if ((totalLines - lines.size() - hiddenLines.size()) % (gridLimits.y - 1) == 0 || gridLimits.y == 1)
                     advanceStart = -1;
                 else 
-                    advanceStart = frameCount + ((advanceProgress - LETTER_HEIGHT) * delay);
+                    advanceStart = frameCount + ((advanceProgress - settings.LETTER_HEIGHT) * delay);
                 break;
             case (ScrollType::oneLine):
                 advanceStart = -1;
                 break;
             case (ScrollType::continuous):
-                advanceStart = frameCount + ((advanceProgress - LETTER_HEIGHT) * delay);
+                advanceStart = frameCount + ((advanceProgress - settings.LETTER_HEIGHT) * delay);
                 return 1;
             default:
                 break;
@@ -298,13 +298,13 @@ void Phrase::popBubble(SDL_Rect sourceRect, float time) {
 void Phrase::renderLetter(int lineNumber, int charPosition, int asciiValue, int occlusion, int raise) {
 
     int adjustedFontValue = asciiValue - 32;
-    int fontX = (adjustedFontValue % LETTERS_PER_FONT_ROW) * LETTER_WIDTH;
-    int fontY = (adjustedFontValue / LETTERS_PER_FONT_ROW) * LETTER_HEIGHT;
-    SDL_Rect sourceRect = { fontX, fontY + occlusion, LETTER_WIDTH, LETTER_HEIGHT - occlusion};
+    int fontX = (adjustedFontValue % settings.LETTERS_PER_FONT_ROW) * settings.LETTER_WIDTH;
+    int fontY = (adjustedFontValue / settings.LETTERS_PER_FONT_ROW) * settings.LETTER_HEIGHT;
+    SDL_Rect sourceRect = { fontX, fontY + occlusion, settings.LETTER_WIDTH, settings.LETTER_HEIGHT - occlusion};
 
-    int xPosition = box.x + leftPad + (charPosition * LETTER_WIDTH * phraseScale);
-    int yPosition = box.y + topPad + (lineNumber * LETTER_HEIGHT * phraseScale) - (raise * phraseScale);
-    SDL_Rect renderRect = { xPosition, yPosition + occlusion, LETTER_WIDTH * phraseScale, (LETTER_HEIGHT - occlusion) * phraseScale };
+    int xPosition = box.x + leftPad + (charPosition * settings.LETTER_WIDTH * phraseScale);
+    int yPosition = box.y + topPad + (lineNumber * settings.LETTER_HEIGHT * phraseScale) - (raise * phraseScale);
+    SDL_Rect renderRect = { xPosition, yPosition + occlusion, settings.LETTER_WIDTH * phraseScale, (settings.LETTER_HEIGHT - occlusion) * phraseScale };
 
     SDL_RenderCopy(renderer, font, &sourceRect, &renderRect);
 }
@@ -314,7 +314,7 @@ SDL_Rect& Phrase::getBox() {
 }
 
 void Phrase::setGridLimits(DirectionMap dM) {
-    if (dM.up && gridLimits.y <= (box.h / (phraseScale * LETTER_HEIGHT)) - 2) {
+    if (dM.up && gridLimits.y <= (box.h / (phraseScale * settings.LETTER_HEIGHT)) - 2) {
         gridLimits.y++;
         reset();
     }
@@ -326,7 +326,7 @@ void Phrase::setGridLimits(DirectionMap dM) {
         gridLimits.x--;
         reset();
     }
-    if (dM.right && gridLimits.x <= (box.w / (phraseScale * LETTER_WIDTH)) - 4) {
+    if (dM.right && gridLimits.x <= (box.w / (phraseScale * settings.LETTER_WIDTH)) - 4) {
         gridLimits.x++;
         reset();
     }

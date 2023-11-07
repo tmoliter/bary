@@ -3,7 +3,7 @@
 CommandLine::CommandLine(vector<string> coms, CLIMode m) : commands(coms), mode(m), historyPosition(-1), currentChoice(0) {
     commandText = new Text(Point(48, 48), "");
     helpText = new Text(Point(32, 32), "");
-    commandList = new Text(Point(SCREEN_WIDTH - 172, 16), "");
+    commandList = new Text(Point(settings.SCREEN_WIDTH - 172, 16), "");
     UIRenderer::addText(commandList);
     UIRenderer::addText(commandText);
     UIRenderer::addText(helpText);
