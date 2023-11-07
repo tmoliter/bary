@@ -31,7 +31,7 @@ RayEditor::~RayEditor() {
 
 void RayEditor::saveRay() {
     if (type == CollidableType::obstruction)
-        parent->addObstruction({ new Ray(ray->a,ray->b) }, layer);
+        parent->addObstruction({ Ray(ray->a,ray->b) }, layer);
     if (type == CollidableType::interactable) {
         bool editExisting = parent->interactables.count(name);
         Interactable *in = parent->addInteractable(name);

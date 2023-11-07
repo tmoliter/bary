@@ -1,7 +1,7 @@
 thing = {
     name = "Sailor Shack",
-    x = 50,
-    y = 50,
+    x = 300,
+    y = 300,
     spriteDataVector = {
         {
             layer = 0,

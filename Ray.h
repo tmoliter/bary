@@ -57,6 +57,7 @@ struct Ray {
     Ray (int aX,int aY,int bX,int bY) : a(aX, aY), b(bX, bY) {};
     Ray (Point a, Point b) : a(a), b(b) {};
     Ray (Ray& r) : a(r.a), b(r.b) {};
+    Ray (const Ray& r) : a(r.a), b(r.b) {};
     Ray () : a(0,0), b(0,0) {};
 
     string getStringPosition();

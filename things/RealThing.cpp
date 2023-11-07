@@ -118,12 +118,12 @@ Trigger* RealThing::addTrigger(string iName, vector<Ray*> rays, int layer, Event
     return tr;
 }
 
-Obstruction* RealThing::addObstruction(vector<Ray*> rays, int layer) {
+Obstruction* RealThing::addObstruction(vector<Ray> rays, int layer) {
     Obstruction* o;
     if (obstructions.count(layer)) {
         o = obstructions[layer];
         for (auto r : rays)
-            o->addRay(r);
+            o->addRay(new Ray(r));
     }
     else {
         o = new Obstruction(position, name, rays, layer);

@@ -6,11 +6,14 @@ using namespace std;
 
 Collidable::Collidable (Point &pP, string &tN, CollidableData cd) : 
 layer(cd.layer),
-rays(cd.rays),
 active(true),
 parentPos(pP),
 thingName(tN),
-linesVisible(false) {}
+linesVisible(false) {
+    for (auto r : cd.rays) {
+        this->addRay(new Ray(r));
+    }
+}
 
 Collidable::Collidable (Point &pP, string &tN) : 
 layer(0),
