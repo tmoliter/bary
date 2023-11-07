@@ -5,8 +5,9 @@ function dump(t)
       if type(o) == 'table' then
          local s = '{ '
          for k,v in pairs(o) do
-            if type(k) ~= 'number' then k = '"'..k..'"' end
-            s = s .. '['..k..'] = ' .. getDumpString(v) .. ','
+            if type(k) ~= 'number' then k = '["' .. k .. '"] = ' else k = "" end
+            if type(v) == 'string' then v = '"' .. v .. '"' end
+            s = s .. k .. getDumpString(v) .. ','
          end
          return s .. '} '
       else
