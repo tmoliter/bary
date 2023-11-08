@@ -84,17 +84,18 @@ int main(int argc, char* args[]) {
             }
         }
 
-        SDL_RenderClear(renderer);
         FocusTracker::ftracker->setCameraFocalPoint();
+        SDL_RenderClear(renderer);
         Camera::c->renderBackground();
         Sprite::renderSprites(renderer, Camera::c->getSourceRectCoords());
         UIRenderer::render();
         Camera::c->renderAfterEffects();
 
-        t.timeElapsed(&p.e);
 
-        t.endFrameAndWait(frameCount, p);
         SDL_SetRenderDrawColor(renderer, 0,0,0,255);
+        
+        t.timeElapsed(&p.e);
+        t.endFrameAndWait(frameCount, p);
         SDL_RenderPresent(renderer);
         RealThing::destroyThings();
     }

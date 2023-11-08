@@ -35,8 +35,8 @@ void barysystem::startup() {
         settings.FULLSCREEN_MODE ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_SHOWN
     );
 
-    // Play with third arguemnt. SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC ?
-    renderer = SDL_CreateRenderer(window, -1, 0);
+    // Play with third arguemnt?
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (settings.FULLSCREEN_MODE) {
         SDL_RenderSetLogicalSize(renderer, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT);
         SDL_RenderSetIntegerScale(renderer, SDL_TRUE);
