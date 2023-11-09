@@ -20,9 +20,6 @@ void parse_map() {
                 RealThing::buildThingFromGlobal(L);
             }
         }
-    } else {
-        string errmsg = lua_tostring(L, -1);
-        cout << errmsg << endl; 
     }
     lua_close(L);
 }

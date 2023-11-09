@@ -9,7 +9,7 @@ inline int frameCount = 0;
 inline char* BASE_PATH = SDL_GetBasePath();
 
 inline struct Settings {
-    Settings()
+    void init()
     {
         lua_State* L = luaL_newstate();
         if (luaUtils::CheckLua(L, luaL_dofile(L, "config/settings.lua"))) {
@@ -26,7 +26,6 @@ inline struct Settings {
         } else {
             std::cout << "couldn't find config/globals.lua" << std::endl;
         }
-        
     }
     int SCALE;
     int SCREEN_WIDTH;

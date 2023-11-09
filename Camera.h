@@ -36,7 +36,7 @@ class Camera {
         initialized(false),
         warpStatus(FxStatus::unapplied),
         fadeStatus(FxStatus::applied),
-        fadeMultiplier(2),
+        fadeMultiplier(1),
         warpMultiplier(1),
         scaledScreenWidth(settings.SCREEN_WIDTH / settings.SCALE),
         scaledScreenHeight(settings.SCREEN_HEIGHT / settings.SCALE) {
@@ -46,7 +46,8 @@ class Camera {
 
         void setPosition();
         Point getSourceRectCoords();
-        void render();
+        void renderBackground();
+        void renderAfterEffects();
 
 
         void handleFade();
