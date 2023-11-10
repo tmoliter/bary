@@ -1,37 +1,37 @@
-#include "FieldPlayer.h"
+#include "MovinThing.h"
 
 using namespace std;
 
-FieldPlayer *FieldPlayer::player = nullptr;
+MovinThing *MovinThing::player = nullptr;
 
-FieldPlayer::FieldPlayer(FieldPlayerData fpD) : RealThing(fpD) {
+MovinThing::MovinThing(MovinThingData fpD) : RealThing(fpD) {
     init();
 }
 
-FieldPlayer::FieldPlayer(Point p, string name, string textureName) : RealThing(p,name) {
+MovinThing::MovinThing(Point p, string name, string textureName) : RealThing(p,name) {
     AddRawSprite(textureName);
     init();
 }
 
-FieldPlayer::~FieldPlayer() { 
+MovinThing::~MovinThing() { 
     delete walk;
-    FieldPlayer::player = nullptr;
+    MovinThing::player = nullptr;
 };
 
-void FieldPlayer::init() {
+void MovinThing::init() {
     currentDirection = Direction::down;
     sprite = sprites[0];
     sprite->divideSheet(9, 4);
     sprite->frontAndCenter();
-    walk = new Walk(position.x, position.y, sprite->d.layer, sprite);
+    walk = new Move(position.x, position.y, sprite->d.layer, sprite);
 
     bounds.bottom = sprite->d.height;
     bounds.right = sprite->d.width;
-    FieldPlayer::player = this;
+    MovinThing::player = this;
 }
 
 
-void FieldPlayer::getRay(Ray &r) {
+void MovinThing::getRay(Ray &r) {
     switch (currentDirection) {
         case (Direction::up):
             r = Ray(position.x, position.y, position.x, position.y - 16);
@@ -50,7 +50,7 @@ void FieldPlayer::getRay(Ray &r) {
     }
 }
 
-void FieldPlayer::meat(KeyPresses keysDown) {
+void MovinThing::meat(KeyPresses keysDown) {
     int xV = 0, yV = 0;
     DirectionMap dM;
     vector<Ray> rv;

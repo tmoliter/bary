@@ -7,6 +7,7 @@
 #include <algorithm>
 #include "components/Obstruction.h"
 #include "components/Interactable.h"
+#include "components/Animator.h"
 
 // dubiously from Thing.h
 #include <string>
@@ -40,12 +41,15 @@ class RealThing {
 
         virtual void destroy();
 
+        virtual void checkCollisions() {};
         virtual void meat() {};
+        virtual void animate() {};
         virtual void meat(KeyPresses keysDown) {};
 
         // Static Members PORTED FROM Thing.h
 
         inline static map<string, RealThing*> things;
+        inline static map<string, RealThing*> animatedThings;
         inline static vector<string> thingsToDestroy;
 
         static void meatThings(KeyPresses keysDown);
@@ -65,12 +69,15 @@ class RealThing {
         void _save_name_and_save_in_map(string n);
 
         vector<Sprite*> sprites;
+        Animator* animator;
 
         map<int, Obstruction*> obstructions;
         map<string, Interactable*> interactables;
         map<string, Trigger*> triggers;
 
         void calculateHeight();
+
+        Animator* AddAnimator();
 
         Sprite* AddSprite(SpriteData SD);
         Sprite* AddRawSprite(string path);
@@ -121,7 +128,6 @@ class RealThing {
 
         static void buildThingFromGlobal(lua_State* L);
         static vector<RealThingData> getAllThingData();
-
 };
 
 #endif

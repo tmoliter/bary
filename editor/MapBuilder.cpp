@@ -32,7 +32,7 @@ void MapBuilder::changeState(EditorState newState) {
             break;
         case EditorState::play:
             helpText->setText("Play");
-            currentThing = new FieldPlayer(dotThing->position, "test player", "zinnia");
+            currentThing = new MovinThing(dotThing->position, "test player", "zinnia");
             FocusTracker::panTo(currentThing->name, true);
             state = EditorState::play;
             break;

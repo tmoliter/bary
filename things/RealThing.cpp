@@ -3,7 +3,9 @@
 using namespace std;
 using namespace luaUtils;
 
-RealThing::RealThing(RealThingData tD) : position(tD.x, tD.y) {
+RealThing::RealThing(RealThingData tD) : 
+    position(tD.x, tD.y), 
+    animator(nullptr) {
     _save_name_and_save_in_map(tD.name);
     for (auto sd : tD.spriteDataVector)
         AddSprite(sd);
@@ -11,11 +13,14 @@ RealThing::RealThing(RealThingData tD) : position(tD.x, tD.y) {
         addObstruction(cd.rays, cd.layer);
 }
 
-RealThing::RealThing(Point p) : position(p.x,p.y) {
+RealThing::RealThing(Point p) : 
+    position(p.x,p.y), 
+    animator(nullptr) {
     _save_name_and_save_in_map("AnonymousThing");
 }
 RealThing::RealThing(Point p, string name) : 
     position(p.x,p.y),
+    animator(nullptr),
     name(name) {
     _save_name_and_save_in_map(name);
 }
@@ -44,6 +49,10 @@ RealThing::~RealThing() {
         delete tr;
     for (auto t : subThings)
         delete t;
+    if (animator != nullptr) {
+        animatedThings.erase(name);
+        delete animator;
+    }
     things.erase(name); // This came before deleting subThings in original Thing.cpp, beware if bug arises
 };
 
@@ -87,6 +96,12 @@ void RealThing::calculateHeight() { // Do we need to save this to bounds and ris
         if (tmpTop < bounds.top)
             bounds.top = tmpTop;
     }
+}
+
+Animator* RealThing::AddAnimator() {
+    animator = new Animator();
+    animatedThings[name] = this;
+    return animator;
 }
 
 Sprite* RealThing::AddSprite(SpriteData SD) {

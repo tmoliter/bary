@@ -1,9 +1,8 @@
-#include "Walk.h"
-
+#include "Move.h"
 
 using namespace std;
 
-void Walk::padSide(DirectionMap dM) {
+void Move::padSide(DirectionMap dM) {
     Ray ray;
     if (dM.up || dM.down){
         ray = Ray(x, y, x - 5, y);
@@ -24,7 +23,7 @@ void Walk::padSide(DirectionMap dM) {
 };
 
 
-bool Walk::checkCollision(Direction d) {
+bool Move::checkCollision(Direction d) {
     Ray ray;
     switch(d){
         case (Direction::up):
@@ -47,7 +46,7 @@ bool Walk::checkCollision(Direction d) {
     return false;
 };
 
-void Walk::animate(Direction d) {
+void Move::animate(Direction d) {
     int totalFrames = 7;
     int delayPerFrame = 12 / speed;
     switch (d) {
@@ -73,7 +72,7 @@ void Walk::animate(Direction d) {
     sprite->d.sourceX = frame * sprite->d.width;
 }
 
-void Walk::face(Direction d) {
+void Move::face(Direction d) {
     switch (d) {
         case (Direction::down):
             sprite->d.sourceY = sprite->d.height * 0;
@@ -92,7 +91,7 @@ void Walk::face(Direction d) {
     };
 }
 
-Direction Walk::move(DirectionMap dM){
+Direction Move::move(DirectionMap dM){
     Direction d = directionFromMap(dM);
     face(d);
     if (speed == 0) {
@@ -134,7 +133,7 @@ Direction Walk::move(DirectionMap dM){
     return d;
 };
 
-void Walk::changeSpeed(bool decrease) {
+void Move::changeSpeed(bool decrease) {
     if (decrease && speed > 0) {
         speed -= 1;
         return;
