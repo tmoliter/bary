@@ -1,23 +1,23 @@
 #ifndef MOVE_H
 #define MOVE_H
 
-#include <vector>
-#include "things/RealThing.h"
+#include "Ray.h"
 
-class Move {
-    private:
-        Sprite *sprite;
-        int speed;
-        
-    public:
-        int &x, &y, &layer;
-        Move(int &x, int &y, int &layer, Sprite *s) : sprite(s), speed(2), x(x), y(y), layer(layer) {};
-        void padSide(DirectionMap dM);
-        bool checkCollision(Direction d);
-        void animate(Direction d);
-        void face(Direction d);
-        Direction move(DirectionMap dM);
-        void changeSpeed(bool decrease);
+enum class MoveType {
+    controlled
+};
+
+struct Move {
+    Move() : type(MoveType::controlled), speed(1), layer(0) {};
+
+    MoveType type;
+
+    int speed;
+    int layer;
+    Point velocity;
+    
+    void moveFromInput(KeyPresses keysDown);
+    void changeSpeed(bool decrease);
 };
 
 #endif

@@ -1,5 +1,15 @@
 #include "Animator.h"
 
+Animator::Animator(Sprite* sprite) : 
+    sprite(sprite), 
+    type(AnimationType::movement) {
+    };
+
+void Animator::splitSheet(int columns, int rows) {
+    sprite->divideSheet(columns, rows);
+    sprite->frontAndCenter();
+}
+
 void Animator::animate(Point movement, KeyPresses keysDown) {
     switch(type) {
         case AnimationType::movement:
@@ -11,21 +21,18 @@ void Animator::animate(Point movement, KeyPresses keysDown) {
 }
 
 void Animator::face(Direction d) {
+    sprite->d.sourceX = 0;
     switch (d) {
         case (Direction::down):
-            sprite->d.sourceX = 0;
             sprite->d.sourceY = sprite->d.height * 0;
             break;
         case (Direction::up):
-            sprite->d.sourceX = 0;
             sprite->d.sourceY = sprite->d.height * 1;
             break;
         case (Direction::left):
-            sprite->d.sourceX = 0;
             sprite->d.sourceY = sprite->d.height * 2;
             break;
         case (Direction::right):
-            sprite->d.sourceX = 0;
             sprite->d.sourceY = sprite->d.height * 3;
             break;
         default:
@@ -54,8 +61,8 @@ void Animator::animateMovementFromSpriteSheet(Point movement) {
         default:
             break;
     }
-    int speed = d == Direction::up || d == Direction::down ? movement.y : movement.x;
-    int delayPerFrame = 12 / speed;
+    int speed = d == Direction::up || d == Direction::down ? abs(movement.y) : abs(movement.x);
+    int delayPerFrame = 6 / speed;
     int totalFrames = 7;
     int frame = ((frameCount / delayPerFrame) % totalFrames) + 1;
     sprite->d.sourceX = frame * sprite->d.width;

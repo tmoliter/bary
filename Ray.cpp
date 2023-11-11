@@ -25,3 +25,7 @@ bool pointIsInside(Point p, Point boxP, Bounds bounds) {
         return false;
     return true;
 }
+
+Ray addPointToRay(Ray ray, Point point) {
+    return Ray(point.x + ray.a.x, point.y + ray.a.y, point.x + ray.b.x, point.y + ray.b.y);
+};

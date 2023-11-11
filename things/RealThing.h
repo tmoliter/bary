@@ -8,6 +8,7 @@
 #include "components/Obstruction.h"
 #include "components/Interactable.h"
 #include "components/Animator.h"
+#include "components/Move.h"
 
 // dubiously from Thing.h
 #include <string>
@@ -30,6 +31,7 @@ class RealThing {
     public:
         // Class Members PORTED FROM Thing.h
         Point position;
+
         Bounds bounds;
         string name;
         vector<RealThing*> subThings;
@@ -41,14 +43,15 @@ class RealThing {
 
         virtual void destroy();
 
-        virtual void checkCollisions() {};
-        virtual void meat() {};
-        virtual void animate() {};
-        virtual void meat(KeyPresses keysDown) {};
+        virtual void processMove(KeyPresses keysDown);
+        virtual void processCollisions();
+        virtual void animate(KeyPresses keysDown);
+        virtual void meat(KeyPresses keysDown);
 
         // Static Members PORTED FROM Thing.h
 
         inline static map<string, RealThing*> things;
+        inline static map<string, RealThing*> movinThings;
         inline static map<string, RealThing*> animatedThings;
         inline static vector<string> thingsToDestroy;
 
@@ -70,6 +73,7 @@ class RealThing {
 
         vector<Sprite*> sprites;
         Animator* animator;
+        Move* move;
 
         map<int, Obstruction*> obstructions;
         map<string, Interactable*> interactables;

@@ -8,7 +8,7 @@ int testActions::test_event_node_callback () {
         if (time > 30)
             dM.right = true;
         dM.down = true;
-        MovinThing::player->walk->move(dM);
+        // MovinThing::player->move->moveByDirection(dM);
         return 0;
     }
     Timer::destroy("test");

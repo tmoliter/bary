@@ -7,9 +7,13 @@ enum class AnimationType {
 };
 
 struct Animator {
-    Animator() : type(AnimationType::movement) {};
+    Animator(Sprite* sprite);
+
     Sprite* sprite;
     AnimationType type;
+
+    void splitSheet(int columns, int rows);
+
     void animate(Point movement, KeyPresses keysDown);
     void face(Direction d); 
     void animateMovementFromSpriteSheet(Point movement);

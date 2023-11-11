@@ -5,7 +5,8 @@ using namespace luaUtils;
 
 RealThing::RealThing(RealThingData tD) : 
     position(tD.x, tD.y), 
-    animator(nullptr) {
+    animator(nullptr),
+    move(nullptr) {
     _save_name_and_save_in_map(tD.name);
     for (auto sd : tD.spriteDataVector)
         AddSprite(sd);
@@ -15,14 +16,15 @@ RealThing::RealThing(RealThingData tD) :
 
 RealThing::RealThing(Point p) : 
     position(p.x,p.y), 
-    animator(nullptr) {
+    animator(nullptr),
+    move(nullptr) {
     _save_name_and_save_in_map("AnonymousThing");
 }
-RealThing::RealThing(Point p, string name) : 
+RealThing::RealThing(Point p, string n) : 
     position(p.x,p.y),
     animator(nullptr),
-    name(name) {
-    _save_name_and_save_in_map(name);
+    move(nullptr) {
+    _save_name_and_save_in_map(n);
 }
 
 RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(oldThing.bounds) {
@@ -53,6 +55,10 @@ RealThing::~RealThing() {
         animatedThings.erase(name);
         delete animator;
     }
+    if (move != nullptr) {
+        movinThings.erase(name);
+        delete move;
+    }
     things.erase(name); // This came before deleting subThings in original Thing.cpp, beware if bug arises
 };
 
@@ -72,6 +78,60 @@ void RealThing::_save_name_and_save_in_map(string n) {
     for (auto s : sprites) // REFACTOR Sprite shouldn't have to care about this
         s->thingName = name;
 }
+
+void RealThing::processMove(KeyPresses keysDown) {
+    if (move == nullptr)
+        return;
+    if (move->type == MoveType::controlled)
+        move->moveFromInput(keysDown);
+    position.x += move->velocity.x;
+    position.y += move->velocity.y;
+}
+
+void RealThing::processCollisions() {
+    if (move == nullptr)
+        return;
+    if (move->velocity.x == 0 && move->velocity.y == 0)
+        return;
+    if (obstructions.count(move->layer) < 1)
+        return;
+    Obstruction* ownObstruction = obstructions[move->layer];
+    for (auto const& [n, thing] : things) {
+        if (thing->obstructions.count(move->layer) < 1)
+            continue;
+        Obstruction* foreignObstruction = thing->obstructions[move->layer];
+        if (ownObstruction == foreignObstruction)
+            continue;
+        for (auto const& ray : foreignObstruction->rays) {
+            Ray adjustedRay = addPointToRay(*ray, foreignObstruction->parentPos);
+            if(ownObstruction->isColliding(adjustedRay, move->layer)) {
+                position.x -= move->velocity.x;
+                position.y -= move->velocity.y;
+                move->velocity.x = 0;
+                move->velocity.y = 0;
+                return;
+            }
+        }
+    }
+    return;
+}
+
+void RealThing::animate(KeyPresses keysDown) {
+    animator->animate(move->velocity, keysDown);
+    return;
+}
+
+void RealThing::meat(KeyPresses keysDown) {
+    if (animator != nullptr) {
+        animate(keysDown);
+    }
+    if (move != nullptr) {
+        move->velocity.x = 0;
+        move->velocity.y = 0;
+    }
+    return;
+}
+
 
 void RealThing::calculateHeight() { // Do we need to save this to bounds and risk it being out of date? Do some code reading
     if (sprites.size() == 1) {
@@ -99,7 +159,16 @@ void RealThing::calculateHeight() { // Do we need to save this to bounds and ris
 }
 
 Animator* RealThing::AddAnimator() {
-    animator = new Animator();
+    // Right now there is only one type of animator, but this could take
+    // AnimationType in the future
+    if (sprites.size() < 1) {
+        std::cout << "Can't animate no sprites!" << std::endl;
+        return nullptr;
+    }
+    animator = new Animator(sprites[0]);
+    animator->splitSheet(9, 4); // Obviously this shouldn't be hard-coded, but for now it is
+    bounds.bottom = sprites[0]->d.height;
+    bounds.right = sprites[0]->d.width;
     animatedThings[name] = this;
     return animator;
 }
@@ -245,9 +314,9 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
             break;
         case (CollidableType::obstruction):
             for (auto const& [layer, o] : obstructions){
-            if(o->isColliding(incoming, incomingLayer))
-                return 1;
-            }
+                if(o->isColliding(incoming, incomingLayer))
+                    return 1;
+                }
             break;
         }
     return 0;
@@ -391,9 +460,14 @@ void RealThing::destroy() {
 // STATIC PORTED OVER FROM Thing.cpp
 
 void RealThing::meatThings(KeyPresses keysDown) {
+    for (auto const& [id, thing] : RealThing::movinThings){
+        thing->processMove(keysDown);
+    }
+    for (auto const& [id, thing] : RealThing::movinThings){
+        thing->processCollisions();
+    }
     for (auto const& [id, thing] : RealThing::things){
         thing->meat(keysDown);
-        thing->meat();
     }
 }
 
