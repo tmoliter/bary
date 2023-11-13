@@ -159,7 +159,7 @@ void RealThing::meat(KeyPresses keysDown) {
 }
 
 
-void RealThing::calculateHeight() { // Do we need to save this to bounds and risk it being out of date? Do some code reading
+void RealThing::calculateHeight() {
     if (sprites.size() == 1) {
         Sprite* sprite = sprites.back();
         bounds.right = sprite->d.width + sprite->d.xOffset;
@@ -193,10 +193,10 @@ Animator* RealThing::AddAnimator() {
     }
     animator = new Animator(sprites[0]);
     animator->splitSheet(9, 4); // Obviously this shouldn't be hard-coded, but for now it is
-    bounds.top = 0 - sprites[0]->d.width; // Not totally sure about this
+    bounds.top = 0 - sprites[0]->d.width;
     bounds.bottom = 0;
-    bounds.right = 0 - ( sprites[0]->d.width / 2) + 8;
-    bounds.left = (sprites[0]->d.width / 2) - 10;
+    bounds.right = 0 - ( sprites[0]->d.width / 2);
+    bounds.left = (sprites[0]->d.width / 2);
     animatedThings[name] = this;
     return animator;
 }
@@ -205,10 +205,10 @@ Move* RealThing::AddMove() {
     move = new Move();
 
     vector<Ray> obstructionRays = {
-        Ray(Point(bounds.left, bounds.bottom), Point(bounds.right, bounds.bottom)),
-        Ray(Point(bounds.right, bounds.bottom), Point(bounds.right, bounds.bottom - 6)),
-        Ray( Point(bounds.right, bounds.bottom - 6), Point(bounds.left, bounds.bottom - 6)),
-        Ray(Point(bounds.left, bounds.bottom - 6), Point(bounds.left, bounds.bottom))
+        Ray(Point(bounds.left - 10, bounds.bottom), Point(bounds.right + 8, bounds.bottom)),
+        Ray(Point(bounds.right + 8, bounds.bottom), Point(bounds.right + 8, bounds.bottom - 6)),
+        Ray( Point(bounds.right + 8, bounds.bottom - 6), Point(bounds.left - 10, bounds.bottom - 6)),
+        Ray(Point(bounds.left - 10, bounds.bottom - 6), Point(bounds.left - 10, bounds.bottom))
     };
     addObstruction(obstructionRays, 0);
     RealThing::movinThings[name] = this;
