@@ -7,6 +7,8 @@
 #include <algorithm>
 #include "components/Obstruction.h"
 #include "components/Interactable.h"
+#include "components/Animator.h"
+#include "components/Move.h"
 
 // dubiously from Thing.h
 #include <string>
@@ -29,6 +31,7 @@ class RealThing {
     public:
         // Class Members PORTED FROM Thing.h
         Point position;
+
         Bounds bounds;
         string name;
         vector<RealThing*> subThings;
@@ -40,12 +43,16 @@ class RealThing {
 
         virtual void destroy();
 
-        virtual void meat() {};
-        virtual void meat(KeyPresses keysDown) {};
+        virtual void processMove(KeyPresses keysDown);
+        virtual void processCollisions();
+        virtual void animate(KeyPresses keysDown);
+        virtual void meat(KeyPresses keysDown);
 
         // Static Members PORTED FROM Thing.h
 
         inline static map<string, RealThing*> things;
+        inline static map<string, RealThing*> movinThings;
+        inline static map<string, RealThing*> animatedThings;
         inline static vector<string> thingsToDestroy;
 
         static void meatThings(KeyPresses keysDown);
@@ -65,12 +72,17 @@ class RealThing {
         void _save_name_and_save_in_map(string n);
 
         vector<Sprite*> sprites;
+        Animator* animator;
+        Move* move;
 
         map<int, Obstruction*> obstructions;
         map<string, Interactable*> interactables;
         map<string, Trigger*> triggers;
 
         void calculateHeight();
+
+        Animator* AddAnimator();
+        Move* AddMove();
 
         Sprite* AddSprite(SpriteData SD);
         Sprite* AddRawSprite(string path);
@@ -121,7 +133,6 @@ class RealThing {
 
         static void buildThingFromGlobal(lua_State* L);
         static vector<RealThingData> getAllThingData();
-
 };
 
 #endif

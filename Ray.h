@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include "utils.h"
+#include "Input.h"
 
 using namespace std;
 
@@ -16,6 +17,14 @@ enum class Direction {
     right,
     none
 };
+
+struct Point {
+    int x;
+    int y;
+    Point (int x, int y) : x(x), y(y) {};
+    Point () : x(0), y(0) {};
+};
+
 
 struct DirectionMap {
     bool up = false;
@@ -37,13 +46,29 @@ inline Direction directionFromMap(DirectionMap dM) {
     return Direction::none;
 }
 
+inline Direction directionFromPoint(Point vector) {
+    if (vector.y < 0) 
+        return Direction::up;
+    if (vector.y > 0) 
+        return Direction::down;
+    if (vector.x < 0) 
+        return Direction::left;
+    if (vector.x > 0) 
+        return Direction::right;
+    return Direction::none;
+}
 
-struct Point {
-    int x;
-    int y;
-    Point (int x, int y) : x(x), y(y) {};
-    Point () : x(0), y(0) {};
-};
+inline Direction directionFromKeyPresses(KeyPresses keysDown) {
+    if (keysDown.up) 
+        return Direction::up;
+    if (keysDown.down) 
+        return Direction::down;
+    if (keysDown.left) 
+        return Direction::left;
+    if (keysDown.right) 
+        return Direction::right;
+    return Direction::none;
+}
 
 struct Bounds {
     int left, right, top, bottom;
@@ -66,5 +91,6 @@ struct Ray {
 bool isCounterClockwise (Point A, Point B, Point C);
 bool raysCollide(Ray &ray1, Ray &ray2);
 bool pointIsInside(Point p, Point boxP, Bounds bounds);
+Ray addPointToRay(Ray ray, Point point);
 
 #endif

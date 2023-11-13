@@ -3,7 +3,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "Input.h"
 #include "resourceDepository.h"
 #include "./Text.h"
 

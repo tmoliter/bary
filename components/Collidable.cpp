@@ -75,10 +75,9 @@ bool Collidable::isColliding(Ray &incoming, int incomingLayer) {
     if (incomingLayer != layer)
         return false;
     for (auto r : rays) {
-        Ray ray = Ray(parentPos.x + r->a.x, parentPos.y + r->a.y, parentPos.x + r->b.x, parentPos.y + r->b.y);
-        if (raysCollide(incoming, ray)) {
+        Ray ray = addPointToRay(*r, parentPos);
+        if (raysCollide(incoming, ray))
             return true;
-        }
     }
     return false;
 }
