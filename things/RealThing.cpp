@@ -102,15 +102,41 @@ void RealThing::processCollisions() {
         Obstruction* foreignObstruction = thing->obstructions[move->layer];
         if (ownObstruction == foreignObstruction)
             continue;
-        for (auto const& ray : foreignObstruction->rays) {
-            Ray adjustedRay = addPointToRay(*ray, foreignObstruction->parentPos);
-            if(ownObstruction->isColliding(adjustedRay, move->layer)) {
-                position.x -= move->velocity.x;
-                position.y -= move->velocity.y;
-                move->velocity.x = 0;
-                move->velocity.y = 0;
-                return;
+        // NOTE ABOUT PERFORMANCE:
+        // With 41 player characters walking around and two static things,
+        // this hovers around 2.5ms and sometimes spikes around 6ms. If performance becomes a concern,
+        // we can try a couple things:
+        // maybe play with boxes + rays? Idea being we could do less calculations if we treat
+        // colliders that are boxes as actual boxes rather than 4 rays.
+        //      https://tavianator.com/2011/ray_box.html
+        // Split map up into grid:
+        //      https://gamedev.stackexchange.com/questions/18261/how-can-i-implement-fast-accurate-2d-collision-detection
+        //      https://gamedev.stackexchange.com/questions/14369/how-could-you-parallelise-a-2d-boids-simulation
+        // Part of both of these solutions might involve splitting things up into more groups, based on
+        // static vs. moving (already split) and/or box vs ray colliders.
+        if (move->velocity.x != 0) {
+            position.y -= move->velocity.y;
+            for (auto const& ray : foreignObstruction->rays) {
+                Ray adjustedRay = addPointToRay(*ray, foreignObstruction->parentPos);
+                if(ownObstruction->isColliding(adjustedRay, move->layer)) {
+                    position.x -= move->velocity.x;
+                    move->velocity.x = 0;
+                    break;
+                }
             }
+            position.y += move->velocity.y;
+        }
+        if (move->velocity.y != 0) {
+            position.x -= move->velocity.x;
+            for (auto const& ray : foreignObstruction->rays) {
+                Ray adjustedRay = addPointToRay(*ray, foreignObstruction->parentPos);
+                if(ownObstruction->isColliding(adjustedRay, move->layer)) {
+                    position.y -= move->velocity.y;
+                    move->velocity.y = 0;
+                    break;
+                }
+            }
+            position.x += move->velocity.x;
         }
     }
     return;
