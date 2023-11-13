@@ -1,6 +1,6 @@
 #ifndef EVENT_ACTIONS_H
 #define EVENT_ACTIONS_H
-#include "things/MovinThing.h"
+#include "things/FieldPlayer.h"
 
 namespace testActions {
     int test_event_node_callback ();

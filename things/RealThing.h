@@ -82,6 +82,7 @@ class RealThing {
         void calculateHeight();
 
         Animator* AddAnimator();
+        Move* AddMove();
 
         Sprite* AddSprite(SpriteData SD);
         Sprite* AddRawSprite(string path);

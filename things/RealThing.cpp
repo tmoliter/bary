@@ -193,11 +193,28 @@ Animator* RealThing::AddAnimator() {
     }
     animator = new Animator(sprites[0]);
     animator->splitSheet(9, 4); // Obviously this shouldn't be hard-coded, but for now it is
-    bounds.bottom = sprites[0]->d.height;
-    bounds.right = sprites[0]->d.width;
+    bounds.top = 0 - sprites[0]->d.width; // Not totally sure about this
+    bounds.bottom = 0;
+    bounds.right = 0 - ( sprites[0]->d.width / 2) + 8;
+    bounds.left = (sprites[0]->d.width / 2) - 10;
     animatedThings[name] = this;
     return animator;
 }
+
+Move* RealThing::AddMove() {
+    move = new Move();
+
+    vector<Ray> obstructionRays = {
+        Ray(Point(bounds.left, bounds.bottom), Point(bounds.right, bounds.bottom)),
+        Ray(Point(bounds.right, bounds.bottom), Point(bounds.right, bounds.bottom - 6)),
+        Ray( Point(bounds.right, bounds.bottom - 6), Point(bounds.left, bounds.bottom - 6)),
+        Ray(Point(bounds.left, bounds.bottom - 6), Point(bounds.left, bounds.bottom))
+    };
+    addObstruction(obstructionRays, 0);
+    RealThing::movinThings[name] = this;
+    return move;
+}
+
 
 Sprite* RealThing::AddSprite(SpriteData SD) {
     sprites.push_back(new Sprite(position, name, SD));
