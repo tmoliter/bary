@@ -20,6 +20,7 @@ struct Scene {
 
     RealThing* addThing(RealThingData tD);
     RealThing* addThing(Point p, string name = "AnonymousThing");
+    RealThing* addThingToScene(RealThing* existingThing);
 
     RealThing* copyThing(RealThing& oldThing);
 

@@ -56,6 +56,12 @@ RealThing* Scene::addThing(Point p, string n) {
     return newThing;
 }
 
+RealThing* Scene::addThingToScene(RealThing* existingThing) {
+    existingThing->name = getNewThingName(existingThing->name);
+    things[existingThing->name] = existingThing;
+    return existingThing;
+}
+
 RealThing* Scene::copyThing(RealThing& oldThing) {
     RealThing* newThing = oldThing.copyInPlace();
     newThing->name = getNewThingName(oldThing.name);

@@ -5,6 +5,7 @@ Door::Door(Point p) : RealThing(p, "AnonymousDoor"),
     locked(false) {
 }
 
+// This neds to be reworked, perhaps with Lua events
 int Door::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) {
     if (opened)
         return 0;
