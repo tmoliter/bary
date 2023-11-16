@@ -2,6 +2,8 @@
 
 Scene::Scene(string name) {
     lua_State* L = luaL_newstate();
+    // We should instead ask a script to run that will gather all of these
+    // things along with background path, behaviors, and events, and call C++
     if (CheckLua(L, luaL_dofile(L, "storage/maps/burg.lua"))) {
         lua_getglobal(L, "allThings");
         if(!lua_isnil(L, -1)) {
@@ -135,14 +137,6 @@ void Scene::showAllLines() {
 void Scene::hideAllLines() {
     for (auto const& [id, t] : things)
         t->hideLines();
-}
-
-int Scene::checkAllObstructions (Ray incoming, int incomingLayer) {
-    for (auto const& [n, t] : things) {
-        if (t->checkForCollidables(incoming, incomingLayer, CollidableType::obstruction))
-            return 1;
-    }
-    return 0;
 }
 
 int Scene::checkAllInteractables (Ray incoming, int incomingLayer) {

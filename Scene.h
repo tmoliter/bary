@@ -35,7 +35,6 @@ struct Scene {
     void showAllLines();
     void hideAllLines();
 
-    int checkAllObstructions (Ray incoming, int incomingLayer);
     int checkAllInteractables (Ray incoming, int incomingLayer);
     int checkAllTriggers (Ray incoming, int incomingLayer);
 
