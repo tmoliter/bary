@@ -1,5 +1,6 @@
 #include "barysystem.h"
 #include "FpsTimer.h"
+#include "editor/MapBuilder.h"
 
 using namespace std;
 

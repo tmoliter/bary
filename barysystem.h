@@ -7,8 +7,9 @@
 #include "unistd.h"
 #define cd chdir
 #endif
-#include "MapParser.h"
 #include "jukebox.h"
+#include "globals.h"
+#include <SDL2/SDL_image.h>
 
 namespace barysystem {
     void startup();
