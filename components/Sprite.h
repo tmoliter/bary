@@ -22,7 +22,7 @@ struct SpriteData {
 };
 
 struct Sprite {
-    Sprite(Point &pos, string &tN, SpriteData sd);
+    Sprite(Point &pos, SpriteData sd);
     Sprite(Sprite &sprite);
     Sprite(Sprite &sprite, Point &pos, string &tN);
     ~Sprite();
@@ -31,7 +31,6 @@ struct Sprite {
     int alpha, sheetHeight, sheetWidth;
     Point &position;
     SpriteData d;
-    string &thingName;
     SDL_Texture* texture;
 
     void divideSheet(int columns, int rows);
@@ -48,7 +47,6 @@ struct Sprite {
     static void renderSprites(SDL_Renderer *renderer, Point camPosition);
 
     static void highlightSprite(Sprite* sprite);
-    static void highlightThing(string thingName);
     static void removeHighlight();
 };
 

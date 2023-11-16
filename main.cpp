@@ -5,8 +5,7 @@ using namespace std;
 
 int main(int argc, char* args[]) {
     barysystem::startup();
-    parse_map();
-    RealThing::showAllLines();
+    MapBuilder *m = new MapBuilder();
     // jukebox::playSong("Boss Battle", true);
 
     gameState = GameState::FieldFree;
@@ -78,7 +77,7 @@ int main(int argc, char* args[]) {
                     break;
                 case (GameState::FieldFree):
                 default:
-                    RealThing::meatThings(keysDown);
+                    Scene::currentScene->meatThings(keysDown);
                     t.timeElapsed(&p.d);
                     break;
             }
@@ -97,10 +96,10 @@ int main(int argc, char* args[]) {
         t.timeElapsed(&p.e);
         t.endFrameAndWait(frameCount, p);
         SDL_RenderPresent(renderer);
-        RealThing::destroyThings();
+        Scene::currentScene->destroyThings();
     }
     jukebox::stop();
-    RealThing::destroyThings();
+    Scene::currentScene->destroyThings();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 

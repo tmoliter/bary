@@ -36,40 +36,20 @@ class RealThing {
         string name;
         vector<RealThing*> subThings;
 
-        string rename(string newName);
         Point getCenter();
 
         void manuallyControl(KeyPresses keysDown);
 
-        virtual void destroy();
-
         virtual void processMove(KeyPresses keysDown);
-        virtual void processCollisions();
+        virtual void processCollisions(map<string, RealThing*>& things);
         virtual void animate(KeyPresses keysDown);
         virtual void meat(KeyPresses keysDown);
-
-        // Static Members PORTED FROM Thing.h
-
-        inline static map<string, RealThing*> things;
-        inline static map<string, RealThing*> movinThings;
-        inline static map<string, RealThing*> animatedThings;
-        inline static vector<string> thingsToDestroy;
-
-        static void meatThings(KeyPresses keysDown);
-        static void destroyThings();
-        static void destroyThing(string n);
-        static void destroyAllThings();
-
-        static vector<RealThing*> findThingsByPoint(Point p);
 
         // EXISTED BEFORE
         RealThing(RealThingData tD);
         RealThing(Point p, string name);
-        RealThing(Point p);
         RealThing(RealThing &oldThing);
         ~RealThing();
-
-        void _save_name_and_save_in_map(string n);
 
         vector<Sprite*> sprites;
         Animator* animator;
@@ -81,8 +61,8 @@ class RealThing {
 
         void calculateHeight();
 
-        Animator* AddAnimator();
-        Move* AddMove();
+        Animator* AddAnimator(map<string, RealThing*>& animatedThings);
+        Move* AddMove(map<string, RealThing*>& movinThings);
 
         Sprite* AddSprite(SpriteData SD);
         Sprite* AddRawSprite(string path);
@@ -112,27 +92,17 @@ class RealThing {
         void hideTriggerLines();
         void hideLines();
 
+        void highlightThing();
+        void highlightSprite(Sprite* sprite);
+        void removeHighlight();
+
         vector<string> findAndShowInteractableLines(string beginning);
         vector<string> findAndShowTriggerLines(string beginning);
 
-        void highlightSprite(Sprite* sprite);
-        void removeHighlight();
 
         RealThingData getData();
 
         virtual RealThing* copyInPlace();
-
-        static void showAllLines();
-        static void hideAllLines();
-
-        static int checkAllObstructions (Ray incoming, int incomingLayer);
-        static int checkAllInteractables (Ray incoming, int incomingLayer);
-        static int checkAllTriggers (Ray incoming, int incomingLayer);
-
-        static RealThing *findRealThing(string name);
-
-        static void buildThingFromGlobal(lua_State* L);
-        static vector<RealThingData> getAllThingData();
 };
 
 #endif

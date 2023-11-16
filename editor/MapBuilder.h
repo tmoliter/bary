@@ -19,6 +19,8 @@ class MapBuilder {
     public:
         MapBuilder();
 
+        Scene* scene;
+
         RealThing *dotThing, *currentThing;
 
         EditorState state;

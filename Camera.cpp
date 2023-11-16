@@ -34,6 +34,7 @@ void Camera::init() {
     renderRect = { 0 , 0, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT };
     fadeStart = warpStart = frameCount;
     fadeStatus = FxStatus::unapplying;
+    focalPoint = Point(renderRect.w / 2, renderRect.h / 2);
     initialized = true;
 }
 

@@ -10,14 +10,19 @@ MapBuilder::MapBuilder() : selectedSprite(-1) {
     eventEditor = nullptr;
     thingRouter = nullptr;
 
+    scene = new Scene("Burg");
+    currentThing = dotThing = scene->addThing(Point(600,600), "EditorDot");
+    FocusTracker::ftracker->setFocus(currentThing);
+
     CommandLine::init();
+
+    dotThing->AddRawSprite("singlepixel");
 
     // Maybe we can pass this down into Editors to share? Maybe that's dumb.
     helpText = new Text(Point(16, 16), "");
     UIRenderer::addText(helpText);
-    
-    currentThing = dotThing = new RealThing(Point(600,600), "EditorDot");
-    dotThing->AddRawSprite("singlepixel");
+    Scene::currentScene->showAllLines();
+
     changeState(EditorState::freeMove);
 }
 
@@ -33,7 +38,7 @@ void MapBuilder::changeState(EditorState newState) {
         case EditorState::play:
             helpText->setText("Play");
             currentThing = new FieldPlayer(dotThing->position, "test player", "zinnia");
-            FocusTracker::panTo(currentThing->name, true);
+            FocusTracker::ftracker->setFocus(currentThing);
             state = EditorState::play;
             break;
         case EditorState::commandInput:
@@ -51,7 +56,7 @@ void MapBuilder::changeState(EditorState newState) {
 
 void MapBuilder::focusDot() {
     currentThing = dotThing;
-    FocusTracker::panTo(currentThing->name, true);
+    FocusTracker::ftracker->setFocus(currentThing);
     if (cross == nullptr)
         return;
     delete cross;
@@ -60,9 +65,9 @@ void MapBuilder::focusDot() {
 
 void MapBuilder::updateLines() {
     if(currentThing == dotThing)
-        RealThing::showAllLines();
+        Scene::currentScene->showAllLines();
     else {
-        RealThing::hideAllLines();
+        Scene::currentScene->hideAllLines();
         currentThing->showLines();
     }
 }
@@ -79,7 +84,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
 
     if(state == EditorState::play) {
         if (keysDown.start) {
-            delete currentThing;
+            Scene::currentScene->destroyThing(currentThing);
             currentThing = dotThing;
             changeState(EditorState::freeMove);
             return;
@@ -88,7 +93,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
 
     if (state == EditorState::freeMove) {
         if (keysDown.ok) {
-            vector<RealThing*> collisions = RealThing::findThingsByPoint(dotThing->position);
+            vector<RealThing*> collisions = Scene::currentScene->findThingsByPoint(dotThing->position);
             for (auto t : collisions) {
                 if (t != dotThing) {
                     RealThing* match = dynamic_cast<RealThing*>(t);
@@ -141,7 +146,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
 }
 
 void MapBuilder::save() {
-    vector<RealThingData> allThingData = RealThing::getAllThingData();
+    vector<RealThingData> allThingData = Scene::currentScene->getAllThingData();
     lua_State* L = luaL_newstate();
     luaL_openlibs(L);
 

@@ -31,17 +31,7 @@ struct FocusTracker {
             return;
         Camera::c->focalPoint = focusMode == FocusMode::center ? focus->getCenter() : focus->position;
     }
-    static void panTo(string thingName, bool snap) {
-        if (ftracker == nullptr)
-            return;
-        // if (!snap) {
-        //     // Do some smooth panning shit and maybe lock input or something
-        //     c->focus = RealThing::things[thingName];
-        //     return;
-        // }
-        ftracker->setFocus(RealThing::things[thingName]); // Always snap for now
-    }
-
+    
     inline static FocusTracker *ftracker;
 };
 

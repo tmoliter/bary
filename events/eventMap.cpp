@@ -6,7 +6,8 @@ void eventMap::buildEventMap() {
 };
 
 int eventMap::attachEvent(string event, string thing, string collidable, CollidableType type) {
-    RealThing *rt = RealThing::findRealThing(thing);
+    // RealThing *rt = RealThing::findRealThing(thing);
+    RealThing *rt = nullptr; // this is gonna get nuked anyway
     if (!rt)
         return 0;
     if (type == CollidableType::obstruction)

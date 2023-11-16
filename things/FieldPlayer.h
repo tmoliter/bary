@@ -2,7 +2,7 @@
 #define FIELD_PLAYER_H
 
 #include <iostream>
-#include "RealThing.h"
+#include "Scene.h"
 
 struct FieldPlayerData : RealThingData {
 };
