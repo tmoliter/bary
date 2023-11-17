@@ -27,7 +27,7 @@ class Camera {
             bgWidth, bgHeight, 
             scaledScreenWidth, scaledScreenHeight,  
             fadeMultiplier, warpMultiplier;
-        const char *path;
+        string path;
         bool initialized;
 
         Camera(SDL_Renderer* r) : 

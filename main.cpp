@@ -6,7 +6,7 @@ using namespace std;
 
 int main(int argc, char* args[]) {
     barysystem::startup();
-    MapBuilder *m = new MapBuilder();
+    MapBuilder *m = new MapBuilder("burg");
     // jukebox::playSong("Boss Battle", true);
 
     gameState = GameState::FieldFree;

@@ -11,6 +11,8 @@ struct Scene {
 
     lua_State *L;
 
+    string name;
+
     map<string, RealThing*> things;
     map<string, RealThing*> movinThings;
     map<string, RealThing*> animatedThings;

@@ -1,20 +1,32 @@
 #include "Scene.h"
 
-Scene::Scene(string name) {
+Scene::Scene(string name) : name(name) {
     lua_State* L = luaL_newstate();
-    // We should instead ask a script to run that will gather all of these
-    // things along with background path, behaviors, and events, and call C++
-    if (CheckLua(L, luaL_dofile(L, "storage/maps/burg.lua"))) {
-        lua_getglobal(L, "allThings");
-        if(!lua_isnil(L, -1)) {
-            lua_pushnil(L);
-            while (lua_next(L, -2)) {
-                buildThingFromGlobal(L);
-            }
-        }
+    luaL_openlibs(L);
+
+    // This is v1. We might actually want the lua script to call C++ to make the things,
+    // rather than reading from globals here
+    if (!CheckLua(L, luaL_dofile(L, "scripts/load.lua")))
+        throw exception();
+    lua_getglobal(L, "loadMap");
+    if (!lua_isfunction(L, -1)) {
+        cout << "loadMap isn't a function!" << endl;
+        throw exception();
     }
+    lua_pushstring(L, name.c_str());
+    if (!CheckLua(L, lua_pcall(L, 1, 0, 0)))
+        throw exception();
+    lua_getglobal(L, "allThings");
+    lua_pushnil(L);
+    while (lua_next(L, -2)) {
+        buildThingFromGlobal(L);
+    }
+    lua_pop(L, 1);
+    lua_getglobal(L, "backgroundPath");
+    string backgroundPath = lua_tostring(L, -1);
+
     new Camera(renderer);
-    Camera::c->path = "./assets/backgrounds/Burg.png";
+    Camera::c->path = backgroundPath;
     Camera::c->init();
     new FocusTracker(); // TODO: Figure out what thing to follow based on lua data
 
