@@ -8,7 +8,8 @@ enum class FocusMode {
 };
 
 struct FocusTracker {
-    FocusTracker() : focus(nullptr), focusMode(FocusMode::center) {
+    FocusTracker(RealThing* startingFocus) : focusMode(FocusMode::center) {
+        setFocus(startingFocus);
         ftracker = this;
     };
     FocusMode focusMode;
@@ -20,7 +21,6 @@ struct FocusTracker {
     };
     void setFocus(RealThing* newFocus) {
         RealThing* x = newFocus;
-        int y = 1;
         focus = newFocus;
         // This is kind of a hacky way to set focus mode for the map editor
         if (focus != nullptr)

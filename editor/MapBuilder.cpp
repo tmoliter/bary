@@ -11,7 +11,9 @@ MapBuilder::MapBuilder(string sceneName) : selectedSprite(-1) {
     thingRouter = nullptr;
 
     scene = new Scene(sceneName);
+    scene->Load();
     currentThing = dotThing = scene->addThing(Point(600,600), "EditorDot");
+    scene->EnterLoaded(currentThing);
     FocusTracker::ftracker->setFocus(currentThing);
 
     CommandLine::init();
@@ -208,7 +210,7 @@ void MapBuilder::save() {
     }
     lua_pop(L, 1);
     PushStringToTable(L, "backgroundPath", Camera::c->path);
-    lua_pushstring(L, Scene::currentScene->name.c_str());
+    lua_pushstring(L, Scene::currentScene->sceneName.c_str());
     if (CheckLua(L, lua_pcall(L, 2, 0, 0))) {
         cout << "SAVED" << endl;
     }

@@ -5,13 +5,15 @@
 using namespace luaUtils;
 
 struct Scene {
-    Scene(string name);
+    Scene(string sceneName);
+    ~Scene();
 
     inline static Scene* currentScene;
 
     lua_State *L;
 
-    string name;
+    string sceneName;
+    string backgroundPath;
 
     map<string, RealThing*> things;
     map<string, RealThing*> movinThings;
@@ -45,6 +47,11 @@ struct Scene {
     void buildThingFromGlobal(lua_State* L);
 
     vector<RealThingData> getAllThingData();
+
+    void Load();
+    void EnterLoaded(RealThing* focus);
+
+    static int _loadScene(lua_State* L);
 
     private:
         string getNewThingName(string name);

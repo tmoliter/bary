@@ -1,37 +1,53 @@
 #include "Scene.h"
 
-Scene::Scene(string name) : name(name) {
-    lua_State* L = luaL_newstate();
+int Scene::_loadScene(lua_State* L) {
+    if (lua_gettop(L) != 3)
+        throw exception();
+    Scene* scene = static_cast<Scene*>(lua_touserdata(L, -1));
+    lua_pop(L, 1);
+    lua_pushnil(L);
+    while (lua_next(L, -2))
+        scene->buildThingFromGlobal(L);
+    lua_pop(L,1);
+    scene->backgroundPath = lua_tostring(L, -1);
+    lua_settop(L, 0);
+    cout << "Scene Loaded!" << endl;
+    return 0;
+}
+
+Scene::Scene(string sceneName) : sceneName(sceneName) {
+    L = luaL_newstate();
     luaL_openlibs(L);
 
-    // This is v1. We might actually want the lua script to call C++ to make the things,
-    // rather than reading from globals here
+    lua_register(L, "_loadScene", _loadScene);
+}
+
+Scene::~Scene() {
+    lua_close(L);
+}
+
+void Scene::Load() {
+    cout << "Loading scene..." << endl;
     if (!CheckLua(L, luaL_dofile(L, "scripts/load.lua")))
         throw exception();
-    lua_getglobal(L, "loadMap");
+    lua_getglobal(L, "loadScene");
     if (!lua_isfunction(L, -1)) {
-        cout << "loadMap isn't a function!" << endl;
+        cout << "loadScene isn't a function!" << endl;
         throw exception();
     }
-    lua_pushstring(L, name.c_str());
-    if (!CheckLua(L, lua_pcall(L, 1, 0, 0)))
+    lua_pushstring(L, sceneName.c_str());
+    lua_pushlightuserdata(L, this);
+    if (!CheckLua(L, lua_pcall(L, 2, 0, 0)))
         throw exception();
-    lua_getglobal(L, "allThings");
-    lua_pushnil(L);
-    while (lua_next(L, -2)) {
-        buildThingFromGlobal(L);
-    }
-    lua_pop(L, 1);
-    lua_getglobal(L, "backgroundPath");
-    string backgroundPath = lua_tostring(L, -1);
+}
 
+void Scene::EnterLoaded(RealThing* focus) {
     new Camera(renderer);
     Camera::c->path = backgroundPath;
-    Camera::c->init();
-    new FocusTracker(); // TODO: Figure out what thing to follow based on lua data
 
-    // Don't always do this
-    currentScene = this;
+    Camera::c->init();
+    new FocusTracker(focus);
+    Scene::currentScene = this;
 }
 
 string Scene::getNewThingName(string name) {
