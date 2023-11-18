@@ -5,9 +5,6 @@
 using namespace luaUtils;
 
 struct Scene {
-    Scene(string sceneName);
-    ~Scene();
-
     inline static Scene* currentScene;
 
     lua_State *L;
@@ -19,6 +16,12 @@ struct Scene {
     map<string, RealThing*> movinThings;
     map<string, RealThing*> animatedThings;
     vector<string> thingsToDestroy;
+
+    Scene(string sceneName);
+    ~Scene();
+
+    void Load();
+    void EnterLoaded(RealThing* focus);
 
     void meatThings(KeyPresses keysDown);
 
@@ -44,12 +47,9 @@ struct Scene {
 
     RealThing *findRealThing(string name);
 
-    void buildThingFromGlobal(lua_State* L);
+    void buildThingFromTable(lua_State* L);
 
     vector<RealThingData> getAllThingData();
-
-    void Load();
-    void EnterLoaded(RealThing* focus);
 
     static int _loadScene(lua_State* L);
 

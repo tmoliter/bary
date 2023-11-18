@@ -1,20 +1,5 @@
 #include "Scene.h"
 
-int Scene::_loadScene(lua_State* L) {
-    if (lua_gettop(L) != 3)
-        throw exception();
-    Scene* scene = static_cast<Scene*>(lua_touserdata(L, -1));
-    lua_pop(L, 1);
-    lua_pushnil(L);
-    while (lua_next(L, -2))
-        scene->buildThingFromGlobal(L);
-    lua_pop(L,1);
-    scene->backgroundPath = lua_tostring(L, -1);
-    lua_settop(L, 0);
-    cout << "Scene Loaded!" << endl;
-    return 0;
-}
-
 Scene::Scene(string sceneName) : sceneName(sceneName) {
     L = luaL_newstate();
     luaL_openlibs(L);
@@ -188,7 +173,7 @@ RealThing* Scene::findRealThing (string name) {
     return things[name];
 }
 
-void Scene::buildThingFromGlobal(lua_State* L) {
+void Scene::buildThingFromTable(lua_State* L) {
     RealThingData td;
     GetLuaIntFromTable(L, "x", td.x);
     GetLuaIntFromTable(L, "y", td.y);
@@ -248,4 +233,21 @@ vector<RealThingData> Scene::getAllThingData() {
         allData.push_back(t->getData());
     }
     return allData;
+}
+
+// Lua registered functions
+
+int Scene::_loadScene(lua_State* L) {
+    if (lua_gettop(L) != 3)
+        throw exception();
+    Scene* scene = static_cast<Scene*>(lua_touserdata(L, -1));
+    lua_pop(L, 1);
+    lua_pushnil(L);
+    while (lua_next(L, -2))
+        scene->buildThingFromTable(L);
+    lua_pop(L,1);
+    scene->backgroundPath = lua_tostring(L, -1);
+    lua_settop(L, 0);
+    cout << "Scene Loaded!" << endl;
+    return 0;
 }
