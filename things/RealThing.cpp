@@ -1,35 +1,23 @@
 #include "RealThing.h"
 
-using namespace std;
-using namespace luaUtils;
-
 RealThing::RealThing(RealThingData tD) : 
+    name(tD.name),
     position(tD.x, tD.y), 
     animator(nullptr),
     move(nullptr) {
-    _save_name_and_save_in_map(tD.name);
     for (auto sd : tD.spriteDataVector)
         AddSprite(sd);
     for (auto cd : tD.obstructionData)
         addObstruction(cd.rays, cd.layer);
 }
 
-RealThing::RealThing(Point p) : 
-    position(p.x,p.y), 
-    animator(nullptr),
-    move(nullptr) {
-    _save_name_and_save_in_map("AnonymousThing");
-}
 RealThing::RealThing(Point p, string n) : 
+    name(n),
     position(p.x,p.y),
     animator(nullptr),
-    move(nullptr) {
-    _save_name_and_save_in_map(n);
-}
+    move(nullptr)  {}
 
 RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(oldThing.bounds) {
-    string n = oldThing.name;
-    _save_name_and_save_in_map(n);
     for (auto oldS : oldThing.sprites)
         sprites.push_back(new Sprite(*oldS, position, name));
     for (auto const& [layer, oldO] : oldThing.obstructions)
@@ -49,35 +37,7 @@ RealThing::~RealThing() {
         delete in;
     for (auto const& [name, tr] : triggers)
         delete tr;
-    for (auto t : subThings)
-        delete t;
-    if (animator != nullptr) {
-        animatedThings.erase(name);
-        delete animator;
-    }
-    if (move != nullptr) {
-        movinThings.erase(name);
-        delete move;
-    }
-    things.erase(name); // This came before deleting subThings in original Thing.cpp, beware if bug arises
 };
-
-void RealThing::_save_name_and_save_in_map(string n) {
-    int i;
-    for (i = 0; i < n.length(); i++)
-        if (isdigit(n[i]))
-            break;
-    string baseName = n.substr(0, i);
-    i = 1;
-    name = baseName;
-    while(RealThing::things.count(name)) {
-        name = baseName + to_string(i);
-        i++;
-    }
-    RealThing::things[name] = this;
-    for (auto s : sprites) // REFACTOR Sprite shouldn't have to care about this
-        s->thingName = name;
-}
 
 void RealThing::processMove(KeyPresses keysDown) {
     if (move == nullptr)
@@ -88,7 +48,7 @@ void RealThing::processMove(KeyPresses keysDown) {
     position.y += move->velocity.y;
 }
 
-void RealThing::processCollisions() {
+void RealThing::processCollisions(map<string, RealThing*>& things) {
     if (move == nullptr)
         return;
     if (move->velocity.x == 0 && move->velocity.y == 0)
@@ -97,11 +57,11 @@ void RealThing::processCollisions() {
         return;
     Obstruction* ownObstruction = obstructions[move->layer];
     for (auto const& [n, thing] : things) {
+        if (thing == this)
+            continue;
         if (thing->obstructions.count(move->layer) < 1)
             continue;
         Obstruction* foreignObstruction = thing->obstructions[move->layer];
-        if (ownObstruction == foreignObstruction)
-            continue;
         // NOTE ABOUT PERFORMANCE:
         // With 41 player characters walking around and two static things,
         // this hovers around 2.5ms and sometimes spikes around 6ms. If performance becomes a concern,
@@ -184,7 +144,7 @@ void RealThing::calculateHeight() {
     }
 }
 
-Animator* RealThing::AddAnimator() {
+Animator* RealThing::AddAnimator(map<string, RealThing*>& animatedThings) {
     // Right now there is only one type of animator, but this could take
     // AnimationType in the future
     if (sprites.size() < 1) {
@@ -201,7 +161,7 @@ Animator* RealThing::AddAnimator() {
     return animator;
 }
 
-Move* RealThing::AddMove() {
+Move* RealThing::AddMove(map<string, RealThing*>& movinThings) {
     move = new Move();
 
     vector<Ray> obstructionRays = {
@@ -211,13 +171,13 @@ Move* RealThing::AddMove() {
         Ray(Point(bounds.left - 10, bounds.bottom - 6), Point(bounds.left - 10, bounds.bottom))
     };
     addObstruction(obstructionRays, 0);
-    RealThing::movinThings[name] = this;
+    movinThings[name] = this;
     return move;
 }
 
 
 Sprite* RealThing::AddSprite(SpriteData SD) {
-    sprites.push_back(new Sprite(position, name, SD));
+    sprites.push_back(new Sprite(position, SD));
     sprites.back()->active = true; // This was added to test lua loading, might have side effects
     calculateHeight();
     return sprites.back();
@@ -454,6 +414,13 @@ void RealThing::highlightSprite(Sprite* sprite) {
     }
 }
 
+void RealThing::highlightThing() {
+    for (auto const& [id, s] : Sprite::sprites)
+        s->alpha = 100;
+    for (auto const& [id, s] : Sprite::sprites)
+        s->alpha = 255;
+}
+
 void RealThing::removeHighlight() {
     for (auto s : sprites)
         s->alpha = 255;
@@ -461,13 +428,6 @@ void RealThing::removeHighlight() {
 
 RealThing* RealThing::copyInPlace() {
     return new RealThing(*this);
-}
-
-// Ported Over from Thing.cpp
-string RealThing::rename(string newName) {
-    RealThing::things.erase(name);
-    _save_name_and_save_in_map(newName);
-    return this->name;
 }
 
 Point RealThing::getCenter() {
@@ -495,54 +455,6 @@ void RealThing::manuallyControl(KeyPresses keysDown) {
         t->manuallyControl(keysDown);
 }
 
-
-void RealThing::destroy() {
-    RealThing::destroyThing(name);
-}
-
-// STATIC PORTED OVER FROM Thing.cpp
-
-void RealThing::meatThings(KeyPresses keysDown) {
-    for (auto const& [id, thing] : RealThing::movinThings){
-        thing->processMove(keysDown);
-    }
-    for (auto const& [id, thing] : RealThing::movinThings){
-        thing->processCollisions();
-    }
-    for (auto const& [id, thing] : RealThing::things){
-        thing->meat(keysDown);
-    }
-}
-
-void RealThing::destroyThings() {
-    for (auto killMe : thingsToDestroy) {
-        RealThing* thing = RealThing::things[killMe];
-        delete thing;
-    }
-    thingsToDestroy.clear();
-}
-
-void RealThing::destroyAllThings() {
-   map<string, RealThing*>::iterator itr = RealThing::things.begin();
-   while (itr != RealThing::things.end()) {
-        delete itr->second;
-        itr = RealThing::things.erase(itr);
-   }
-}
-
-void RealThing::destroyThing(string n) {
-    thingsToDestroy.push_back(n);
-}
-
-vector<RealThing*> RealThing::findThingsByPoint(Point p) {
-    vector<RealThing*> matches;
-    for (auto const& [id, thing] : RealThing::things) {
-        if (pointIsInside(p, thing->position, thing->bounds))
-            matches.push_back(thing);
-    }
-    return matches;
-}
-
 RealThingData RealThing::getData() {
     RealThingData td;
     td.name = name;
@@ -562,108 +474,4 @@ RealThingData RealThing::getData() {
         }
     }
     return td;
-}
-
-// STATIC
-
-void RealThing::showAllLines() {
-    for (auto const& [id, t] : RealThing::things) {
-        t->showLines();
-    }
-}
-
-void RealThing::hideAllLines() {
-    for (auto const& [id, t] : RealThing::things) {
-        t->hideLines();
-    }
-}
-
-int RealThing::checkAllObstructions (Ray incoming, int incomingLayer) {
-    for (auto const& [n, t] : RealThing::things) {
-        if (t->checkForCollidables(incoming, incomingLayer, CollidableType::obstruction))
-            return 1;
-    }
-    return 0;
-}
-
-int RealThing::checkAllInteractables (Ray incoming, int incomingLayer) {
-    for (auto const& [name, t] : RealThing::things) {
-        if (t->checkForCollidables(incoming, incomingLayer, CollidableType::interactable))
-            return 1;
-    }
-    return 0;
-}
-
-int RealThing::checkAllTriggers (Ray incoming, int incomingLayer) {
-    for (auto const& [name, t] : RealThing::things) {
-        if (t->checkForCollidables(incoming, incomingLayer, CollidableType::trigger))
-            return 1;
-    }
-    return 0;
-}
-
-RealThing* RealThing::findRealThing (string name) {
-    return RealThing::things[name];
-}
-
-void RealThing::buildThingFromGlobal(lua_State* L) {
-    RealThingData td;
-    GetLuaIntFromTable(L, "x", td.x);
-    GetLuaIntFromTable(L, "y", td.y);
-    GetLuaStringFromTable(L, "name", td.name);
-    GetTableOnStackFromTable(L, "spriteDataVector");
-    if(!lua_isnil(L, -1)) {
-        lua_pushnil(L);
-        while (lua_next(L, -2)) {
-            td.spriteDataVector.push_back(SpriteData());
-            SpriteData &newSpriteData = td.spriteDataVector.back();
-            GetLuaIntFromTable(L, "height", newSpriteData.height);
-            GetLuaIntFromTable(L, "width", newSpriteData.width);
-            GetLuaIntFromTable(L, "layer", newSpriteData.layer);
-            GetLuaIntFromTable(L, "renderOffset", newSpriteData.renderOffset);
-            GetLuaIntFromTable(L, "xOffset", newSpriteData.xOffset);
-            GetLuaIntFromTable(L, "yOffset", newSpriteData.yOffset);
-            GetLuaIntFromTable(L, "sourceX", newSpriteData.sourceX);
-            GetLuaIntFromTable(L, "sourceY", newSpriteData.sourceY);
-            GetLuaStringFromTable(L, "textureName", newSpriteData.textureName);
-            lua_pop(L, 1);
-        }
-    }
-    lua_pop(L, 1);
-    GetTableOnStackFromTable(L, "obstructionData");
-    if(!lua_isnil(L, -1)) {
-        lua_pushnil(L);
-        while (lua_next(L, -2)) {
-            td.obstructionData.push_back(CollidableData());
-            CollidableData &newObstructionData = td.obstructionData.back();
-            GetLuaIntFromTable(L, "layer", newObstructionData.layer);
-            GetTableOnStackFromTable(L, "rays");
-            lua_pushnil(L);
-            while (lua_next(L, -2)) {
-                newObstructionData.rays.push_back(Ray());
-                Ray& newRay = newObstructionData.rays.back();
-                GetLuaIntFromTable(L, "aX", newRay.a.x);
-                GetLuaIntFromTable(L, "aY", newRay.a.y);
-                GetLuaIntFromTable(L, "bX", newRay.b.x);
-                GetLuaIntFromTable(L, "bY", newRay.b.y);
-                lua_pop(L, 1);
-            }
-            lua_pop(L, 2);
-        }
-        lua_pop(L, 1);
-    }
-    lua_pop(L, 1);
-    new RealThing(td);
-}
-
-vector<RealThingData> RealThing::getAllThingData() {
-    vector<RealThingData> allData;
-    for (auto const& [i, t] : things) {
-        if (t->name == "EditorDot")
-            continue;
-        if (t->name == "test player")
-            continue;
-        allData.push_back(t->getData());
-    }
-    return allData;
 }

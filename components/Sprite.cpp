@@ -2,9 +2,8 @@
 
 using namespace std;
 
-Sprite::Sprite (Point &pos, string &tN, SpriteData sd) : 
+Sprite::Sprite (Point &pos, SpriteData sd) : 
     position(pos),
-    thingName(tN), 
     d(sd),
     alpha(255),
     active(false) {
@@ -19,7 +18,6 @@ Sprite::Sprite (Point &pos, string &tN, SpriteData sd) :
 
 Sprite::Sprite(Sprite &sprite) :
     position(sprite.position),
-    thingName(sprite.thingName), 
     d(sprite.d),
     alpha(sprite.alpha),
     active(sprite.active),
@@ -32,7 +30,6 @@ Sprite::Sprite(Sprite &sprite) :
 
 Sprite::Sprite(Sprite &sprite, Point &pos, string &tN) :
     position(pos),
-    thingName(tN), 
     d(sprite.d),
     alpha(sprite.alpha),
     active(sprite.active),
@@ -134,12 +131,6 @@ void Sprite::renderSprites(SDL_Renderer *renderer, Point camPosition) {
 void Sprite::highlightSprite(Sprite* sprite) {
     for (auto const& [id, s] : sprites)
         if (s != sprite)
-            s->alpha = 100;
-}
-
-void Sprite::highlightThing(string thingName) {
-    for (auto const& [id, s] : sprites)
-        if (s->thingName != thingName)
             s->alpha = 100;
 }
 

@@ -20,18 +20,16 @@ class Camera {
         SDL_Texture* bgTexture;
         int fadeStart, warpStart;
     public:
-        SDL_Renderer* renderer;
         Point focalPoint;
         FxStatus fadeStatus, warpStatus;
         int 
             bgWidth, bgHeight, 
             scaledScreenWidth, scaledScreenHeight,  
             fadeMultiplier, warpMultiplier;
-        const char *path;
+        string path;
         bool initialized;
 
-        Camera(SDL_Renderer* r) : 
-        renderer(r),
+        Camera() : 
         focalPoint(Point(0,0)),
         initialized(false),
         warpStatus(FxStatus::unapplied),

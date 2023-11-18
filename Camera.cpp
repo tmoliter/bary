@@ -26,7 +26,7 @@ Point Camera::getSourceRectCoords() {
 }
 
 void Camera::init() {
-    SDL_Surface* temp = IMG_Load(path);
+    SDL_Surface* temp = IMG_Load(path.c_str());
     bgTexture = SDL_CreateTextureFromSurface(renderer, temp);
     SDL_FreeSurface(temp);
     SDL_QueryTexture(bgTexture, NULL, NULL, &bgWidth, &bgHeight);
@@ -34,6 +34,7 @@ void Camera::init() {
     renderRect = { 0 , 0, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT };
     fadeStart = warpStart = frameCount;
     fadeStatus = FxStatus::unapplying;
+    focalPoint = Point(renderRect.w / 2, renderRect.h / 2);
     initialized = true;
 }
 

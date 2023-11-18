@@ -1,7 +1,7 @@
 #include "ThingEditor.h"
 
 ThingEditor::ThingEditor(Point p) {
-    thing = new RealThing(p);
+    thing = Scene::currentScene->addThing(p);
     init();
 }
 
@@ -14,16 +14,16 @@ ThingEditor::~ThingEditor() {
     // Once we have a way to select spriteless things, we should remove this conditional
     // or expand it to also check for rays and events
     if (thing != nullptr && thing->sprites.size() < 1)
-        delete thing;
+        Scene::currentScene->destroyThing(thing);
     delete spriteEditor;
     delete rayEditor;
     delete eventEditor;
     UIRenderer::removeText(helpText);
-    RealThing::showAllLines();
-}
+    Scene::currentScene->showAllLines();
+} 
 
 void ThingEditor::init() {
-    FocusTracker::panTo(thing->name, true);
+    FocusTracker::ftracker->setFocus(thing);
     spriteEditor = nullptr;
     rayEditor = nullptr;
     eventEditor = nullptr;
@@ -34,7 +34,7 @@ void ThingEditor::init() {
 
 void ThingEditor::changeState(ThingEditState newState) {
     helpText->setText("");
-    Sprite::highlightThing(thing->name);
+    thing->highlightThing();
     CommandLine::breakdown();
     switch (newState) {
         case ThingEditState::commandInput:
@@ -53,7 +53,7 @@ void ThingEditor::changeState(ThingEditState newState) {
             break;
         case ThingEditState::move:
             helpText->setText(thing->name + ": Thing Move");
-            FocusTracker::panTo(thing->name, true);
+            FocusTracker::ftracker->setFocus(thing);
             break;
         case ThingEditState::pathInput:
             CommandLine::refresh({
@@ -131,7 +131,7 @@ int ThingEditor::meat(KeyPresses keysDown) {
             return 0;
         }
         if (input == "copy") {
-            RealThing *newThing = new RealThing(*thing);
+            RealThing *newThing = Scene::currentScene->copyThing(*thing);
             for (auto t : thing->subThings)
                 newThing->subThings.push_back(t->copyInPlace());
             thing = newThing;
@@ -140,7 +140,7 @@ int ThingEditor::meat(KeyPresses keysDown) {
         }
         if (input == "delete") {
             CommandLine::breakdown();
-            delete thing;
+            Scene::currentScene->destroyThing(thing);
             thing = nullptr;
             return 1;
         }
@@ -208,7 +208,7 @@ int ThingEditor::meat(KeyPresses keysDown) {
             delete rayEditor;
             rayEditor = nullptr;
             changeState(ThingEditState::commandInput);
-            RealThing::hideAllLines();
+            Scene::currentScene->hideAllLines();
             thing->showLines();
             return 0;
         }
@@ -230,7 +230,7 @@ int ThingEditor::meat(KeyPresses keysDown) {
         string input = CommandLine::popInput();
         string oldName = thing->name;
         if (input.length() > 0)
-            eventMap::updateThingName(oldName, thing->rename(input));
+            eventMap::updateThingName(oldName, Scene::currentScene->renameThing(thing, input));
         changeState(ThingEditState::commandInput);
         return 0;
     }

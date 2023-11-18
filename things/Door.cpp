@@ -1,10 +1,11 @@
 #include "things/Door.h"
 
-Door::Door(Point p) : RealThing(p), 
+Door::Door(Point p) : RealThing(p, "AnonymousDoor"), 
     opened(false),
     locked(false) {
 }
 
+// This neds to be reworked, perhaps with Lua events
 int Door::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) {
     if (opened)
         return 0;

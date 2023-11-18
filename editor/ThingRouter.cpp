@@ -12,9 +12,9 @@ ThingRouter::ThingRouter(RealThing *rt) : realThing(rt), state(ThingRouterState:
     doorEditor = nullptr;
     thingEditor = nullptr;
     cross = nullptr;
-    Sprite::highlightThing(rt->name);
+    rt->highlightThing();
     changeState(ThingRouterState::editOrCreateSub);
-    FocusTracker::panTo(rt->name, true);
+    FocusTracker::ftracker->setFocus(rt);
 }
 
 ThingRouter::~ThingRouter(){
@@ -40,7 +40,7 @@ void ThingRouter::createCross() {
         SpriteData sd;
         sd.textureName = "editorCross";
         sd.layer = 100;
-        cross = new Sprite(realThing->position, realThing->name, sd);
+        cross = new Sprite(realThing->position, sd);
         cross->centerOffset();
     }
 }

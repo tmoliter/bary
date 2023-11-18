@@ -1,6 +1,6 @@
 #ifndef SPRITE_EDITOR_H
 #define SPRITE_EDITOR_H
-#include "FocusTracker.h"
+#include "Scene.h"
 
 using namespace std;
 

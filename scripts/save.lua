@@ -1,6 +1,6 @@
 -- modified from:
 -- https://stackoverflow.com/questions/9168058/how-to-dump-a-table-to-console
-function dump(t)
+function dump(t, scene)
    function getDumpString(o)
       if type(o) == 'table' then
          local s = '{ '
@@ -15,6 +15,6 @@ function dump(t)
       end
    end
    print("Map Data Computed")
-   io.output("storage/maps/burg.lua")
-   io.write("allThings = " .. getDumpString(t))
+   io.output("scenes/" .. scene .. "/map.lua")
+   io.write("return " .. getDumpString(t))
 end

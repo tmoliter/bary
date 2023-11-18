@@ -19,8 +19,9 @@ FieldPlayer::~FieldPlayer() {
 };
 
 void FieldPlayer::init() {
-    AddAnimator();
-    AddMove();
+    Scene::currentScene->things[name] = this;
+    AddAnimator(Scene::currentScene->animatedThings); // REFACTOR: This is kind of a weird pattern, maybe these should be scene functions instead of RealThing functions
+    AddMove(Scene::currentScene->movinThings); // Ditto
     FieldPlayer::player = this;
 }
 
@@ -42,9 +43,9 @@ void FieldPlayer::meat(KeyPresses keysDown) {
         default:
             ray = Ray(position.x, position.y, position.x, position.y);
     }
-    RealThing::checkAllTriggers(ray, move->layer);
+    Scene::currentScene->checkAllTriggers(ray, move->layer);
     if(keysDown.ok && gameState == GameState::FieldFree) {
-        RealThing::checkAllInteractables(ray, move->layer);
+        Scene::currentScene->checkAllInteractables(ray, move->layer);
     }
 
     /* DEBUG MODE CONTROLS */

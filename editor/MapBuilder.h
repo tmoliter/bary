@@ -17,7 +17,9 @@ enum class EditorState {
 
 class MapBuilder {
     public:
-        MapBuilder();
+        MapBuilder(string sceneName);
+
+        Scene* scene;
 
         RealThing *dotThing, *currentThing;
 
