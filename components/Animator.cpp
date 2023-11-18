@@ -3,7 +3,7 @@
 Animator::Animator(Sprite* sprite) : 
     sprite(sprite), 
     type(AnimationType::movement) {
-    };
+};
 
 void Animator::splitSheet(int columns, int rows) {
     sprite->divideSheet(columns, rows);

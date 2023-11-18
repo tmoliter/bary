@@ -8,9 +8,10 @@ enum class MoveType {
 };
 
 struct Move {
-    Move() : type(MoveType::controlled), speed(1), layer(0) {};
+    Move() : type(MoveType::controlled), currentDirection(Direction::down), speed(1), layer(0) {};
 
     MoveType type;
+    Direction currentDirection;
 
     int speed;
     int layer;

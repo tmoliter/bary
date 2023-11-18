@@ -26,6 +26,25 @@ bool pointIsInside(Point p, Point boxP, Bounds bounds) {
     return true;
 }
 
+Ray getRayFromOriginAndDirection(Point origin, Direction direction) {
+    switch (direction) {
+        case (Direction::up):
+            return Ray(origin.x, origin.y, origin.x, origin.y - 16);
+            break;
+        case (Direction::down):
+            return Ray(origin.x, origin.y, origin.x, origin.y + 16);
+            break;
+        case (Direction::left):
+            return Ray(origin.x, origin.y, origin.x - 16, origin.y);
+            break;
+        case (Direction::right):
+            return Ray(origin.x, origin.y, origin.x + 16, origin.y);
+            break;
+        default:
+            return Ray(origin.x, origin.y, origin.x, origin.y);
+    }
+}
+
 Ray addPointToRay(Ray ray, Point point) {
     return Ray(point.x + ray.a.x, point.y + ray.a.y, point.x + ray.b.x, point.y + ray.b.y);
 };
