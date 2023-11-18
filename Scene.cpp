@@ -27,7 +27,7 @@ void Scene::Load() {
 }
 
 void Scene::EnterLoaded(RealThing* focus) {
-    new Camera(renderer);
+    new Camera();
     Camera::c->path = backgroundPath;
 
     Camera::c->init();

@@ -20,7 +20,6 @@ class Camera {
         SDL_Texture* bgTexture;
         int fadeStart, warpStart;
     public:
-        SDL_Renderer* renderer; // Do we need to do this? isn't it global?
         Point focalPoint;
         FxStatus fadeStatus, warpStatus;
         int 
@@ -30,8 +29,7 @@ class Camera {
         string path;
         bool initialized;
 
-        Camera(SDL_Renderer* r) : 
-        renderer(r),
+        Camera() : 
         focalPoint(Point(0,0)),
         initialized(false),
         warpStatus(FxStatus::unapplied),
