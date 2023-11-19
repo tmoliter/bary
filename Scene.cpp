@@ -16,9 +16,6 @@ Scene::~Scene() {
 
 void Scene::Load() {
     cout << "Loading scene..." << endl;
-    string behaviorsPath = "scenes/" + sceneName + "/behaviors.lua";
-    if (!CheckLua(L, luaL_dofile(L, behaviorsPath.c_str())))
-        throw exception();
     if (!CheckLua(L, luaL_dofile(L, "scripts/load.lua")))
         throw exception();
     lua_getglobal(L, "loadScene");
