@@ -9,6 +9,34 @@ bool luaUtils::CheckLua(lua_State* L, int r) {
     return false;
 }
 
+bool luaUtils::CheckParams(lua_State* L, std::vector<ParamType> params) {
+    if (lua_gettop(L) != params.size()) {
+        std::cout << "param length is not a correct!" << std::endl;
+        return false;
+    }
+    int i = -1;
+    for (auto p : params) {
+      if (p == ParamType::str && !lua_isstring(L, i)) {
+        std::cout << "param " << std::to_string(i) << " is not a string!" << std::endl;
+        return false;
+      }
+      if (p == ParamType::number && !lua_isnumber(L, i)) {
+        std::cout << "param " << std::to_string(i) << " is not a number!" << std::endl;
+        return false;
+      }
+      if (p == ParamType::point && !lua_islightuserdata(L, i)) {
+        std::cout << "param " << std::to_string(i) << " is not a pointer!" << std::endl;
+        return false;
+      }
+      if (p == ParamType::table && !lua_istable(L, i)) {
+        std::cout << "param " << std::to_string(i) << " is not a table!" << std::endl;
+        return false;
+      }
+      i--;
+    }
+    return true;
+}
+
 bool luaUtils::GetLuaStringFromTable(lua_State *L, std::string key, std::string &value, int tableIndex) {
     if (lua_istable(L, tableIndex)) {
         lua_pushstring(L, key.c_str());
@@ -56,6 +84,21 @@ bool luaUtils::GetLuaBoolFromTable(lua_State *L, std::string key, bool &value, i
     std::cout << "PROBLEM : " << key << std::endl;
     return false;
 }
+
+bool luaUtils::GetLuaFuncOnStackFromTable(lua_State *L, std::string key, int tableIndex) {
+    if (lua_istable(L, tableIndex)) {
+        lua_pushstring(L, key.c_str());
+        lua_gettable(L, tableIndex - 1);
+        if (!lua_isfunction(L, -1)) {
+            std::cout << key << " is not a func" << std::endl;
+            return false;
+        }
+        return true;
+    }
+    std::cout << "PROBLEM : " << key << std::endl;
+    return false;
+}
+
 
 bool luaUtils::GetTableOnStackFromTable(lua_State *L, std::string key, int tableIndex) {
     if (lua_istable(L, tableIndex)) {

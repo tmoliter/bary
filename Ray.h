@@ -23,6 +23,22 @@ struct Point {
     int y;
     Point (int x, int y) : x(x), y(y) {};
     Point () : x(0), y(0) {};
+    bool isNaught() {
+        return x == 0 && y == 0;
+    }
+    bool isWithin(Point otherPoint, int tolerance) {
+        int xDiff = abs(this->x - otherPoint.x);
+        int yDiff = abs(this->y - otherPoint.y);
+        if (xDiff + yDiff > tolerance)
+            return false;
+        return true;
+    }
+    bool operator==(const Point& other) {
+        return this->x == other.x && this->y == other.y;
+    }
+    bool operator!=(const Point& other) {
+        return !(*this == other);
+    }
 };
 
 
@@ -91,6 +107,7 @@ struct Ray {
 bool isCounterClockwise (Point A, Point B, Point C);
 bool raysCollide(Ray &ray1, Ray &ray2);
 bool pointIsInside(Point p, Point boxP, Bounds bounds);
+Ray getRayFromOriginAndDirection(Point origin, Direction direction);
 Ray addPointToRay(Ray ray, Point point);
 
 #endif

@@ -27,7 +27,7 @@ struct Scene {
 
     RealThing* addThing(RealThingData tD);
     RealThing* addThing(Point p, string name = "AnonymousThing");
-    RealThing* addThingToScene(RealThing* existingThing);
+    RealThing* addExistingThingToScene(RealThing* existingThing);
 
     RealThing* copyThing(RealThing& oldThing);
 
@@ -38,6 +38,9 @@ struct Scene {
 
     string renameThing(RealThing* thing, string newName);
 
+    Animator* AddAnimator(string name);
+    Move* AddMove(string name, MoveType type);
+
     vector<RealThing*> findThingsByPoint(Point p);
     void showAllLines();
     void hideAllLines();
@@ -47,11 +50,14 @@ struct Scene {
 
     RealThing *findRealThing(string name);
 
-    void buildThingFromTable(lua_State* L);
+    RealThing* buildThingFromTable(lua_State* L);
+    void addComponentsFromTable(lua_State* L, RealThing* thing);
 
     vector<RealThingData> getAllThingData();
 
     static int _loadScene(lua_State* L);
+    static int _createThing(lua_State* L);
+    static int _updateMoveTarget(lua_State *L);
 
     private:
         string getNewThingName(string name);

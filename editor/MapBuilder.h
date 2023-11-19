@@ -21,7 +21,7 @@ class MapBuilder {
 
         Scene* scene;
 
-        RealThing *dotThing, *currentThing;
+        RealThing *dotThing, *currentThing, *followThing;
 
         EditorState state;
         Text *helpText;

@@ -20,33 +20,17 @@ FieldPlayer::~FieldPlayer() {
 
 void FieldPlayer::init() {
     Scene::currentScene->things[name] = this;
-    AddAnimator(Scene::currentScene->animatedThings); // REFACTOR: This is kind of a weird pattern, maybe these should be scene functions instead of RealThing functions
-    AddMove(Scene::currentScene->movinThings); // Ditto
+    Scene::currentScene->AddAnimator(name);
+    Scene::currentScene->AddMove(name, MoveType::controlled);
+    move->speed = 2;
     FieldPlayer::player = this;
 }
 
 void FieldPlayer::meat(KeyPresses keysDown) {
-    Ray ray;
-    switch (directionFromPoint(move->velocity)) {
-        case (Direction::up):
-            ray = Ray(position.x, position.y, position.x, position.y - 16);
-            break;
-        case (Direction::down):
-            ray = Ray(position.x, position.y, position.x, position.y + 16);
-            break;
-        case (Direction::left):
-            ray = Ray(position.x, position.y, position.x - 16, position.y);
-            break;
-        case (Direction::right):
-            ray = Ray(position.x, position.y, position.x + 16, position.y);
-            break;
-        default:
-            ray = Ray(position.x, position.y, position.x, position.y);
-    }
-    Scene::currentScene->checkAllTriggers(ray, move->layer);
-    if(keysDown.ok && gameState == GameState::FieldFree) {
-        Scene::currentScene->checkAllInteractables(ray, move->layer);
-    }
+    if (!move->velocity.isNaught())
+        Scene::currentScene->checkAllTriggers(getRayFromOriginAndDirection(position, move->currentDirection), move->layer);
+    if(keysDown.ok && gameState == GameState::FieldFree)
+        Scene::currentScene->checkAllInteractables(getRayFromOriginAndDirection(position, move->currentDirection), move->layer);
 
     /* DEBUG MODE CONTROLS */
     if (keysDown.debug_left && sprites[0]->d.layer > 0) {

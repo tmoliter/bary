@@ -11,6 +11,26 @@ void Move::moveFromInput(KeyPresses keysDown) {
         velocity.x -= speed;
     if (keysDown.right)
         velocity.x += speed;
+    currentDirection = directionFromKeyPresses(keysDown);
+}
+
+bool Move::autoMove(Point position) {
+    if (type == MoveType::follow)
+        destination = *leader;
+    
+    if (position.isWithin(destination, tolerance))
+        return true;
+    int xDiff = destination.x - position.x;
+    int yDiff = destination.y - position.y;
+    if (abs(xDiff) < speed)
+        velocity.x = xDiff;
+    else
+        velocity.x = xDiff > 0 ? speed : 0 - speed;
+    if (abs(yDiff) <= speed)
+        velocity.y = yDiff;
+    else
+        velocity.y = yDiff > 0 ? speed : 0 - speed;
+    return false;
 }
 
 
