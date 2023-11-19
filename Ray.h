@@ -26,6 +26,12 @@ struct Point {
     bool isNaught() {
         return x == 0 && y == 0;
     }
+    bool operator==(const Point& other) {
+        return this->x == other.x && this->y == other.y;
+    }
+    bool operator!=(const Point& other) {
+        return !(*this == other);
+    }
 };
 
 

@@ -20,8 +20,8 @@ FieldPlayer::~FieldPlayer() {
 
 void FieldPlayer::init() {
     Scene::currentScene->things[name] = this;
-    AddAnimator(Scene::currentScene->animatedThings); // REFACTOR: This is kind of a weird pattern, maybe these should be scene functions instead of RealThing functions
-    AddMove(Scene::currentScene->movinThings); // Ditto
+    Scene::currentScene->AddAnimator(name);
+    Scene::currentScene->AddMove(name, MoveType::controlled);
     FieldPlayer::player = this;
 }
 

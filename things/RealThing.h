@@ -29,11 +29,13 @@ struct RealThingData {
 
 class RealThing {
     public:
-        // Class Members PORTED FROM Thing.h
-        Point position;
-
-        Bounds bounds;
         string name;
+
+        Point position;
+        Bounds bounds;
+
+        lua_State* sceneL;
+
         vector<RealThing*> subThings;
 
         Point getCenter();
@@ -45,7 +47,6 @@ class RealThing {
         virtual void animate(KeyPresses keysDown);
         virtual void meat(KeyPresses keysDown);
 
-        // EXISTED BEFORE
         RealThing(RealThingData tD);
         RealThing(Point p, string name);
         RealThing(RealThing &oldThing);
@@ -60,9 +61,6 @@ class RealThing {
         map<string, Trigger*> triggers;
 
         void calculateHeight();
-
-        Animator* AddAnimator(map<string, RealThing*>& animatedThings);
-        Move* AddMove(map<string, RealThing*>& movinThings);
 
         Sprite* AddSprite(SpriteData SD);
         Sprite* AddRawSprite(string path);

@@ -3,8 +3,11 @@
 Scene::Scene(string sceneName) : sceneName(sceneName) {
     L = luaL_newstate();
     luaL_openlibs(L);
+    
 
     lua_register(L, "_loadScene", _loadScene);
+    lua_register(L, "_createThing", _createThing);
+    lua_register(L, "_updateMoveTarget", _updateMoveTarget);
 }
 
 Scene::~Scene() {
@@ -13,6 +16,9 @@ Scene::~Scene() {
 
 void Scene::Load() {
     cout << "Loading scene..." << endl;
+    string behaviorsPath = "scenes/" + sceneName + "/behaviors.lua";
+    if (!CheckLua(L, luaL_dofile(L, behaviorsPath.c_str())))
+        throw exception();
     if (!CheckLua(L, luaL_dofile(L, "scripts/load.lua")))
         throw exception();
     lua_getglobal(L, "loadScene");
@@ -51,6 +57,7 @@ string Scene::getNewThingName(string name) {
 }
 
 string Scene::renameThing(RealThing* thing, string newName) {
+    // This should only happen in the editor so maybe we can hoist this
     things.erase(thing->name);
     thing->name = getNewThingName(newName);
     things[thing->name] = thing;
@@ -71,7 +78,7 @@ RealThing* Scene::addThing(Point p, string n) {
     return newThing;
 }
 
-RealThing* Scene::addThingToScene(RealThing* existingThing) {
+RealThing* Scene::addExistingThingToScene(RealThing* existingThing) {
     existingThing->name = getNewThingName(existingThing->name);
     things[existingThing->name] = existingThing;
     return existingThing;
@@ -98,6 +105,51 @@ void Scene::destroyThing(RealThing* thing) {
     things.erase(thing->name);
     delete thing;
 }
+
+
+Animator* Scene::AddAnimator(string name) {
+    // Right now there is only one type of animator, but this could take
+    // AnimationType in the future
+    if (things.count(name) < 1) {
+        cout << "can't animate '" << name << "', it isn't a thing";
+        return nullptr;
+    }
+    RealThing* thing = things[name];
+    if (thing->sprites.size() != 1) {
+        std::cout << "Can't animate no sprites!" << std::endl;
+        return nullptr;
+    }
+    thing->animator = new Animator(thing->sprites[0]);
+    thing->animator->splitSheet(9, 4); // Obviously this shouldn't be hard-coded, but for now it is
+    thing->bounds.top = 0 - thing->sprites[0]->d.width;
+    thing->bounds.bottom = 0;
+    thing->bounds.right = 0 - ( thing->sprites[0]->d.width / 2); // I think these are backwards
+    thing->bounds.left = (thing->sprites[0]->d.width / 2);
+    animatedThings[name] = thing;
+    return thing->animator;
+}
+
+Move* Scene::AddMove(string name, MoveType type) { // this should just take a pointer I think
+    if (things.count(name) < 1) {
+        cout << "can't make '" << name << "' move, it isn't a thing";
+        return nullptr;
+    }
+    RealThing* thing = things[name];
+
+    thing->move = new Move(type, thing->position);
+
+    Bounds bounds = thing->bounds;
+    vector<Ray> obstructionRays = {
+        Ray(Point(bounds.left - 10, bounds.bottom), Point(bounds.right + 8, bounds.bottom)),
+        Ray(Point(bounds.right + 8, bounds.bottom), Point(bounds.right + 8, bounds.bottom - 6)),
+        Ray( Point(bounds.right + 8, bounds.bottom - 6), Point(bounds.left - 10, bounds.bottom - 6)),
+        Ray(Point(bounds.left - 10, bounds.bottom - 6), Point(bounds.left - 10, bounds.bottom))
+    };
+    thing->addObstruction(obstructionRays, 0);
+    movinThings[name] = thing;
+    return thing->move;
+}
+
 
 void Scene::addThingToDestroyQueue(string n) {
     thingsToDestroy.push_back(n);
@@ -173,7 +225,7 @@ RealThing* Scene::findRealThing (string name) {
     return things[name];
 }
 
-void Scene::buildThingFromTable(lua_State* L) {
+RealThing* Scene::buildThingFromTable(lua_State* L) {
     RealThingData td;
     GetLuaIntFromTable(L, "x", td.x);
     GetLuaIntFromTable(L, "y", td.y);
@@ -220,7 +272,32 @@ void Scene::buildThingFromTable(lua_State* L) {
         lua_pop(L, 1);
     }
     lua_pop(L, 1);
-    addThing(td);
+    RealThing* newThing = addThing(td);
+    newThing->sceneL = L;
+    return newThing;
+}
+
+void Scene::addComponentsFromTable(lua_State* L, RealThing* thing) {
+    if (!lua_istable(L, -1)) {
+        cout << "top of stack is not table of components!" << endl;
+        return;
+    }
+    lua_pushnil(L);
+    while (lua_next(L, -2)) {
+        if (!lua_isstring(L, -1)) {
+            cout << "component name is not string!" << endl;
+            continue;
+        }
+        string component = lua_tostring(L, -1); // we will have more data than just component name eventually
+        if (component == "autoMove")
+            AddMove(thing->name, MoveType::automatic);
+        if (component == "followMove")
+            thing->move->type = MoveType::follow;
+        if (component == "moveAnimate")
+            AddAnimator(thing->name);
+        lua_pop(L, 1);
+    }
+    lua_pop(L, 1);
 }
 
 vector<RealThingData> Scene::getAllThingData() {
@@ -236,10 +313,11 @@ vector<RealThingData> Scene::getAllThingData() {
 }
 
 // Lua registered functions
-
 int Scene::_loadScene(lua_State* L) {
-    if (lua_gettop(L) != 3)
+    if(!CheckParams(L, {ParamType::point, ParamType::table, ParamType::str})) {
+        cout << "_loadScene failed!" << endl;
         throw exception();
+    }
     Scene* scene = static_cast<Scene*>(lua_touserdata(L, -1));
     lua_pop(L, 1);
     lua_pushnil(L);
@@ -249,5 +327,35 @@ int Scene::_loadScene(lua_State* L) {
     scene->backgroundPath = lua_tostring(L, -1);
     lua_settop(L, 0);
     cout << "Scene Loaded!" << endl;
+    return 0;
+}
+
+int Scene::_createThing(lua_State* L) {
+    if(!CheckParams(L, {ParamType::point, ParamType::table, ParamType::table })) {
+        cout << "_createThing failed!" << endl;
+        throw exception();
+    }
+    Scene* scene = static_cast<Scene*>(lua_touserdata(L, -1));
+    lua_pop(L, 1);
+    RealThing* newThing = scene->buildThingFromTable(L);
+    scene->addComponentsFromTable(L, newThing);
+
+    lua_pushstring(L, newThing->name.c_str());
+    return 1;
+}
+
+int Scene::_updateMoveTarget(lua_State *L) {
+    if(!CheckParams(L, {ParamType::point, ParamType::number, ParamType::number}))
+        return 0;
+    RealThing* thing = static_cast<RealThing*>(lua_touserdata(L, -1));
+    Move* move = thing->move;
+    if (move == nullptr) {
+        cout << "can't update '" << thing->name << "' move target because it does not move" << endl;
+        return 0;
+    }
+    int newY = lua_tointeger(L, -2);
+    int newX = lua_tointeger(L, -3);
+    lua_settop(L, 0);
+    move->destination = Point(newX, newY);
     return 0;
 }

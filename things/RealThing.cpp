@@ -44,6 +44,24 @@ void RealThing::processMove(KeyPresses keysDown) {
         return;
     if (move->type == MoveType::controlled)
         move->moveFromInput(keysDown);
+    if (move->type == MoveType::follow && move->leader)
+        move->autoMove(*move->leader);
+    if (move->type == MoveType::automatic) {
+        if(move->autoMove(position)) {
+            lua_getglobal(sceneL, "doAutoMove");
+            if (!lua_isfunction(sceneL, -1)) {
+                cout << "doAutoMove is not function" << endl;
+                throw exception();
+            }
+            lua_pushnumber(sceneL, move->origin.x);
+            lua_pushnumber(sceneL, move->origin.y);
+            lua_pushstring(sceneL, name.c_str());
+            lua_pushlightuserdata(sceneL, this);
+            lua_pcall(sceneL, 4, 0, 0);
+            if (lua_isstring(sceneL, -1))
+                cout << lua_tostring(sceneL, -1) << endl;
+        }
+    }
     position.x += move->velocity.x;
     position.y += move->velocity.y;
 }
@@ -143,38 +161,6 @@ void RealThing::calculateHeight() {
             bounds.top = tmpTop;
     }
 }
-
-Animator* RealThing::AddAnimator(map<string, RealThing*>& animatedThings) {
-    // Right now there is only one type of animator, but this could take
-    // AnimationType in the future
-    if (sprites.size() < 1) {
-        std::cout << "Can't animate no sprites!" << std::endl;
-        return nullptr;
-    }
-    animator = new Animator(sprites[0]);
-    animator->splitSheet(9, 4); // Obviously this shouldn't be hard-coded, but for now it is
-    bounds.top = 0 - sprites[0]->d.width;
-    bounds.bottom = 0;
-    bounds.right = 0 - ( sprites[0]->d.width / 2);
-    bounds.left = (sprites[0]->d.width / 2);
-    animatedThings[name] = this;
-    return animator;
-}
-
-Move* RealThing::AddMove(map<string, RealThing*>& movinThings) {
-    move = new Move();
-
-    vector<Ray> obstructionRays = {
-        Ray(Point(bounds.left - 10, bounds.bottom), Point(bounds.right + 8, bounds.bottom)),
-        Ray(Point(bounds.right + 8, bounds.bottom), Point(bounds.right + 8, bounds.bottom - 6)),
-        Ray( Point(bounds.right + 8, bounds.bottom - 6), Point(bounds.left - 10, bounds.bottom - 6)),
-        Ray(Point(bounds.left - 10, bounds.bottom - 6), Point(bounds.left - 10, bounds.bottom))
-    };
-    addObstruction(obstructionRays, 0);
-    movinThings[name] = this;
-    return move;
-}
-
 
 Sprite* RealThing::AddSprite(SpriteData SD) {
     sprites.push_back(new Sprite(position, SD));
