@@ -45,7 +45,7 @@ void RealThing::processMove(KeyPresses keysDown) {
     if (move->type == MoveType::controlled)
         move->moveFromInput(keysDown);
     if (move->type == MoveType::follow && move->leader)
-        move->autoMove(*move->leader);
+        move->autoMove(position);
     if (move->type == MoveType::automatic) {
         if(move->autoMove(position)) {
             lua_getglobal(sceneL, "doAutoMove");

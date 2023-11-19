@@ -22,6 +22,7 @@ void FieldPlayer::init() {
     Scene::currentScene->things[name] = this;
     Scene::currentScene->AddAnimator(name);
     Scene::currentScene->AddMove(name, MoveType::controlled);
+    move->speed = 2;
     FieldPlayer::player = this;
 }
 

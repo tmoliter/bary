@@ -26,6 +26,13 @@ struct Point {
     bool isNaught() {
         return x == 0 && y == 0;
     }
+    bool isWithin(Point otherPoint, int tolerance) {
+        int xDiff = abs(this->x - otherPoint.x);
+        int yDiff = abs(this->y - otherPoint.y);
+        if (xDiff + yDiff > tolerance)
+            return false;
+        return true;
+    }
     bool operator==(const Point& other) {
         return this->x == other.x && this->y == other.y;
     }

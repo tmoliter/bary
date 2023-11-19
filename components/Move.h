@@ -18,7 +18,8 @@ struct Move {
         currentDirection(Direction::down), 
         leader(nullptr),
         speed(1), 
-        layer(0)
+        layer(0),
+        tolerance(0)
     {};
 
     MoveType type;
@@ -27,6 +28,7 @@ struct Move {
 
     int speed;
     int layer;
+    int tolerance;
     Point velocity;
     Point origin;
     Point destination;

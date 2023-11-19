@@ -15,7 +15,10 @@ void Move::moveFromInput(KeyPresses keysDown) {
 }
 
 bool Move::autoMove(Point position) {
-    if (position == destination)
+    if (type == MoveType::follow)
+        destination = *leader;
+    
+    if (position.isWithin(destination, tolerance))
         return true;
     int xDiff = destination.x - position.x;
     int yDiff = destination.y - position.y;
