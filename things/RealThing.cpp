@@ -270,7 +270,7 @@ void RealThing::removeAllCollidables() {
     }
 };
 
-// Pass in incoming Thing name here to ignore collisions
+// Pass in incoming Thing name here to ignore collisions (might be outdated comment)
 int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) {
     switch (collidableType) {
         case (CollidableType::interactable):
@@ -302,10 +302,8 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
             }
             break;
         case (CollidableType::obstruction):
-            for (auto const& [layer, o] : obstructions){
-                if(o->isColliding(incoming, incomingLayer))
-                    return 1;
-                }
+            if(obstructions.count(incomingLayer) && obstructions[incomingLayer]->isColliding(incoming, incomingLayer))
+                return 1;
             break;
         }
     return 0;
