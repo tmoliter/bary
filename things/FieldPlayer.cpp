@@ -19,9 +19,9 @@ FieldPlayer::~FieldPlayer() {
 
 void FieldPlayer::meat(KeyPresses keysDown) {
     if (!move->velocity.isNaught())
-        checkAllTriggers();
+        castRayForTriggers();
     if(keysDown.ok && gameState == GameState::FieldFree)
-        checkAllInteractables();
+        castRayForInteractables();
 
     /* DEBUG MODE CONTROLS */
     if (keysDown.debug_left && sprites[0]->d.layer > 0) {
@@ -55,3 +55,28 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     /* END DEBUG MODE CONTROLS */
     RealThing::meat(keysDown);
 };
+
+
+int FieldPlayer::castRayForInteractables () {
+    if (move == nullptr)
+        return 0;
+    for (auto const& [name, t] : thingLists.things) {
+        if (t == this)
+            return 0;
+        if (t->checkForCollidables(getRayFromOriginAndDirection(position, move->currentDirection), move->layer, CollidableType::interactable))
+            return 1;
+    }
+    return 0;
+}
+
+int FieldPlayer::castRayForTriggers () {
+    if (move == nullptr)
+        return 0;
+    for (auto const& [name, t] : thingLists.things) {
+        if (t == this)
+            return 0;
+        if (t->checkForCollidables(getRayFromOriginAndDirection(position, move->currentDirection), move->layer, CollidableType::trigger))
+            return 1;
+    }
+    return 0;
+}

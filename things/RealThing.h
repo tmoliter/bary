@@ -110,9 +110,6 @@ struct RealThing {
 
     void removeAllCollidables();
 
-    int checkAllInteractables ();
-    int checkAllTriggers ();
-
     virtual int checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType);
 
     void showObstructionLines(int layer = -1001);

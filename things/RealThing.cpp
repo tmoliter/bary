@@ -304,31 +304,6 @@ void RealThing::removeAllCollidables() {
     }
 };
 
-
-int RealThing::checkAllInteractables () {
-    if (move == nullptr)
-        return 0;
-    for (auto const& [name, t] : thingLists.things) {
-        if (t == this)
-            return 0;
-        if (t->checkForCollidables(getRayFromOriginAndDirection(position, move->currentDirection), move->layer, CollidableType::interactable))
-            return 1;
-    }
-    return 0;
-}
-
-int RealThing::checkAllTriggers () {
-    if (move == nullptr)
-        return 0;
-    for (auto const& [name, t] : thingLists.things) {
-        if (t == this)
-            return 0;
-        if (t->checkForCollidables(getRayFromOriginAndDirection(position, move->currentDirection), move->layer, CollidableType::trigger))
-            return 1;
-    }
-    return 0;
-}
-
 int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) {
     switch (collidableType) {
         case (CollidableType::interactable):

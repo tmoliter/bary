@@ -9,6 +9,9 @@ struct FieldPlayer : public RealThing {
     ~FieldPlayer();
 
     void meat(KeyPresses keysDown);
+
+    int castRayForInteractables ();
+    int castRayForTriggers ();
     
     static FieldPlayer *player;
 };
