@@ -157,6 +157,45 @@ void RealThing::calculateHeight() {
     }
 }
 
+void RealThing::AddToMap(map<string, RealThing*>& thingMap) {
+    if (thingMap.count(name)) {
+        cout << "TRIED TO ADD DUPLICATE NAMED ENTRY TO THING MAP OF SOME KIND" << endl;
+        throw exception();
+    }
+    thingMap[name] = this;
+}
+
+Animator* RealThing::AddAnimator() {
+    // Right now there is only one type of animator, but this could take
+    // AnimationType in the future
+    if (sprites.size() != 1) {
+        std::cout << "Can't animate no sprites!" << std::endl;
+        return nullptr;
+    }
+    animator = new Animator(sprites[0]);
+    animator->splitSheet(9, 4); // Obviously this shouldn't be hard-coded, but for now it is
+    bounds.top = 0 - sprites[0]->d.width;
+    bounds.bottom = 0;
+    bounds.right = 0 - ( sprites[0]->d.width / 2); // I think these are backwards
+    bounds.left = (sprites[0]->d.width / 2);
+    AddToMap(thingLists.animatedThings);
+    return animator;
+}
+
+Move* RealThing::AddMove(MoveType type) {
+    move = new Move(type, position);
+
+    vector<Ray> obstructionRays = {
+        Ray(Point(bounds.left - 10, bounds.bottom), Point(bounds.right + 8, bounds.bottom)),
+        Ray(Point(bounds.right + 8, bounds.bottom), Point(bounds.right + 8, bounds.bottom - 6)),
+        Ray( Point(bounds.right + 8, bounds.bottom - 6), Point(bounds.left - 10, bounds.bottom - 6)),
+        Ray(Point(bounds.left - 10, bounds.bottom - 6), Point(bounds.left - 10, bounds.bottom))
+    };
+    addObstruction(obstructionRays, 0);
+    AddToMap(thingLists.movinThings);
+    return move;
+}
+
 Sprite* RealThing::AddSprite(SpriteData SD) {
     sprites.push_back(new Sprite(position, SD));
     sprites.back()->active = true; // This was added to test lua loading, might have side effects
@@ -264,6 +303,31 @@ void RealThing::removeAllCollidables() {
         trItr = triggers.erase(trItr);
     }
 };
+
+
+int RealThing::checkAllInteractables () {
+    if (move == nullptr)
+        return 0;
+    for (auto const& [name, t] : thingLists.things) {
+        if (t == this)
+            return 0;
+        if (t->checkForCollidables(getRayFromOriginAndDirection(position, move->currentDirection), move->layer, CollidableType::interactable))
+            return 1;
+    }
+    return 0;
+}
+
+int RealThing::checkAllTriggers () {
+    if (move == nullptr)
+        return 0;
+    for (auto const& [name, t] : thingLists.things) {
+        if (t == this)
+            return 0;
+        if (t->checkForCollidables(getRayFromOriginAndDirection(position, move->currentDirection), move->layer, CollidableType::trigger))
+            return 1;
+    }
+    return 0;
+}
 
 int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) {
     switch (collidableType) {

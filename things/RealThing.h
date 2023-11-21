@@ -24,7 +24,10 @@ enum class ThingType {
 
 struct RealThingData {
     RealThingData() {};
-    RealThingData(Point p, string n = "AnonymousThing") : x(p.x), y(p.y), name(n) {}
+    RealThingData(Point p, string n = "AnonymousThing", string textureName = "") : x(p.x), y(p.y), name(n) {
+        if (textureName != "")
+            spriteDataVector.push_back(SpriteData(textureName));
+    };
     string name = "AnonymousThing";
     int x = 0;
     int y = 0;
@@ -61,6 +64,7 @@ struct RealThing {
 
     vector<RealThing*> subThings;
 
+
     Point getCenter();
 
     void manuallyControl(KeyPresses keysDown);
@@ -84,6 +88,11 @@ struct RealThing {
 
     void calculateHeight();
 
+    void AddToMap(map<string, RealThing*>& thingMap);
+
+    Animator* AddAnimator();
+    Move* AddMove(MoveType type);
+
     Sprite* AddSprite(SpriteData SD);
     Sprite* AddRawSprite(string path);
 
@@ -100,6 +109,9 @@ struct RealThing {
     void removeTrigger(string name);
 
     void removeAllCollidables();
+
+    int checkAllInteractables ();
+    int checkAllTriggers ();
 
     virtual int checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType);
 

@@ -66,27 +66,39 @@ string Scene::renameThing(RealThing* thing, string newName) {
     // This should only happen in the editor so maybe we can hoist this
     things.erase(thing->name);
     thing->name = getNewThingName(newName);
-    things[thing->name] = thing;
+    thing->AddToMap(things);
     return thing->name;
 }
 
 RealThing* Scene::addThing(RealThingData tD, ThingType type) {
     tD.name = getNewThingName(tD.name);
-    RealThing* newThing = new RealThing(tD, getThingLists());
-    things[newThing->name] = newThing;
+    RealThing* newThing;
+    switch(type) {
+        case ThingType::fieldPlayer:
+            newThing = new FieldPlayer(tD, getThingLists());
+            break;
+        case ThingType::door:
+            newThing = new Door(tD, getThingLists());
+            break;
+        case ThingType::thing:
+        default:
+            newThing = new RealThing(tD, getThingLists());
+            break;
+    }
+    newThing->AddToMap(things);
     return newThing;
 }
 
 RealThing* Scene::addExistingThingToScene(RealThing* existingThing) {
     existingThing->name = getNewThingName(existingThing->name);
-    things[existingThing->name] = existingThing;
+    existingThing->AddToMap(things);
     return existingThing;
 }
 
 RealThing* Scene::copyThing(RealThing& oldThing) {
     RealThing* newThing = oldThing.copyInPlace();
     newThing->name = getNewThingName(oldThing.name);
-    things[newThing->name] = newThing;
+    newThing->AddToMap(things);
     return newThing;
 }
 
@@ -104,51 +116,6 @@ void Scene::destroyThing(RealThing* thing) {
     things.erase(thing->name);
     delete thing;
 }
-
-
-Animator* Scene::AddAnimator(string name) {
-    // Right now there is only one type of animator, but this could take
-    // AnimationType in the future
-    if (things.count(name) < 1) {
-        cout << "can't animate '" << name << "', it isn't a thing";
-        return nullptr;
-    }
-    RealThing* thing = things[name];
-    if (thing->sprites.size() != 1) {
-        std::cout << "Can't animate no sprites!" << std::endl;
-        return nullptr;
-    }
-    thing->animator = new Animator(thing->sprites[0]);
-    thing->animator->splitSheet(9, 4); // Obviously this shouldn't be hard-coded, but for now it is
-    thing->bounds.top = 0 - thing->sprites[0]->d.width;
-    thing->bounds.bottom = 0;
-    thing->bounds.right = 0 - ( thing->sprites[0]->d.width / 2); // I think these are backwards
-    thing->bounds.left = (thing->sprites[0]->d.width / 2);
-    animatedThings[name] = thing;
-    return thing->animator;
-}
-
-Move* Scene::AddMove(string name, MoveType type) { // this should just take a pointer I think
-    if (things.count(name) < 1) {
-        cout << "can't make '" << name << "' move, it isn't a thing";
-        return nullptr;
-    }
-    RealThing* thing = things[name];
-
-    thing->move = new Move(type, thing->position);
-
-    Bounds bounds = thing->bounds;
-    vector<Ray> obstructionRays = {
-        Ray(Point(bounds.left - 10, bounds.bottom), Point(bounds.right + 8, bounds.bottom)),
-        Ray(Point(bounds.right + 8, bounds.bottom), Point(bounds.right + 8, bounds.bottom - 6)),
-        Ray( Point(bounds.right + 8, bounds.bottom - 6), Point(bounds.left - 10, bounds.bottom - 6)),
-        Ray(Point(bounds.left - 10, bounds.bottom - 6), Point(bounds.left - 10, bounds.bottom))
-    };
-    thing->addObstruction(obstructionRays, 0);
-    movinThings[name] = thing;
-    return thing->move;
-}
-
 
 void Scene::addThingToDestroyQueue(string n) {
     thingsToDestroy.push_back(n);
@@ -202,23 +169,6 @@ void Scene::hideAllLines() {
     for (auto const& [id, t] : things)
         t->hideLines();
 }
-
-int Scene::checkAllInteractables (Ray incoming, int incomingLayer) {
-    for (auto const& [name, t] : things) {
-        if (t->checkForCollidables(incoming, incomingLayer, CollidableType::interactable))
-            return 1;
-    }
-    return 0;
-}
-
-int Scene::checkAllTriggers (Ray incoming, int incomingLayer) {
-    for (auto const& [name, t] : things) {
-        if (t->checkForCollidables(incoming, incomingLayer, CollidableType::trigger))
-            return 1;
-    }
-    return 0;
-}
-
 
 RealThing* Scene::findRealThing (string name) {
     return things[name];
@@ -289,11 +239,11 @@ void Scene::addComponentsFromTable(lua_State* L, RealThing* thing) {
         }
         string component = lua_tostring(L, -1); // we will have more data than just component name eventually
         if (component == "autoMove")
-            AddMove(thing->name, MoveType::automatic);
+            thing->AddMove(MoveType::automatic);
         if (component == "followMove")
             thing->move->type = MoveType::follow;
         if (component == "moveAnimate")
-            AddAnimator(thing->name);
+            thing->AddAnimator();
         lua_pop(L, 1);
     }
     lua_pop(L, 1);

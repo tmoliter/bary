@@ -1,6 +1,8 @@
 #ifndef SCENE_H
 #define SCENE_H
 #include "FocusTracker.h"
+#include "things/FieldPlayer.h"
+#include "things/Door.h"
 
 using namespace luaUtils;
 
@@ -37,15 +39,9 @@ struct Scene {
 
     string renameThing(RealThing* thing, string newName);
 
-    Animator* AddAnimator(string name);
-    Move* AddMove(string name, MoveType type);
-
     vector<RealThing*> findThingsByPoint(Point p);
     void showAllLines();
     void hideAllLines();
-
-    int checkAllInteractables (Ray incoming, int incomingLayer);
-    int checkAllTriggers (Ray incoming, int incomingLayer);
 
     RealThing *findRealThing(string name);
 

@@ -31,10 +31,6 @@ MapBuilder::MapBuilder(string sceneName) : selectedSprite(-1) {
 
 void MapBuilder::changeState(EditorState newState) {
     string prefix = currentThing != dotThing ? currentThing->name + ": " : "";
-    // FOLLOW TESTING
-    SpriteData sD;
-    RealThingData tD;
-    // END FOLLOW TESTING
     switch (newState) {
         case EditorState::freeMove:
             helpText->setText("Free Move");
@@ -44,24 +40,11 @@ void MapBuilder::changeState(EditorState newState) {
             break;
         case EditorState::play:
             helpText->setText("Play");
-            currentThing = new FieldPlayer(RealThingData(dotThing->position, "test player"), scene->getThingLists(), "zinnia");
+            currentThing = scene->addThing(RealThingData(dotThing->position, "test player", "zinnia"), ThingType::fieldPlayer);
             // FOLLOW TESTING
-            sD.xOffset = 0;
-            sD.height = 0;
-            sD.layer = 0;
-            sD.textureName = "zinnia";
-            sD.renderOffset = 0;
-            sD.width = 0;
-            sD.yOffset = 0;
-            sD.sourceX = 0;
-            sD.sourceY = 0;
-            tD.spriteDataVector = {sD};
-            tD.name = "followZinnia";
-            tD.x = 1000;
-            tD.y = 1000;
-            followThing = scene->addThing(tD);
-            scene->AddAnimator(followThing->name);
-            scene->AddMove(followThing->name, MoveType::follow);
+            followThing = scene->addThing(RealThingData(Point(1000,1000), "followZinnia", "zinnia"));
+            followThing->AddAnimator();
+            followThing->AddMove(MoveType::follow);
             followThing->move->leader = &currentThing->position;
             followThing->move->tolerance = 40;
             // END FOLLOW TESTING

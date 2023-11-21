@@ -2,12 +2,10 @@
 #define FIELD_PLAYER_H
 
 #include <iostream>
-#include "Scene.h"
+#include "RealThing.h"
 
 struct FieldPlayer : public RealThing {
-    void init();
-
-    FieldPlayer(RealThingData tD, ThingLists tL, string textureName = "");
+    FieldPlayer(RealThingData tD, ThingLists tL);
     ~FieldPlayer();
 
     void meat(KeyPresses keysDown);

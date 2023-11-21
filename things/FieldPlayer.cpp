@@ -4,10 +4,12 @@ using namespace std;
 
 FieldPlayer *FieldPlayer::player = nullptr;
 
-FieldPlayer::FieldPlayer(RealThingData tD, ThingLists tL, string textureName) : RealThing(tD, tL) {
-    if (textureName != "")
-        AddRawSprite(textureName); // We could maybe just add a constructor to SpriteData to not do this rigamarole
-    init();
+FieldPlayer::FieldPlayer(RealThingData tD, ThingLists tL) : RealThing(tD, tL) {
+    type = ThingType::fieldPlayer;
+    AddAnimator();
+    AddMove(MoveType::controlled);
+    move->speed = 2;
+    FieldPlayer::player = this;
 }
 
 FieldPlayer::~FieldPlayer() { 
@@ -15,19 +17,11 @@ FieldPlayer::~FieldPlayer() {
     FieldPlayer::player = nullptr;
 };
 
-void FieldPlayer::init() {
-    thingLists.things[name] = this;
-    Scene::currentScene->AddAnimator(name);
-    Scene::currentScene->AddMove(name, MoveType::controlled);
-    move->speed = 2;
-    FieldPlayer::player = this;
-}
-
 void FieldPlayer::meat(KeyPresses keysDown) {
     if (!move->velocity.isNaught())
-        Scene::currentScene->checkAllTriggers(getRayFromOriginAndDirection(position, move->currentDirection), move->layer);
+        checkAllTriggers();
     if(keysDown.ok && gameState == GameState::FieldFree)
-        Scene::currentScene->checkAllInteractables(getRayFromOriginAndDirection(position, move->currentDirection), move->layer);
+        checkAllInteractables();
 
     /* DEBUG MODE CONTROLS */
     if (keysDown.debug_left && sprites[0]->d.layer > 0) {

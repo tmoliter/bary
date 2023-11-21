@@ -2,7 +2,6 @@
 #define DOOR_EDITOR_H
 #include "editor/SpriteEditor.h"
 #include "editor/RayEditor.h"
-#include "things/Door.h"
 
 using namespace std;
 
