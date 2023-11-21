@@ -9,7 +9,7 @@ SpriteEditor::SpriteEditor(Sprite *s) :
     snapCamera(true) {
     
     oldFocus = Scene::currentScene->things[FocusTracker::ftracker->getFocusName()];
-    focus = Scene::currentScene->addThing(Point(sprite->position), "sprite focus");
+    focus = Scene::currentScene->addThing(RealThingData(Point(sprite->position), "sprite focus"));
     FocusTracker::ftracker->setFocus(focus);
 
     text = new Text(Point(sprite->position), "");

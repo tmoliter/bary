@@ -15,92 +15,114 @@
 
 using namespace std;
 
+enum class ThingType {
+    fieldPlayer,
+    door,
+    npc,
+    thing,
+};
+
 struct RealThingData {
-    // ported from ThingData
-    string name;
-    int x;
-    int y;
+    RealThingData() {};
+    RealThingData(Point p, string n = "AnonymousThing") : x(p.x), y(p.y), name(n) {}
+    string name = "AnonymousThing";
+    int x = 0;
+    int y = 0;
 
     vector<SpriteData> spriteDataVector;
     vector<CollidableData> obstructionData;
 };
 
-// NEXT THING: COPY SIMPLE MESSAGES (or don't) AND DOORS
+struct RealThing {
+    struct ThingLists {
+        ThingLists(
+            map<string, RealThing*>& things, 
+            map<string, RealThing*>& movinThings, 
+            map<string, RealThing*>& animatedThings
+        ) : 
+        things(things),
+        movinThings(movinThings),
+        animatedThings(animatedThings) {};
 
-class RealThing {
-    public:
-        string name;
+        map<string, RealThing*>& things;
+        map<string, RealThing*>& movinThings;
+        map<string, RealThing*>& animatedThings;
+    };
 
-        Point position;
-        Bounds bounds;
+    string name;
+    ThingType type;
 
-        lua_State* sceneL;
+    ThingLists thingLists;
 
-        vector<RealThing*> subThings;
+    Point position;
+    Bounds bounds;
 
-        Point getCenter();
+    lua_State* sceneL;
 
-        void manuallyControl(KeyPresses keysDown);
+    vector<RealThing*> subThings;
 
-        virtual void processMove(KeyPresses keysDown);
-        virtual void processCollisions(map<string, RealThing*>& things);
-        virtual void animate(KeyPresses keysDown);
-        virtual void meat(KeyPresses keysDown);
+    Point getCenter();
 
-        RealThing(RealThingData tD);
-        RealThing(Point p, string name);
-        RealThing(RealThing &oldThing);
-        ~RealThing();
+    void manuallyControl(KeyPresses keysDown);
 
-        vector<Sprite*> sprites;
-        Animator* animator;
-        Move* move;
+    virtual void processMove(KeyPresses keysDown);
+    virtual void processCollisions(map<string, RealThing*>& things);
+    virtual void animate(KeyPresses keysDown);
+    virtual void meat(KeyPresses keysDown);
 
-        map<int, Obstruction*> obstructions;
-        map<string, Interactable*> interactables;
-        map<string, Trigger*> triggers;
+    RealThing(RealThingData tD, ThingLists tL);
+    RealThing(RealThing &oldThing);
+    ~RealThing();
 
-        void calculateHeight();
+    vector<Sprite*> sprites;
+    Animator* animator;
+    Move* move;
 
-        Sprite* AddSprite(SpriteData SD);
-        Sprite* AddRawSprite(string path);
+    map<int, Obstruction*> obstructions;
+    map<string, Interactable*> interactables;
+    map<string, Trigger*> triggers;
 
-        Interactable* addInteractable(string iName, vector<Ray*> rays, int layer, Event* event = nullptr);
-        Trigger* addTrigger(string iName, vector<Ray*> rays, int layer, Event* event = nullptr);
-        Obstruction* addObstruction(vector<Ray> rays, int layer);
-        Interactable* addInteractable(string iName);
-        Trigger* addTrigger(string iName);
-        Obstruction* addObstruction(int layer);
+    void calculateHeight();
 
-        void RemoveSprite(Sprite* sprite);
-        void removeObstruction(int layer);
-        void removeInteractable(string name);
-        void removeTrigger(string name);
+    Sprite* AddSprite(SpriteData SD);
+    Sprite* AddRawSprite(string path);
 
-        void removeAllCollidables();
+    Interactable* addInteractable(string iName, vector<Ray*> rays, int layer, Event* event = nullptr);
+    Trigger* addTrigger(string iName, vector<Ray*> rays, int layer, Event* event = nullptr);
+    Obstruction* addObstruction(vector<Ray> rays, int layer);
+    Interactable* addInteractable(string iName);
+    Trigger* addTrigger(string iName);
+    Obstruction* addObstruction(int layer);
 
-        virtual int checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType);
+    void RemoveSprite(Sprite* sprite);
+    void removeObstruction(int layer);
+    void removeInteractable(string name);
+    void removeTrigger(string name);
 
-        void showObstructionLines(int layer = -1001);
-        void showInteractableLines(int layer = -1001, string name = "");
-        void showTriggerLines(int layer = -1001, string name = "");
-        void showLines();
-        void hideObstructionLines();
-        void hideInteractableLines();
-        void hideTriggerLines();
-        void hideLines();
+    void removeAllCollidables();
 
-        void highlightThing();
-        void highlightSprite(Sprite* sprite);
-        void removeHighlight();
+    virtual int checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType);
 
-        vector<string> findAndShowInteractableLines(string beginning);
-        vector<string> findAndShowTriggerLines(string beginning);
+    void showObstructionLines(int layer = -1001);
+    void showInteractableLines(int layer = -1001, string name = "");
+    void showTriggerLines(int layer = -1001, string name = "");
+    void showLines();
+    void hideObstructionLines();
+    void hideInteractableLines();
+    void hideTriggerLines();
+    void hideLines();
+
+    void highlightThing();
+    void highlightSprite(Sprite* sprite);
+    void removeHighlight();
+
+    vector<string> findAndShowInteractableLines(string beginning);
+    vector<string> findAndShowTriggerLines(string beginning);
 
 
-        RealThingData getData();
+    RealThingData getData();
 
-        virtual RealThing* copyInPlace();
+    virtual RealThing* copyInPlace();
 };
 
 #endif

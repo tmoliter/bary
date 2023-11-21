@@ -1,23 +1,18 @@
 #include "RealThing.h"
 
-RealThing::RealThing(RealThingData tD) : 
+RealThing::RealThing(RealThingData tD, ThingLists tL) :
     name(tD.name),
     position(tD.x, tD.y), 
     animator(nullptr),
-    move(nullptr) {
+    move(nullptr),
+    thingLists(tL) {
     for (auto sd : tD.spriteDataVector)
         AddSprite(sd);
     for (auto cd : tD.obstructionData)
         addObstruction(cd.rays, cd.layer);
 }
 
-RealThing::RealThing(Point p, string n) : 
-    name(n),
-    position(p.x,p.y),
-    animator(nullptr),
-    move(nullptr)  {}
-
-RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(oldThing.bounds) {
+RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(oldThing.bounds), thingLists(oldThing.thingLists) {
     for (auto oldS : oldThing.sprites)
         sprites.push_back(new Sprite(*oldS, position, name));
     for (auto const& [layer, oldO] : oldThing.obstructions)
@@ -270,7 +265,6 @@ void RealThing::removeAllCollidables() {
     }
 };
 
-// Pass in incoming Thing name here to ignore collisions (might be outdated comment)
 int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) {
     switch (collidableType) {
         case (CollidableType::interactable):

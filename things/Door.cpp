@@ -1,6 +1,6 @@
 #include "things/Door.h"
 
-Door::Door(Point p) : RealThing(p, "AnonymousDoor"), 
+Door::Door(RealThingData tD, ThingLists tL) : RealThing(tD, tL), 
     opened(false),
     locked(false) {
 }

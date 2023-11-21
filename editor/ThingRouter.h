@@ -5,11 +5,6 @@
 
 using namespace std;
 
-enum class ThingType {
-    thing,
-    door
-};
-
 enum class ThingRouterState {
     editOrCreateSub,
     chooseThingType,

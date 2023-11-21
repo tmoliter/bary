@@ -25,8 +25,7 @@ struct Scene {
 
     void meatThings(KeyPresses keysDown);
 
-    RealThing* addThing(RealThingData tD);
-    RealThing* addThing(Point p, string name = "AnonymousThing");
+    RealThing* addThing(RealThingData tD, ThingType type = ThingType::thing);
     RealThing* addExistingThingToScene(RealThing* existingThing);
 
     RealThing* copyThing(RealThing& oldThing);
@@ -59,6 +58,7 @@ struct Scene {
     static int _createThing(lua_State* L);
     static int _updateMoveTarget(lua_State *L);
 
+    RealThing::ThingLists getThingLists();
     private:
         string getNewThingName(string name);
 };

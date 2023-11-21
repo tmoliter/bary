@@ -4,12 +4,9 @@ using namespace std;
 
 FieldPlayer *FieldPlayer::player = nullptr;
 
-FieldPlayer::FieldPlayer(FieldPlayerData fpD) : RealThing(fpD) {
-    init();
-}
-
-FieldPlayer::FieldPlayer(Point p, string n, string textureName) : RealThing(p,n) {
-    AddRawSprite(textureName);
+FieldPlayer::FieldPlayer(RealThingData tD, ThingLists tL, string textureName) : RealThing(tD, tL) {
+    if (textureName != "")
+        AddRawSprite(textureName); // We could maybe just add a constructor to SpriteData to not do this rigamarole
     init();
 }
 
@@ -19,7 +16,7 @@ FieldPlayer::~FieldPlayer() {
 };
 
 void FieldPlayer::init() {
-    Scene::currentScene->things[name] = this;
+    thingLists.things[name] = this;
     Scene::currentScene->AddAnimator(name);
     Scene::currentScene->AddMove(name, MoveType::controlled);
     move->speed = 2;

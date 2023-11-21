@@ -11,6 +11,7 @@ Scene::Scene(string sceneName) : sceneName(sceneName) {
 }
 
 Scene::~Scene() {
+    destroyAllThings();
     lua_close(L);
 }
 
@@ -53,6 +54,14 @@ string Scene::getNewThingName(string name) {
     return name;
 }
 
+RealThing::ThingLists Scene::getThingLists() {
+    return RealThing::ThingLists(
+        things,
+        movinThings,
+        animatedThings
+    );
+}
+
 string Scene::renameThing(RealThing* thing, string newName) {
     // This should only happen in the editor so maybe we can hoist this
     things.erase(thing->name);
@@ -61,16 +70,9 @@ string Scene::renameThing(RealThing* thing, string newName) {
     return thing->name;
 }
 
-RealThing* Scene::addThing(RealThingData tD) {
+RealThing* Scene::addThing(RealThingData tD, ThingType type) {
     tD.name = getNewThingName(tD.name);
-    RealThing* newThing = new RealThing(tD);
-    things[newThing->name] = newThing;
-    return newThing;
-}
-
-RealThing* Scene::addThing(Point p, string n) {
-    string name = getNewThingName(n);
-    RealThing* newThing = new RealThing(p, name);
+    RealThing* newThing = new RealThing(tD, getThingLists());
     things[newThing->name] = newThing;
     return newThing;
 }

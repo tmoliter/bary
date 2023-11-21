@@ -13,7 +13,7 @@ MapBuilder::MapBuilder(string sceneName) : selectedSprite(-1) {
 
     scene = new Scene(sceneName);
     scene->Load();
-    currentThing = dotThing = scene->addThing(Point(600,600), "EditorDot");
+    currentThing = dotThing = scene->addThing(RealThingData(Point(600,600), "EditorDot"));
     scene->EnterLoaded(currentThing);
     FocusTracker::ftracker->setFocus(currentThing);
 
@@ -44,7 +44,7 @@ void MapBuilder::changeState(EditorState newState) {
             break;
         case EditorState::play:
             helpText->setText("Play");
-            currentThing = new FieldPlayer(dotThing->position, "test player", "zinnia");
+            currentThing = new FieldPlayer(RealThingData(dotThing->position, "test player"), scene->getThingLists(), "zinnia");
             // FOLLOW TESTING
             sD.xOffset = 0;
             sD.height = 0;

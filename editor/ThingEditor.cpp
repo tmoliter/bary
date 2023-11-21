@@ -1,7 +1,7 @@
 #include "ThingEditor.h"
 
 ThingEditor::ThingEditor(Point p) {
-    thing = Scene::currentScene->addThing(p);
+    thing = Scene::currentScene->addThing(RealThingData(p));
     init();
 }
 
