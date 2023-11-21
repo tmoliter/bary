@@ -8,6 +8,7 @@ FieldPlayer::FieldPlayer(RealThingData tD, ThingLists tL) : RealThing(tD, tL) {
     type = ThingType::fieldPlayer;
     AddAnimator();
     AddMove(MoveType::controlled);
+    AddStandardCollision();
     move->speed = 2;
     FieldPlayer::player = this;
 }

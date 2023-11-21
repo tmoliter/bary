@@ -52,6 +52,8 @@ class Phrase {
         SDL_Rect& getBox();
         void setGridLimits(DirectionMap dM);
 
+        static int _phrase(lua_State *L);
+
         static int currentID;
 
     private:

@@ -171,7 +171,7 @@ void Scene::hideAllLines() {
 }
 
 RealThing* Scene::findRealThing (string name) {
-    return things[name];
+    return things.at(name);
 }
 
 RealThing* Scene::buildThingFromTable(lua_State* L) {
@@ -244,6 +244,8 @@ void Scene::addComponentsFromTable(lua_State* L, RealThing* thing) {
             thing->move->type = MoveType::follow;
         if (component == "moveAnimate")
             thing->AddAnimator();
+        if (component == "standardCollider")
+            thing->AddStandardCollision();
         lua_pop(L, 1);
     }
     lua_pop(L, 1);
@@ -263,7 +265,7 @@ vector<RealThingData> Scene::getAllThingData() {
 
 // Lua registered functions
 int Scene::_loadScene(lua_State* L) {
-    if(!CheckParams(L, {ParamType::point, ParamType::table, ParamType::str})) {
+    if(!CheckParams(L, {ParamType::pointer, ParamType::table, ParamType::str})) {
         cout << "_loadScene failed!" << endl;
         throw exception();
     }
@@ -280,7 +282,7 @@ int Scene::_loadScene(lua_State* L) {
 }
 
 int Scene::_createThing(lua_State* L) {
-    if(!CheckParams(L, {ParamType::point, ParamType::table, ParamType::table })) {
+    if(!CheckParams(L, {ParamType::pointer, ParamType::table, ParamType::table })) {
         cout << "_createThing failed!" << endl;
         throw exception();
     }
@@ -294,7 +296,7 @@ int Scene::_createThing(lua_State* L) {
 }
 
 int Scene::_updateMoveTarget(lua_State *L) {
-    if(!CheckParams(L, {ParamType::point, ParamType::number, ParamType::number}))
+    if(!CheckParams(L, {ParamType::pointer, ParamType::number, ParamType::number}))
         return 0;
     RealThing* thing = static_cast<RealThing*>(lua_touserdata(L, -1));
     Move* move = thing->move;

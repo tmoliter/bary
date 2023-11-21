@@ -176,24 +176,27 @@ Animator* RealThing::AddAnimator() {
     animator->splitSheet(9, 4); // Obviously this shouldn't be hard-coded, but for now it is
     bounds.top = 0 - sprites[0]->d.width;
     bounds.bottom = 0;
-    bounds.right = 0 - ( sprites[0]->d.width / 2); // I think these are backwards
-    bounds.left = (sprites[0]->d.width / 2);
+    bounds.left = 0 - ( sprites[0]->d.width / 2);
+    bounds.right = (sprites[0]->d.width / 2);
     AddToMap(thingLists.animatedThings);
     return animator;
 }
 
 Move* RealThing::AddMove(MoveType type) {
     move = new Move(type, position);
-
-    vector<Ray> obstructionRays = {
-        Ray(Point(bounds.left - 10, bounds.bottom), Point(bounds.right + 8, bounds.bottom)),
-        Ray(Point(bounds.right + 8, bounds.bottom), Point(bounds.right + 8, bounds.bottom - 6)),
-        Ray( Point(bounds.right + 8, bounds.bottom - 6), Point(bounds.left - 10, bounds.bottom - 6)),
-        Ray(Point(bounds.left - 10, bounds.bottom - 6), Point(bounds.left - 10, bounds.bottom))
-    };
-    addObstruction(obstructionRays, 0);
     AddToMap(thingLists.movinThings);
     return move;
+}
+
+void RealThing::AddStandardCollision() {
+    vector<Ray> obstructionRays = {
+        Ray(Point(bounds.right - 10, bounds.bottom), Point(bounds.left + 8, bounds.bottom)),
+        Ray(Point(bounds.left + 8, bounds.bottom), Point(bounds.left + 8, bounds.bottom - 6)),
+        Ray( Point(bounds.left + 8, bounds.bottom - 6), Point(bounds.right - 10, bounds.bottom - 6)),
+        Ray(Point(bounds.right - 10, bounds.bottom - 6), Point(bounds.right - 10, bounds.bottom))
+    };
+    addInteractable("talk", obstructionRays, 0);
+    addObstruction(obstructionRays, 0);
 }
 
 Sprite* RealThing::AddSprite(SpriteData SD) {
@@ -209,18 +212,18 @@ Sprite* RealThing::AddRawSprite(string textureName) {
     return AddSprite(sd);
 }
 
-Interactable* RealThing::addInteractable(string iName, vector<Ray*> rays, int layer, Event* event) {
+Interactable* RealThing::addInteractable(string iName, vector<Ray> rays, int layer, Event* event) {
     if (interactables.count(iName))
         return interactables[iName];
-    Interactable* in = new Interactable(position, name, iName, rays, layer, event);
+    Interactable* in = new Interactable(position, name, iName, CollidableData(rays, layer));
     interactables[iName] = in;
     return in;
 }
 
-Trigger* RealThing::addTrigger(string iName, vector<Ray*> rays, int layer, Event* event) {
+Trigger* RealThing::addTrigger(string iName, vector<Ray> rays, int layer, Event* event) {
     if (triggers.count(iName))
         return triggers[iName];
-    Trigger* tr = new Trigger(position, name, iName, rays, layer, event);
+    Trigger* tr = new Trigger(position, name, iName, CollidableData(rays, layer));
     triggers[iName] = tr;
     return tr;
 }

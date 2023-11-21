@@ -176,11 +176,11 @@ void RayEditor::handleNameSubmit() {
         return;
     if (type == CollidableType::interactable && parent->interactables.count(name)) {
         editState = RayEditState::move;
-        layer =  parent->interactables[name]->layer;
+        layer =  parent->interactables.at(name)->layer;
         updateLines();
     } else if (type == CollidableType::trigger && parent->triggers.count(name)) {
         editState = RayEditState::move;
-        layer =  parent->triggers[name]->layer;
+        layer =  parent->triggers.at(name)->layer;
         updateLines();
     } else
         editState = RayEditState::layer;
@@ -200,13 +200,13 @@ void RayEditor::enterSelect () {
             break;
         case CollidableType::interactable:
             if (parent->interactables.count(name)) {
-                selected = parent->interactables[name];
+                selected = parent->interactables.at(name);
                 found = true;
             }
             break;
         case CollidableType::trigger:
             if (parent->triggers.count(name)) {
-                selected = parent->triggers[name];
+                selected = parent->triggers.at(name);
                 found = true;
             }
             break;

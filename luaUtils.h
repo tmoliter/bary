@@ -12,7 +12,7 @@ extern "C" {
 enum class ParamType {
     str,
     number,
-    point,
+    pointer,
     table,
 };
 

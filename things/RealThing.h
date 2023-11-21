@@ -39,7 +39,7 @@ struct RealThingData {
 struct RealThing {
     struct ThingLists {
         ThingLists(
-            map<string, RealThing*>& things, 
+            map<string, RealThing*>& things,
             map<string, RealThing*>& movinThings, 
             map<string, RealThing*>& animatedThings
         ) : 
@@ -92,12 +92,13 @@ struct RealThing {
 
     Animator* AddAnimator();
     Move* AddMove(MoveType type);
+    void AddStandardCollision();
 
     Sprite* AddSprite(SpriteData SD);
     Sprite* AddRawSprite(string path);
 
-    Interactable* addInteractable(string iName, vector<Ray*> rays, int layer, Event* event = nullptr);
-    Trigger* addTrigger(string iName, vector<Ray*> rays, int layer, Event* event = nullptr);
+    Interactable* addInteractable(string iName, vector<Ray> rays, int layer, Event* event = nullptr);
+    Trigger* addTrigger(string iName, vector<Ray> rays, int layer, Event* event = nullptr);
     Obstruction* addObstruction(vector<Ray> rays, int layer);
     Interactable* addInteractable(string iName);
     Trigger* addTrigger(string iName);

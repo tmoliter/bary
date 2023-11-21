@@ -6,7 +6,8 @@ local function setup(host)
     _createThing(
         {
             "moveAnimate", -- this should be a table or a list of table with "componentName" keys so that components can have attributes
-            "autoMove"
+            "autoMove",
+            "standardCollider" -- maybe this gets relegated to as an option in the table for moveAnimate or something, I dunno
         },
         {
             name = "otherZinnia",

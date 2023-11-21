@@ -24,7 +24,7 @@ bool luaUtils::CheckParams(lua_State* L, std::vector<ParamType> params) {
         std::cout << "param " << std::to_string(i) << " is not a number!" << std::endl;
         return false;
       }
-      if (p == ParamType::point && !lua_islightuserdata(L, i)) {
+      if (p == ParamType::pointer && !lua_islightuserdata(L, i)) {
         std::cout << "param " << std::to_string(i) << " is not a pointer!" << std::endl;
         return false;
       }
