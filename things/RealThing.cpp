@@ -35,10 +35,14 @@ RealThing::~RealThing() {
         delete tr;
 };
 
-// void RealThing::callLuaFunc(lua_State *L, int nargs, int nresults, int errfunc) {
-//     lua_pushlightuserdata(L, parentScene);
-//     Host::callLuaFunc(L, nargs + 1, nresults, errfunc);
-// }
+void RealThing::loadLuaFunc(lua_State *L, std::string funcname) {
+    Host::loadLuaFunc(L, funcname);
+    lua_pushlightuserdata(L, this);
+}
+
+void RealThing::callLuaFunc(lua_State *L, int nargs, int nresults, int errfunc) {
+    Host::callLuaFunc(L, nargs + 1, nresults, errfunc);
+}
 
 void RealThing::processMove(KeyPresses keysDown) {
     if (move == nullptr)

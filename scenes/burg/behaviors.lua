@@ -1,6 +1,6 @@
 -- BEHAVIORS
 
-local function zinniaAutoMove(originX, originY, hostThing)
+local function zinniaAutoMove(hostThing, originX, originY)
     while true do
         _updateMoveTarget(originX - 150, originY - 50, hostThing)
         coroutine.yield()
@@ -93,7 +93,7 @@ activeBehaviors = {}
 
 -- NOTE: These sorts of functions should be moved somewhere scene agnostic and re-usable
 
-function beginAutoMove(originX, originY, hostThingName, hostThing)
+function beginAutoMove(hostScene, hostThing, originX, originY, hostThingName)
     local autoMove = {
         def = coroutine.create(behaviorDefinitions[hostThingName]["autoMove"]),
         originX = originX,
@@ -109,19 +109,19 @@ function beginAutoMove(originX, originY, hostThingName, hostThing)
     end
 end
 
-function doAutoMove(hostThing)
+function doAutoMove(hostScene, hostThing)
     local autoMove = activeBehaviors[hostThing]["autoMove"]
     if coroutine.status(autoMove["def"]) ~= 'dead' then
         coroutine.resume(
-            autoMove["def"],  
+            autoMove["def"],
+            hostThing,
             autoMove["originX"],
-            autoMove["originY"],
-            hostThing
+            autoMove["originY"]
         )
         autoMove["timesInvoked"] = autoMove["timesInvoked"] + 1
     end
     print(activeBehaviors[hostThing]["autoMove"]["timesInvoked"])
-    print(hostScene)
+    print(hostThing)
 end
 
 --
@@ -137,7 +137,7 @@ end
 
 --
 
-local function doEvent(collidableName, thingName, hostThing)
+local function doEvent(hostScene, hostThing, collidableName, thingName)
     if eventDefinitions[thingName] == nil or eventDefinitions[thingName][collidableName] == nil then
         return 0
     end
@@ -153,10 +153,10 @@ local function doEvent(collidableName, thingName, hostThing)
     return 1
 end
         
-local function resumeEvent(collidableName, thingName, hostThing)
+local function resumeEvent(hostScene, hostThing, collidableName, thingName)
     -- Event has never been invoked
     if activeEvents[thingName][collidableName] == nil then
-        doEvent(collidableName, thingName, hostThing)
+        doEvent(collidableName, thingName, hostScene, hostThing)
         return 0
     end
     -- Event has just now finished
@@ -166,6 +166,6 @@ local function resumeEvent(collidableName, thingName, hostThing)
         return 1
     end
     -- Event is in progress
-    coroutine.resume(events[thingName][collidableName], hostThing)
+    coroutine.resume(events[thingName][collidableName], hostScene, hostThing)
     return 0
 end

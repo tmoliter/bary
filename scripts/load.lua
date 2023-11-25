@@ -1,5 +1,4 @@
-function loadScene(sceneName, host)
-    hostScene = host
+function loadScene(host, sceneName)
     require('scenes.' .. sceneName .. '.behaviors')
 
     local mapTable = require('scenes.' .. sceneName .. '.map')
