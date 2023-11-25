@@ -202,7 +202,7 @@ void RealThing::AddStandardCollision() {
         Ray( Point(bounds.left + 8, bounds.bottom - 6), Point(bounds.right - 10, bounds.bottom - 6)),
         Ray(Point(bounds.right - 10, bounds.bottom - 6), Point(bounds.right - 10, bounds.bottom))
     };
-    addInteractable("talk", obstructionRays, 0);
+    addInteractable("interact", obstructionRays, 0);
     addObstruction(obstructionRays, 0);
 }
 
@@ -317,17 +317,23 @@ void RealThing::removeAllCollidables() {
 int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) {
     switch (collidableType) {
         case (CollidableType::interactable):
-            for (auto const& [name, in] : interactables){
+            for (auto const& [cName, in] : interactables){
                 if(in->isColliding(incoming, incomingLayer)) {
-                    // Hit Lua to fire event
+                    loadLuaFunc(sceneL, "doEvent");
+                    lua_pushstring(sceneL, name.c_str());
+                    lua_pushstring(sceneL, cName.c_str());
+                    callLuaFunc(sceneL, 2, 0, 0);
                     return 1;
                 }
             }
             break;
         case (CollidableType::trigger):
-            for (auto const& [name, tr] : triggers){
+            for (auto const& [cName, tr] : triggers){
                 if(tr->isColliding(incoming, incomingLayer)) {
-                    // Hit Lua to fire event
+                    loadLuaFunc(sceneL, "doEvent");
+                    lua_pushstring(sceneL, name.c_str());
+                    lua_pushstring(sceneL, cName.c_str());
+                    callLuaFunc(sceneL, 2, 0, 0);
                     return 0;
                 }
             }

@@ -3,11 +3,11 @@
 Scene::Scene(string sceneName) : sceneName(sceneName) {
     L = luaL_newstate();
     luaL_openlibs(L);
-    
 
     lua_register(L, "_loadScene", _loadScene);
     lua_register(L, "_createThing", _createThing);
     lua_register(L, "_updateMoveTarget", _updateMoveTarget);
+    lua_register(L, "_phrase", UIRenderer::_phrase);
 }
 
 Scene::~Scene() {

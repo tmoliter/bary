@@ -20,7 +20,7 @@ behaviorDefinitions = {
 -- EVENTS
 
 local function zinniaTalk(hostThing)
-    _updateMoveSpeed(0, hostThing)
+    -- _updateMoveSpeed(0, hostThing)
     _phrase(
         {
             text = "Hey what's happening bro",
@@ -47,42 +47,44 @@ local function zinniaTalk(hostThing)
         }
     )
     coroutine.yield()
-    _updateMoveSpeed(1, hostThing)
+    -- _updateMoveSpeed(1, hostThing)
 end
 
 
 eventDefinitions = {
-    otherZinnia = { -- name of thing
-        interact =  { -- name of collidable
-            type = "custom",
-            customCoroutine = zinniaTalk
-        }
-    },
+    -- otherZinnia = { -- name of thing
+    --     interact =  { -- name of collidable
+    --         type = "custom",
+    --         customCoroutine = zinniaTalk
+    --     }
+    -- },
     -- NOTE: Non-custom event definitions maybe should be able to be stored on the serialized Thing in map.lua
-    somebodyElse = {
+    otherZinnia = {
         interact =  { -- This has the same effect as zinniaTalk, but is stored as data
             type = "simpleMessages",
-            phrases = {
-                {
-                    text = "Hey what's happening bro",
-                    x = 150,
-                    y = 150,
-                    width = 400,
-                    height = 100,
-                    scrollType = "continuous",
-                    gridLimitsX = 1000,
-                    gridLimitsY = 1000,
-                },
-                {
-                    text = "Didn't I tell you not to come around here",
-                    x = 150,
-                    y = 150,
-                    width = 400,
-                    height = 100,
-                    scrollType = "continuous",
-                    gridLimitsX = 1000,
-                    gridLimitsY = 1000,
-                },
+            args = {
+                phrases = {
+                    {
+                        text = "Hey what's happening bro",
+                        x = 150,
+                        y = 150,
+                        width = 400,
+                        height = 100,
+                        scrollType = "continuous",
+                        gridLimitsX = 1000,
+                        gridLimitsY = 1000,
+                    },
+                    {
+                        text = "Didn't I tell you not to come around here",
+                        x = 150,
+                        y = 150,
+                        width = 400,
+                        height = 100,
+                        scrollType = "continuous",
+                        gridLimitsX = 1000,
+                        gridLimitsY = 1000,
+                    },
+                }
             }
         }
     }
@@ -126,46 +128,68 @@ end
 
 --
 
-local function simpleMessages(eventDef)
-    _updateMoveSpeed(0, hostThing)
-    for k,v in ipairs(eventDef["Phrases"]) do
+local function simpleMessages(hostScene, hostThing, args)
+    -- _updateMoveSpeed(0, hostThing)
+    print(args)
+    for k,v in ipairs(args["phrases"]) do
         _phrase(v)
         coroutine.yield()
     end
-    _updateMoveSpeed(0, hostThing)
+    -- _updateMoveSpeed(0, hostThing)
 end
 
 --
-
-local function doEvent(hostScene, hostThing, collidableName, thingName)
-    if eventDefinitions[thingName] == nil or eventDefinitions[thingName][collidableName] == nil then
+        
+local function resumeEvent(hostScene, hostThing, collidableName, args)
+    -- Event is not active
+    if activeEvents[hostThing] == nil or 
+        activeEvents[hostThing][collidableName] == nil or
+        activeEvents[hostThing][collidableName]["coroutine"] == nil then
         return 0
     end
-    local eventDefinition = eventDefinitions[thingName][collidableName]
-    if activeEvents[thingName][collidableName] == nil then
-        activeEvents[thingName][collidableName] = { timesInvoked = 0 }
+
+    activeEvent = activeEvents[hostThing][collidableName]
+
+    -- Event is already finished
+    if coroutine.status(activeEvent["coroutine"]) == 'dead' then
+        activeEvent["coroutine"] = nil
+        return 0
     end
-    if event["type"] == "custom" then
-        activeEvents[thingName][collidableName]["event"] = coroutine.create(eventDefinition["customCoroutine"])
-    elseif event["type"] == "simpleMessages" then
-        activeEvents[thingName][collidableName]["event"] = coroutine.create(simpleMessages(eventDef))
+
+    -- Event is in progress
+    coroutine.resume(activeEvent["coroutine"], hostScene, hostThing, args or activeEvent["args"])
+    if coroutine.status(activeEvent["coroutine"]) == 'dead' then
+        activeEvent["coroutine"] = nil
+        return
     end
     return 1
 end
-        
-local function resumeEvent(hostScene, hostThing, collidableName, thingName)
-    -- Event has never been invoked
-    if activeEvents[thingName][collidableName] == nil then
-        doEvent(collidableName, thingName, hostScene, hostThing)
+
+
+function doEvent(hostScene, hostThing, thingName, collidableName, args)
+    if eventDefinitions[thingName] == nil or eventDefinitions[thingName][collidableName] == nil then
         return 0
     end
-    -- Event has just now finished
-    if coroutine.status(activeEvents[thingName][collidableName]) == 'dead' then
-        activeEvents[thingName][collidableName]["event"] = nil
-        activeEvents[thingName][collidableName]["timesInvoked"] = events[thingName][collidableName]["timesInvoked"] + 1
-        return 1
+
+    if activeEvents[hostThing] == nil then
+        activeEvents[hostThing] = {}
     end
-    -- Event is in progress
-    coroutine.resume(events[thingName][collidableName], hostScene, hostThing)
-    return 0
+
+    local eventDefinition = eventDefinitions[thingName][collidableName]
+
+    if activeEvents[hostThing][collidableName] == nil then
+        activeEvents[hostThing][collidableName] = { timesInvoked = 0 }
+    end
+
+    activeEvent = activeEvents[hostThing][collidableName]
+    activeEvent["args"] = args or eventDefinition["args"]
+
+    if eventDefinition["type"] == "custom" then
+        activeEvent["coroutine"] = coroutine.create(eventDefinition["customCoroutine"])
+    elseif eventDefinition["type"] == "simpleMessages" then
+        activeEvent["coroutine"] = coroutine.create(simpleMessages)
+    end
+    activeEvent["timesInvoked"] = activeEvent["timesInvoked"] + 1
+
+    return resumeEvent(hostScene, hostThing, collidableName, args or activeEvent["args"])
 end

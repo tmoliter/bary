@@ -116,7 +116,7 @@ void UIRenderer::changeLineType(Ray *r, LineType lineType) {
     }
 };
 
-void UIRenderer::_phrase(lua_State *L) {
+int UIRenderer::_phrase(lua_State *L) {
     luaUtils::CheckParams(L, { ParamType::table });
     string text;
     Point point;
@@ -131,5 +131,6 @@ void UIRenderer::_phrase(lua_State *L) {
     luaUtils::GetLuaStringFromTable(L, "scrollType", scrollType);
     luaUtils::GetLuaIntFromTable(L, "gridLimitsX", gridLimits.x);
     luaUtils::GetLuaIntFromTable(L, "gridLimitsY", gridLimits.y);
-    UIRenderer::addPhrase(new Phrase(point, size, ScrollType::allButLast, text, gridLimits, 2));
+    UIRenderer::addPhrase(new Phrase(point, size, ScrollType::allButLast, text, gridLimits));
+    return 0;
 }
