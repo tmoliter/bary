@@ -19,15 +19,9 @@ void Scene::Load() {
     cout << "Loading scene..." << endl;
     if (!CheckLua(L, luaL_dofile(L, "scripts/load.lua")))
         throw exception();
-    lua_getglobal(L, "loadScene");
-    if (!lua_isfunction(L, -1)) {
-        cout << "loadScene isn't a function!" << endl;
-        throw exception();
-    }
+    loadLuaFunc(L, "loadScene");
     lua_pushstring(L, sceneName.c_str());
-    lua_pushlightuserdata(L, this);
-    if (!CheckLua(L, lua_pcall(L, 2, 0, 0)))
-        throw exception();
+    callLuaFunc(L, 1, 0, 0);
 }
 
 void Scene::EnterLoaded(RealThing* focus) {
@@ -86,6 +80,7 @@ RealThing* Scene::addThing(RealThingData tD, ThingType type) {
             break;
     }
     newThing->AddToMap(things);
+    newThing->parentScene = this;
     return newThing;
 }
 

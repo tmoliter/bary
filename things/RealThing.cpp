@@ -21,6 +21,7 @@ RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(
         interactables[oldInName] = new Interactable(*oldIn, position, name);
     for (auto const& [oldTrName, oldTr] : oldThing.triggers)
         triggers[oldTrName] = new Trigger(*oldTr, position, name);
+    parentScene = oldThing.parentScene;
 }
 
 RealThing::~RealThing() {
@@ -34,6 +35,11 @@ RealThing::~RealThing() {
         delete tr;
 };
 
+// void RealThing::callLuaFunc(lua_State *L, int nargs, int nresults, int errfunc) {
+//     lua_pushlightuserdata(L, parentScene);
+//     Host::callLuaFunc(L, nargs + 1, nresults, errfunc);
+// }
+
 void RealThing::processMove(KeyPresses keysDown) {
     if (move == nullptr)
         return;
@@ -43,18 +49,8 @@ void RealThing::processMove(KeyPresses keysDown) {
         move->autoMove(position);
     if (move->type == MoveType::automatic) {
         if(move->autoMove(position)) {
-            lua_getglobal(sceneL, "doAutoMove");
-            if (!lua_isfunction(sceneL, -1)) {
-                cout << "doAutoMove is not function" << endl;
-                throw exception();
-            }
-            lua_pushnumber(sceneL, move->origin.x);
-            lua_pushnumber(sceneL, move->origin.y);
-            lua_pushstring(sceneL, name.c_str());
-            lua_pushlightuserdata(sceneL, this);
-            lua_pcall(sceneL, 4, 0, 0);
-            if (lua_isstring(sceneL, -1))
-                cout << lua_tostring(sceneL, -1) << endl;
+            loadLuaFunc(sceneL, "doAutoMove");
+            callLuaFunc(sceneL, 0, 0, 0);
         }
     }
     position.x += move->velocity.x;
@@ -184,6 +180,13 @@ Animator* RealThing::AddAnimator() {
 
 Move* RealThing::AddMove(MoveType type) {
     move = new Move(type, position);
+    if (type == MoveType::automatic) {
+        loadLuaFunc(sceneL, "beginAutoMove");
+        lua_pushnumber(sceneL, move->origin.x);
+        lua_pushnumber(sceneL, move->origin.y);
+        lua_pushstring(sceneL, name.c_str());
+        callLuaFunc(sceneL, 3, 0, 0);
+    }
     AddToMap(thingLists.movinThings);
     return move;
 }

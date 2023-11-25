@@ -117,5 +117,19 @@ void UIRenderer::changeLineType(Ray *r, LineType lineType) {
 };
 
 void UIRenderer::_phrase(lua_State *L) {
-    UIRenderer::addPhrase(new Phrase(Point(150,150), Point(400, 24), ScrollType::allButLast, "Damn, nothing.", Point(1000,1000), 2));
+    luaUtils::CheckParams(L, { ParamType::table });
+    string text;
+    Point point;
+    Point size;
+    string scrollType;
+    Point gridLimits;
+    luaUtils::GetLuaStringFromTable(L, "text", text);
+    luaUtils::GetLuaIntFromTable(L, "x", point.x);
+    luaUtils::GetLuaIntFromTable(L, "y", point.y);
+    luaUtils::GetLuaIntFromTable(L, "width", size.x);
+    luaUtils::GetLuaIntFromTable(L, "height", size.y);
+    luaUtils::GetLuaStringFromTable(L, "scrollType", scrollType);
+    luaUtils::GetLuaIntFromTable(L, "gridLimitsX", gridLimits.x);
+    luaUtils::GetLuaIntFromTable(L, "gridLimitsY", gridLimits.y);
+    UIRenderer::addPhrase(new Phrase(point, size, ScrollType::allButLast, text, gridLimits, 2));
 }

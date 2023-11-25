@@ -9,6 +9,7 @@
 #include "components/Interactable.h"
 #include "components/Animator.h"
 #include "components/Move.h"
+#include "Host.h"
 
 // dubiously from Thing.h
 #include <string>
@@ -36,7 +37,7 @@ struct RealThingData {
     vector<CollidableData> obstructionData;
 };
 
-struct RealThing {
+struct RealThing : public Host {
     struct ThingLists {
         ThingLists(
             map<string, RealThing*>& things,
@@ -56,6 +57,7 @@ struct RealThing {
     ThingType type;
 
     ThingLists thingLists;
+    Host* parentScene;
 
     Point position;
     Bounds bounds;

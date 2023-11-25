@@ -6,7 +6,7 @@
 
 using namespace luaUtils;
 
-struct Scene {
+struct Scene : public Host {
     inline static Scene* currentScene;
 
     enum class SceneState {

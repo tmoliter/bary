@@ -1,18 +1,21 @@
-x = {}
-if x["y"] == nil then
-    print("HEY")
-    x["y"] = {}
-end
-x["y"]["z"] = 5
-print(x)
-print(x["y"])
-print(x["y"]["z"])
-print(x["y"]["A"])
-if x["y"] == nil then
-    print("HEY")
-    x["y"] = {}
-end
-x["y"]["A"] = 10
-poop = x["y"]["A"] 
-poop = poop + 1
-print(x["y"]["A"])
+x = {
+    a = 1,
+    b = 2,
+    c = {
+        y = 100
+    }
+}
+t = x["c"]
+t["y"] = t["y"] + 2
+t["m"] = -2
+print(x["c"]["y"])
+print(x["c"]["m"])
+
+v = x["b"]
+v = v + 1000
+print(x["b"])
+print(v)
+
+y = x
+y["b"] = y["b"] + 10000
+print(x["b"])
