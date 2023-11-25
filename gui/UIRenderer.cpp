@@ -115,3 +115,7 @@ void UIRenderer::changeLineType(Ray *r, LineType lineType) {
         }
     }
 };
+
+void UIRenderer::_phrase(lua_State *L) {
+    UIRenderer::addPhrase(new Phrase(Point(150,150), Point(400, 24), ScrollType::allButLast, "Damn, nothing.", Point(1000,1000), 2));
+}

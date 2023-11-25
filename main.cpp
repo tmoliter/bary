@@ -52,9 +52,9 @@ int main(int argc, char* args[]) {
                 MapBuilder::mapBuilder->meat(keysDown);
             t.timeElapsed(&p.c);
             switch(gameState) {
-                case (GameState::FieldUI):
-                    Event::meat(keysDown);
-                    break;
+                // case (GameState::FieldUI):
+                //     Event::meat(keysDown);
+                //     break;
                 case (GameState::FieldFree):
                 default:
                     Scene::currentScene->meatThings(keysDown);

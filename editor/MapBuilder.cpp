@@ -7,7 +7,6 @@ MapBuilder::MapBuilder(string sceneName) : selectedSprite(-1) {
     cross = nullptr;
     spriteEditor = nullptr;
     rayEditor = nullptr;
-    eventEditor = nullptr;
     thingRouter = nullptr;
     followThing = nullptr;
 

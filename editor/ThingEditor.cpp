@@ -74,7 +74,7 @@ void ThingEditor::changeState(ThingEditState newState) {
             break;
         case ThingEditState::eventEdit:
             helpText->setText(thing->name + ": Event Edit Mode");
-            eventEditor = new EventEditor(thing);
+            // eventEditor = new EventEditor(thing);
             break;
         case ThingEditState::rename:
             CommandLine::refresh({
@@ -215,12 +215,12 @@ int ThingEditor::meat(KeyPresses keysDown) {
     }
 
     if(state == ThingEditState::eventEdit) {
-        if(eventEditor->routeInput(keysDown)) {
-            delete eventEditor;
-            eventEditor = nullptr;
+        // if(eventEditor->routeInput(keysDown)) { // tmp comment out while events are in turmoil
+            // delete eventEditor;
+            // eventEditor = nullptr;
             changeState(ThingEditState::commandInput);
             return 0;
-        }
+        // }
     }
 
     if (state == ThingEditState::rename) {
@@ -229,8 +229,7 @@ int ThingEditor::meat(KeyPresses keysDown) {
 
         string input = CommandLine::popInput();
         string oldName = thing->name;
-        if (input.length() > 0)
-            eventMap::updateThingName(oldName, Scene::currentScene->renameThing(thing, input));
+        // Renaming will break lua event map
         changeState(ThingEditState::commandInput);
         return 0;
     }

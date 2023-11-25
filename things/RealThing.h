@@ -97,8 +97,8 @@ struct RealThing {
     Sprite* AddSprite(SpriteData SD);
     Sprite* AddRawSprite(string path);
 
-    Interactable* addInteractable(string iName, vector<Ray> rays, int layer, Event* event = nullptr);
-    Trigger* addTrigger(string iName, vector<Ray> rays, int layer, Event* event = nullptr);
+    Interactable* addInteractable(string iName, vector<Ray> rays, int layer);
+    Trigger* addTrigger(string iName, vector<Ray> rays, int layer);
     Obstruction* addObstruction(vector<Ray> rays, int layer);
     Interactable* addInteractable(string iName);
     Trigger* addTrigger(string iName);

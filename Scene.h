@@ -9,6 +9,15 @@ using namespace luaUtils;
 struct Scene {
     inline static Scene* currentScene;
 
+    enum class SceneState {
+        play,
+        pausePlayerControl,
+        pauseThings,
+        pauseAll,
+    } sceneState;
+
+    vector<pair<string, string>> activeEvents; // stack of thingName, collidableName pairs (could be treated as a queue in some circumstances)
+
     lua_State *L;
 
     string sceneName;
@@ -25,6 +34,8 @@ struct Scene {
     void Load();
     void EnterLoaded(RealThing* focus);
 
+    void meat(KeyPresses keysDown);
+    void meatEvent(KeyPresses keysDown);
     void meatThings(KeyPresses keysDown);
 
     RealThing* addThing(RealThingData tD, ThingType type = ThingType::thing);

@@ -1,8 +1,7 @@
 #ifndef EVENT_EDITOR_H
 #define EVENT_EDITOR_H
 #include "util.h"
-#include "events/eventMap.h"
-#include "events/SimpleMessage.h"
+#include "things/RealThing.h"
 
 using namespace std;
 
@@ -31,39 +30,39 @@ enum class BoxEditState {
 };
 
 class EventEditor {
-    public:
+    // public:
         EventEditor(RealThing *p);
-        ~EventEditor();
+    //     ~EventEditor();
 
-        string input, eventName, soundName;
-        Text *text;
+    //     string input, eventName, soundName;
+    //     Text *text;
 
-        RealThing* parent;
-        pair<string, EventCollidable*> collidable;
-        Phrase* previewPhrase;
+    //     RealThing* parent;
+    //     pair<string, EventCollidable*> collidable;
+    //     Phrase* previewPhrase;
         
-        MenuDisplay* menu;
+    //     MenuDisplay* menu;
 
-        vector<string> availableCollidables;
+    //     vector<string> availableCollidables;
 
-        EventEditState editState;
-        BoxEditState boxState;
-        EventType eventType;
-        CollidableType collidableType;
+    //     EventEditState editState;
+    //     BoxEditState boxState;
+    //     EventType eventType;
+    //     CollidableType collidableType;
 
-        int changeState(EventEditState nextState);
+    //     int changeState(EventEditState nextState);
 
-        void updateDisplay();
+    //     void updateDisplay();
 
-        int routeInput(KeyPresses keysDown);
+    //     int routeInput(KeyPresses keysDown);
 
-        void selectCollidableType (KeyPresses keysDown);
-        void selectEventType (KeyPresses keysDown);
-        void chooseCollidable (KeyPresses keysDown);
-        void choosePredefined (KeyPresses keysDown);
-        void enterMessage (KeyPresses keysDown);
-        void enterSoundName (KeyPresses keysDown);
-        void editBox (KeyPresses keysDown);
+    //     void selectCollidableType (KeyPresses keysDown);
+    //     void selectEventType (KeyPresses keysDown);
+    //     void chooseCollidable (KeyPresses keysDown);
+    //     void choosePredefined (KeyPresses keysDown);
+    //     void enterMessage (KeyPresses keysDown);
+    //     void enterSoundName (KeyPresses keysDown);
+    //     void editBox (KeyPresses keysDown);
 };
 
 #endif

@@ -212,7 +212,7 @@ Sprite* RealThing::AddRawSprite(string textureName) {
     return AddSprite(sd);
 }
 
-Interactable* RealThing::addInteractable(string iName, vector<Ray> rays, int layer, Event* event) {
+Interactable* RealThing::addInteractable(string iName, vector<Ray> rays, int layer) {
     if (interactables.count(iName))
         return interactables[iName];
     Interactable* in = new Interactable(position, name, iName, CollidableData(rays, layer));
@@ -220,7 +220,7 @@ Interactable* RealThing::addInteractable(string iName, vector<Ray> rays, int lay
     return in;
 }
 
-Trigger* RealThing::addTrigger(string iName, vector<Ray> rays, int layer, Event* event) {
+Trigger* RealThing::addTrigger(string iName, vector<Ray> rays, int layer) {
     if (triggers.count(iName))
         return triggers[iName];
     Trigger* tr = new Trigger(position, name, iName, CollidableData(rays, layer));
@@ -312,13 +312,7 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
         case (CollidableType::interactable):
             for (auto const& [name, in] : interactables){
                 if(in->isColliding(incoming, incomingLayer)) {
-                    if(in->timesTriggered++ == in->maxTriggers) {
-                        delete in;
-                        interactables.erase(name);
-                        return 0;
-                    }
-                    if (in->event)
-                        in->event->begin();
+                    // Hit Lua to fire event
                     return 1;
                 }
             }
@@ -326,13 +320,7 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
         case (CollidableType::trigger):
             for (auto const& [name, tr] : triggers){
                 if(tr->isColliding(incoming, incomingLayer)) {
-                    if(tr->timesTriggered++ == tr->maxTriggers) {
-                        triggers.erase(name);
-                        delete tr;
-                        return 0;
-                    }
-                    if (tr->event)
-                        tr->event->begin();
+                    // Hit Lua to fire event
                     return 0;
                 }
             }

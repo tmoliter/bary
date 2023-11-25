@@ -138,8 +138,28 @@ void Scene::destroyAllThings() {
     }
 }
 
+void Scene::meat(KeyPresses keysDown) {
+    if (sceneState == SceneState::pauseAll) {
+        // Listen for unpause
+        return;
+    }
+    if (activeEvents.size() > 0)
+        meatEvent(keysDown);
+    meatThings(keysDown);
+}
+
+
+void Scene::meatEvent(KeyPresses keysDown) {
+    // somehow need to know if event is ready to proceed,
+    // after which listen for keysDown.ok and proceed
+}
+
 
 void Scene::meatThings(KeyPresses keysDown) {
+    if (sceneState == SceneState::pauseThings)
+        return;
+    if (sceneState == SceneState::pausePlayerControl)
+        keysDown = KeyPresses();
     for (auto const& [id, thing] : movinThings){
         thing->processMove(keysDown);
     }
@@ -150,6 +170,7 @@ void Scene::meatThings(KeyPresses keysDown) {
         thing->meat(keysDown);
     }
 }
+
 
 vector<RealThing*> Scene::findThingsByPoint(Point p) {
     vector<RealThing*> matches;

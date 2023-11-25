@@ -121,7 +121,7 @@ void RayEditor::handleCameraControls(KeyPresses keysDown) {
 
 void RayEditor::displayText() {
     string displayText;
-    string prefix = name.size() > 0 ? eventMap::namePlusEvent(parent->name, name, type) + ": " : "";
+    string prefix = name.size() > 0 ? parent->name + " : " + name + ": " : "";
     string suffix = "`layer: " + to_string(layer);
     switch (editState) {
     case RayEditState::selectType:
