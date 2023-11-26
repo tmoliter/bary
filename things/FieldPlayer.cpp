@@ -63,9 +63,10 @@ int FieldPlayer::castRayForInteractables () {
         return 0;
     for (auto const& [name, t] : thingLists.things) {
         if (t == this)
-            return 0;
-        if (t->checkForCollidables(getRayFromOriginAndDirection(position, move->currentDirection), move->layer, CollidableType::interactable))
-            return 1;
+            continue;
+        for (auto r : getRaysFromOriginAndDirection(position, move->currentDirection))
+            if (t->checkForCollidables(r, move->layer, CollidableType::interactable))
+                return 1;
     }
     return 0;
 }
@@ -75,9 +76,11 @@ int FieldPlayer::castRayForTriggers () {
         return 0;
     for (auto const& [name, t] : thingLists.things) {
         if (t == this)
-            return 0;
-        if (t->checkForCollidables(getRayFromOriginAndDirection(position, move->currentDirection), move->layer, CollidableType::trigger))
-            return 1;
+            continue;
+        for (auto r : getRaysFromOriginAndDirection(position, move->currentDirection))
+            if (t->checkForCollidables(r, move->layer, CollidableType::trigger))
+                return 1;
     }
     return 0;
 }
+

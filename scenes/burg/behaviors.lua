@@ -122,15 +122,12 @@ function doAutoMove(hostScene, hostThing)
         )
         autoMove["timesInvoked"] = autoMove["timesInvoked"] + 1
     end
-    print(activeBehaviors[hostThing]["autoMove"]["timesInvoked"])
-    print(hostThing)
 end
 
 --
 
 local function simpleMessages(hostScene, hostThing, args)
     -- _updateMoveSpeed(0, hostThing)
-    print(args)
     for k,v in ipairs(args["phrases"]) do
         _phrase(v)
         coroutine.yield()
@@ -167,7 +164,6 @@ end
 
 
 function doEvent(hostScene, hostThing, thingName, collidableName, args)
-    print(thingName)
     if eventDefinitions[thingName] == nil or eventDefinitions[thingName][collidableName] == nil then
         return 0
     end

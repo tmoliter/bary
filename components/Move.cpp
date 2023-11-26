@@ -11,6 +11,8 @@ void Move::moveFromInput(KeyPresses keysDown) {
         velocity.x -= speed;
     if (keysDown.right)
         velocity.x += speed;
+    if (velocity.isNaught())
+        return;
     currentDirection = directionFromKeyPresses(keysDown);
 }
 
