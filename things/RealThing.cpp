@@ -53,8 +53,8 @@ void RealThing::processMove(KeyPresses keysDown) {
         move->autoMove(position);
     if (move->type == MoveType::automatic) {
         if(move->autoMove(position)) {
-            loadLuaFunc(sceneL, "doAutoMove");
-            callLuaFunc(sceneL, 0, 0, 0);
+            loadLuaFunc(L, "doAutoMove");
+            callLuaFunc(L, 0, 0, 0);
         }
     }
     position.x += move->velocity.x;
@@ -185,11 +185,11 @@ Animator* RealThing::AddAnimator() {
 Move* RealThing::AddMove(MoveType type) {
     move = new Move(type, position);
     if (type == MoveType::automatic) {
-        loadLuaFunc(sceneL, "beginAutoMove");
-        lua_pushnumber(sceneL, move->origin.x);
-        lua_pushnumber(sceneL, move->origin.y);
-        lua_pushstring(sceneL, name.c_str());
-        callLuaFunc(sceneL, 3, 0, 0);
+        loadLuaFunc(L, "beginAutoMove");
+        lua_pushnumber(L, move->origin.x);
+        lua_pushnumber(L, move->origin.y);
+        lua_pushstring(L, name.c_str());
+        callLuaFunc(L, 3, 0, 0);
     }
     AddToMap(thingLists.movinThings);
     return move;
@@ -319,10 +319,10 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
         case (CollidableType::interactable):
             for (auto const& [cName, in] : interactables){
                 if(in->isColliding(incoming, incomingLayer)) {
-                    loadLuaFunc(sceneL, "doEvent");
-                    lua_pushstring(sceneL, name.c_str());
-                    lua_pushstring(sceneL, cName.c_str());
-                    callLuaFunc(sceneL, 2, 0, 0);
+                    loadLuaFunc(L, "doEvent");
+                    lua_pushstring(L, name.c_str());
+                    lua_pushstring(L, cName.c_str());
+                    callLuaFunc(L, 2, 0, 0);
                     return 1;
                 }
             }
@@ -330,10 +330,10 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
         case (CollidableType::trigger):
             for (auto const& [cName, tr] : triggers){
                 if(tr->isColliding(incoming, incomingLayer)) {
-                    loadLuaFunc(sceneL, "doEvent");
-                    lua_pushstring(sceneL, name.c_str());
-                    lua_pushstring(sceneL, cName.c_str());
-                    callLuaFunc(sceneL, 2, 0, 0);
+                    loadLuaFunc(L, "doEvent");
+                    lua_pushstring(L, name.c_str());
+                    lua_pushstring(L, cName.c_str());
+                    callLuaFunc(L, 2, 0, 0);
                     return 0;
                 }
             }

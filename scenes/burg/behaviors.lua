@@ -23,14 +23,14 @@ local function zinniaTalk(hostThing)
     -- _updateMoveSpeed(0, hostThing)
     _phrase(
         {
-            text = "Hey what's happening bro",
+            text = "poopoo",
             x = 150,
             y = 150,
-            width = 400,
+            width = 200,
             height = 100,
             scrollType = "continuous",
-            gridLimitsX = 1000,
-            gridLimitsY = 1000,
+            gridLimitsX = 100,
+            gridLimitsY = 100,
         }
     )
     coroutine.yield()
@@ -52,12 +52,12 @@ end
 
 
 eventDefinitions = {
-    -- otherZinnia = { -- name of thing
-    --     interact =  { -- name of collidable
-    --         type = "custom",
-    --         customCoroutine = zinniaTalk
-    --     }
-    -- },
+    followZinnia = { -- name of thing
+        interact =  { -- name of collidable
+            type = "custom",
+            customCoroutine = zinniaTalk
+        }
+    },
     -- NOTE: Non-custom event definitions maybe should be able to be stored on the serialized Thing in map.lua
     otherZinnia = {
         interact =  { -- This has the same effect as zinniaTalk, but is stored as data
@@ -167,6 +167,7 @@ end
 
 
 function doEvent(hostScene, hostThing, thingName, collidableName, args)
+    print(thingName)
     if eventDefinitions[thingName] == nil or eventDefinitions[thingName][collidableName] == nil then
         return 0
     end

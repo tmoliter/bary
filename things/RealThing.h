@@ -62,8 +62,6 @@ struct RealThing : public Host {
     Point position;
     Bounds bounds;
 
-    lua_State* sceneL;
-
     vector<RealThing*> subThings;
 
 

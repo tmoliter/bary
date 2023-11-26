@@ -1,6 +1,8 @@
 #include "luaUtils.h"
 
 struct Host {
+    lua_State* L;
+
     virtual void loadLuaFunc(lua_State *L, std::string funcname) {
         lua_getglobal(L, funcname.c_str());
         if (!lua_isfunction(L, -1)) {

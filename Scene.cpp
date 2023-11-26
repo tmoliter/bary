@@ -81,6 +81,7 @@ RealThing* Scene::addThing(RealThingData tD, ThingType type) {
     }
     newThing->AddToMap(things);
     newThing->parentScene = this;
+    newThing->L = L;
     return newThing;
 }
 
@@ -238,7 +239,6 @@ RealThing* Scene::buildThingFromTable(lua_State* L) {
     }
     lua_pop(L, 1);
     RealThing* newThing = addThing(td);
-    newThing->sceneL = L;
     return newThing;
 }
 

@@ -18,8 +18,6 @@ struct Scene : public Host {
 
     vector<pair<string, string>> activeEvents; // stack of thingName, collidableName pairs (could be treated as a queue in some circumstances)
 
-    lua_State *L;
-
     string sceneName;
     string backgroundPath;
 
