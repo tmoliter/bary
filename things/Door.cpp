@@ -14,6 +14,7 @@ int Door::checkForCollidables(Ray incoming, int incomingLayer, CollidableType co
     if (RealThing::checkForCollidables(incoming, incomingLayer, collidableType)) {
         if (!locked)
             open();
+        // Fire off phrase event?
         return 1;
     };
     return 0;

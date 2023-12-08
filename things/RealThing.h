@@ -42,15 +42,18 @@ struct RealThing : public Host {
         ThingLists(
             map<string, RealThing*>& things,
             map<string, RealThing*>& movinThings, 
-            map<string, RealThing*>& animatedThings
+            map<string, RealThing*>& animatedThings,
+            vector<pair<RealThing*, string>>& activeEvents
         ) : 
         things(things),
         movinThings(movinThings),
-        animatedThings(animatedThings) {};
+        animatedThings(animatedThings),
+        activeEvents(activeEvents) {};
 
         map<string, RealThing*>& things;
         map<string, RealThing*>& movinThings;
         map<string, RealThing*>& animatedThings;
+        vector<pair<RealThing*, string>>& activeEvents;
     };
 
     string name;

@@ -66,7 +66,7 @@ eventDefinitions = {
                 phrases = {
                     {
                         text = "Hey what's happening bro",
-                        x = 150,
+                        x = 300,
                         y = 150,
                         width = 400,
                         height = 100,
@@ -137,12 +137,12 @@ end
 
 --
         
-local function resumeEvent(hostScene, hostThing, collidableName, args)
+function resumeEvent(hostScene, hostThing, collidableName)
     -- Event is not active
     if activeEvents[hostThing] == nil or 
         activeEvents[hostThing][collidableName] == nil or
         activeEvents[hostThing][collidableName]["coroutine"] == nil then
-        return 0
+        return true
     end
 
     activeEvent = activeEvents[hostThing][collidableName]
@@ -150,16 +150,16 @@ local function resumeEvent(hostScene, hostThing, collidableName, args)
     -- Event is already finished
     if coroutine.status(activeEvent["coroutine"]) == 'dead' then
         activeEvent["coroutine"] = nil
-        return 0
+        return true
     end
 
     -- Event is in progress
-    coroutine.resume(activeEvent["coroutine"], hostScene, hostThing, args or activeEvent["args"])
+    coroutine.resume(activeEvent["coroutine"], hostScene, hostThing, activeEvent["args"])
     if coroutine.status(activeEvent["coroutine"]) == 'dead' then
         activeEvent["coroutine"] = nil
-        return
+        return true
     end
-    return 1
+    return false
 end
 
 
@@ -188,5 +188,45 @@ function doEvent(hostScene, hostThing, thingName, collidableName, args)
     end
     activeEvent["timesInvoked"] = activeEvent["timesInvoked"] + 1
 
-    return resumeEvent(hostScene, hostThing, collidableName, args or activeEvent["args"])
+    return resumeEvent(hostScene, hostThing, collidableName)
 end
+
+--[[
+
+DO WE NEED TO DECOUPLE EVENTS FROM COLLIDABLES EARLY, SO THAT THINGS LIKE BUTTON PRESSES, ETC. CAN FIRE EVENTS?
+
+eventSubTasks, for now
+-----
+phrase
+wait
+autoMove thing (new moveType? Or refactor behaviors to be events?)
+
+
+future
+-----
+unlock door/container
+begin/end animation (add animation types: continuous, oneOff)
+teleport thing
+change scene
+
+
+each eventTask can have multiple SubTasks, and only reports back to Lua when none are left?
+
+might need to call C++ with a list of subTask types followed by tables of arguments for each..
+we'd probably want to validate the contents of tables as well with a new table validation function
+
+C++ EVENT TASK: has a regular, incrementing ID, along with pointer to RealThing and Scene, and vector of SubTasks.
+Upon construction, the Event Task calls Lua, where the ID becomes a key in the events {} table
+The value of the table contains a reference to the coroutine and other stuff.
+Coroutine serves to call C++ with a list of SubTasks and tables with arguments for those SubTasks.
+These populate the Task on construction, and each time the event exhausts its SubTasks, until the coroutine dies and the Task terminates
+Scene has a regular vector of Tasks, and if it is not empty we loop through Tasks before meatThings.
+If any Tasks are blockMeat = true, then we skip meatThings. Allowing only animation or only movement and animation are also possible.
+We only give live input to the the Task at .back() of the event task vector
+Inside the Task's meat call, we loop through SubTasks and call their meat.
+Once all SubTasks have terminated themselves, the Event Task calls lua to resume the coroutine
+
+
+12/7: Collidables shouldn't have names for themselves, just non-unique names of events
+
+--]]

@@ -314,7 +314,7 @@ void RealThing::removeAllCollidables() {
     }
 };
 
-int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) {
+int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) { // Someday we might want to accept a RealThing* of the incoming thing here, if we want non-players to deal with this
     switch (collidableType) {
         case (CollidableType::interactable):
             for (auto const& [cName, in] : interactables){
@@ -323,6 +323,7 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
                     lua_pushstring(L, name.c_str());
                     lua_pushstring(L, cName.c_str());
                     callLuaFunc(L, 2, 0, 0);
+                    thingLists.activeEvents.push_back(make_pair(this, cName));
                     return 1;
                 }
             }
@@ -334,6 +335,7 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
                     lua_pushstring(L, name.c_str());
                     lua_pushstring(L, cName.c_str());
                     callLuaFunc(L, 2, 0, 0);
+                    thingLists.activeEvents.push_back(make_pair(this, cName));
                     return 0;
                 }
             }

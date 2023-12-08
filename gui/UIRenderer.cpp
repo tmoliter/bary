@@ -26,17 +26,19 @@ void UIRenderer::addLines(int &parentX, int &parentY, vector<Ray*> rays, LineTyp
 }
 
 void UIRenderer::renderPhrases() {
+    vector<Phrase*> phrasesToDestroy;
     vector<Phrase*>::iterator itr = u->phrases.begin();
     while (itr != u->phrases.end()) {
         Phrase* p = *itr;
         if (p->isComplete() && p->autoDestroy) {
-            delete p;
-            removePhrase(p);
+            phrasesToDestroy.push_back(p);
             continue;
         }
         p->progDisplay();
         itr++;
     }
+    for (auto p : phrasesToDestroy)
+        removePhrase(p);
 }
 
 void UIRenderer::renderTexts() {
@@ -94,6 +96,7 @@ void UIRenderer::removeLine(Ray *r) {
 
 
 void UIRenderer::removePhrase(Phrase *p) {
+    delete p;
     u->phrases.erase(remove(u->phrases.begin(), u->phrases.end(), p), u->phrases.end());
 }
 
@@ -116,21 +119,3 @@ void UIRenderer::changeLineType(Ray *r, LineType lineType) {
     }
 };
 
-int UIRenderer::_phrase(lua_State *L) {
-    luaUtils::CheckParams(L, { ParamType::table });
-    string text;
-    Point point;
-    Point size;
-    string scrollType;
-    Point gridLimits;
-    luaUtils::GetLuaStringFromTable(L, "text", text);
-    luaUtils::GetLuaIntFromTable(L, "x", point.x);
-    luaUtils::GetLuaIntFromTable(L, "y", point.y);
-    luaUtils::GetLuaIntFromTable(L, "width", size.x);
-    luaUtils::GetLuaIntFromTable(L, "height", size.y);
-    luaUtils::GetLuaStringFromTable(L, "scrollType", scrollType);
-    luaUtils::GetLuaIntFromTable(L, "gridLimitsX", gridLimits.x);
-    luaUtils::GetLuaIntFromTable(L, "gridLimitsY", gridLimits.y);
-    UIRenderer::addPhrase(new Phrase(point, size, ScrollType::allButLast, text, gridLimits));
-    return 0;
-}

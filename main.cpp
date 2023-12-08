@@ -57,7 +57,7 @@ int main(int argc, char* args[]) {
                 //     break;
                 case (GameState::FieldFree):
                 default:
-                    Scene::currentScene->meatThings(keysDown);
+                    Scene::currentScene->meat(keysDown);
                     t.timeElapsed(&p.d);
                     break;
             }

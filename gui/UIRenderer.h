@@ -46,7 +46,6 @@ class UIRenderer {
         static int currentPhraseId;
         static UIRenderer *u;
 
-        static int _phrase(lua_State *L);
 };
 
 #endif

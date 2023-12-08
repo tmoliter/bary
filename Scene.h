@@ -16,7 +16,7 @@ struct Scene : public Host {
         pauseAll,
     } sceneState;
 
-    vector<pair<string, string>> activeEvents; // stack of thingName, collidableName pairs (could be treated as a queue in some circumstances)
+    vector<pair<RealThing*, string>> activeEvents; // stack of thing pointer, collidableName pairs (could be treated as a queue in some circumstances)
 
     string sceneName;
     string backgroundPath;
@@ -62,9 +62,10 @@ struct Scene : public Host {
     static int _loadScene(lua_State* L);
     static int _createThing(lua_State* L);
     static int _updateMoveTarget(lua_State *L);
+    static int _phrase(lua_State *L);
 
-    RealThing::ThingLists getThingLists();
     private:
+        RealThing::ThingLists getThingLists();
         string getNewThingName(string name);
 };
 
