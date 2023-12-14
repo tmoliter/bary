@@ -68,7 +68,9 @@ void Task::addSubtasks(lua_State* L) {
         lua_pop(L,1);
     }
     lua_pop(L,1);
-    for (auto t : subtaskTypes)
+    for (auto t : subtaskTypes) {
         if (t == "phrase")
             subtasks.push_back(new PhraseST(L));
+        lua_pop(L,1);
+    }
 }

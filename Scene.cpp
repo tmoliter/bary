@@ -382,5 +382,6 @@ int Scene::_newTask(lua_State *L) {
 
     newTask->addSubtasks(L);
     scene->activeTasks.push_back(newTask);
+    lua_settop(L, 0);
     return 0;
 }
