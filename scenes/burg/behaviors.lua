@@ -19,7 +19,7 @@ behaviorDefinitions = {
 
 -- EVENTS
 
-local function zinniaTalk(hostThing, hostScene)
+local function zinniaTalk(hostScene, hostThing, args, eventName)
     _newTask(
         {
             text = "poopoo",
@@ -31,8 +31,8 @@ local function zinniaTalk(hostThing, hostScene)
             gridLimitsX = 100,
             gridLimitsY = 100,
         },
-        "zinniaTalk",
         { "phrase" },
+        eventName,
         hostThing, hostScene
     )
     coroutine.yield()
@@ -47,8 +47,8 @@ local function zinniaTalk(hostThing, hostScene)
             gridLimitsX = 1000,
             gridLimitsY = 1000,
         },
-        "zinniaTalk",
         { "phrase" },
+        eventName,
         hostThing, hostScene
     )
 end
@@ -98,7 +98,7 @@ activeBehaviors = {}
 
 -- NOTE: These sorts of functions should be moved somewhere scene agnostic and re-usable
 
-function beginAutoMove(hostThing, hostScene, originX, originY, hostThingName)
+function beginAutoMove(hostScene, hostThing, originX, originY, hostThingName)
     local autoMove = {
         def = coroutine.create(behaviorDefinitions[hostThingName]["autoMove"]),
         originX = originX,
@@ -114,7 +114,7 @@ function beginAutoMove(hostThing, hostScene, originX, originY, hostThingName)
     end
 end
 
-function doAutoMove(hostThing, hostScene)
+function doAutoMove(hostScene, hostThing)
     local autoMove = activeBehaviors[hostThing]["autoMove"]
     if coroutine.status(autoMove["def"]) ~= 'dead' then
         coroutine.resume(
@@ -129,7 +129,7 @@ end
 
 --
 
-local function simpleMessages(hostThing, hostScene, args, eventName)
+local function simpleMessages(hostScene, hostThing, args, eventName)
     local index = 1
     for k,v in ipairs(args["phrases"]) do
         _newTask(v, { "phrase" }, eventName, hostThing, hostScene)
@@ -142,7 +142,7 @@ end
 
 --
         
-function resumeEvent(hostThing, hostScene, eventName)
+function resumeEvent(hostScene, hostThing, eventName)
     -- Event is not active
     if activeEvents[eventName] == nil or
         activeEvents[eventName]["coroutine"] == nil then
@@ -158,7 +158,7 @@ function resumeEvent(hostThing, hostScene, eventName)
     end
 
     -- Event is in progress
-    coroutine.resume(activeEvent["coroutine"], hostThing, hostScene, activeEvent["args"], eventName)
+    coroutine.resume(activeEvent["coroutine"], hostScene, hostThing, activeEvent["args"], eventName)
     if coroutine.status(activeEvent["coroutine"]) == 'dead' then
         activeEvent["coroutine"] = nil
         return true
@@ -167,7 +167,7 @@ function resumeEvent(hostThing, hostScene, eventName)
 end
 
 
-function doEvent(hostThing, hostScene, thingName, collidableName, args)
+function beginEvent(hostScene, hostThing, thingName, collidableName, args)
     if eventDefinitions[thingName] == nil or eventDefinitions[thingName][collidableName] == nil then
         return 0
     end
@@ -190,15 +190,15 @@ function doEvent(hostThing, hostScene, thingName, collidableName, args)
     activeEvent["args"] = args or eventDefinition["args"]
 
     if eventDefinition["type"] == "custom" then
-        activeEvent["coroutine"] = coroutine.create(eventDefinition["customCoroutine"], hostThing, hostScene, activeEvent["args"])
+        activeEvent["coroutine"] = coroutine.create(eventDefinition["customCoroutine"], hostScene, hostThing, activeEvent["args"])
     elseif eventDefinition["type"] == "simpleMessages" then
-        activeEvent["coroutine"] = coroutine.create(simpleMessages, hostThing, hostScene, activeEvent["args"])
+        activeEvent["coroutine"] = coroutine.create(simpleMessages, hostScene, hostThing, activeEvent["args"])
     end
     activeEvent["timesInvoked"] = activeEvent["timesInvoked"] + 1
 
     -- return task data for C++ here?
     -- Data will be an event name, a list of subtasks, and a table of data for each subtask
-    return resumeEvent(hostThing, hostScene, eventName)
+    return resumeEvent(hostScene, hostThing, eventName)
 end
 
 --[[

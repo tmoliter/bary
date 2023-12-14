@@ -36,8 +36,13 @@ RealThing::~RealThing() {
 };
 
 void RealThing::loadLuaFunc(lua_State *L, std::string funcname) {
-    Host::loadLuaFunc(L, funcname);
+    lua_getglobal(L, funcname.c_str());
+    if (!lua_isfunction(L, -1)) {
+        std::cout << funcname << " is not function" << std::endl;
+        throw std::exception();
+    }
     lua_pushlightuserdata(L, parentScene);
+    lua_pushlightuserdata(L, this);
 }
 
 void RealThing::callLuaFunc(lua_State *L, int nargs, int nresults, int errfunc) {
@@ -189,7 +194,6 @@ Move* RealThing::AddMove(MoveType type) {
         lua_pushnumber(L, move->origin.x);
         lua_pushnumber(L, move->origin.y);
         lua_pushstring(L, name.c_str());
-        cout << "CALLING beginAutoMove" << endl;
         callLuaFunc(L, 3, 0, 0);
     }
     AddToMap(thingLists.movinThings);
@@ -320,7 +324,7 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
         case (CollidableType::interactable):
             for (auto const& [cName, in] : interactables){
                 if(in->isColliding(incoming, incomingLayer)) {
-                    loadLuaFunc(L, "doEvent");
+                    loadLuaFunc(L, "beginEvent");
                     lua_pushstring(L, name.c_str());
                     lua_pushstring(L, cName.c_str());
                     callLuaFunc(L, 2, 0, 0);
@@ -331,7 +335,7 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
         case (CollidableType::trigger):
             for (auto const& [cName, tr] : triggers){
                 if(tr->isColliding(incoming, incomingLayer)) {
-                    loadLuaFunc(L, "doEvent");
+                    loadLuaFunc(L, "beginEvent");
                     lua_pushstring(L, name.c_str());
                     lua_pushstring(L, cName.c_str());
                     callLuaFunc(L, 2, 0, 0);

@@ -27,14 +27,10 @@ PhraseST::PhraseST(lua_State* L) : Subtask(L) {
 bool PhraseST::meat(KeyPresses keysDown) {
     if (phrase == nullptr)
         return true;
-    if(phrase->isComplete()) {
-        cout << "COMPLETE" << endl;
+    if(phrase->isComplete())
         return true;
-    }
-    if (keysDown.ok) {
-        cout << "ADVANCE" << endl;
+    if (keysDown.ok)
         phrase->advance();
-    }
     return false;
 }
 
@@ -53,7 +49,6 @@ int Task::meat(KeyPresses keysDown) {
         delete s;
         subtasks.erase(remove(subtasks.begin(), subtasks.end(), s), subtasks.end());
     }
-    cout << "subtasks total : " << subtasks.size() << endl;
     return subtasks.size();
 }
 

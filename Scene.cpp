@@ -154,7 +154,8 @@ void Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to 
         if (t->meat(keysDown) < 1) {
             // task has exhausted subtasks and should look for more tasks in the event
             loadLuaFunc(L, "resumeEvent");
-            lua_pushstring(L, activeTasks.back()->eventName.c_str());
+            lua_pushlightuserdata(L, t->hostThing);
+            lua_pushstring(L, t->eventName.c_str());
             callLuaFunc(L, 2, 1, 0);
             if (lua_toboolean(L, -1))
                 tasksToDelete.push_back(t);
