@@ -17,6 +17,7 @@ enum class ParamType {
 };
 
 namespace luaUtils {
+    void ThrowLua(lua_State* L, std::string message);
     bool CheckLua(lua_State* L, int r);
     bool CheckParams(lua_State* L, std::vector<ParamType> params);
 

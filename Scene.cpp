@@ -8,6 +8,7 @@ Scene::Scene(string sceneName) : sceneName(sceneName) {
     lua_register(L, "_createThing", _createThing);
     lua_register(L, "_updateMoveTarget", _updateMoveTarget);
     lua_register(L, "_phrase", _phrase);
+    lua_register(L, "_newTask", _newTask);
 }
 
 Scene::~Scene() {
@@ -52,8 +53,7 @@ RealThing::ThingLists Scene::getThingLists() {
     return RealThing::ThingLists(
         things,
         movinThings,
-        animatedThings,
-        activeEvents
+        animatedThings
     );
 }
 
@@ -140,7 +140,7 @@ void Scene::meat(KeyPresses keysDown) {
         // Listen for unpause
         return;
     }
-    if (activeEvents.size() > 0) {
+    if (activeTasks.size() > 0) {
         meatEvent(keysDown);
     }
     else
@@ -148,16 +148,22 @@ void Scene::meat(KeyPresses keysDown) {
 }
 
 
-void Scene::meatEvent(KeyPresses keysDown) {
-    if (!keysDown.ok)
-        return;
-    cout << "AYY" << endl;
-    loadLuaFunc(L, "resumeEvent");
-    lua_pushlightuserdata(L, activeEvents.back().first);
-    lua_pushstring(L, activeEvents.back().second.c_str());
-    callLuaFunc(L, 2, 1, 0);
-    if (lua_toboolean(L, -1))
-        activeEvents.pop_back();
+void Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to decide whether to block meat here
+    vector<Task*> tasksToDelete;
+    for (auto t : activeTasks) {
+        if (t->meat(keysDown) < 1) {
+            // task has exhausted subtasks and should look for more tasks in the event
+            loadLuaFunc(L, "resumeEvent");
+            lua_pushstring(L, activeTasks.back()->eventName.c_str());
+            callLuaFunc(L, 2, 1, 0);
+            if (lua_toboolean(L, -1))
+                tasksToDelete.push_back(t);
+        }
+    }
+    for (auto t : tasksToDelete) {
+        delete t;
+        activeTasks.erase(remove(activeTasks.begin(), activeTasks.end(), t), activeTasks.end());
+    }
 }
 
 
@@ -353,5 +359,27 @@ int Scene::_phrase(lua_State *L) {
     luaUtils::GetLuaIntFromTable(L, "gridLimitsX", gridLimits.x);
     luaUtils::GetLuaIntFromTable(L, "gridLimitsY", gridLimits.y);
     UIRenderer::addPhrase(new Phrase(point, size, ScrollType::allButLast, text, gridLimits));
+    return 0;
+}
+
+int Scene::_newTask(lua_State *L) {
+    if(!lua_islightuserdata(L, -1))
+        luaUtils::ThrowLua(L, "top param to _newTask is not a Scene pointer!");
+    Scene* scene = static_cast<Scene*>(lua_touserdata(L, -1));
+    lua_pop(L, 1);
+
+    if(!lua_islightuserdata(L, -1))
+        luaUtils::ThrowLua(L,  "second param to _newTask is not an host Thing!" );
+    RealThing* hostThing = static_cast<RealThing*>(lua_touserdata(L, -1)); // should eventually pass this into task
+    lua_pop(L, 1);
+
+    if(!lua_isstring(L, -1))
+        luaUtils::ThrowLua(L, "third param to _newTask is not an event name!" );
+    string eventName = lua_tostring(L, -1);
+    Task* newTask = new Task(eventName, hostThing);
+    lua_pop(L, 1);
+
+    newTask->addSubtasks(L);
+    scene->activeTasks.push_back(newTask);
     return 0;
 }

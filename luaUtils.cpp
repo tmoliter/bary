@@ -1,17 +1,23 @@
 #include "luaUtils.h"
 
+void luaUtils::ThrowLua(lua_State* L, std::string message) {
+  std::cout << message << std::endl;
+  dumpstack(L);
+  throw std::exception();
+}
+
 bool luaUtils::CheckLua(lua_State* L, int r) {
     if (r == LUA_OK) {
         return true;
     }
     std::string errmsg = lua_tostring(L, -1);
-    std::cout << errmsg << std::endl;
+    std::cout << "LUA ERROR : " << errmsg << std::endl;
     return false;
 }
 
 bool luaUtils::CheckParams(lua_State* L, std::vector<ParamType> params) {
     if (lua_gettop(L) != params.size()) {
-        std::cout << "param length is not a correct!" << std::endl;
+        std::cout << "param length is not correct!" << std::endl;
         return false;
     }
     int i = -1;

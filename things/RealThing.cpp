@@ -37,7 +37,7 @@ RealThing::~RealThing() {
 
 void RealThing::loadLuaFunc(lua_State *L, std::string funcname) {
     Host::loadLuaFunc(L, funcname);
-    lua_pushlightuserdata(L, this);
+    lua_pushlightuserdata(L, parentScene);
 }
 
 void RealThing::callLuaFunc(lua_State *L, int nargs, int nresults, int errfunc) {
@@ -189,6 +189,7 @@ Move* RealThing::AddMove(MoveType type) {
         lua_pushnumber(L, move->origin.x);
         lua_pushnumber(L, move->origin.y);
         lua_pushstring(L, name.c_str());
+        cout << "CALLING beginAutoMove" << endl;
         callLuaFunc(L, 3, 0, 0);
     }
     AddToMap(thingLists.movinThings);
@@ -323,7 +324,6 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
                     lua_pushstring(L, name.c_str());
                     lua_pushstring(L, cName.c_str());
                     callLuaFunc(L, 2, 0, 0);
-                    thingLists.activeEvents.push_back(make_pair(this, cName));
                     return 1;
                 }
             }
@@ -335,7 +335,6 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
                     lua_pushstring(L, name.c_str());
                     lua_pushstring(L, cName.c_str());
                     callLuaFunc(L, 2, 0, 0);
-                    thingLists.activeEvents.push_back(make_pair(this, cName));
                     return 0;
                 }
             }
