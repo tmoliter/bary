@@ -17,7 +17,7 @@ struct Scene : public Host {
         pauseAll,
     } sceneState;
 
-    vector<Task*> activeTasks; // stack of thing pointer, collidableName pairs (could be treated as a queue in some circumstances)
+    vector<Task*> activeTasks;
 
     string sceneName;
     string backgroundPath;

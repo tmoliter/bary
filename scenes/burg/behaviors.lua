@@ -19,41 +19,7 @@ behaviorDefinitions = {
 
 -- EVENTS
 
-local function zinniaTalk(hostScene, hostThing, args, eventName)
-    _newTask(
-        {
-            frames = 300
-        },
-        {
-            text = "poopoo",
-            x = 150,
-            y = 150, 
-            width = 100,
-            height = 50,
-            scrollType = "continuous",
-            gridLimitsX = 1000,
-            gridLimitsY = 1000,
-        },
-        { "phrase", "wait" },
-        eventName,
-        hostThing, hostScene
-    )
-    _newTask(
-        {
-            text = "doodoo",
-            x = 5,
-            y = 10, 
-            width = 200,
-            height = 100,
-            scrollType = "continuous",
-            gridLimitsX = 100,
-            gridLimitsY = 100,
-        },
-        { "phrase" },
-        eventName,
-        hostThing, hostScene
-    )
-    coroutine.yield()
+local function zinniaTalkA(hostScene, hostThing, args, eventName)
     _newTask(
         {
             text = "Didn't I tell you not to come around here",
@@ -64,6 +30,43 @@ local function zinniaTalk(hostScene, hostThing, args, eventName)
             scrollType = "continuous",
             gridLimitsX = 1000,
             gridLimitsY = 1000,
+            frames = 259
+        },
+        { "phrase" },
+        eventName,
+        hostThing, hostScene
+    )
+end
+
+local function zinniaTalkB(hostScene, hostThing, args, eventName)
+    _newTask(
+        {
+            text = "doodoo",
+            x = 30,
+            y = 40, 
+            width = 80,
+            height = 50,
+            scrollType = "continuous",
+            gridLimitsX = 100,
+            gridLimitsY = 100,
+            frames = 100
+        },
+        { "phrase" },
+        eventName,
+        hostThing, hostScene
+    )
+    coroutine.yield()
+    _newTask(
+        {
+            text = "poopoo",
+            x = 300,
+            y = 100, 
+            width = 100,
+            height = 50,
+            scrollType = "continuous",
+            gridLimitsX = 1000,
+            gridLimitsY = 1000,
+            frames = 75
         },
         { "phrase" },
         eventName,
@@ -74,37 +77,45 @@ end
 
 eventDefinitions = {
     followZinnia = { -- name of thing
-        interact =  { -- name of collidable
-            type = "custom",
-            customCoroutine = zinniaTalk
+        interact =  {
+            { -- name of collidable
+                type = "custom",
+                customCoroutine = zinniaTalkA
+            },
+            { -- name of collidable
+                type = "custom",
+                customCoroutine = zinniaTalkB
+            }
         }
     },
     -- NOTE: Non-custom event definitions maybe should be able to be stored on the serialized Thing in map.lua
     otherZinnia = {
-        interact =  { -- This has the same effect as zinniaTalk, but is stored as data
-            type = "simpleMessages",
-            args = {
-                phrases = {
-                    {
-                        text = "Hey what's happening bro",
-                        x = 300,
-                        y = 150,
-                        width = 400,
-                        height = 100,
-                        scrollType = "continuous",
-                        gridLimitsX = 1000,
-                        gridLimitsY = 1000,
-                    },
-                    {
-                        text = "Didn't I tell you not to come around here",
-                        x = 150,
-                        y = 150,
-                        width = 400,
-                        height = 100,
-                        scrollType = "continuous",
-                        gridLimitsX = 1000,
-                        gridLimitsY = 1000,
-                    },
+        interact =  {
+            { -- This has the same effect as zinniaTalk, but is stored as data
+                type = "simpleMessages",
+                args = {
+                    phrases = {
+                        {
+                            text = "Hey what's happening bro",
+                            x = 300,
+                            y = 150,
+                            width = 400,
+                            height = 100,
+                            scrollType = "continuous",
+                            gridLimitsX = 1000,
+                            gridLimitsY = 1000,
+                        },
+                        {
+                            text = "Didn't I tell you not to come around here",
+                            x = 150,
+                            y = 150,
+                            width = 400,
+                            height = 100,
+                            scrollType = "continuous",
+                            gridLimitsX = 1000,
+                            gridLimitsY = 1000,
+                        },
+                    }
                 }
             }
         }
@@ -190,33 +201,35 @@ function beginEvent(hostScene, hostThing, thingName, collidableName, args)
         return 0
     end
 
-    local eventName = thingName .. "_" .. collidableName
-    
-    -- Event has never been invoked
-    if activeEvents[eventName] == nil then
-        activeEvents[eventName] = { timesInvoked = 0 }
+    for i, eventDefinition in ipairs(eventDefinitions[thingName][collidableName]) do
+        local eventName = thingName .. "_" .. collidableName
+        
+        -- Event has never been invoked
+        if activeEvents[eventName] == nil then
+            activeEvents[eventName] = { timesInvoked = 0 }
+        end
+
+        local activeEvent = activeEvents[eventName]
+
+        -- Event is already in progress
+        if activeEvent["coroutine"] ~= nil then
+            return
+        end
+
+        
+        activeEvent["args"] = args or eventDefinition["args"]
+
+        if eventDefinition["type"] == "custom" then
+            activeEvent["coroutine"] = coroutine.create(eventDefinition["customCoroutine"], hostScene, hostThing, activeEvent["args"])
+        elseif eventDefinition["type"] == "simpleMessages" then
+            activeEvent["coroutine"] = coroutine.create(simpleMessages, hostScene, hostThing, activeEvent["args"])
+        end
+        activeEvent["timesInvoked"] = activeEvent["timesInvoked"] + 1
+
+        -- return task data for C++ here?
+        -- Data will be an event name, a list of subtasks, and a table of data for each subtask
+        resumeEvent(hostScene, hostThing, eventName)
     end
-
-    -- Event is already in progress
-    if activeEvents[eventName]["coroutine"] ~= nil then
-        return
-    end
-
-    local activeEvent = activeEvents[eventName]
-    local eventDefinition = eventDefinitions[thingName][collidableName]
-    
-    activeEvent["args"] = args or eventDefinition["args"]
-
-    if eventDefinition["type"] == "custom" then
-        activeEvent["coroutine"] = coroutine.create(eventDefinition["customCoroutine"], hostScene, hostThing, activeEvent["args"])
-    elseif eventDefinition["type"] == "simpleMessages" then
-        activeEvent["coroutine"] = coroutine.create(simpleMessages, hostScene, hostThing, activeEvent["args"])
-    end
-    activeEvent["timesInvoked"] = activeEvent["timesInvoked"] + 1
-
-    -- return task data for C++ here?
-    -- Data will be an event name, a list of subtasks, and a table of data for each subtask
-    return resumeEvent(hostScene, hostThing, eventName)
 end
 
 --[[

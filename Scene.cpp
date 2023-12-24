@@ -130,8 +130,8 @@ void Scene::destroyThings() {
 void Scene::destroyAllThings() {
     map<string, RealThing*>::iterator itr = things.begin();
     while (itr != things.end()) {
-            delete itr->second;
-            itr = things.erase(itr);
+        delete itr->second;
+        itr = things.erase(itr);
     }
 }
 

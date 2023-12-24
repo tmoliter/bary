@@ -10,15 +10,10 @@ enum class SubTaskType {
 
 struct Subtask {
     Subtask(lua_State* L);
-    virtual bool meat(KeyPresses keysDown) { return true; };
-};
-
-struct WaitST : public Subtask {
-    WaitST(lua_State* L);
-    ~WaitST();
+    ~Subtask();
+    virtual bool meat(KeyPresses keysDown);
     Timer *timer;
     int framesToWait;
-    virtual bool meat(KeyPresses keysDown);
 };
 
 struct PhraseST : public Subtask {

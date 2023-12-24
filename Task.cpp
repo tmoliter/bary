@@ -1,8 +1,11 @@
 #include "Task.h"
 
-Subtask::Subtask(lua_State* L) {
+Subtask::Subtask(lua_State* L) : timer(nullptr) {
     if (!lua_istable(L, -1)) {
         throw exception();
+    }
+    if(luaUtils::GetLuaIntFromTable(L, "frames", framesToWait)) {
+        timer = new Timer();
     }
 }
 
@@ -24,19 +27,15 @@ PhraseST::PhraseST(lua_State* L) : Subtask(L) {
     UIRenderer::addPhrase(phrase);
 }
 
-WaitST::WaitST(lua_State* L) : Subtask(L) {
-    timer = new Timer();
-    luaUtils::GetLuaIntFromTable(L, "frames", framesToWait);
-}
-
-WaitST::~WaitST() {
-    delete timer;
-}
-
-bool WaitST::meat(KeyPresses keysDown) {
-    if (timer->getTime() >= framesToWait)
-        return true;
+bool Subtask::meat(KeyPresses keysDown) {
+    if (timer)
+        return timer->getTime() >= framesToWait;
     return false;
+}
+
+Subtask::~Subtask() {
+    if (timer)
+        delete timer;
 }
 
 bool PhraseST::meat(KeyPresses keysDown) {
@@ -44,6 +43,11 @@ bool PhraseST::meat(KeyPresses keysDown) {
         return true;
     if(phrase->isComplete())
         return true;
+    if (timer) {
+        if (Subtask::meat(keysDown))
+            phrase->advance();
+        return false;
+    }
     if (keysDown.ok)
         phrase->advance();
     return false;
@@ -87,7 +91,7 @@ void Task::addSubtasks(lua_State* L) {
         if (t == "phrase")
             subtasks.push_back(new PhraseST(L));
         if (t == "wait")
-            subtasks.push_back(new WaitST(L));
+            subtasks.push_back(new Subtask(L));
         lua_pop(L,1);
     }
 }
