@@ -13,6 +13,14 @@ struct Subtask {
     virtual bool meat(KeyPresses keysDown) { return true; };
 };
 
+struct WaitST : public Subtask {
+    WaitST(lua_State* L);
+    ~WaitST();
+    Timer *timer;
+    int framesToWait;
+    virtual bool meat(KeyPresses keysDown);
+};
+
 struct PhraseST : public Subtask {
     PhraseST(lua_State* L);
     ~PhraseST();
@@ -23,7 +31,7 @@ struct PhraseST : public Subtask {
 struct Task {
     Task(string eventName, RealThing* hostThing) : eventName(eventName), hostThing(hostThing) {};
     string eventName;
-    std::vector<Subtask*> subtasks; 
+    std::vector<Subtask*> subtasks;
     RealThing* hostThing;
     bool blockMeat;
 

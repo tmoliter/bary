@@ -339,7 +339,7 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
                     lua_pushstring(L, name.c_str());
                     lua_pushstring(L, cName.c_str());
                     callLuaFunc(L, 2, 0, 0);
-                    return 0;
+                    return 1;
                 }
             }
             break;

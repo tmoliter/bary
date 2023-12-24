@@ -24,6 +24,21 @@ PhraseST::PhraseST(lua_State* L) : Subtask(L) {
     UIRenderer::addPhrase(phrase);
 }
 
+WaitST::WaitST(lua_State* L) : Subtask(L) {
+    timer = new Timer();
+    luaUtils::GetLuaIntFromTable(L, "frames", framesToWait);
+}
+
+WaitST::~WaitST() {
+    delete timer;
+}
+
+bool WaitST::meat(KeyPresses keysDown) {
+    if (timer->getTime() >= framesToWait)
+        return true;
+    return false;
+}
+
 bool PhraseST::meat(KeyPresses keysDown) {
     if (phrase == nullptr)
         return true;
@@ -71,6 +86,8 @@ void Task::addSubtasks(lua_State* L) {
     for (auto t : subtaskTypes) {
         if (t == "phrase")
             subtasks.push_back(new PhraseST(L));
+        if (t == "wait")
+            subtasks.push_back(new WaitST(L));
         lua_pop(L,1);
     }
 }

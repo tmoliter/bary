@@ -22,6 +22,9 @@ behaviorDefinitions = {
 local function zinniaTalk(hostScene, hostThing, args, eventName)
     _newTask(
         {
+            frames = 300
+        },
+        {
             text = "poopoo",
             x = 150,
             y = 150, 
@@ -31,6 +34,11 @@ local function zinniaTalk(hostScene, hostThing, args, eventName)
             gridLimitsX = 1000,
             gridLimitsY = 1000,
         },
+        { "phrase", "wait" },
+        eventName,
+        hostThing, hostScene
+    )
+    _newTask(
         {
             text = "doodoo",
             x = 5,
@@ -41,7 +49,7 @@ local function zinniaTalk(hostScene, hostThing, args, eventName)
             gridLimitsX = 100,
             gridLimitsY = 100,
         },
-        { "phrase", "phrase" },
+        { "phrase" },
         eventName,
         hostThing, hostScene
     )

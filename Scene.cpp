@@ -150,16 +150,32 @@ void Scene::meat(KeyPresses keysDown) {
 
 void Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to decide whether to block meat here
     vector<Task*> tasksToDelete;
+    map<string, pair<bool, RealThing*>> eventsToResume;
     for (auto t : activeTasks) {
         if (t->meat(keysDown) < 1) {
-            // task has exhausted subtasks and should look for more tasks in the event
+            // task has exhausted subtasks
+            if (!eventsToResume.count(t->eventName))
+                eventsToResume[t->eventName] = make_pair(true, t->hostThing);
+            tasksToDelete.push_back(t);
             loadLuaFunc(L, "resumeEvent");
             lua_pushlightuserdata(L, t->hostThing);
             lua_pushstring(L, t->eventName.c_str());
             callLuaFunc(L, 2, 1, 0);
-            if (lua_toboolean(L, -1))
-                tasksToDelete.push_back(t);
+        } else {
+            if (!eventsToResume.count(t->eventName))
+                eventsToResume[t->eventName] = make_pair(false, t->hostThing);
+            else
+                eventsToResume.at(t->eventName).first = false;
         }
+    }
+    for (auto e : eventsToResume) {
+        if (!e.second.first)
+            continue;
+        // All tasks for this event have exhausted subtasks, so we look for more tasks
+        loadLuaFunc(L, "resumeEvent");
+        lua_pushlightuserdata(L, e.second.second);
+        lua_pushstring(L, e.first.c_str());
+        callLuaFunc(L, 2, 1, 0);
     }
     for (auto t : tasksToDelete) {
         delete t;
