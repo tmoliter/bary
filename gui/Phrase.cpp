@@ -331,15 +331,3 @@ void Phrase::setGridLimits(DirectionMap dM) {
         reset();
     }
 }
-
-int Phrase::_phrase(lua_State *L) {
-    if(!luaUtils::CheckParams(L, {ParamType::pointer, ParamType::str, ParamType::str})) {
-        cout << "_loadScene failed!" << endl;
-        throw exception();
-    }
-    return 1; // Return phrase pointer? I dunno, we'll have to fuck around
-}
-
-// int Phrase::_advance(lua_State *L) {
-
-// }

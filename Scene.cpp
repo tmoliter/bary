@@ -7,7 +7,6 @@ Scene::Scene(string sceneName) : sceneName(sceneName) {
     lua_register(L, "_loadScene", _loadScene);
     lua_register(L, "_createThing", _createThing);
     lua_register(L, "_updateMoveTarget", _updateMoveTarget);
-    lua_register(L, "_phrase", _phrase);
     lua_register(L, "_newTask", _newTask);
 }
 
@@ -357,25 +356,6 @@ int Scene::_updateMoveTarget(lua_State *L) {
     int newX = lua_tointeger(L, -3);
     lua_settop(L, 0);
     move->destination = Point(newX, newY);
-    return 0;
-}
-
-int Scene::_phrase(lua_State *L) {
-    luaUtils::CheckParams(L, { ParamType::table });
-    string text;
-    Point point;
-    Point size;
-    string scrollType;
-    Point gridLimits;
-    luaUtils::GetLuaStringFromTable(L, "text", text);
-    luaUtils::GetLuaIntFromTable(L, "x", point.x);
-    luaUtils::GetLuaIntFromTable(L, "y", point.y);
-    luaUtils::GetLuaIntFromTable(L, "width", size.x);
-    luaUtils::GetLuaIntFromTable(L, "height", size.y);
-    luaUtils::GetLuaStringFromTable(L, "scrollType", scrollType);
-    luaUtils::GetLuaIntFromTable(L, "gridLimitsX", gridLimits.x);
-    luaUtils::GetLuaIntFromTable(L, "gridLimitsY", gridLimits.y);
-    UIRenderer::addPhrase(new Phrase(point, size, ScrollType::allButLast, text, gridLimits));
     return 0;
 }
 
