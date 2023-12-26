@@ -35,7 +35,7 @@ RealThing::~RealThing() {
         delete tr;
 };
 
-void RealThing::loadLuaFunc(lua_State *L, std::string funcname) {
+void RealThing::loadLuaFunc(std::string funcname) {
     lua_getglobal(L, funcname.c_str());
     if (!lua_isfunction(L, -1)) {
         std::cout << funcname << " is not function" << std::endl;
@@ -45,8 +45,8 @@ void RealThing::loadLuaFunc(lua_State *L, std::string funcname) {
     lua_pushlightuserdata(L, this);
 }
 
-void RealThing::callLuaFunc(lua_State *L, int nargs, int nresults, int errfunc) {
-    Host::callLuaFunc(L, nargs + 1, nresults, errfunc);
+void RealThing::callLuaFunc(int nargs, int nresults, int errfunc) {
+    Host::callLuaFunc(nargs + 1, nresults, errfunc);
 }
 
 void RealThing::processMove(KeyPresses keysDown) {
@@ -58,8 +58,8 @@ void RealThing::processMove(KeyPresses keysDown) {
         move->autoMove(position);
     if (move->type == MoveType::automatic) {
         if(move->autoMove(position)) {
-            loadLuaFunc(L, "doAutoMove");
-            callLuaFunc(L, 0, 0, 0);
+            loadLuaFunc("doAutoMove");
+            callLuaFunc(0, 0, 0);
         }
     }
     position.x += move->velocity.x;
@@ -170,6 +170,32 @@ void RealThing::AddToMap(map<string, RealThing*>& thingMap) {
     thingMap[name] = this;
 }
 
+void RealThing::addComponentsFromTable() {
+    if (!lua_istable(L, -1)) {
+        cout << "top of stack is not table of components!" << endl;
+        return;
+    }
+    lua_pushnil(L);
+    while (lua_next(L, -2)) {
+        if (!lua_isstring(L, -1)) {
+            cout << "component name is not string!" << endl;
+            continue;
+        }
+        string component = lua_tostring(L, -1); // we will have more data than just component name eventually
+        if (component == "autoMove")
+            AddMove(MoveType::automatic);
+        if (component == "followMove")
+            move->type = MoveType::follow;
+        if (component == "moveAnimate")
+            AddAnimator();
+        if (component == "standardCollider")
+            AddStandardCollision();
+        lua_pop(L, 1);
+    }
+    lua_pop(L, 1);
+}
+
+
 Animator* RealThing::AddAnimator() {
     // Right now there is only one type of animator, but this could take
     // AnimationType in the future
@@ -190,11 +216,11 @@ Animator* RealThing::AddAnimator() {
 Move* RealThing::AddMove(MoveType type) {
     move = new Move(type, position);
     if (type == MoveType::automatic) {
-        loadLuaFunc(L, "beginAutoMove");
+        loadLuaFunc("beginAutoMove");
         lua_pushnumber(L, move->origin.x);
         lua_pushnumber(L, move->origin.y);
         lua_pushstring(L, name.c_str());
-        callLuaFunc(L, 3, 0, 0);
+        callLuaFunc(3, 0, 0);
     }
     AddToMap(thingLists.movinThings);
     return move;
@@ -324,10 +350,10 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
         case (CollidableType::interactable):
             for (auto const& [cName, in] : interactables){
                 if(in->isColliding(incoming, incomingLayer)) {
-                    loadLuaFunc(L, "beginEvent");
+                    loadLuaFunc("beginEvent");
                     lua_pushstring(L, name.c_str());
                     lua_pushstring(L, cName.c_str());
-                    callLuaFunc(L, 2, 0, 0);
+                    callLuaFunc(2, 0, 0);
                     return 1;
                 }
             }
@@ -335,10 +361,10 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
         case (CollidableType::trigger):
             for (auto const& [cName, tr] : triggers){
                 if(tr->isColliding(incoming, incomingLayer)) {
-                    loadLuaFunc(L, "beginEvent");
+                    loadLuaFunc("beginEvent");
                     lua_pushstring(L, name.c_str());
                     lua_pushstring(L, cName.c_str());
-                    callLuaFunc(L, 2, 0, 0);
+                    callLuaFunc(2, 0, 0);
                     return 1;
                 }
             }

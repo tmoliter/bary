@@ -19,9 +19,9 @@ void Scene::Load() {
     cout << "Loading scene..." << endl;
     if (!CheckLua(L, luaL_dofile(L, "scripts/load.lua")))
         throw exception();
-    loadLuaFunc(L, "loadScene");
+    loadLuaFunc("loadScene");
     lua_pushstring(L, sceneName.c_str());
-    callLuaFunc(L, 1, 0, 0);
+    callLuaFunc(1, 0, 0);
 }
 
 void Scene::EnterLoaded(RealThing* focus) {
@@ -156,10 +156,10 @@ void Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to 
             if (!eventsToResume.count(t->eventName))
                 eventsToResume[t->eventName] = make_pair(true, t->hostThing);
             tasksToDelete.push_back(t);
-            loadLuaFunc(L, "resumeEvent");
+            loadLuaFunc("resumeEvent");
             lua_pushlightuserdata(L, t->hostThing);
             lua_pushstring(L, t->eventName.c_str());
-            callLuaFunc(L, 2, 1, 0);
+            callLuaFunc(2, 1, 0);
         } else {
             if (!eventsToResume.count(t->eventName))
                 eventsToResume[t->eventName] = make_pair(false, t->hostThing);
@@ -171,10 +171,10 @@ void Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to 
         if (!e.second.first)
             continue;
         // All tasks for this event have exhausted subtasks, so we look for more tasks
-        loadLuaFunc(L, "resumeEvent");
+        loadLuaFunc("resumeEvent");
         lua_pushlightuserdata(L, e.second.second);
         lua_pushstring(L, e.first.c_str());
-        callLuaFunc(L, 2, 1, 0);
+        callLuaFunc(2, 1, 0);
     }
     for (auto t : tasksToDelete) {
         delete t;
@@ -223,7 +223,7 @@ RealThing* Scene::findRealThing (string name) {
     return things.at(name);
 }
 
-RealThing* Scene::buildThingFromTable(lua_State* L) {
+RealThing* Scene::buildThingFromTable() {
     RealThingData td;
     GetLuaIntFromTable(L, "x", td.x);
     GetLuaIntFromTable(L, "y", td.y);
@@ -274,31 +274,6 @@ RealThing* Scene::buildThingFromTable(lua_State* L) {
     return newThing;
 }
 
-void Scene::addComponentsFromTable(lua_State* L, RealThing* thing) {
-    if (!lua_istable(L, -1)) {
-        cout << "top of stack is not table of components!" << endl;
-        return;
-    }
-    lua_pushnil(L);
-    while (lua_next(L, -2)) {
-        if (!lua_isstring(L, -1)) {
-            cout << "component name is not string!" << endl;
-            continue;
-        }
-        string component = lua_tostring(L, -1); // we will have more data than just component name eventually
-        if (component == "autoMove")
-            thing->AddMove(MoveType::automatic);
-        if (component == "followMove")
-            thing->move->type = MoveType::follow;
-        if (component == "moveAnimate")
-            thing->AddAnimator();
-        if (component == "standardCollider")
-            thing->AddStandardCollision();
-        lua_pop(L, 1);
-    }
-    lua_pop(L, 1);
-}
-
 vector<RealThingData> Scene::getAllThingData() {
     vector<RealThingData> allData;
     for (auto const& [i, t] : things) {
@@ -321,7 +296,7 @@ int Scene::_loadScene(lua_State* L) {
     lua_pop(L, 1);
     lua_pushnil(L);
     while (lua_next(L, -2))
-        scene->buildThingFromTable(L);
+        scene->buildThingFromTable();
     lua_pop(L,1);
     scene->backgroundPath = lua_tostring(L, -1);
     lua_settop(L, 0);
@@ -336,8 +311,8 @@ int Scene::_createThing(lua_State* L) {
     }
     Scene* scene = static_cast<Scene*>(lua_touserdata(L, -1));
     lua_pop(L, 1);
-    RealThing* newThing = scene->buildThingFromTable(L);
-    scene->addComponentsFromTable(L, newThing);
+    RealThing* newThing = scene->buildThingFromTable();
+    newThing->addComponentsFromTable();
 
     lua_pushstring(L, newThing->name.c_str());
     return 1;

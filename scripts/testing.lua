@@ -1,3 +1,4 @@
+-- demonstrates assignment by reference in lua. keeping it around for now
 x = {
     a = 1,
     b = 2,

@@ -86,13 +86,14 @@ struct RealThing : public Host {
     map<string, Interactable*> interactables;
     map<string, Trigger*> triggers;
 
-    void loadLuaFunc(lua_State *L, std::string funcname);
-    void callLuaFunc(lua_State *L, int nargs, int nresults, int errfunc);
+    void loadLuaFunc(std::string funcname);
+    void callLuaFunc(int nargs, int nresults, int errfunc);
 
     void calculateHeight();
 
     void AddToMap(map<string, RealThing*>& thingMap);
 
+    void addComponentsFromTable();
     Animator* AddAnimator();
     Move* AddMove(MoveType type);
     void AddStandardCollision();
@@ -131,6 +132,7 @@ struct RealThing : public Host {
 
     vector<string> findAndShowInteractableLines(string beginning);
     vector<string> findAndShowTriggerLines(string beginning);
+
 
 
     RealThingData getData();

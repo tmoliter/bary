@@ -3,7 +3,7 @@
 struct Host {
     lua_State* L;
 
-    virtual void loadLuaFunc(lua_State *L, std::string funcname) {
+    virtual void loadLuaFunc(std::string funcname) {
         lua_getglobal(L, funcname.c_str());
         if (!lua_isfunction(L, -1)) {
             std::cout << funcname << " is not function" << std::endl;
@@ -12,7 +12,7 @@ struct Host {
         lua_pushlightuserdata(L, this);
     }
 
-    virtual void callLuaFunc(lua_State *L, int nargs, int nresults, int errfunc) {
+    virtual void callLuaFunc(int nargs, int nresults, int errfunc) {
         if(!luaUtils::CheckLua(L, lua_pcall(L, nargs + 1, nresults, errfunc)))
             throw exception();
     }

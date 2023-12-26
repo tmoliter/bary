@@ -55,8 +55,7 @@ struct Scene : public Host {
 
     RealThing *findRealThing(string name);
 
-    RealThing* buildThingFromTable(lua_State* L);
-    void addComponentsFromTable(lua_State* L, RealThing* thing);
+    RealThing* buildThingFromTable();
 
     vector<RealThingData> getAllThingData();
 
