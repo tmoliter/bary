@@ -35,7 +35,8 @@ Texture* resourceDepository::initializeTexture(string name) {
         return new Texture("pinkboxheader", "assets/menus/pinkInventoryHeader.png");
     if (name == "pinkinventoryfooter")
         return new Texture("pinkboxfooter", "assets/menus/pinkInventoryFooter.png");
-    return nullptr;
+    cout << "NO SPRITE WITH NAME '" << name << "' found!";
+    throw exception();
 }
 
 Sfx* resourceDepository::initializeSfx(string name) {

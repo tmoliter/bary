@@ -2,13 +2,12 @@
 #define DOOR_H
 
 #include "things/RealThing.h"
-#include "events/SimpleMessage.h"
 
 struct Door : public RealThing {
-    Door(Point p);
+    Door(RealThingData tD, ThingLists tL);
 
     bool opened, locked;
-    SimpleMessage lockedMessage;
+    string lockedMessage;
     
     virtual int checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType);
 

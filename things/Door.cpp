@@ -1,6 +1,6 @@
 #include "things/Door.h"
 
-Door::Door(Point p) : RealThing(p, "AnonymousDoor"), 
+Door::Door(RealThingData tD, ThingLists tL) : RealThing(tD, tL), 
     opened(false),
     locked(false) {
 }
@@ -14,6 +14,7 @@ int Door::checkForCollidables(Ray incoming, int incomingLayer, CollidableType co
     if (RealThing::checkForCollidables(incoming, incomingLayer, collidableType)) {
         if (!locked)
             open();
+        // Fire off phrase event?
         return 1;
     };
     return 0;

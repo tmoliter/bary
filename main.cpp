@@ -43,7 +43,7 @@ int main(int argc, char* args[]) {
             }
         }
         if (men != nullptr) {
-            men->processInput(keysDown);
+            men->processInput(keysDown); // This needs to happen somewhere else. Are all menus in an event?
         }
         /* END MENU TESTING */
 
@@ -52,12 +52,9 @@ int main(int argc, char* args[]) {
                 MapBuilder::mapBuilder->meat(keysDown);
             t.timeElapsed(&p.c);
             switch(gameState) {
-                case (GameState::FieldUI):
-                    Event::meat(keysDown);
-                    break;
                 case (GameState::FieldFree):
                 default:
-                    Scene::currentScene->meatThings(keysDown);
+                    Scene::currentScene->meat(keysDown);
                     t.timeElapsed(&p.d);
                     break;
             }

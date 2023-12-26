@@ -4,13 +4,13 @@ using namespace std;
 
 FieldPlayer *FieldPlayer::player = nullptr;
 
-FieldPlayer::FieldPlayer(FieldPlayerData fpD) : RealThing(fpD) {
-    init();
-}
-
-FieldPlayer::FieldPlayer(Point p, string n, string textureName) : RealThing(p,n) {
-    AddRawSprite(textureName);
-    init();
+FieldPlayer::FieldPlayer(RealThingData tD, ThingLists tL) : RealThing(tD, tL) {
+    type = ThingType::fieldPlayer;
+    AddAnimator();
+    AddMove(MoveType::controlled);
+    AddStandardCollision();
+    move->speed = 2;
+    FieldPlayer::player = this;
 }
 
 FieldPlayer::~FieldPlayer() { 
@@ -18,19 +18,11 @@ FieldPlayer::~FieldPlayer() {
     FieldPlayer::player = nullptr;
 };
 
-void FieldPlayer::init() {
-    Scene::currentScene->things[name] = this;
-    Scene::currentScene->AddAnimator(name);
-    Scene::currentScene->AddMove(name, MoveType::controlled);
-    move->speed = 2;
-    FieldPlayer::player = this;
-}
-
 void FieldPlayer::meat(KeyPresses keysDown) {
     if (!move->velocity.isNaught())
-        Scene::currentScene->checkAllTriggers(getRayFromOriginAndDirection(position, move->currentDirection), move->layer);
+        castRayForTriggers();
     if(keysDown.ok && gameState == GameState::FieldFree)
-        Scene::currentScene->checkAllInteractables(getRayFromOriginAndDirection(position, move->currentDirection), move->layer);
+        castRayForInteractables();
 
     /* DEBUG MODE CONTROLS */
     if (keysDown.debug_left && sprites[0]->d.layer > 0) {
@@ -64,3 +56,31 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     /* END DEBUG MODE CONTROLS */
     RealThing::meat(keysDown);
 };
+
+
+int FieldPlayer::castRayForInteractables () {
+    if (move == nullptr)
+        return 0;
+    for (auto const& [name, t] : thingLists.things) {
+        if (t == this)
+            continue;
+        for (auto r : getRaysFromOriginAndDirection(position, move->currentDirection))
+            if (t->checkForCollidables(r, move->layer, CollidableType::interactable))
+                return 1;
+    }
+    return 0;
+}
+
+int FieldPlayer::castRayForTriggers () {
+    if (move == nullptr)
+        return 0;
+    for (auto const& [name, t] : thingLists.things) {
+        if (t == this)
+            continue;
+        for (auto r : getRaysFromOriginAndDirection(position, move->currentDirection))
+            if (t->checkForCollidables(r, move->layer, CollidableType::trigger))
+                return 1;
+    }
+    return 0;
+}
+

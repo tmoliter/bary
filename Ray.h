@@ -107,7 +107,7 @@ struct Ray {
 bool isCounterClockwise (Point A, Point B, Point C);
 bool raysCollide(Ray &ray1, Ray &ray2);
 bool pointIsInside(Point p, Point boxP, Bounds bounds);
-Ray getRayFromOriginAndDirection(Point origin, Direction direction);
+vector<Ray> getRaysFromOriginAndDirection(Point origin, Direction direction);
 Ray addPointToRay(Ray ray, Point point);
 
 #endif

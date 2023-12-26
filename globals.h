@@ -40,6 +40,11 @@ inline struct Settings {
 inline SDL_Window* window;
 inline SDL_Renderer* renderer;
 
+inline enum class InputType {
+    TextInput,
+    Controller
+} inputType;
+
 enum class GameState {
     FieldFree,
     FieldUI,

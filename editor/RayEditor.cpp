@@ -14,7 +14,7 @@ RayEditor::RayEditor(RealThing *p) :
     UIRenderer::addLine(parent->position.x, parent->position.y, ray, LineType::editing);
     
     oldFocus = Scene::currentScene->things[FocusTracker::ftracker->getFocusName()];
-    focus = Scene::currentScene->addThing(Point(parent->position.x, parent->position.y), "ray focus");
+    focus = Scene::currentScene->addThing(RealThingData(Point(parent->position.x, parent->position.y), "ray focus"));
     FocusTracker::ftracker->setFocus(focus);
 
     text = new Text(Point(settings.LETTER_WIDTH * 2, settings.LETTER_HEIGHT * 4), "");
@@ -121,7 +121,7 @@ void RayEditor::handleCameraControls(KeyPresses keysDown) {
 
 void RayEditor::displayText() {
     string displayText;
-    string prefix = name.size() > 0 ? eventMap::namePlusEvent(parent->name, name, type) + ": " : "";
+    string prefix = name.size() > 0 ? parent->name + " : " + name + ": " : "";
     string suffix = "`layer: " + to_string(layer);
     switch (editState) {
     case RayEditState::selectType:
@@ -176,11 +176,11 @@ void RayEditor::handleNameSubmit() {
         return;
     if (type == CollidableType::interactable && parent->interactables.count(name)) {
         editState = RayEditState::move;
-        layer =  parent->interactables[name]->layer;
+        layer =  parent->interactables.at(name)->layer;
         updateLines();
     } else if (type == CollidableType::trigger && parent->triggers.count(name)) {
         editState = RayEditState::move;
-        layer =  parent->triggers[name]->layer;
+        layer =  parent->triggers.at(name)->layer;
         updateLines();
     } else
         editState = RayEditState::layer;
@@ -200,13 +200,13 @@ void RayEditor::enterSelect () {
             break;
         case CollidableType::interactable:
             if (parent->interactables.count(name)) {
-                selected = parent->interactables[name];
+                selected = parent->interactables.at(name);
                 found = true;
             }
             break;
         case CollidableType::trigger:
             if (parent->triggers.count(name)) {
-                selected = parent->triggers[name];
+                selected = parent->triggers.at(name);
                 found = true;
             }
             break;

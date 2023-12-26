@@ -5,7 +5,7 @@ using namespace std;
 int Phrase::currentID = 0;
 
 Phrase::Phrase(Point p, Point pixelSize, ScrollType type, string t, Point gL, int pS, int d) :
-    autoDestroy(true),
+    autoDestroy(false),
     phraseScale(pS),
     scrollType(type),
     delay(d),

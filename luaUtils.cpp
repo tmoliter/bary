@@ -1,17 +1,23 @@
 #include "luaUtils.h"
 
+void luaUtils::ThrowLua(lua_State* L, std::string message) {
+  std::cout << message << std::endl;
+  dumpstack(L);
+  throw std::exception();
+}
+
 bool luaUtils::CheckLua(lua_State* L, int r) {
     if (r == LUA_OK) {
         return true;
     }
     std::string errmsg = lua_tostring(L, -1);
-    std::cout << errmsg << std::endl;
+    std::cout << "LUA ERROR : " << errmsg << std::endl;
     return false;
 }
 
 bool luaUtils::CheckParams(lua_State* L, std::vector<ParamType> params) {
     if (lua_gettop(L) != params.size()) {
-        std::cout << "param length is not a correct!" << std::endl;
+        std::cout << "param length is not correct!" << std::endl;
         return false;
     }
     int i = -1;
@@ -24,7 +30,7 @@ bool luaUtils::CheckParams(lua_State* L, std::vector<ParamType> params) {
         std::cout << "param " << std::to_string(i) << " is not a number!" << std::endl;
         return false;
       }
-      if (p == ParamType::point && !lua_islightuserdata(L, i)) {
+      if (p == ParamType::pointer && !lua_islightuserdata(L, i)) {
         std::cout << "param " << std::to_string(i) << " is not a pointer!" << std::endl;
         return false;
       }
@@ -42,7 +48,7 @@ bool luaUtils::GetLuaStringFromTable(lua_State *L, std::string key, std::string 
         lua_pushstring(L, key.c_str());
         lua_gettable(L, tableIndex - 1);
         if (!lua_isstring(L, -1)) {
-            std::cout << key << " is not a string" << std::endl;
+            lua_pop(L, 1);
             return false;
         }
         value = lua_tostring(L, -1);
@@ -58,7 +64,7 @@ bool luaUtils::GetLuaIntFromTable(lua_State *L, std::string key, int &value, int
         lua_pushstring(L, key.c_str());
         lua_gettable(L, tableIndex - 1);
         if (!lua_isnumber(L, -1)) {
-            std::cout << key << " is not a number" << std::endl;
+            lua_pop(L, 1);
             return false;
         }
         value = lua_tointeger(L, -1);
@@ -74,7 +80,7 @@ bool luaUtils::GetLuaBoolFromTable(lua_State *L, std::string key, bool &value, i
         lua_pushstring(L, key.c_str());
         lua_gettable(L, tableIndex - 1);
         if (!lua_isboolean(L, -1)) {
-            std::cout << key << " is not a bool" << std::endl;
+            lua_pop(L, 1);
             return false;
         }
         value = lua_toboolean(L, -1);
@@ -90,7 +96,7 @@ bool luaUtils::GetLuaFuncOnStackFromTable(lua_State *L, std::string key, int tab
         lua_pushstring(L, key.c_str());
         lua_gettable(L, tableIndex - 1);
         if (!lua_isfunction(L, -1)) {
-            std::cout << key << " is not a func" << std::endl;
+            lua_pop(L, 1);
             return false;
         }
         return true;
@@ -105,7 +111,7 @@ bool luaUtils::GetTableOnStackFromTable(lua_State *L, std::string key, int table
         lua_pushstring(L, key.c_str());
         lua_gettable(L, tableIndex - 1);
         if (!lua_istable(L, -1)) {
-            std::cout << key << " is not a table" << std::endl;
+            lua_pop(L, -1);
             return false;
         }
         return true;

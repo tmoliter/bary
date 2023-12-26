@@ -31,7 +31,6 @@ class MapBuilder {
         Sprite *cross;
 
         RayEditor *rayEditor;
-        EventEditor *eventEditor;
         ThingRouter *thingRouter;
 
         void changeState(EditorState newState);

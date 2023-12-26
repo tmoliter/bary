@@ -6,7 +6,8 @@ local function setup(host)
     _createThing(
         {
             "moveAnimate", -- this should be a table or a list of table with "componentName" keys so that components can have attributes
-            "autoMove"
+            "autoMove",
+            "standardCollider" -- maybe this gets relegated to as an option in the table for moveAnimate or something, I dunno
         },
         {
             name = "otherZinnia",
@@ -29,25 +30,6 @@ local function setup(host)
         },
         host
     )
-    -- _createThing({
-    --     name = "followZinnia",
-    --     spriteDataVector = {
-    --         {
-    --             xOffset = 0,
-    --             height = 0,
-    --             layer = 0,
-    --             textureName = "zinnia",
-    --             renderOffset = 0,
-    --             width = 0,
-    --             yOffset = 0,
-    --             sourceX = 0,
-    --             sourceY = 0
-    --         }
-    --     },
-    --     x = 1000,
-    --     y = 1000,
-    --     obstructionData = {}
-    -- }, host)
 end
 
 return setup

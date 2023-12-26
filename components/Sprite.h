@@ -10,6 +10,8 @@
 using namespace std;
 
 struct SpriteData {
+    SpriteData() {};
+    SpriteData(string textureName) : textureName(textureName) {};
     int layer = 0;
     int renderOffset = 0;
     int xOffset = 0;

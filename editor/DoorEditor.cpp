@@ -5,7 +5,7 @@ DoorEditor::DoorEditor(Point p) : state(DoorEditState::closedSprite), input("") 
     rayEditor = nullptr;
     text = new Text(Point(settings.LETTER_WIDTH * 2, settings.LETTER_HEIGHT * 2), "");
     UIRenderer::addText(text);
-    door = static_cast<Door*>(Scene::currentScene->addExistingThingToScene(new Door(p)));
+    door = static_cast<Door*>(Scene::currentScene->addThing(RealThingData(p, "AnonymousDoor"), ThingType::door));
     changeState(DoorEditState::closedSprite);
 }
 

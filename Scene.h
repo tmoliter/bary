@@ -1,13 +1,23 @@
 #ifndef SCENE_H
 #define SCENE_H
 #include "FocusTracker.h"
+#include "things/FieldPlayer.h"
+#include "things/Door.h"
+#include "Task.h"
 
 using namespace luaUtils;
 
-struct Scene {
+struct Scene : public Host {
     inline static Scene* currentScene;
 
-    lua_State *L;
+    enum class SceneState {
+        play,
+        pausePlayerControl,
+        pauseThings,
+        pauseAll,
+    } sceneState;
+
+    vector<Task*> activeTasks;
 
     string sceneName;
     string backgroundPath;
@@ -23,10 +33,11 @@ struct Scene {
     void Load();
     void EnterLoaded(RealThing* focus);
 
+    void meat(KeyPresses keysDown);
+    void meatEvent(KeyPresses keysDown);
     void meatThings(KeyPresses keysDown);
 
-    RealThing* addThing(RealThingData tD);
-    RealThing* addThing(Point p, string name = "AnonymousThing");
+    RealThing* addThing(RealThingData tD, ThingType type = ThingType::thing);
     RealThing* addExistingThingToScene(RealThing* existingThing);
 
     RealThing* copyThing(RealThing& oldThing);
@@ -38,28 +49,23 @@ struct Scene {
 
     string renameThing(RealThing* thing, string newName);
 
-    Animator* AddAnimator(string name);
-    Move* AddMove(string name, MoveType type);
-
     vector<RealThing*> findThingsByPoint(Point p);
     void showAllLines();
     void hideAllLines();
 
-    int checkAllInteractables (Ray incoming, int incomingLayer);
-    int checkAllTriggers (Ray incoming, int incomingLayer);
-
     RealThing *findRealThing(string name);
 
-    RealThing* buildThingFromTable(lua_State* L);
-    void addComponentsFromTable(lua_State* L, RealThing* thing);
+    RealThing* buildThingFromTable();
 
     vector<RealThingData> getAllThingData();
 
     static int _loadScene(lua_State* L);
     static int _createThing(lua_State* L);
     static int _updateMoveTarget(lua_State *L);
+    static int _newTask(lua_State *L);
 
     private:
+        RealThing::ThingLists getThingLists();
         string getNewThingName(string name);
 };
 

@@ -1,23 +1,18 @@
 #include "RealThing.h"
 
-RealThing::RealThing(RealThingData tD) : 
+RealThing::RealThing(RealThingData tD, ThingLists tL) :
     name(tD.name),
     position(tD.x, tD.y), 
     animator(nullptr),
-    move(nullptr) {
+    move(nullptr),
+    thingLists(tL) {
     for (auto sd : tD.spriteDataVector)
         AddSprite(sd);
     for (auto cd : tD.obstructionData)
         addObstruction(cd.rays, cd.layer);
 }
 
-RealThing::RealThing(Point p, string n) : 
-    name(n),
-    position(p.x,p.y),
-    animator(nullptr),
-    move(nullptr)  {}
-
-RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(oldThing.bounds) {
+RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(oldThing.bounds), thingLists(oldThing.thingLists) {
     for (auto oldS : oldThing.sprites)
         sprites.push_back(new Sprite(*oldS, position, name));
     for (auto const& [layer, oldO] : oldThing.obstructions)
@@ -26,6 +21,7 @@ RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(
         interactables[oldInName] = new Interactable(*oldIn, position, name);
     for (auto const& [oldTrName, oldTr] : oldThing.triggers)
         triggers[oldTrName] = new Trigger(*oldTr, position, name);
+    parentScene = oldThing.parentScene;
 }
 
 RealThing::~RealThing() {
@@ -39,6 +35,20 @@ RealThing::~RealThing() {
         delete tr;
 };
 
+void RealThing::loadLuaFunc(std::string funcname) {
+    lua_getglobal(L, funcname.c_str());
+    if (!lua_isfunction(L, -1)) {
+        std::cout << funcname << " is not function" << std::endl;
+        throw std::exception();
+    }
+    lua_pushlightuserdata(L, parentScene);
+    lua_pushlightuserdata(L, this);
+}
+
+void RealThing::callLuaFunc(int nargs, int nresults, int errfunc) {
+    Host::callLuaFunc(nargs + 1, nresults, errfunc);
+}
+
 void RealThing::processMove(KeyPresses keysDown) {
     if (move == nullptr)
         return;
@@ -48,18 +58,8 @@ void RealThing::processMove(KeyPresses keysDown) {
         move->autoMove(position);
     if (move->type == MoveType::automatic) {
         if(move->autoMove(position)) {
-            lua_getglobal(sceneL, "doAutoMove");
-            if (!lua_isfunction(sceneL, -1)) {
-                cout << "doAutoMove is not function" << endl;
-                throw exception();
-            }
-            lua_pushnumber(sceneL, move->origin.x);
-            lua_pushnumber(sceneL, move->origin.y);
-            lua_pushstring(sceneL, name.c_str());
-            lua_pushlightuserdata(sceneL, this);
-            lua_pcall(sceneL, 4, 0, 0);
-            if (lua_isstring(sceneL, -1))
-                cout << lua_tostring(sceneL, -1) << endl;
+            loadLuaFunc("doAutoMove");
+            callLuaFunc(0, 0, 0);
         }
     }
     position.x += move->velocity.x;
@@ -162,6 +162,81 @@ void RealThing::calculateHeight() {
     }
 }
 
+void RealThing::AddToMap(map<string, RealThing*>& thingMap) {
+    if (thingMap.count(name)) {
+        cout << "TRIED TO ADD DUPLICATE NAMED ENTRY TO THING MAP OF SOME KIND" << endl;
+        throw exception();
+    }
+    thingMap[name] = this;
+}
+
+void RealThing::addComponentsFromTable() {
+    if (!lua_istable(L, -1)) {
+        cout << "top of stack is not table of components!" << endl;
+        return;
+    }
+    lua_pushnil(L);
+    while (lua_next(L, -2)) {
+        if (!lua_isstring(L, -1)) {
+            cout << "component name is not string!" << endl;
+            continue;
+        }
+        string component = lua_tostring(L, -1); // we will have more data than just component name eventually
+        if (component == "autoMove")
+            AddMove(MoveType::automatic);
+        if (component == "followMove")
+            move->type = MoveType::follow;
+        if (component == "moveAnimate")
+            AddAnimator();
+        if (component == "standardCollider")
+            AddStandardCollision();
+        lua_pop(L, 1);
+    }
+    lua_pop(L, 1);
+}
+
+
+Animator* RealThing::AddAnimator() {
+    // Right now there is only one type of animator, but this could take
+    // AnimationType in the future
+    if (sprites.size() != 1) {
+        std::cout << "Can't animate no sprites!" << std::endl;
+        return nullptr;
+    }
+    animator = new Animator(sprites[0]);
+    animator->splitSheet(9, 4); // Obviously this shouldn't be hard-coded, but for now it is
+    bounds.top = 0 - sprites[0]->d.width;
+    bounds.bottom = 0;
+    bounds.left = 0 - ( sprites[0]->d.width / 2);
+    bounds.right = (sprites[0]->d.width / 2);
+    AddToMap(thingLists.animatedThings);
+    return animator;
+}
+
+Move* RealThing::AddMove(MoveType type) {
+    move = new Move(type, position);
+    if (type == MoveType::automatic) {
+        loadLuaFunc("beginAutoMove");
+        lua_pushnumber(L, move->origin.x);
+        lua_pushnumber(L, move->origin.y);
+        lua_pushstring(L, name.c_str());
+        callLuaFunc(3, 0, 0);
+    }
+    AddToMap(thingLists.movinThings);
+    return move;
+}
+
+void RealThing::AddStandardCollision() {
+    vector<Ray> obstructionRays = {
+        Ray(Point(bounds.right - 10, bounds.bottom), Point(bounds.left + 8, bounds.bottom)),
+        Ray(Point(bounds.left + 8, bounds.bottom), Point(bounds.left + 8, bounds.bottom - 6)),
+        Ray( Point(bounds.left + 8, bounds.bottom - 6), Point(bounds.right - 10, bounds.bottom - 6)),
+        Ray(Point(bounds.right - 10, bounds.bottom - 6), Point(bounds.right - 10, bounds.bottom))
+    };
+    addInteractable("interact", obstructionRays, 0);
+    addObstruction(obstructionRays, 0);
+}
+
 Sprite* RealThing::AddSprite(SpriteData SD) {
     sprites.push_back(new Sprite(position, SD));
     sprites.back()->active = true; // This was added to test lua loading, might have side effects
@@ -175,18 +250,18 @@ Sprite* RealThing::AddRawSprite(string textureName) {
     return AddSprite(sd);
 }
 
-Interactable* RealThing::addInteractable(string iName, vector<Ray*> rays, int layer, Event* event) {
+Interactable* RealThing::addInteractable(string iName, vector<Ray> rays, int layer) {
     if (interactables.count(iName))
         return interactables[iName];
-    Interactable* in = new Interactable(position, name, iName, rays, layer, event);
+    Interactable* in = new Interactable(position, name, iName, CollidableData(rays, layer));
     interactables[iName] = in;
     return in;
 }
 
-Trigger* RealThing::addTrigger(string iName, vector<Ray*> rays, int layer, Event* event) {
+Trigger* RealThing::addTrigger(string iName, vector<Ray> rays, int layer) {
     if (triggers.count(iName))
         return triggers[iName];
-    Trigger* tr = new Trigger(position, name, iName, rays, layer, event);
+    Trigger* tr = new Trigger(position, name, iName, CollidableData(rays, layer));
     triggers[iName] = tr;
     return tr;
 }
@@ -270,42 +345,33 @@ void RealThing::removeAllCollidables() {
     }
 };
 
-// Pass in incoming Thing name here to ignore collisions
-int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) {
+int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) { // Someday we might want to accept a RealThing* of the incoming thing here, if we want non-players to deal with this
     switch (collidableType) {
         case (CollidableType::interactable):
-            for (auto const& [name, in] : interactables){
+            for (auto const& [cName, in] : interactables){
                 if(in->isColliding(incoming, incomingLayer)) {
-                    if(in->timesTriggered++ == in->maxTriggers) {
-                        delete in;
-                        interactables.erase(name);
-                        return 0;
-                    }
-                    if (in->event)
-                        in->event->begin();
+                    loadLuaFunc("beginEvent");
+                    lua_pushstring(L, name.c_str());
+                    lua_pushstring(L, cName.c_str());
+                    callLuaFunc(2, 0, 0);
                     return 1;
                 }
             }
             break;
         case (CollidableType::trigger):
-            for (auto const& [name, tr] : triggers){
+            for (auto const& [cName, tr] : triggers){
                 if(tr->isColliding(incoming, incomingLayer)) {
-                    if(tr->timesTriggered++ == tr->maxTriggers) {
-                        triggers.erase(name);
-                        delete tr;
-                        return 0;
-                    }
-                    if (tr->event)
-                        tr->event->begin();
-                    return 0;
+                    loadLuaFunc("beginEvent");
+                    lua_pushstring(L, name.c_str());
+                    lua_pushstring(L, cName.c_str());
+                    callLuaFunc(2, 0, 0);
+                    return 1;
                 }
             }
             break;
         case (CollidableType::obstruction):
-            for (auto const& [layer, o] : obstructions){
-                if(o->isColliding(incoming, incomingLayer))
-                    return 1;
-                }
+            if(obstructions.count(incomingLayer) && obstructions[incomingLayer]->isColliding(incoming, incomingLayer))
+                return 1;
             break;
         }
     return 0;

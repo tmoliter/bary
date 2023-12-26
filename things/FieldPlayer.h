@@ -2,19 +2,16 @@
 #define FIELD_PLAYER_H
 
 #include <iostream>
-#include "Scene.h"
-
-struct FieldPlayerData : RealThingData {
-};
+#include "RealThing.h"
 
 struct FieldPlayer : public RealThing {
-    void init();
-
-    FieldPlayer(FieldPlayerData fpD);
-    FieldPlayer(Point p, string n, string textureName);
+    FieldPlayer(RealThingData tD, ThingLists tL);
     ~FieldPlayer();
 
     void meat(KeyPresses keysDown);
+
+    int castRayForInteractables ();
+    int castRayForTriggers ();
     
     static FieldPlayer *player;
 };

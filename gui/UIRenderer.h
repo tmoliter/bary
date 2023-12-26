@@ -45,6 +45,7 @@ class UIRenderer {
 
         static int currentPhraseId;
         static UIRenderer *u;
+
 };
 
 #endif

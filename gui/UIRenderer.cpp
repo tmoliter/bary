@@ -26,17 +26,19 @@ void UIRenderer::addLines(int &parentX, int &parentY, vector<Ray*> rays, LineTyp
 }
 
 void UIRenderer::renderPhrases() {
+    vector<Phrase*> phrasesToDestroy;
     vector<Phrase*>::iterator itr = u->phrases.begin();
     while (itr != u->phrases.end()) {
         Phrase* p = *itr;
         if (p->isComplete() && p->autoDestroy) {
-            delete p;
-            removePhrase(p);
+            phrasesToDestroy.push_back(p);
             continue;
         }
         p->progDisplay();
         itr++;
     }
+    for (auto p : phrasesToDestroy)
+        removePhrase(p);
 }
 
 void UIRenderer::renderTexts() {
@@ -94,6 +96,7 @@ void UIRenderer::removeLine(Ray *r) {
 
 
 void UIRenderer::removePhrase(Phrase *p) {
+    delete p;
     u->phrases.erase(remove(u->phrases.begin(), u->phrases.end(), p), u->phrases.end());
 }
 
@@ -115,3 +118,4 @@ void UIRenderer::changeLineType(Ray *r, LineType lineType) {
         }
     }
 };
+

@@ -1,7 +1,6 @@
 #ifndef RAY_EDITOR_H
 #define RAY_EDITOR_H
 #include "Scene.h"
-#include "events/eventMap.h"
 
 using namespace std;
 
