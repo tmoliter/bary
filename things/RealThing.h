@@ -6,7 +6,7 @@
 #include <map>
 #include <algorithm>
 #include "components/Obstruction.h"
-#include "components/Interactable.h"
+#include "components/EventCollidable.h"
 #include "components/Animator.h"
 #include "components/Move.h"
 #include "Host.h"

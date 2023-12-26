@@ -22,7 +22,7 @@ parentPos(pP),
 thingName(tN),
 linesVisible(false) {}
 
-Collidable::Collidable (Collidable &oldCollidable, Point &pP, string &tN) : 
+Collidable::Collidable (Collidable &oldCollidable, Point &pP, string &tN) : // Could we simplify this to just take the first param?
 thingName(tN),
 parentPos(pP),
 layer(oldCollidable.layer),
