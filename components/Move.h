@@ -7,7 +7,7 @@ enum class MoveType {
     controlled,
     automatic,
     follow,
-    disabled
+    disabled,
 };
 
 struct Move {

@@ -9,25 +9,40 @@ enum class SubTaskType {
 };
 
 struct Subtask {
-    Subtask(lua_State* L);
+    Subtask(lua_State* L, map<string, RealThing*>& things);
     ~Subtask();
+    lua_State* L;
+    map<string, RealThing*>& things;
+    virtual void init() {};
     virtual bool meat(KeyPresses keysDown);
     Timer *timer;
     int framesToWait;
 };
 
 struct PhraseST : public Subtask {
-    PhraseST(lua_State* L);
+    PhraseST(lua_State* L, map<string, RealThing*>& things) : Subtask(L, things) {};
     ~PhraseST();
-    Phrase* phrase;
+    virtual void init();
     virtual bool meat(KeyPresses keysDown);
+    Phrase* phrase = nullptr;
 };
 
+struct MoveST : public Subtask {
+    MoveST(lua_State* L, map<string, RealThing*>& things) : Subtask(L, things) {};
+    // ~MoveST();
+    virtual void init();
+    virtual bool meat(KeyPresses keysDown);
+    RealThing* movingThing = nullptr;
+    Move* move = nullptr;
+};
+
+
 struct Task {
-    Task(string eventName, RealThing* hostThing) : eventName(eventName), hostThing(hostThing) {};
+    Task(string eventName, RealThing* hostThing, map<string, RealThing*>& things) : eventName(eventName), hostThing(hostThing), things(things) {};
     string eventName;
     std::vector<Subtask*> subtasks;
     RealThing* hostThing;
+    map<string, RealThing*>& things;
     bool blockMeat;
 
     int meat(KeyPresses keysDown);

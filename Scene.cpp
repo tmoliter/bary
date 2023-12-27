@@ -50,9 +50,7 @@ string Scene::getNewThingName(string name) {
 
 RealThing::ThingLists Scene::getThingLists() {
     return RealThing::ThingLists(
-        things,
-        movinThings,
-        animatedThings
+        things
     );
 }
 
@@ -102,11 +100,9 @@ void Scene::destroyThing(RealThing* thing) {
     for (auto subThing : thing->subThings)
         destroyThing(subThing);
     if (thing->animator != nullptr) {
-        animatedThings.erase(thing->name);
         delete thing->animator;
     }
     if (thing->move != nullptr) {
-        movinThings.erase(thing->name);
         delete thing->move;
     }
     things.erase(thing->name);
@@ -188,10 +184,10 @@ void Scene::meatThings(KeyPresses keysDown) {
         return;
     if (sceneState == SceneState::pausePlayerControl)
         keysDown = KeyPresses();
-    for (auto const& [id, thing] : movinThings){
+    for (auto const& [id, thing] : things){
         thing->processMove(keysDown);
     }
-    for (auto const& [id, thing] : movinThings){
+    for (auto const& [id, thing] : things){
         thing->processCollisions(things);
     }
     for (auto const& [id, thing] : things){
@@ -348,7 +344,7 @@ int Scene::_newTask(lua_State *L) {
     if(!lua_isstring(L, -1))
         luaUtils::ThrowLua(L, "third param to _newTask is not an event name!" );
     string eventName = lua_tostring(L, -1);
-    Task* newTask = new Task(eventName, hostThing);
+    Task* newTask = new Task(eventName, hostThing, scene->getThingLists().things);
     lua_pop(L, 1);
 
     newTask->addSubtasks(L);

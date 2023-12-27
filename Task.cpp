@@ -1,6 +1,6 @@
 #include "Task.h"
 
-Subtask::Subtask(lua_State* L) : timer(nullptr) {
+Subtask::Subtask(lua_State* L,  map<string, RealThing*>& things) : L(L), timer(nullptr), things(things) {
     if (!lua_istable(L, -1)) {
         throw exception();
     }
@@ -9,7 +9,22 @@ Subtask::Subtask(lua_State* L) : timer(nullptr) {
     }
 }
 
-PhraseST::PhraseST(lua_State* L) : Subtask(L) {
+bool Subtask::meat(KeyPresses keysDown) {
+    if (timer)
+        return timer->getTime() >= framesToWait;
+    return false;
+}
+
+Subtask::~Subtask() {
+    if (timer)
+        delete timer;
+}
+PhraseST::~PhraseST() {
+    phrase = nullptr;
+    UIRenderer::removePhrase(phrase);
+}
+
+void PhraseST::init() {
     string text;
     Point point;
     Point size;
@@ -27,17 +42,6 @@ PhraseST::PhraseST(lua_State* L) : Subtask(L) {
     UIRenderer::addPhrase(phrase);
 }
 
-bool Subtask::meat(KeyPresses keysDown) {
-    if (timer)
-        return timer->getTime() >= framesToWait;
-    return false;
-}
-
-Subtask::~Subtask() {
-    if (timer)
-        delete timer;
-}
-
 bool PhraseST::meat(KeyPresses keysDown) {
     if (phrase == nullptr)
         return true;
@@ -53,9 +57,29 @@ bool PhraseST::meat(KeyPresses keysDown) {
     return false;
 }
 
-PhraseST::~PhraseST() {
-    phrase = nullptr;
-    UIRenderer::removePhrase(phrase);
+void MoveST::init() {
+    string thingName;
+    if (!luaUtils::GetLuaStringFromTable(L, "thingName", thingName)) {
+        return;
+    }
+    movingThing = things.at(thingName);
+    movingThing->AddMove(MoveType::automatic);
+}
+
+bool MoveST::meat(KeyPresses keysDown) {
+    return true;
+    // if (phrase == nullptr)
+    //     return true;
+    // if(phrase->isComplete())
+    //     return true;
+    // if (timer) {
+    //     if (Subtask::meat(keysDown))
+    //         phrase->advance();
+    //     return false;
+    // }
+    // if (keysDown.ok)
+    //     phrase->advance();
+    // return false;
 }
 
 int Task::meat(KeyPresses keysDown) {
@@ -70,7 +94,6 @@ int Task::meat(KeyPresses keysDown) {
     }
     return subtasks.size();
 }
-
 
 void Task::addSubtasks(lua_State* L) {
     if (!lua_istable(L, -1))
@@ -88,10 +111,13 @@ void Task::addSubtasks(lua_State* L) {
     }
     lua_pop(L,1);
     for (auto t : subtaskTypes) {
+        if (t == "move")
+            subtasks.push_back(new MoveST(L, things));
         if (t == "phrase")
-            subtasks.push_back(new PhraseST(L));
+            subtasks.push_back(new PhraseST(L, things));
         if (t == "wait")
-            subtasks.push_back(new Subtask(L));
+            subtasks.push_back(new Subtask(L, things));
+        subtasks.back()->init();
         lua_pop(L,1);
     }
 }

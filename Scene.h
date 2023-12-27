@@ -23,8 +23,6 @@ struct Scene : public Host {
     string backgroundPath;
 
     map<string, RealThing*> things;
-    map<string, RealThing*> movinThings;
-    map<string, RealThing*> animatedThings;
     vector<string> thingsToDestroy;
 
     Scene(string sceneName);

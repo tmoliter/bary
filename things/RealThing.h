@@ -40,17 +40,11 @@ struct RealThingData {
 struct RealThing : public Host {
     struct ThingLists {
         ThingLists(
-            map<string, RealThing*>& things,
-            map<string, RealThing*>& movinThings,
-            map<string, RealThing*>& animatedThings
+            map<string, RealThing*>& things
         ) :
-        things(things),
-        movinThings(movinThings),
-        animatedThings(animatedThings) {}
+        things(things) {}
 
         map<string, RealThing*>& things;
-        map<string, RealThing*>& movinThings;
-        map<string, RealThing*>& animatedThings;
     };
 
     string name;

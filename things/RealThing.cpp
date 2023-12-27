@@ -209,7 +209,6 @@ Animator* RealThing::AddAnimator() {
     bounds.bottom = 0;
     bounds.left = 0 - ( sprites[0]->d.width / 2);
     bounds.right = (sprites[0]->d.width / 2);
-    AddToMap(thingLists.animatedThings);
     return animator;
 }
 
@@ -222,7 +221,6 @@ Move* RealThing::AddMove(MoveType type) {
         lua_pushstring(L, name.c_str());
         callLuaFunc(3, 0, 0);
     }
-    AddToMap(thingLists.movinThings);
     return move;
 }
 
