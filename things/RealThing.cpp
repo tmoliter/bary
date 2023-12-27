@@ -532,3 +532,16 @@ RealThingData RealThing::getData() {
     }
     return td;
 }
+
+int RealThing::_getThingData(lua_State* L) {
+    if(!lua_islightuserdata(L, -1))
+        luaUtils::ThrowLua(L,  "second param to _newTask is not an host Thing!" );
+    RealThing* thing = static_cast<RealThing*>(lua_touserdata(L, -1)); // should eventually pass this into task
+    lua_pop(L, 1);
+
+    lua_newtable(L);
+    luaUtils::PushIntToTable(L, "x", thing->position.x);
+    luaUtils::PushIntToTable(L, "y", thing->position.y);
+    luaUtils::PushStringToTable(L, "thingName", thing->name);
+    return 1;
+}

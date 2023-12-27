@@ -8,6 +8,7 @@ Scene::Scene(string sceneName) : sceneName(sceneName) {
     lua_register(L, "_createThing", _createThing);
     lua_register(L, "_updateMoveTarget", _updateMoveTarget);
     lua_register(L, "_newTask", _newTask);
+    lua_register(L, "_getThingData", RealThing::_getThingData);
 }
 
 Scene::~Scene() {

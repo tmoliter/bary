@@ -57,11 +57,12 @@ local function zinniaTalkB(hostScene, hostThing, args, eventName)
         hostThing, hostScene
     )
     coroutine.yield()
+    local thingData = _getThingData(hostThing)
     _newTask(
         {
             thingPointer = hostThing,
-            destinationX = 250,
-            destinationY = 250,
+            destinationX = thingData["x"],
+            destinationY = thingData["y"] - 100,
         },
         {
             text = "poopoo",

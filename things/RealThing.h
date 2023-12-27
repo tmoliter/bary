@@ -123,6 +123,8 @@ struct RealThing : public Host {
     RealThingData getData();
 
     virtual RealThing* copyInPlace();
+
+    static int _getThingData(lua_State* L);
 };
 
 #endif

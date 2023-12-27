@@ -71,13 +71,13 @@ void MoveST::init() {
     } else {
         Host* hostPointer = nullptr;
         if (!Host::GetHostPointerFromTable(L, "thingPointer", hostPointer) || hostPointer == nullptr)
-            return;
+            throw exception();
         movingThing = static_cast<RealThing*>(hostPointer);
     }
     if (!luaUtils::GetLuaIntFromTable(L, "destinationX", destination.x))
-        return;
+        throw exception();
     if (!luaUtils::GetLuaIntFromTable(L, "destinationY", destination.y))
-        return;
+        throw exception();
 
     prevMove = movingThing->move;
     movingThing->AddMove(MoveType::follow);
