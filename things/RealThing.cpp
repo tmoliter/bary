@@ -52,9 +52,11 @@ void RealThing::callLuaFunc(int nargs, int nresults, int errfunc) {
 void RealThing::processMove(KeyPresses keysDown) {
     if (move == nullptr)
         return;
+    if (move->type == MoveType::disabled)
+        return;
     if (move->type == MoveType::controlled)
         move->moveFromInput(keysDown);
-    if (move->type == MoveType::follow && move->leader)
+    if (move->type == MoveType::follow)
         move->autoMove(position);
     if (move->type == MoveType::automatic) {
         if(move->autoMove(position)) {

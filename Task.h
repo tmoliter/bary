@@ -10,7 +10,7 @@ enum class SubTaskType {
 
 struct Subtask {
     Subtask(lua_State* L, map<string, RealThing*>& things);
-    ~Subtask();
+    virtual ~Subtask();
     lua_State* L;
     map<string, RealThing*>& things;
     virtual void init() {};
@@ -29,11 +29,12 @@ struct PhraseST : public Subtask {
 
 struct MoveST : public Subtask {
     MoveST(lua_State* L, map<string, RealThing*>& things) : Subtask(L, things) {};
-    // ~MoveST();
+    ~MoveST();
     virtual void init();
     virtual bool meat(KeyPresses keysDown);
     RealThing* movingThing = nullptr;
     Move* move = nullptr;
+    Move* prevMove = nullptr;
 };
 
 

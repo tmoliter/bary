@@ -17,7 +17,7 @@ void Move::moveFromInput(KeyPresses keysDown) {
 }
 
 bool Move::autoMove(Point position) {
-    if (type == MoveType::follow)
+    if (type == MoveType::follow && leader != nullptr)
         destination = *leader;
     
     if (position.isWithin(destination, tolerance))

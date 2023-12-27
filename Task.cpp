@@ -57,29 +57,43 @@ bool PhraseST::meat(KeyPresses keysDown) {
     return false;
 }
 
+MoveST::~MoveST() {
+    if (movingThing != nullptr)
+        movingThing->move = prevMove;
+    delete move;
+}
+
 void MoveST::init() {
     string thingName;
-    if (!luaUtils::GetLuaStringFromTable(L, "thingName", thingName)) {
-        return;
+    Point destination;
+    if (luaUtils::GetLuaStringFromTable(L, "thingName", thingName)) {
+        movingThing = things.at(thingName);
+    } else {
+        Host* hostPointer = nullptr;
+        if (!Host::GetHostPointerFromTable(L, "thingPointer", hostPointer) || hostPointer == nullptr)
+            return;
+        movingThing = static_cast<RealThing*>(hostPointer);
     }
-    movingThing = things.at(thingName);
-    movingThing->AddMove(MoveType::automatic);
+    if (!luaUtils::GetLuaIntFromTable(L, "destinationX", destination.x))
+        return;
+    if (!luaUtils::GetLuaIntFromTable(L, "destinationY", destination.y))
+        return;
+
+    prevMove = movingThing->move;
+    movingThing->AddMove(MoveType::follow);
+    movingThing->move->destination = destination;
 }
 
 bool MoveST::meat(KeyPresses keysDown) {
-    return true;
-    // if (phrase == nullptr)
-    //     return true;
-    // if(phrase->isComplete())
-    //     return true;
-    // if (timer) {
-    //     if (Subtask::meat(keysDown))
-    //         phrase->advance();
-    //     return false;
-    // }
-    // if (keysDown.ok)
-    //     phrase->advance();
-    // return false;
+    if (movingThing == nullptr)
+        return true;
+    if(movingThing->move->autoMove(movingThing->position))
+        return true;
+    movingThing->position.x += movingThing->move->velocity.x;
+    movingThing->position.y += movingThing->move->velocity.y;
+    if (movingThing->animator)
+        movingThing->animate(keysDown);
+    return false;
 }
 
 int Task::meat(KeyPresses keysDown) {
@@ -101,7 +115,7 @@ void Task::addSubtasks(lua_State* L) {
 
     vector<string> subtaskTypes;
     lua_pushnil(L);
-    while (lua_next(L, -2)) {
+    while (lua_next(L, -2)) { // Why not just iterate through a list of tables and pull the name off the table
         if (!lua_isstring(L, -1)) {
             cout << "cannot resolve subtask type to string" << endl;
             continue;

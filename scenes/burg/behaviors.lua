@@ -51,12 +51,17 @@ local function zinniaTalkB(hostScene, hostThing, args, eventName)
             gridLimitsY = 100,
             frames = 100
         },
-        { "phrase" },
+        {  "phrase" },
         eventName,
         hostThing, hostScene
     )
     coroutine.yield()
     _newTask(
+        {
+            thingPointer = hostThing,
+            destinationX = 250,
+            destinationY = 250,
+        },
         {
             text = "poopoo",
             x = 300,
@@ -68,12 +73,11 @@ local function zinniaTalkB(hostScene, hostThing, args, eventName)
             gridLimitsY = 1000,
             frames = 75
         },
-        { "phrase" },
+        { "phrase", "move" },
         eventName,
         hostThing, hostScene
     )
 end
-
 
 eventDefinitions = {
     followZinnia = { -- name of thing
@@ -91,6 +95,10 @@ eventDefinitions = {
     -- NOTE: Non-custom event definitions maybe should be able to be stored on the serialized Thing in map.lua
     otherZinnia = {
         interact =  {
+            { -- name of collidable
+                type = "custom",
+                customCoroutine = zinniaTalkB
+            },
             { -- This has the same effect as zinniaTalk, but is stored as data
                 type = "simpleMessages",
                 args = {
