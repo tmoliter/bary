@@ -1,3 +1,6 @@
+local standardBehaviors = require('definitions.behaviors')
+local randomAutoMove = table.unpack(standardBehaviors)
+
 local activeEvents = {}
 local activeBehaviors = {}
 local eventDefinitions = {}
@@ -76,9 +79,19 @@ end
 
 
 local function beginBehavior(hostScene, hostThing, args)
-    local behaviorType, thingName = table.unpack {args["behaviorType"], args["thingName"]}
+    local behaviorType, thingName, standardBehavior = table.unpack {args["behaviorType"], args["thingName"], args["standardBehavior"]}
+    
+    local behaviorDef
+    if standardBehavior ~= nil then
+        if standardBehavior == "randomAutoMove" then
+            behaviorDef = randomAutoMove
+        end
+    else
+        behaviorDef = behaviorDefinitions[thingName][behaviorType]
+    end
+
     local behavior = {
-        def = coroutine.create(behaviorDefinitions[thingName][behaviorType]),
+        def = coroutine.create(behaviorDef),
         args = args
     }
     if activeBehaviors[hostThing] == nil then

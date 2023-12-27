@@ -224,6 +224,8 @@ Move* RealThing::AddMove(MoveType type) {
         luaUtils::PushIntToTable(L, "originY", move->origin.y);
         luaUtils::PushStringToTable(L, "thingName", name);
         luaUtils::PushStringToTable(L, "behaviorType", "autoMove");
+        luaUtils::PushStringToTable(L, "standardBehavior", "randomAutoMove");
+        luaUtils::PushIntToTable(L, "variance", 16);
         callLuaFunc(1, 0, 0);
     }
     return move;
