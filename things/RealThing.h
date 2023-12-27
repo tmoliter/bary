@@ -38,19 +38,10 @@ struct RealThingData {
 };
 
 struct RealThing : public Host {
-    struct ThingLists {
-        ThingLists(
-            map<string, RealThing*>& things
-        ) :
-        things(things) {}
-
-        map<string, RealThing*>& things;
-    };
-
     string name;
     ThingType type;
 
-    ThingLists thingLists;
+    map<string, RealThing*>& things;
     Host* parentScene;
 
     Point position;
@@ -68,7 +59,7 @@ struct RealThing : public Host {
     virtual void animate(KeyPresses keysDown);
     virtual void meat(KeyPresses keysDown);
 
-    RealThing(RealThingData tD, ThingLists tL);
+    RealThing(RealThingData tD, map<string, RealThing*>& tL);
     RealThing(RealThing &oldThing);
     ~RealThing();
 

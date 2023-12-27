@@ -1,18 +1,18 @@
 #include "RealThing.h"
 
-RealThing::RealThing(RealThingData tD, ThingLists tL) :
+RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
     name(tD.name),
     position(tD.x, tD.y), 
     animator(nullptr),
     move(nullptr),
-    thingLists(tL) {
+    things(tL) {
     for (auto sd : tD.spriteDataVector)
         AddSprite(sd);
     for (auto cd : tD.obstructionData)
         addObstruction(cd.rays, cd.layer);
 }
 
-RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(oldThing.bounds), thingLists(oldThing.thingLists) {
+RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(oldThing.bounds), things(oldThing.things) {
     for (auto oldS : oldThing.sprites)
         sprites.push_back(new Sprite(*oldS, position, name));
     for (auto const& [layer, oldO] : oldThing.obstructions)

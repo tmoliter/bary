@@ -48,12 +48,6 @@ string Scene::getNewThingName(string name) {
     return name;
 }
 
-RealThing::ThingLists Scene::getThingLists() {
-    return RealThing::ThingLists(
-        things
-    );
-}
-
 string Scene::renameThing(RealThing* thing, string newName) {
     // This should only happen in the editor so maybe we can hoist this
     things.erase(thing->name);
@@ -67,14 +61,14 @@ RealThing* Scene::addThing(RealThingData tD, ThingType type) {
     RealThing* newThing;
     switch(type) {
         case ThingType::fieldPlayer:
-            newThing = new FieldPlayer(tD, getThingLists());
+            newThing = new FieldPlayer(tD, things);
             break;
         case ThingType::door:
-            newThing = new Door(tD, getThingLists());
+            newThing = new Door(tD, things);
             break;
         case ThingType::thing:
         default:
-            newThing = new RealThing(tD, getThingLists());
+            newThing = new RealThing(tD, things);
             break;
     }
     newThing->AddToMap(things);
@@ -344,7 +338,7 @@ int Scene::_newTask(lua_State *L) {
     if(!lua_isstring(L, -1))
         luaUtils::ThrowLua(L, "third param to _newTask is not an event name!" );
     string eventName = lua_tostring(L, -1);
-    Task* newTask = new Task(eventName, hostThing, scene->getThingLists().things);
+    Task* newTask = new Task(eventName, hostThing, scene->things);
     lua_pop(L, 1);
 
     newTask->addSubtasks(L);

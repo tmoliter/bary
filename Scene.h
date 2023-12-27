@@ -63,7 +63,6 @@ struct Scene : public Host {
     static int _newTask(lua_State *L);
 
     private:
-        RealThing::ThingLists getThingLists();
         string getNewThingName(string name);
 };
 
