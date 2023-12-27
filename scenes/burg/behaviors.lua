@@ -1,6 +1,7 @@
 -- BEHAVIORS
 
-local function zinniaAutoMove(hostThing, originX, originY)
+local function zinniaAutoMove(hostScene, hostThing, args)
+    originX, originY = table.unpack {args["originX"], args["originY"]}
     while true do
         _updateMoveTarget(originX - 150, originY - 50, hostThing)
         coroutine.yield()

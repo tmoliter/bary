@@ -60,8 +60,9 @@ void RealThing::processMove(KeyPresses keysDown) {
         move->autoMove(position);
     if (move->type == MoveType::automatic) {
         if(move->autoMove(position)) {
-            loadLuaFunc("doAutoMove");
-            callLuaFunc(0, 0, 0);
+            loadLuaFunc("doBehavior");
+            lua_pushstring(L, "autoMove");
+            callLuaFunc(1, 0, 0);
         }
     }
     position.x += move->velocity.x;
@@ -217,11 +218,13 @@ Animator* RealThing::AddAnimator() {
 Move* RealThing::AddMove(MoveType type) {
     move = new Move(type, position);
     if (type == MoveType::automatic) {
-        loadLuaFunc("beginAutoMove");
-        lua_pushnumber(L, move->origin.x);
-        lua_pushnumber(L, move->origin.y);
-        lua_pushstring(L, name.c_str());
-        callLuaFunc(3, 0, 0);
+        loadLuaFunc("beginBehavior");
+        lua_newtable(L);
+        luaUtils::PushIntToTable(L, "originX", move->origin.x);
+        luaUtils::PushIntToTable(L, "originY", move->origin.y);
+        luaUtils::PushStringToTable(L, "thingName", name);
+        luaUtils::PushStringToTable(L, "behaviorType", "autoMove");
+        callLuaFunc(1, 0, 0);
     }
     return move;
 }

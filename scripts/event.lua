@@ -75,32 +75,33 @@ local function simpleMessages(hostScene, hostThing, args, eventName)
 end
 
 
-local function beginAutoMove(hostScene, hostThing, originX, originY, hostThingName)
-    local autoMove = {
-        def = coroutine.create(behaviorDefinitions[hostThingName]["autoMove"]),
-        originX = originX,
-        originY = originY,
-        timesInvoked = 0
+local function beginBehavior(hostScene, hostThing, args)
+    local behaviorType, thingName = table.unpack {args["behaviorType"], args["thingName"]}
+    local behavior = {
+        def = coroutine.create(behaviorDefinitions[thingName][behaviorType]),
+        args = args
     }
     if activeBehaviors[hostThing] == nil then
+        local x = {
+            [behaviorType] = behavior
+        }
         activeBehaviors[hostThing] = {
-            autoMove = autoMove
+            [behaviorType] = behavior
         }
     else
-        activeBehaviors[hostThing]["autoMove"] = autoMove
+        activeBehaviors[hostThing][behaviorType] = behavior
     end
 end
 
-local function doAutoMove(hostScene, hostThing)
-    local autoMove = activeBehaviors[hostThing]["autoMove"]
-    if coroutine.status(autoMove["def"]) ~= 'dead' then
+local function doBehavior(hostScene, hostThing, behaviorType)
+    local behavior = activeBehaviors[hostThing][behaviorType]
+    if coroutine.status(behavior["def"]) ~= 'dead' then
         coroutine.resume(
-            autoMove["def"],
+            behavior["def"],
+            hostScene,
             hostThing,
-            autoMove["originX"],
-            autoMove["originY"]
+            behavior["args"]
         )
-        autoMove["timesInvoked"] = autoMove["timesInvoked"] + 1
     end
 end
 
@@ -112,8 +113,8 @@ return {
     resumeEvent,
     beginEvent,
     simpleMessages,
-    beginAutoMove,
-    doAutoMove,
+    beginBehavior,
+    doBehavior,
     populateDefintions
 }
 
