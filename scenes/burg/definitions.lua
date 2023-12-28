@@ -43,6 +43,11 @@ local function zinniaTalkB(hostThing, args, eventName)
     _newTask(
         {
             {
+                type = "move",
+                offsetX = -100,
+                offsetY = 50
+            },
+            {
                 type = "phrase",
                 text = "doodoo",
                 x = 30,
@@ -57,14 +62,13 @@ local function zinniaTalkB(hostThing, args, eventName)
         }, eventName, hostThing
     )
     coroutine.yield()
-    local thingData = _getThingData(hostThing)
     _newTask(
         {
             {
                 type = "move",
-                thingPointer = hostThing,
-                destinationX = thingData["x"] - 150,
-                destinationY = thingData["y"] + 100,
+                thingName = "otherZinnia",
+                offsetX = -100,
+                offsetY = 50
             },
             {
                 type = "phrase",

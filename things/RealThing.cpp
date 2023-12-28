@@ -519,11 +519,31 @@ RealThingData RealThing::getData() {
     return td;
 }
 
+int RealThing::_updateMoveTarget(lua_State *L) {
+    if(!luaUtils::CheckParams(L, {ParamType::pointer, ParamType::number, ParamType::number}))
+        return 0;
+    RealThing* thing = static_cast<RealThing*>(lua_touserdata(L, -1)); // (assume-host)
+    Move* move = thing->move;
+    if (move == nullptr) {
+        cout << "can't update '" << thing->name << "' move target because it does not move" << endl;
+        return 0;
+    }
+    int newY = lua_tointeger(L, -2);
+    int newX = lua_tointeger(L, -3);
+    lua_settop(L, 0);
+    move->destination = Point(newX, newY);
+    return 0;
+}
+
 int RealThing::_getThingData(lua_State* L) {
     if(!lua_islightuserdata(L, -1))
-        luaUtils::ThrowLua(L,  "second param to _newTask is not an host Thing!" );
-    RealThing* thing = static_cast<RealThing*>(lua_touserdata(L, -1)); // should eventually pass this into task
+        luaUtils::ThrowLua(L,  "first param to _getThingData is not a host Thing!" );
+    RealThing* thing = static_cast<RealThing*>(lua_touserdata(L, -1));
     lua_pop(L, 1);
+    if (lua_isstring(L, -1)) {
+        thing = thing->things.at(lua_tostring(L, -1));
+        lua_pop(L,1);
+    }
 
     lua_newtable(L);
     luaUtils::PushIntToTable(L, "x", thing->position.x);

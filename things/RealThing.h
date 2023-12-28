@@ -121,6 +121,7 @@ struct RealThing : public Host {
 
     virtual RealThing* copyInPlace();
 
+    static int _updateMoveTarget(lua_State *L);
     static int _getThingData(lua_State* L);
 };
 

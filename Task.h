@@ -9,10 +9,10 @@ enum class SubTaskType {
 };
 
 struct Subtask {
-    Subtask(lua_State* L, map<string, RealThing*>& things);
+    Subtask(lua_State* L, Host* host);
     virtual ~Subtask();
     lua_State* L;
-    map<string, RealThing*>& things;
+    Host* host;
     virtual void init() {};
     virtual bool meat(KeyPresses keysDown);
     Timer *timer;
@@ -20,7 +20,7 @@ struct Subtask {
 };
 
 struct PhraseST : public Subtask {
-    PhraseST(lua_State* L, map<string, RealThing*>& things) : Subtask(L, things) {};
+    PhraseST(lua_State* L, Host* host) : Subtask(L, host) {};
     ~PhraseST();
     virtual void init();
     virtual bool meat(KeyPresses keysDown);
@@ -28,7 +28,7 @@ struct PhraseST : public Subtask {
 };
 
 struct MoveST : public Subtask {
-    MoveST(lua_State* L, map<string, RealThing*>& things) : Subtask(L, things) {};
+    MoveST(lua_State* L, Host* host) : Subtask(L, host) {};
     ~MoveST();
     virtual void init();
     virtual bool meat(KeyPresses keysDown);
@@ -39,11 +39,10 @@ struct MoveST : public Subtask {
 
 
 struct Task {
-    Task(string eventName, RealThing* hostThing, map<string, RealThing*>& things) : eventName(eventName), hostThing(hostThing), things(things) {};
+    Task(string eventName, Host* host) : eventName(eventName), host(host) {};
     string eventName;
     std::vector<Subtask*> subtasks;
-    RealThing* hostThing;
-    map<string, RealThing*>& things;
+    Host* host;
     bool blockMeat;
 
     int meat(KeyPresses keysDown);

@@ -1,6 +1,6 @@
 #include "Task.h"
 
-Subtask::Subtask(lua_State* L,  map<string, RealThing*>& things) : L(L), timer(nullptr), things(things) {
+Subtask::Subtask(lua_State* L,  Host* host) : L(L), timer(nullptr), host(host) {
     if (!lua_istable(L, -1)) {
         throw exception();
     }
@@ -66,22 +66,25 @@ MoveST::~MoveST() {
 void MoveST::init() {
     string thingName;
     Point destination;
+    Point offset;
+    RealThing* hostThing = static_cast<RealThing*>(host); // (assume-host)
     if (luaUtils::GetLuaStringFromTable(L, "thingName", thingName)) {
-        movingThing = things.at(thingName);
+        movingThing = hostThing->things.at(thingName);
     } else {
-        Host* hostPointer = nullptr;
-        if (!Host::GetHostPointerFromTable(L, "thingPointer", hostPointer) || hostPointer == nullptr)
-            throw exception();
-        movingThing = static_cast<RealThing*>(hostPointer);
+        movingThing = hostThing;
     }
     if (!luaUtils::GetLuaIntFromTable(L, "destinationX", destination.x))
-        throw exception();
+        destination.x = movingThing->position.x;
     if (!luaUtils::GetLuaIntFromTable(L, "destinationY", destination.y))
-        throw exception();
+        destination.y = movingThing->position.y;
+    if (!luaUtils::GetLuaIntFromTable(L, "offsetX", offset.x))
+        offset.x = movingThing->position.x;
+    if (!luaUtils::GetLuaIntFromTable(L, "offsetY", offset.y))
+        offset.y = movingThing->position.y;
 
     prevMove = movingThing->move;
     movingThing->AddMove(MoveType::follow);
-    movingThing->move->destination = destination;
+    movingThing->move->destination = addPoints(destination, offset);
 }
 
 bool MoveST::meat(KeyPresses keysDown) {
@@ -125,11 +128,11 @@ void Task::addSubtasks(lua_State* L) {
             continue;
         }
         if (currentType == "move")
-            subtasks.push_back(new MoveST(L, things));
+            subtasks.push_back(new MoveST(L, host));
         if (currentType == "phrase")
-            subtasks.push_back(new PhraseST(L, things));
+            subtasks.push_back(new PhraseST(L, host));
         if (currentType == "wait")
-            subtasks.push_back(new Subtask(L, things));
+            subtasks.push_back(new Subtask(L, host));
         subtasks.back()->init();
         lua_pop(L,1);
     }

@@ -6,8 +6,8 @@ Scene::Scene(string sceneName) : sceneName(sceneName) {
 
     lua_register(L, "_loadScene", _loadScene);
     lua_register(L, "_createThing", _createThing);
-    lua_register(L, "_updateMoveTarget", _updateMoveTarget);
     lua_register(L, "_newTask", _newTask);
+    lua_register(L, "_updateMoveTarget", RealThing::_updateMoveTarget);
     lua_register(L, "_getThingData", RealThing::_getThingData);
 }
 
@@ -140,19 +140,19 @@ void Scene::meat(KeyPresses keysDown) {
 
 void Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to decide whether to block meat here
     vector<Task*> tasksToDelete;
-    map<string, pair<bool, RealThing*>> eventsToResume;
+    map<string, pair<bool, Host*>> eventsToResume;
     for (auto t : activeTasks) {
         if (t->meat(keysDown) < 1) {
             // task has exhausted subtasks
             if (!eventsToResume.count(t->eventName))
-                eventsToResume[t->eventName] = make_pair(true, t->hostThing);
+                eventsToResume[t->eventName] = make_pair(true, t->host);
             tasksToDelete.push_back(t);
-            loadLuaFunc("resumeEvent", t->hostThing);
+            loadLuaFunc("resumeEvent", t->host);
             lua_pushstring(L, t->eventName.c_str());
             callLuaFunc(1, 1, 0);
         } else {
             if (!eventsToResume.count(t->eventName))
-                eventsToResume[t->eventName] = make_pair(false, t->hostThing);
+                eventsToResume[t->eventName] = make_pair(false, t->host);
             else
                 eventsToResume.at(t->eventName).first = false;
         }
@@ -307,36 +307,27 @@ int Scene::_createThing(lua_State* L) {
     return 1;
 }
 
-int Scene::_updateMoveTarget(lua_State *L) {
-    if(!CheckParams(L, {ParamType::pointer, ParamType::number, ParamType::number}))
-        return 0;
-    RealThing* thing = static_cast<RealThing*>(lua_touserdata(L, -1));
-    Move* move = thing->move;
-    if (move == nullptr) {
-        cout << "can't update '" << thing->name << "' move target because it does not move" << endl;
-        return 0;
-    }
-    int newY = lua_tointeger(L, -2);
-    int newX = lua_tointeger(L, -3);
-    lua_settop(L, 0);
-    move->destination = Point(newX, newY);
-    return 0;
-}
-
 int Scene::_newTask(lua_State *L) {
+    if(!CheckParams(L, {ParamType::pointer, ParamType::str, ParamType::table })) {
+        cout << "_createThing failed!" << endl;
+        throw exception();
+    }
     if(!lua_islightuserdata(L, -1))
-        luaUtils::ThrowLua(L,  "second param to _newTask is not an host Thing!" );
-    RealThing* hostThing = static_cast<RealThing*>(lua_touserdata(L, -1));
-    Scene* scene = static_cast<Scene*>(hostThing->parentScene);
+        luaUtils::ThrowLua(L,  "first param to _newTask is not a host Thing!" );
+    Host* host = static_cast<Host*>(lua_touserdata(L, -1));
     lua_pop(L, 1);
 
     if(!lua_isstring(L, -1))
-        luaUtils::ThrowLua(L, "third param to _newTask is not an event name!" );
+        luaUtils::ThrowLua(L, "second param to _newTask is not an event name!" );
     string eventName = lua_tostring(L, -1);
-    Task* newTask = new Task(eventName, hostThing, scene->things);
+    Task* newTask = new Task(eventName, host);
     lua_pop(L, 1);
 
     newTask->addSubtasks(L);
+
+    // (assume-host) For now, we assume the host is a RealThing. We may later have Scenes host Events without things.
+    RealThing* hostThing = static_cast<RealThing*>(host);
+    Scene* scene = static_cast<Scene*>(hostThing->parentScene);
     scene->activeTasks.push_back(newTask);
     lua_settop(L, 0);
     return 0;
