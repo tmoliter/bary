@@ -113,25 +113,25 @@ void Task::addSubtasks(lua_State* L) {
     if (!lua_istable(L, -1))
         luaUtils::ThrowLua(L, "top of stack is not list of subTasks!");
 
-    vector<string> subtaskTypes;
     lua_pushnil(L);
+    string currentType;
     while (lua_next(L, -2)) { // Why not just iterate through a list of tables and pull the name off the table
-        if (!lua_isstring(L, -1)) {
-            cout << "cannot resolve subtask type to string" << endl;
+        if (!lua_istable(L, -1)) {
+            cout << "subtask should be a table" << endl;
             continue;
         }
-        subtaskTypes.push_back(lua_tostring(L, -1));
-        lua_pop(L,1);
-    }
-    lua_pop(L,1);
-    for (auto t : subtaskTypes) {
-        if (t == "move")
+        if(!luaUtils::GetLuaStringFromTable(L, "type", currentType)) {
+            cout << "subtask has no type!" << endl;
+            continue;
+        }
+        if (currentType == "move")
             subtasks.push_back(new MoveST(L, things));
-        if (t == "phrase")
+        if (currentType == "phrase")
             subtasks.push_back(new PhraseST(L, things));
-        if (t == "wait")
+        if (currentType == "wait")
             subtasks.push_back(new Subtask(L, things));
         subtasks.back()->init();
         lua_pop(L,1);
     }
+    lua_pop(L,1);
 }

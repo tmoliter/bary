@@ -23,61 +23,62 @@ behaviorDefinitions = {
 local function zinniaTalkA(hostScene, hostThing, args, eventName)
     _newTask(
         {
-            text = "Didn't I tell you not to come around here",
-            x = 150,
-            y = 150,
-            width = 400,
-            height = 100,
-            scrollType = "continuous",
-            gridLimitsX = 1000,
-            gridLimitsY = 1000,
-            frames = 259
-        },
-        { "phrase" },
-        eventName,
-        hostThing, hostScene
+            {
+                type = "phrase",
+                text = "Didn't I tell you not to come around here",
+                x = 150,
+                y = 150,
+                width = 400,
+                height = 100,
+                scrollType = "continuous",
+                gridLimitsX = 1000,
+                gridLimitsY = 1000,
+                frames = 259
+            }
+        }, eventName, hostThing, hostScene
     )
 end
 
 local function zinniaTalkB(hostScene, hostThing, args, eventName)
     _newTask(
         {
-            text = "doodoo",
-            x = 30,
-            y = 40, 
-            width = 80,
-            height = 50,
-            scrollType = "continuous",
-            gridLimitsX = 100,
-            gridLimitsY = 100,
-            frames = 100
-        },
-        {  "phrase" },
-        eventName,
-        hostThing, hostScene
+            {
+                type = "phrase",
+                text = "doodoo",
+                x = 30,
+                y = 40, 
+                width = 80,
+                height = 50,
+                scrollType = "continuous",
+                gridLimitsX = 100,
+                gridLimitsY = 100,
+                frames = 100
+            }
+        }, eventName, hostThing, hostScene
     )
     coroutine.yield()
     local thingData = _getThingData(hostThing)
     _newTask(
         {
-            thingPointer = hostThing,
-            destinationX = thingData["x"],
-            destinationY = thingData["y"] - 100,
-        },
-        {
-            text = "poopoo",
-            x = 300,
-            y = 100, 
-            width = 100,
-            height = 50,
-            scrollType = "continuous",
-            gridLimitsX = 1000,
-            gridLimitsY = 1000,
-            frames = 75
-        },
-        { "phrase", "move" },
-        eventName,
-        hostThing, hostScene
+            {
+                type = "move",
+                thingPointer = hostThing,
+                destinationX = thingData["x"] - 150,
+                destinationY = thingData["y"] + 100,
+            },
+            {
+                type = "phrase",
+                text = "poopoo",
+                x = 300,
+                y = 100, 
+                width = 100,
+                height = 50,
+                scrollType = "continuous",
+                gridLimitsX = 1000,
+                gridLimitsY = 1000,
+                frames = 75
+            }
+        }, eventName, hostThing, hostScene
     )
 end
 
@@ -97,10 +98,10 @@ eventDefinitions = {
     -- NOTE: Non-custom event definitions maybe should be able to be stored on the serialized Thing in map.lua
     otherZinnia = {
         interact =  {
-            { -- name of collidable
-                type = "custom",
-                customCoroutine = zinniaTalkB
-            },
+            -- { -- name of collidable
+            --     type = "custom",
+            --     customCoroutine = zinniaTalkB
+            -- },
             { -- This has the same effect as zinniaTalk, but is stored as data
                 type = "simpleMessages",
                 args = {

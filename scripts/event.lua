@@ -69,7 +69,8 @@ end
 local function simpleMessages(hostScene, hostThing, args, eventName)
     local index = 1
     for k,v in ipairs(args["phrases"]) do
-        _newTask(v, { "phrase" }, eventName, hostThing, hostScene)
+        v["type"] = "phrase"
+        _newTask({ v }, eventName, hostThing, hostScene)
         if index < #args["phrases"] then
             index = index + 1
             coroutine.yield()
