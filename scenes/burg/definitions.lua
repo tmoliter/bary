@@ -1,6 +1,6 @@
 -- BEHAVIORS
 
-local function zinniaAutoMove(hostScene, hostThing, args)
+local function zinniaAutoMove(hostThing, args)
     originX, originY = table.unpack {args["originX"], args["originY"]}
     while true do
         _updateMoveTarget(originX - 150, originY - 50, hostThing)
@@ -20,7 +20,7 @@ behaviorDefinitions = {
 
 -- EVENTS
 
-local function zinniaTalkA(hostScene, hostThing, args, eventName)
+local function zinniaTalkA(hostThing, args, eventName)
     _newTask(
         {
             {
@@ -35,11 +35,11 @@ local function zinniaTalkA(hostScene, hostThing, args, eventName)
                 gridLimitsY = 1000,
                 frames = 259
             }
-        }, eventName, hostThing, hostScene
+        }, eventName, hostThing
     )
 end
 
-local function zinniaTalkB(hostScene, hostThing, args, eventName)
+local function zinniaTalkB(hostThing, args, eventName)
     _newTask(
         {
             {
@@ -54,7 +54,7 @@ local function zinniaTalkB(hostScene, hostThing, args, eventName)
                 gridLimitsY = 100,
                 frames = 100
             }
-        }, eventName, hostThing, hostScene
+        }, eventName, hostThing
     )
     coroutine.yield()
     local thingData = _getThingData(hostThing)
@@ -78,7 +78,7 @@ local function zinniaTalkB(hostScene, hostThing, args, eventName)
                 gridLimitsY = 1000,
                 frames = 75
             }
-        }, eventName, hostThing, hostScene
+        }, eventName, hostThing
     )
 end
 

@@ -5,7 +5,7 @@ local activeEvents = {}
 local activeBehaviors = {}
 local eventDefinitions = {}
 
-local function resumeEvent(hostScene, hostThing, eventName)
+local function resumeEvent(hostThing, eventName)
     -- Event is not active
     if activeEvents[eventName] == nil or
         activeEvents[eventName]["coroutine"] == nil then
@@ -21,7 +21,7 @@ local function resumeEvent(hostScene, hostThing, eventName)
     end
 
     -- Event is in progress
-    coroutine.resume(activeEvent["coroutine"], hostScene, hostThing, activeEvent["args"], eventName)
+    coroutine.resume(activeEvent["coroutine"], hostThing, activeEvent["args"], eventName)
     if coroutine.status(activeEvent["coroutine"]) == 'dead' then
         activeEvent["coroutine"] = nil
         return true
@@ -30,7 +30,7 @@ local function resumeEvent(hostScene, hostThing, eventName)
 end
 
 
-local function beginEvent(hostScene, hostThing, thingName, collidableName, args)
+local function beginEvent(hostThing, thingName, collidableName, args)
     if eventDefinitions[thingName] == nil or eventDefinitions[thingName][collidableName] == nil then
         return 0
     end
@@ -54,23 +54,23 @@ local function beginEvent(hostScene, hostThing, thingName, collidableName, args)
         activeEvent["args"] = args or eventDefinition["args"]
 
         if eventDefinition["type"] == "custom" then
-            activeEvent["coroutine"] = coroutine.create(eventDefinition["customCoroutine"], hostScene, hostThing, activeEvent["args"])
+            activeEvent["coroutine"] = coroutine.create(eventDefinition["customCoroutine"], hostThing, activeEvent["args"])
         elseif eventDefinition["type"] == "simpleMessages" then
-            activeEvent["coroutine"] = coroutine.create(simpleMessages, hostScene, hostThing, activeEvent["args"])
+            activeEvent["coroutine"] = coroutine.create(simpleMessages, hostThing, activeEvent["args"])
         end
         activeEvent["timesInvoked"] = activeEvent["timesInvoked"] + 1
 
         -- return task data for C++ here?
         -- Data will be an event name, a list of subtasks, and a table of data for each subtask
-        resumeEvent(hostScene, hostThing, eventName)
+        resumeEvent(hostThing, eventName)
     end
 end
 
-local function simpleMessages(hostScene, hostThing, args, eventName)
+local function simpleMessages(hostThing, args, eventName)
     local index = 1
     for k,v in ipairs(args["phrases"]) do
         v["type"] = "phrase"
-        _newTask({ v }, eventName, hostThing, hostScene)
+        _newTask({ v }, eventName, hostThing)
         if index < #args["phrases"] then
             index = index + 1
             coroutine.yield()
@@ -79,7 +79,7 @@ local function simpleMessages(hostScene, hostThing, args, eventName)
 end
 
 
-local function beginBehavior(hostScene, hostThing, args)
+local function beginBehavior(hostThing, args)
     local behaviorType, thingName, standardBehavior = table.unpack {args["behaviorType"], args["thingName"], args["standardBehavior"]}
     
     local behaviorDef
@@ -107,12 +107,11 @@ local function beginBehavior(hostScene, hostThing, args)
     end
 end
 
-local function doBehavior(hostScene, hostThing, behaviorType)
+local function doBehavior(hostThing, behaviorType)
     local behavior = activeBehaviors[hostThing][behaviorType]
     if coroutine.status(behavior["def"]) ~= 'dead' then
         coroutine.resume(
             behavior["def"],
-            hostScene,
             hostThing,
             behavior["args"]
         )

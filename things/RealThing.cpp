@@ -35,20 +35,6 @@ RealThing::~RealThing() {
         delete tr;
 };
 
-void RealThing::loadLuaFunc(std::string funcname) {
-    lua_getglobal(L, funcname.c_str());
-    if (!lua_isfunction(L, -1)) {
-        std::cout << funcname << " is not function" << std::endl;
-        throw std::exception();
-    }
-    lua_pushlightuserdata(L, parentScene);
-    lua_pushlightuserdata(L, this);
-}
-
-void RealThing::callLuaFunc(int nargs, int nresults, int errfunc) {
-    Host::callLuaFunc(nargs + 1, nresults, errfunc);
-}
-
 void RealThing::processMove(KeyPresses keysDown) {
     if (move == nullptr)
         return;

@@ -71,9 +71,6 @@ struct RealThing : public Host {
     map<string, Interactable*> interactables;
     map<string, Trigger*> triggers;
 
-    void loadLuaFunc(std::string funcname);
-    void callLuaFunc(int nargs, int nresults, int errfunc);
-
     void calculateHeight();
 
     void AddToMap(map<string, RealThing*>& thingMap);

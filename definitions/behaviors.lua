@@ -1,4 +1,4 @@
-local function randomAutoMove(hostScene, hostThing, args)
+local function randomAutoMove(hostThing, args)
     originX, originY, variance, stop = table.unpack {args["originX"], args["originY"], args["variance"], args["stop"]}
     while stop ~= true do
         local x = math.random(originX - variance, originX + variance)

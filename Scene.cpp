@@ -147,10 +147,9 @@ void Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to 
             if (!eventsToResume.count(t->eventName))
                 eventsToResume[t->eventName] = make_pair(true, t->hostThing);
             tasksToDelete.push_back(t);
-            loadLuaFunc("resumeEvent");
-            lua_pushlightuserdata(L, t->hostThing);
+            loadLuaFunc("resumeEvent", t->hostThing);
             lua_pushstring(L, t->eventName.c_str());
-            callLuaFunc(2, 1, 0);
+            callLuaFunc(1, 1, 0);
         } else {
             if (!eventsToResume.count(t->eventName))
                 eventsToResume[t->eventName] = make_pair(false, t->hostThing);
@@ -162,10 +161,9 @@ void Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to 
         if (!e.second.first)
             continue;
         // All tasks for this event have exhausted subtasks, so we look for more tasks
-        loadLuaFunc("resumeEvent");
-        lua_pushlightuserdata(L, e.second.second);
+        loadLuaFunc("resumeEvent", e.second.second);
         lua_pushstring(L, e.first.c_str());
-        callLuaFunc(2, 1, 0);
+        callLuaFunc(1, 1, 0);
     }
     for (auto t : tasksToDelete) {
         delete t;
@@ -327,13 +325,9 @@ int Scene::_updateMoveTarget(lua_State *L) {
 
 int Scene::_newTask(lua_State *L) {
     if(!lua_islightuserdata(L, -1))
-        luaUtils::ThrowLua(L, "top param to _newTask is not a Scene pointer!");
-    Scene* scene = static_cast<Scene*>(lua_touserdata(L, -1));
-    lua_pop(L, 1);
-
-    if(!lua_islightuserdata(L, -1))
         luaUtils::ThrowLua(L,  "second param to _newTask is not an host Thing!" );
-    RealThing* hostThing = static_cast<RealThing*>(lua_touserdata(L, -1)); // should eventually pass this into task
+    RealThing* hostThing = static_cast<RealThing*>(lua_touserdata(L, -1));
+    Scene* scene = static_cast<Scene*>(hostThing->parentScene);
     lua_pop(L, 1);
 
     if(!lua_isstring(L, -1))
