@@ -115,7 +115,10 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
 }
 
 void RealThing::animate(KeyPresses keysDown) {
-    animator->animate(move->velocity, keysDown);
+    if (move->type == MoveType::controlled)
+        animator->animate(move->velocity, keysDown);
+    else
+        animator->animate(move->velocity, KeyPresses());
     return;
 }
 
