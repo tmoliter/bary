@@ -43,7 +43,7 @@ struct Task {
     string eventName;
     std::vector<Subtask*> subtasks;
     Host* host;
-    bool blockMeat;
+    bool blocking = false;
 
     int meat(KeyPresses keysDown);
 

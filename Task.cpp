@@ -127,6 +127,8 @@ void Task::addSubtasks(lua_State* L) {
             cout << "subtask has no type!" << endl;
             continue;
         }
+        if (!blocking)
+            luaUtils::GetLuaBoolFromTable(L, "blocking", blocking);
         if (currentType == "move")
             subtasks.push_back(new MoveST(L, host));
         if (currentType == "phrase")

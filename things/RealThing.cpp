@@ -45,13 +45,6 @@ void RealThing::processMove(KeyPresses keysDown) {
     if (move->type == MoveType::follow)
         move->autoMove(position);
     if (move->type == MoveType::automatic && move->autoMove(position)) {
-        if (move->pauseTime) {
-            string timerName = name + "AutoMove";
-            Timer::startOrIgnore(timerName);
-            if (Timer::timeSince(timerName) < move->pauseTime)
-                return;
-            Timer::destroy(timerName);
-        }
         loadLuaFunc("doBehavior");
         lua_pushstring(L, "autoMove");
         callLuaFunc(1, 0, 0);
@@ -186,7 +179,6 @@ void RealThing::addComponentsFromTable() {
             string standardBehavior;
             luaUtils::GetLuaIntFromTable(L, "variance", variance);
             luaUtils::GetLuaStringFromTable(L, "standardBehavior", standardBehavior);
-            luaUtils::GetLuaIntFromTable(L, "pauseTime", move->pauseTime);
             loadLuaFunc("beginBehavior");
             lua_newtable(L);
             luaUtils::PushIntToTable(L, "originX", position.x);

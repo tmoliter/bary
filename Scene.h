@@ -32,7 +32,7 @@ struct Scene : public Host {
     void EnterLoaded(RealThing* focus);
 
     void meat(KeyPresses keysDown);
-    void meatEvent(KeyPresses keysDown);
+    bool meatEvent(KeyPresses keysDown);
     void meatThings(KeyPresses keysDown);
 
     RealThing* addThing(RealThingData tD, ThingType type = ThingType::thing);

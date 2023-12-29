@@ -130,18 +130,20 @@ void Scene::meat(KeyPresses keysDown) {
         // Listen for unpause
         return;
     }
-    if (activeTasks.size() > 0) {
-        meatEvent(keysDown);
+    if (activeTasks.size() > 0 && meatEvent(keysDown)) {
+        return;
     }
-    else
-        meatThings(keysDown); // should we actually pause all things or not?
+    meatThings(keysDown); // should we actually pause all things or not?
 }
 
 
-void Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to decide whether to block meat here
+bool Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to decide whether to block meat here
     vector<Task*> tasksToDelete;
     map<string, pair<bool, Host*>> eventsToResume;
+    bool blocking = false;
     for (auto t : activeTasks) {
+        if (!blocking && t->blocking)
+            blocking = true;
         if (t->meat(keysDown) < 1) {
             // task has exhausted subtasks
             if (!eventsToResume.count(t->eventName))
@@ -166,9 +168,11 @@ void Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to 
         callLuaFunc(1, 1, 0);
     }
     for (auto t : tasksToDelete) {
+        static_cast<RealThing*>(t->host)->activeEvents -= 1;
         delete t;
         activeTasks.erase(remove(activeTasks.begin(), activeTasks.end(), t), activeTasks.end());
     }
+    return blocking;
 }
 
 
@@ -178,12 +182,18 @@ void Scene::meatThings(KeyPresses keysDown) {
     if (sceneState == SceneState::pausePlayerControl)
         keysDown = KeyPresses();
     for (auto const& [id, thing] : things){
+        if (thing->activeEvents > 0)
+            continue;
         thing->processMove(keysDown);
     }
     for (auto const& [id, thing] : things){
+        if (thing->activeEvents > 0)
+            continue;
         thing->processCollisions(things);
     }
     for (auto const& [id, thing] : things){
+        if (thing->activeEvents > 0)
+            continue;
         thing->meat(keysDown);
     }
 }
@@ -330,6 +340,7 @@ int Scene::_newTask(lua_State *L) {
 
     // (assume-host) For now, we assume the host is a RealThing. We may later have Scenes host Events without things.
     RealThing* hostThing = static_cast<RealThing*>(host);
+    hostThing->activeEvents += 1;
     Scene* scene = static_cast<Scene*>(hostThing->parentScene);
     scene->activeTasks.push_back(newTask);
     lua_settop(L, 0);

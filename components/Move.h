@@ -17,8 +17,7 @@ struct Move {
         leader(nullptr),
         speed(1), 
         layer(0),
-        tolerance(0),
-        pauseTime(0)
+        tolerance(0)
     {};
 
     MoveType type;
@@ -28,7 +27,6 @@ struct Move {
     int speed;
     int layer;
     int tolerance;
-    int pauseTime;
     Point velocity;
     Point destination;
     

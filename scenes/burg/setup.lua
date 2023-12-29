@@ -26,7 +26,6 @@ local customThings = {
                 type = "autoMove",
                 variance = 50,
                 standardBehavior = "randomAutoMove",
-                pauseTime = 100
             }
         },
     }
