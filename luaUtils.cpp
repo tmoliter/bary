@@ -111,7 +111,7 @@ bool luaUtils::GetTableOnStackFromTable(lua_State *L, std::string key, int table
         lua_pushstring(L, key.c_str());
         lua_gettable(L, tableIndex - 1);
         if (!lua_istable(L, -1)) {
-            lua_pop(L, -1);
+            lua_pop(L, 1);
             return false;
         }
         return true;

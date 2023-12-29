@@ -22,6 +22,8 @@ struct Move {
         tolerance(0)
     {};
 
+    // void getSettingsFromLuaTable(lua_State* L);
+
     MoveType type;
     Direction currentDirection;
     Point* leader;

@@ -258,8 +258,11 @@ RealThing* Scene::buildThingFromTable() {
         }
         lua_pop(L, 1);
     }
-    lua_pop(L, 1);
     RealThing* newThing = addThing(td);
+    if (GetTableOnStackFromTable(L, "components")) {
+        newThing->addComponentsFromTable();
+    }
+    lua_pop(L, 1);
     return newThing;
 }
 
@@ -294,7 +297,7 @@ int Scene::_loadScene(lua_State* L) {
 }
 
 int Scene::_createThing(lua_State* L) {
-    if(!CheckParams(L, {ParamType::pointer, ParamType::table, ParamType::table })) {
+    if(!CheckParams(L, {ParamType::pointer, ParamType::table })) {
         cout << "_createThing failed!" << endl;
         throw exception();
     }
@@ -309,7 +312,7 @@ int Scene::_createThing(lua_State* L) {
 
 int Scene::_newTask(lua_State *L) {
     if(!CheckParams(L, {ParamType::pointer, ParamType::str, ParamType::table })) {
-        cout << "_createThing failed!" << endl;
+        cout << "_newTask failed!" << endl;
         throw exception();
     }
     if(!lua_islightuserdata(L, -1))

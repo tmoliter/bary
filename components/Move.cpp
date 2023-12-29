@@ -2,6 +2,14 @@
 
 using namespace std;
 
+// void getSettingsFromLuaTable(lua_State* L) {
+//     if (!lua_istable(L, -1)) {
+//         cout << "top of stack is not table!" << endl;
+//         return;
+//     }
+    
+// }
+
 void Move::moveFromInput(KeyPresses keysDown) {
     if (keysDown.up)
         velocity.y -= speed;

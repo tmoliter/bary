@@ -165,20 +165,24 @@ void RealThing::addComponentsFromTable() {
         return;
     }
     lua_pushnil(L);
+    string currentComponent;
     while (lua_next(L, -2)) {
-        if (!lua_isstring(L, -1)) {
-            cout << "component name is not string!" << endl;
+        if (!lua_istable(L, -1)) {
+            cout << "component def is not table!" << endl;
             continue;
         }
-        string component = lua_tostring(L, -1); // we will have more data than just component name eventually
-        if (component == "autoMove")
+        luaUtils::GetLuaStringFromTable(L, "type", currentComponent); // we will have more data than just component name eventually
+        if (currentComponent == "autoMove")
             AddMove(MoveType::automatic);
-        if (component == "followMove")
+        if (currentComponent == "followMove")
             move->type = MoveType::follow;
-        if (component == "moveAnimate")
+        if (currentComponent == "moveAnimate") {
             AddAnimator();
-        if (component == "standardCollider")
-            AddStandardCollision();
+            bool standardCollider;
+            luaUtils::GetLuaBoolFromTable(L, "standardCollider", standardCollider);
+            if (standardCollider)
+                AddStandardCollision();
+        }
         lua_pop(L, 1);
     }
     lua_pop(L, 1);
