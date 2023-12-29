@@ -1,4 +1,4 @@
-local standardBehaviors = require('definitions.behaviors')
+local standardBehaviors = require('standardDefinitions.behaviors')
 local randomAutoMove = table.unpack(standardBehaviors)
 
 local activeEvents = {}
@@ -83,12 +83,17 @@ local function beginBehavior(hostThing, args)
     local behaviorType, thingName, standardBehavior = table.unpack {args["behaviorType"], args["thingName"], args["standardBehavior"]}
     
     local behaviorDef
-    if standardBehavior ~= nil then
-        if standardBehavior == "randomAutoMove" then
-            behaviorDef = randomAutoMove
-        end
-    else
+    print(standardBehavior)
+    for k,v in pairs(standardBehaviors) do
+        print(k)
+        if standardBehavior == k then behaviorDef = v end
+    end
+    if behaviorDef == nil then
         behaviorDef = behaviorDefinitions[thingName][behaviorType]
+    end
+    if behaviorDef == nil then
+        print("no behavior def could be found")
+        return
     end
 
     local behavior = {
@@ -105,6 +110,7 @@ local function beginBehavior(hostThing, args)
     else
         activeBehaviors[hostThing][behaviorType] = behavior
     end
+    doBehavior(hostThing, behaviorType)
 end
 
 local function doBehavior(hostThing, behaviorType)

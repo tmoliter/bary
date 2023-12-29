@@ -9,5 +9,5 @@ local function randomAutoMove(hostThing, args)
 end
 
 return {
-    randomAutoMove
+    randomAutoMove = randomAutoMove
 }

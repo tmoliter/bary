@@ -11,18 +11,14 @@ enum class MoveType {
 };
 
 struct Move {
-    Move(MoveType moveType, Point origin) :
+    Move(MoveType moveType) :
         type(moveType), 
-        origin(origin), 
-        destination(origin),
         currentDirection(Direction::down), 
         leader(nullptr),
         speed(1), 
         layer(0),
         tolerance(0)
     {};
-
-    // void getSettingsFromLuaTable(lua_State* L);
 
     MoveType type;
     Direction currentDirection;
@@ -32,7 +28,6 @@ struct Move {
     int layer;
     int tolerance;
     Point velocity;
-    Point origin;
     Point destination;
     
     void moveFromInput(KeyPresses keysDown);

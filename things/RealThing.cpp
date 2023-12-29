@@ -171,11 +171,23 @@ void RealThing::addComponentsFromTable() {
             cout << "component def is not table!" << endl;
             continue;
         }
-        luaUtils::GetLuaStringFromTable(L, "type", currentComponent); // we will have more data than just component name eventually
-        if (currentComponent == "autoMove")
+        luaUtils::GetLuaStringFromTable(L, "type", currentComponent);
+        if (currentComponent == "autoMove") {
+            int variance;
+            string standardBehavior;
+            luaUtils::GetLuaIntFromTable(L, "variance", variance);
+            luaUtils::GetLuaStringFromTable(L, "standardBehavior", standardBehavior);
             AddMove(MoveType::automatic);
-        if (currentComponent == "followMove")
-            move->type = MoveType::follow;
+            loadLuaFunc("beginBehavior");
+            lua_newtable(L);
+            luaUtils::PushIntToTable(L, "originX", position.x);
+            luaUtils::PushIntToTable(L, "originY", position.y);
+            luaUtils::PushStringToTable(L, "thingName", name);
+            luaUtils::PushStringToTable(L, "behaviorType", "autoMove");
+            luaUtils::PushStringToTable(L, "standardBehavior", standardBehavior);
+            luaUtils::PushIntToTable(L, "variance", variance);
+            callLuaFunc(1, 0, 0);
+        }
         if (currentComponent == "moveAnimate") {
             AddAnimator();
             bool standardCollider;
@@ -206,18 +218,7 @@ Animator* RealThing::AddAnimator() {
 }
 
 Move* RealThing::AddMove(MoveType type) {
-    move = new Move(type, position);
-    if (type == MoveType::automatic) {
-        loadLuaFunc("beginBehavior");
-        lua_newtable(L);
-        luaUtils::PushIntToTable(L, "originX", move->origin.x);
-        luaUtils::PushIntToTable(L, "originY", move->origin.y);
-        luaUtils::PushStringToTable(L, "thingName", name);
-        luaUtils::PushStringToTable(L, "behaviorType", "autoMove");
-        luaUtils::PushStringToTable(L, "standardBehavior", "randomAutoMove");
-        luaUtils::PushIntToTable(L, "variance", 16);
-        callLuaFunc(1, 0, 0);
-    }
+    move = new Move(type);
     return move;
 }
 

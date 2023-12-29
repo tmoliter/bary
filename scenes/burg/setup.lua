@@ -28,7 +28,8 @@ local customThings = {
             },
             {
                 type = "autoMove",
-                variance = 30,
+                variance = 50,
+                standardBehavior = "randomAutoMove"
             }
         },
     }
