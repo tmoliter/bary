@@ -1,9 +1,9 @@
 local standardBehaviors = require('standardDefinitions.behaviors')
-local randomAutoMove = table.unpack(standardBehaviors)
 
 local activeEvents = {}
 local activeBehaviors = {}
 local eventDefinitions = {}
+local behaviorDefinitions = {}
 
 local function resumeEvent(hostThing, eventName)
     -- Event is not active
@@ -83,9 +83,7 @@ local function beginBehavior(hostThing, args)
     local behaviorType, thingName, standardBehavior = table.unpack {args["behaviorType"], args["thingName"], args["standardBehavior"]}
     
     local behaviorDef
-    print(standardBehavior)
     for k,v in pairs(standardBehaviors) do
-        print(k)
         if standardBehavior == k then behaviorDef = v end
     end
     if behaviorDef == nil then
@@ -124,8 +122,8 @@ local function doBehavior(hostThing, behaviorType)
     end
 end
 
-local function populateDefintions(e)
-    eventDefinitions = e
+local function populateDefinitions(definitions)
+    eventDefinitions, behaviorDefinitions = table.unpack(definitions)
 end
 
 return {
@@ -134,7 +132,7 @@ return {
     simpleMessages,
     beginBehavior,
     doBehavior,
-    populateDefintions
+    populateDefinitions
 }
 
 --[[
@@ -154,26 +152,5 @@ unlock door/container
 begin/end animation (add animation types: continuous, oneOff)
 teleport thing
 change scene
-
-
-each eventTask can have multiple SubTasks, and only reports back to Lua when none are left?
-
-might need to call C++ with a list of subTask types followed by tables of arguments for each..
-we'd probably want to validate the contents of tables as well with a new table validation function
-
-C++ EVENT TASK: has a regular, incrementing ID, along with pointer to RealThing and Scene, and vector of SubTasks.
-Upon construction, the Event Task calls Lua, where the ID becomes a key in the events {} table
-The value of the table contains a reference to the coroutine and other stuff.
-Coroutine serves to call C++ with a list of SubTasks and tables with arguments for those SubTasks.
-These populate the Task on construction, and each time the event exhausts its SubTasks, until the coroutine dies and the Task terminates
-Scene has a regular vector of Tasks, and if it is not empty we loop through Tasks before meatThings.
-If any Tasks are blockMeat = true, then we skip meatThings. Allowing only animation or only movement and animation are also possible.
-We only give live input to the the Task at .back() of the event task vector
-Inside the Task's meat call, we loop through SubTasks and call their meat.
-Once all SubTasks have terminated themselves, the Event Task calls lua to resume the coroutine
-
-
-12/9 There might be events that live in a neutral directory and get loaded into every scene, 
-     like inventory menu event, etc.
 
 --]]

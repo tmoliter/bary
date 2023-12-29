@@ -1,7 +1,3 @@
--- Manipulate things by name here for starting state that can't be stored in data.
--- Note that without some other solution, or way of writing this or other files,
--- the scene will start up exactly the same every time it is loaded.
-
 local customThings = {
     {
         name = "otherZinnia",
@@ -29,11 +25,16 @@ local customThings = {
             {
                 type = "autoMove",
                 variance = 50,
-                standardBehavior = "randomAutoMove"
+                standardBehavior = "randomAutoMove",
+                pauseTime = 100
             }
         },
     }
 }
+
+-- Manipulate things by name here for starting state that can't be stored in data.
+-- Note that without some other solution, or way of writing this or other files,
+-- the scene will start up exactly the same every time it is loaded.
 
 local function setup(host) -- not currently in use
     -- _createThing(

@@ -12,7 +12,7 @@ local function zinniaAutoMove(hostThing, args)
     end
 end
 
-behaviorDefinitions = {
+local behaviorDefinitions = {
     otherZinnia = {
         autoMove = zinniaAutoMove
     }
@@ -86,7 +86,7 @@ local function zinniaTalkB(hostThing, args, eventName)
     )
 end
 
-eventDefinitions = {
+local eventDefinitions = {
     followZinnia = { -- name of thing
         interact =  {
             { -- name of collidable
@@ -137,4 +137,4 @@ eventDefinitions = {
     }
 }
 
-return eventDefinitions
+return { eventDefinitions, behaviorDefinitions }

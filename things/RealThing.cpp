@@ -44,12 +44,17 @@ void RealThing::processMove(KeyPresses keysDown) {
         move->moveFromInput(keysDown);
     if (move->type == MoveType::follow)
         move->autoMove(position);
-    if (move->type == MoveType::automatic) {
-        if(move->autoMove(position)) {
-            loadLuaFunc("doBehavior");
-            lua_pushstring(L, "autoMove");
-            callLuaFunc(1, 0, 0);
+    if (move->type == MoveType::automatic && move->autoMove(position)) {
+        if (move->pauseTime) {
+            string timerName = name + "AutoMove";
+            Timer::startOrIgnore(timerName);
+            if (Timer::timeSince(timerName) < move->pauseTime)
+                return;
+            Timer::destroy(timerName);
         }
+        loadLuaFunc("doBehavior");
+        lua_pushstring(L, "autoMove");
+        callLuaFunc(1, 0, 0);
     }
     position.x += move->velocity.x;
     position.y += move->velocity.y;
@@ -173,11 +178,12 @@ void RealThing::addComponentsFromTable() {
         }
         luaUtils::GetLuaStringFromTable(L, "type", currentComponent);
         if (currentComponent == "autoMove") {
+            AddMove(MoveType::automatic);
             int variance;
             string standardBehavior;
             luaUtils::GetLuaIntFromTable(L, "variance", variance);
             luaUtils::GetLuaStringFromTable(L, "standardBehavior", standardBehavior);
-            AddMove(MoveType::automatic);
+            luaUtils::GetLuaIntFromTable(L, "pauseTime", move->pauseTime);
             loadLuaFunc("beginBehavior");
             lua_newtable(L);
             luaUtils::PushIntToTable(L, "originX", position.x);
