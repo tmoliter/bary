@@ -168,7 +168,6 @@ bool Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to 
         callLuaFunc(1, 1, 0);
     }
     for (auto t : tasksToDelete) {
-        static_cast<RealThing*>(t->host)->activeEvents -= 1;
         delete t;
         activeTasks.erase(remove(activeTasks.begin(), activeTasks.end(), t), activeTasks.end());
     }
@@ -340,7 +339,6 @@ int Scene::_newTask(lua_State *L) {
 
     // (assume-host) For now, we assume the host is a RealThing. We may later have Scenes host Events without things.
     RealThing* hostThing = static_cast<RealThing*>(host);
-    hostThing->activeEvents += 1;
     Scene* scene = static_cast<Scene*>(hostThing->parentScene);
     scene->activeTasks.push_back(newTask);
     lua_settop(L, 0);

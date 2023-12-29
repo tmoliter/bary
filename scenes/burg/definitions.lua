@@ -21,23 +21,23 @@ local behaviorDefinitions = {
 -- EVENTS
 
 local function zinniaTalkA(hostThing, args, eventName)
-    _newTask(
-        {
-            {
-                type = "phrase",
-                text = "Didn't I tell you not to come around here",
-                x = 150,
-                y = 150,
-                width = 400,
-                height = 100,
-                scrollType = "continuous",
-                gridLimitsX = 1000,
-                gridLimitsY = 1000,
-                frames = 259,
-                blocking = true
-            }
-        }, eventName, hostThing
-    )
+    -- _newTask(
+    --     {
+    --         {
+    --             type = "phrase",
+    --             text = "Didn't I tell you not to come around here",
+    --             x = 150,
+    --             y = 150,
+    --             width = 400,
+    --             height = 100,
+    --             scrollType = "continuous",
+    --             gridLimitsX = 1000,
+    --             gridLimitsY = 1000,
+    --             frames = 259,
+    --             blocking = true
+    --         }
+    --     }, eventName, hostThing
+    -- )
 end
 
 local function zinniaTalkB(hostThing, args, eventName)

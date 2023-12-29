@@ -58,8 +58,10 @@ bool PhraseST::meat(KeyPresses keysDown) {
 }
 
 MoveST::~MoveST() {
-    if (movingThing != nullptr)
+    if (movingThing != nullptr) {
         movingThing->move = prevMove;
+        movingThing->activeEvents--;
+    }
     delete move;
 }
 
@@ -85,6 +87,7 @@ void MoveST::init() {
     prevMove = movingThing->move;
     movingThing->AddMove(MoveType::follow);
     movingThing->move->destination = addPoints(destination, offset);
+    movingThing->activeEvents++;
 }
 
 bool MoveST::meat(KeyPresses keysDown) {
