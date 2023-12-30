@@ -58,11 +58,14 @@ bool PhraseST::meat(KeyPresses keysDown) {
 }
 
 MoveST::~MoveST() {
-    if (movingThing != nullptr) {
+    if (movingThing == nullptr)
+        return;
+    if (!isAuto) {
         movingThing->move = prevMove;
-        movingThing->activeEvents--;
+        movingThing->eventCount--;
     }
-    delete move;
+    if (movingThing->move != nullptr)
+        movingThing->move->disabled = false;
 }
 
 void MoveST::init() {
@@ -80,19 +83,27 @@ void MoveST::init() {
     if (!luaUtils::GetLuaIntFromTable(L, "destinationY", destination.y))
         destination.y = movingThing->position.y;
     if (!luaUtils::GetLuaIntFromTable(L, "offsetX", offset.x))
-        offset.x = movingThing->position.x;
+        offset.x = 0;
     if (!luaUtils::GetLuaIntFromTable(L, "offsetY", offset.y))
-        offset.y = movingThing->position.y;
+        offset.y = 0;
+    luaUtils::GetLuaBoolFromTable(L, "auto", isAuto);
 
-    prevMove = movingThing->move;
-    movingThing->AddMove(MoveType::follow);
+
+    if (!isAuto) {
+        prevMove = movingThing->move;
+        if (prevMove != nullptr)
+            prevMove->disabled = true;
+        movingThing->AddMove(MoveType::follow);
+        movingThing->eventCount++;
+    }
     movingThing->move->destination = addPoints(destination, offset);
-    movingThing->activeEvents++;
 }
 
 bool MoveST::meat(KeyPresses keysDown) {
     if (movingThing == nullptr)
         return true;
+    if (movingThing->move->type == MoveType::automatic)
+        return movingThing->position.isWithin(movingThing->move->destination, movingThing->move->tolerance);
     if(movingThing->move->autoMove(movingThing->position))
         return true;
     movingThing->position.x += movingThing->move->velocity.x;
@@ -105,8 +116,9 @@ bool MoveST::meat(KeyPresses keysDown) {
 int Task::meat(KeyPresses keysDown) {
     vector<Subtask*> subtasksToDelete;
     for (auto s : subtasks) {
-        if (s->meat(keysDown))
+        if (s->meat(keysDown)) {
             subtasksToDelete.push_back(s);
+        }
     }
     for (auto s : subtasksToDelete) {
         delete s;

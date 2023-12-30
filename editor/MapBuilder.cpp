@@ -41,7 +41,7 @@ void MapBuilder::changeState(EditorState newState) {
             helpText->setText("Play");
             currentThing = scene->addThing(RealThingData(dotThing->position, "test player", "zinnia"), ThingType::fieldPlayer);
             // FOLLOW TESTING
-            followThing = scene->addThing(RealThingData(Point(1000,1000), "followZinnia", "zinnia"));
+            followThing = scene->addThing(RealThingData(Point(currentThing->position.x + 20, currentThing->position.y + 20), "followZinnia", "zinnia"));
             followThing->AddAnimator();
             followThing->AddMove(MoveType::follow);
             followThing->AddStandardCollision();

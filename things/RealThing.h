@@ -49,7 +49,7 @@ struct RealThing : public Host {
 
     vector<RealThing*> subThings;
 
-    int activeEvents = 0;
+    int eventCount = 0;
 
 
     Point getCenter();

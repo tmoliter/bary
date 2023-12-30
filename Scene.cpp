@@ -149,9 +149,6 @@ bool Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to 
             if (!eventsToResume.count(t->eventName))
                 eventsToResume[t->eventName] = make_pair(true, t->host);
             tasksToDelete.push_back(t);
-            loadLuaFunc("resumeEvent", t->host);
-            lua_pushstring(L, t->eventName.c_str());
-            callLuaFunc(1, 1, 0);
         } else {
             if (!eventsToResume.count(t->eventName))
                 eventsToResume[t->eventName] = make_pair(false, t->host);
@@ -181,17 +178,17 @@ void Scene::meatThings(KeyPresses keysDown) {
     if (sceneState == SceneState::pausePlayerControl)
         keysDown = KeyPresses();
     for (auto const& [id, thing] : things){
-        if (thing->activeEvents > 0)
+        if (thing->eventCount > 0)
             continue;
         thing->processMove(keysDown);
     }
     for (auto const& [id, thing] : things){
-        if (thing->activeEvents > 0)
+        if (thing->eventCount > 0)
             continue;
         thing->processCollisions(things);
     }
     for (auto const& [id, thing] : things){
-        if (thing->activeEvents > 0)
+        if (thing->eventCount > 0)
             continue;
         thing->meat(keysDown);
     }

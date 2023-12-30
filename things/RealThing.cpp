@@ -42,13 +42,8 @@ void RealThing::processMove(KeyPresses keysDown) {
         return;
     if (move->type == MoveType::controlled)
         move->moveFromInput(keysDown);
-    if (move->type == MoveType::follow)
+    if (move->type == MoveType::follow || move->type == MoveType::automatic)
         move->autoMove(position);
-    if (move->type == MoveType::automatic && move->autoMove(position)) {
-        loadLuaFunc("doBehavior");
-        lua_pushstring(L, "autoMove");
-        callLuaFunc(1, 0, 0);
-    }
     position.x += move->velocity.x;
     position.y += move->velocity.y;
 }
@@ -108,6 +103,8 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
 }
 
 void RealThing::animate(KeyPresses keysDown) {
+    if (move == nullptr)
+        return; // currently all animations require a move component
     if (move->type == MoveType::controlled)
         animator->animate(move->velocity, keysDown);
     else
@@ -175,24 +172,18 @@ void RealThing::addComponentsFromTable() {
         luaUtils::GetLuaStringFromTable(L, "type", currentComponent);
         if (currentComponent == "autoMove") {
             AddMove(MoveType::automatic);
-            int variance;
-            string standardBehavior;
-            luaUtils::GetLuaIntFromTable(L, "variance", variance);
-            luaUtils::GetLuaStringFromTable(L, "standardBehavior", standardBehavior);
-            loadLuaFunc("beginBehavior");
+            loadLuaFunc("beginEvent");
             lua_newtable(L);
+            luaUtils::PushStringToTable(L, "eventName", "autoMove");
+            luaUtils::PushStringToTable(L, "thingName", name);
             luaUtils::PushIntToTable(L, "originX", position.x);
             luaUtils::PushIntToTable(L, "originY", position.y);
-            luaUtils::PushStringToTable(L, "thingName", name);
-            luaUtils::PushStringToTable(L, "behaviorType", "autoMove");
-            luaUtils::PushStringToTable(L, "standardBehavior", standardBehavior);
-            luaUtils::PushIntToTable(L, "variance", variance);
             callLuaFunc(1, 0, 0);
         }
         if (currentComponent == "moveAnimate") {
             AddAnimator();
             bool standardCollider;
-            luaUtils::GetLuaBoolFromTable(L, "standardCollider", standardCollider);
+            luaUtils::GetLuaBoolFromTable(L, "standardCollider", standardCollider); // This maybe should be its own component with a list of event names
             if (standardCollider)
                 AddStandardCollision();
         }
@@ -230,7 +221,8 @@ void RealThing::AddStandardCollision() {
         Ray( Point(bounds.left + 8, bounds.bottom - 6), Point(bounds.right - 10, bounds.bottom - 6)),
         Ray(Point(bounds.right - 10, bounds.bottom - 6), Point(bounds.right - 10, bounds.bottom))
     };
-    addInteractable("interact", obstructionRays, 0);
+    Interactable* i = addInteractable("interact", obstructionRays, 0);
+    i->eventNames = {"interact", "interact_1"}; // should use params from Lua for this
     addObstruction(obstructionRays, 0);
 }
 
@@ -250,7 +242,7 @@ Sprite* RealThing::AddRawSprite(string textureName) {
 Interactable* RealThing::addInteractable(string iName, vector<Ray> rays, int layer) {
     if (interactables.count(iName))
         return interactables[iName];
-    Interactable* in = new Interactable(position, name, iName, CollidableData(rays, layer));
+    Interactable* in = new Interactable(position, name, iName, {}, CollidableData(rays, layer));
     interactables[iName] = in;
     return in;
 }
@@ -258,7 +250,7 @@ Interactable* RealThing::addInteractable(string iName, vector<Ray> rays, int lay
 Trigger* RealThing::addTrigger(string iName, vector<Ray> rays, int layer) {
     if (triggers.count(iName))
         return triggers[iName];
-    Trigger* tr = new Trigger(position, name, iName, CollidableData(rays, layer));
+    Trigger* tr = new Trigger(position, name, iName, {}, CollidableData(rays, layer));
     triggers[iName] = tr;
     return tr;
 }
@@ -342,15 +334,20 @@ void RealThing::removeAllCollidables() {
     }
 };
 
-int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) { // Someday we might want to accept a RealThing* of the incoming thing here, if we want non-players to deal with this
+ // Should only check for eventCollidables, and simply return the eventCollidable here, 
+ // so that FieldPlayer can handle the event firing
+int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) {
     switch (collidableType) {
         case (CollidableType::interactable):
             for (auto const& [cName, in] : interactables){
                 if(in->isColliding(incoming, incomingLayer)) {
-                    loadLuaFunc("beginEvent");
-                    lua_pushstring(L, name.c_str());
-                    lua_pushstring(L, cName.c_str());
-                    callLuaFunc(2, 0, 0);
+                    for (auto eventName : in->eventNames) { // could make this a bulk function in lua instead of looping
+                        loadLuaFunc("beginEvent");
+                        lua_newtable(L);
+                        luaUtils::PushStringToTable(L, "eventName", eventName);
+                        luaUtils::PushStringToTable(L, "thingName", name);
+                        callLuaFunc(1, 0, 0);
+                    }
                     return 1;
                 }
             }
@@ -358,10 +355,13 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
         case (CollidableType::trigger):
             for (auto const& [cName, tr] : triggers){
                 if(tr->isColliding(incoming, incomingLayer)) {
-                    loadLuaFunc("beginEvent");
-                    lua_pushstring(L, name.c_str());
-                    lua_pushstring(L, cName.c_str());
-                    callLuaFunc(2, 0, 0);
+                    for (auto eventName : tr->eventNames) { // could make this a bulk function in lua instead of looping
+                        loadLuaFunc("beginEvent");
+                        lua_newtable(L);
+                        luaUtils::PushStringToTable(L, "eventName", eventName);
+                        luaUtils::PushStringToTable(L, "thingName", name);
+                        callLuaFunc(1, 0, 0);
+                    }
                     return 1;
                 }
             }

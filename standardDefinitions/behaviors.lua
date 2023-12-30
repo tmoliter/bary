@@ -1,9 +1,16 @@
 local function randomAutoMove(hostThing, args)
     originX, originY, variance, stop = table.unpack {args["originX"], args["originY"], args["variance"], args["stop"]}
-    local function move()
+    function move()
         local x = math.random(originX - variance, originX + variance)
         local y = math.random(originY - variance, originY + variance)
-        _updateMoveTarget(x, y, hostThing)
+        _newTask({
+            {
+                type = "move",
+                auto = true,
+                destinationX = x,
+                destinationY = y
+            },
+        }, args["eventName"], hostThing)
     end
     while stop ~= true do
         move()
@@ -12,32 +19,47 @@ local function randomAutoMove(hostThing, args)
             {
                 {
                     type = "wait",
-                    frames = 50,
+                    frames = 150,
                     -- blocking = true
                 }
-            }, "", hostThing
+            }, args["eventName"], hostThing
         )
         coroutine.yield()
-        -- move()
-        -- _newTask(
-        --     {
-        --         {
-        --             type = "phrase",
-        --             text = "continue?",
-        --             x = 300,
-        --             y = 100,
-        --             width = 100,
-        --             height = 80,
-        --             scrollType = "continuous",
-        --             gridLimitsX = 1000,
-        --             gridLimitsY = 1000,
-        --         }
-        --     }, "", hostThing
-        -- )
-        -- coroutine.yield()
+        move()
+        coroutine.yield()
+        _newTask(
+            {
+                {
+                    type = "phrase",
+                    text = "continue?",
+                    x = 300,
+                    y = 100,
+                    width = 100,
+                    height = 80,
+                    scrollType = "continuous",
+                    gridLimitsX = 1000,
+                    gridLimitsY = 1000,
+                }
+            }, "autoMove", hostThing
+        )
+        coroutine.yield()
     end
 end
 
+local function simpleMessages(hostThing, args, eventName)
+    local index = 1
+    for k,v in ipairs(args["phrases"]) do
+        v["type"] = "phrase"
+        _newTask({ v }, eventName, hostThing)
+        if index < #args["phrases"] then
+            index = index + 1
+            coroutine.yield()
+        end
+    end
+end
+
+
 return {
-    randomAutoMove = randomAutoMove
+    randomAutoMove = randomAutoMove,
+    simpleMessages = simpleMessages
 }

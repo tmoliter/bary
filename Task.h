@@ -32,6 +32,7 @@ struct MoveST : public Subtask {
     ~MoveST();
     virtual void init();
     virtual bool meat(KeyPresses keysDown);
+    bool isAuto = false;
     RealThing* movingThing = nullptr;
     Move* move = nullptr;
     Move* prevMove = nullptr;
