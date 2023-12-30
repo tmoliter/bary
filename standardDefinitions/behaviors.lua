@@ -25,24 +25,6 @@ local function randomAutoMove(hostThing, args)
             }, args["eventName"], hostThing
         )
         coroutine.yield()
-        move()
-        coroutine.yield()
-        _newTask(
-            {
-                {
-                    type = "phrase",
-                    text = "continue?",
-                    x = 300,
-                    y = 100,
-                    width = 100,
-                    height = 80,
-                    scrollType = "continuous",
-                    gridLimitsX = 1000,
-                    gridLimitsY = 1000,
-                }
-            }, "autoMove", hostThing
-        )
-        coroutine.yield()
     end
 end
 
