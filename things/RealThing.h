@@ -120,7 +120,7 @@ struct RealThing : public Host {
 
     virtual RealThing* copyInPlace();
 
-    static int _getThingData(lua_State* L);
+    static int _getThingData(lua_State* L); // currently unused
 };
 
 #endif
