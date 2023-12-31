@@ -20,7 +20,6 @@ local function randomAutoMove(hostThing, args)
                 {
                     type = "wait",
                     frames = 150,
-                    -- blocking = true
                 }
             }, args["eventName"], hostThing
         )
@@ -32,6 +31,7 @@ local function simpleMessages(hostThing, args, eventName)
     local index = 1
     for k,v in ipairs(args["phrases"]) do
         v["type"] = "phrase"
+        v["blocking"] = true
         _newTask({ v }, eventName, hostThing)
         if index < #args["phrases"] then
             index = index + 1

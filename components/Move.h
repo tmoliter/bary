@@ -17,7 +17,8 @@ struct Move {
         leader(nullptr),
         speed(1), 
         layer(0),
-        tolerance(0)
+        tolerance(0),
+        destination(Point(-1000,-1000))
     {};
 
     MoveType type;

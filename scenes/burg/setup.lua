@@ -33,7 +33,7 @@ local function zinniaTalkA(hostThing, args, eventName)
                 scrollType = "continuous",
                 gridLimitsX = 1000,
                 gridLimitsY = 1000,
-                frames = 259,
+                frames = 250,
                 blocking = true
             }
         }, eventName, hostThing
@@ -58,7 +58,7 @@ local function zinniaTalkB(hostThing, args, eventName)
                 scrollType = "continuous",
                 gridLimitsX = 100,
                 gridLimitsY = 100,
-                frames = 50,
+                frames = 125,
                 blocking = true
             }
         }, eventName, hostThing
@@ -82,7 +82,7 @@ local function zinniaTalkB(hostThing, args, eventName)
                 scrollType = "continuous",
                 gridLimitsX = 1000,
                 gridLimitsY = 1000,
-                frames = 50,
+                frames = 125,
                 blocking = true
             }
         }, eventName, hostThing

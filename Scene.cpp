@@ -141,7 +141,8 @@ bool Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to 
     vector<Task*> tasksToDelete;
     map<string, pair<bool, Host*>> eventsToResume;
     bool blocking = false;
-    for (auto t : activeTasks) {
+    for (int i = activeTasks.size() - 1; i >= 0; i--) {
+        Task* t = activeTasks[i];
         if (!blocking && t->blocking)
             blocking = true;
         if (t->meat(keysDown) < 1) {
@@ -155,6 +156,8 @@ bool Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to 
             else
                 eventsToResume.at(t->eventName).first = false;
         }
+        if (blocking)
+            break;
     }
     for (auto e : eventsToResume) {
         if (!e.second.first)
@@ -182,9 +185,7 @@ void Scene::meatThings(KeyPresses keysDown) {
             continue;
         thing->processMove(keysDown);
     }
-    for (auto const& [id, thing] : things){
-        if (thing->eventCount > 0)
-            continue;
+    for (auto const& [id, thing] : things) {
         thing->processCollisions(things);
     }
     for (auto const& [id, thing] : things){
