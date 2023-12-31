@@ -522,22 +522,6 @@ RealThingData RealThing::getData() {
     return td;
 }
 
-int RealThing::_updateMoveTarget(lua_State *L) {
-    if(!luaUtils::CheckParams(L, {ParamType::pointer, ParamType::number, ParamType::number}))
-        return 0;
-    RealThing* thing = static_cast<RealThing*>(lua_touserdata(L, -1)); // (assume-host)
-    Move* move = thing->move;
-    if (move == nullptr) {
-        cout << "can't update '" << thing->name << "' move target because it does not move" << endl;
-        return 0;
-    }
-    int newY = lua_tointeger(L, -2);
-    int newX = lua_tointeger(L, -3);
-    lua_settop(L, 0);
-    move->destination = Point(newX, newY);
-    return 0;
-}
-
 int RealThing::_getThingData(lua_State* L) {
     if(!lua_islightuserdata(L, -1))
         luaUtils::ThrowLua(L,  "first param to _getThingData is not a host Thing!" );
