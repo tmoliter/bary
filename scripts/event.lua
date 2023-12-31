@@ -1,4 +1,4 @@
-local standardBehaviors = require('standardDefinitions.behaviors')
+local standardEvents = require('scripts.standardEvents')
 
 local activeEvents = {}
 local eventDefinitions = {}
@@ -33,7 +33,7 @@ local function beginEvent(hostThing, args)
     if eventDefinition["type"] == "custom" then
         activeEvent["coroutine"] = coroutine.create(eventDefinition["customCoroutine"], hostThing, activeEvent["args"], eventName)
     else
-        activeEvent["coroutine"] = coroutine.create(standardBehaviors[eventDefinition["type"]], hostThing, activeEvent["args"], eventName)
+        activeEvent["coroutine"] = coroutine.create(standardEvents[eventDefinition["type"]], hostThing, activeEvent["args"], eventName)
     end
 
     activeEvent["timesInvoked"] = activeEvent["timesInvoked"] + 1
@@ -85,7 +85,7 @@ eventSubTasks, for now
 -----
 phrase
 wait
-autoMove thing (new moveType? Or refactor behaviors to be events?)
+autoMove thing
 
 
 future
