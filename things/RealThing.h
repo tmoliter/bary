@@ -49,9 +49,6 @@ struct RealThing : public Host {
 
     vector<RealThing*> subThings;
 
-    int eventCount = 0;
-
-
     Point getCenter();
 
     void manuallyControl(KeyPresses keysDown);
@@ -123,7 +120,6 @@ struct RealThing : public Host {
 
     virtual RealThing* copyInPlace();
 
-    static int _updateMoveTarget(lua_State *L);
     static int _getThingData(lua_State* L);
 };
 

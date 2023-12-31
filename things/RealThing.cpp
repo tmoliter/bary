@@ -36,9 +36,7 @@ RealThing::~RealThing() {
 };
 
 void RealThing::processMove(KeyPresses keysDown) {
-    if (move == nullptr)
-        return;
-    if (move->type == MoveType::disabled)
+    if (move == nullptr || move->disabled)
         return;
     if (move->type == MoveType::controlled)
         move->moveFromInput(keysDown);
@@ -171,7 +169,6 @@ void RealThing::addComponentsFromTable() {
         }
         luaUtils::GetLuaStringFromTable(L, "type", currentComponent);
         if (currentComponent == "autoMove") {
-            AddMove(MoveType::automatic);
             loadLuaFunc("beginEvent");
             lua_newtable(L);
             luaUtils::PushStringToTable(L, "eventName", "autoMove");

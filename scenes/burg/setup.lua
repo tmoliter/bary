@@ -1,22 +1,40 @@
 -- BEHAVIORS
 
--- local function zinniaAutoMove(hostThing, args)
---     originX, originY = table.unpack {args["originX"], args["originY"]}
---     while true do
---         _updateMoveTarget(originX - 150, originY - 50, hostThing)
---         coroutine.yield()
---         _updateMoveTarget(originX + 35, originY + 150, hostThing)
---         coroutine.yield()
---         _updateMoveTarget(originX, originY, hostThing)
---         coroutine.yield()
---     end
--- end
-
--- local behaviorDefinitions = {
---     otherZinnia = {
---         autoMove = zinniaAutoMove
---     }
--- }
+local function zinniaAutoMove(hostThing, args, eventName)
+    originX, originY = table.unpack {args["originX"], args["originY"]}
+    while true do
+        _newTask(
+            {
+                {
+                    type = "move",
+                    destinationX = originX - 150,
+                    destinationY = originY - 150
+                },
+            }, eventName, hostThing
+        )
+        coroutine.yield()
+        _newTask(
+            {
+                {
+                    type = "move",
+                    destinationX = originX + 35,
+                    destinationY = originY - 150
+                },
+            }, eventName, hostThing
+        )
+        coroutine.yield()
+        _newTask(
+            {
+                {
+                    type = "move",
+                    destinationX = originX,
+                    destinationY = originY
+                },
+            }, eventName, hostThing
+        )
+        coroutine.yield()
+    end
+end
 
 -- EVENTS
 
@@ -132,9 +150,13 @@ local customThings = {
             }
         },
         events = {
+            -- autoMove = {
+            --     type = "randomAutoMove",
+            --     variance = 150
+            -- },
             autoMove = {
-                type = "randomAutoMove",
-                variance = 50
+                type = "custom",
+                customCoroutine = zinniaAutoMove
             },
             interact =  { -- This has the same effect as zinniaTalk, but is stored as data
                 type = "simpleMessages",

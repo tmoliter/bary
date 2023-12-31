@@ -7,7 +7,6 @@ Scene::Scene(string sceneName) : sceneName(sceneName) {
     lua_register(L, "_loadScene", _loadScene);
     lua_register(L, "_createThing", _createThing);
     lua_register(L, "_newTask", _newTask);
-    lua_register(L, "_updateMoveTarget", RealThing::_updateMoveTarget);
     lua_register(L, "_getThingData", RealThing::_getThingData);
 }
 
@@ -130,10 +129,7 @@ void Scene::meat(KeyPresses keysDown) {
         // Listen for unpause
         return;
     }
-    if (activeTasks.size() > 0 && meatEvent(keysDown)) {
-        return;
-    }
-    meatThings(keysDown); // should we actually pause all things or not?
+    meatThings(keysDown, activeTasks.size() > 0 && meatEvent(keysDown)); // should we actually pause all things or not?--
 }
 
 
@@ -159,6 +155,10 @@ bool Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to 
         if (blocking)
             break;
     }
+    for (auto t : tasksToDelete) {
+        delete t;
+        activeTasks.erase(remove(activeTasks.begin(), activeTasks.end(), t), activeTasks.end());
+    }
     for (auto e : eventsToResume) {
         if (!e.second.first)
             continue;
@@ -167,32 +167,21 @@ bool Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to 
         lua_pushstring(L, e.first.c_str());
         callLuaFunc(1, 1, 0);
     }
-    for (auto t : tasksToDelete) {
-        delete t;
-        activeTasks.erase(remove(activeTasks.begin(), activeTasks.end(), t), activeTasks.end());
-    }
     return blocking;
 }
 
 
-void Scene::meatThings(KeyPresses keysDown) {
+void Scene::meatThings(KeyPresses keysDown, bool blockingEvent) {
     if (sceneState == SceneState::pauseThings)
         return;
-    if (sceneState == SceneState::pausePlayerControl)
+    if (sceneState == SceneState::pausePlayerControl || blockingEvent)
         keysDown = KeyPresses();
-    for (auto const& [id, thing] : things){
-        if (thing->eventCount > 0)
-            continue;
+    for (auto const& [id, thing] : things)
         thing->processMove(keysDown);
-    }
-    for (auto const& [id, thing] : things) {
+    for (auto const& [id, thing] : things)
         thing->processCollisions(things);
-    }
-    for (auto const& [id, thing] : things){
-        if (thing->eventCount > 0)
-            continue;
+    for (auto const& [id, thing] : things)
         thing->meat(keysDown);
-    }
 }
 
 

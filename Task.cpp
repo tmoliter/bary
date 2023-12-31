@@ -60,12 +60,9 @@ bool PhraseST::meat(KeyPresses keysDown) {
 MoveST::~MoveST() {
     if (movingThing == nullptr)
         return;
-    if (!isAuto) {
-        movingThing->move = prevMove;
-        movingThing->eventCount--;
-    }
-    if (movingThing->move != nullptr)
-        movingThing->move->disabled = false;
+    if (prevMove != nullptr)
+        prevMove->disabled = false;
+    movingThing->move = prevMove;
 }
 
 void MoveST::init() {
@@ -86,31 +83,17 @@ void MoveST::init() {
         offset.x = 0;
     if (!luaUtils::GetLuaIntFromTable(L, "offsetY", offset.y))
         offset.y = 0;
-    luaUtils::GetLuaBoolFromTable(L, "auto", isAuto);
 
-
-    if (!isAuto) {
-        prevMove = movingThing->move;
-        if (prevMove != nullptr)
-            prevMove->disabled = true;
-        movingThing->AddMove(MoveType::follow);
-        movingThing->eventCount++;
-    }
-    movingThing->move->destination = addPoints(destination, offset);
+    prevMove = movingThing->move;
+    if (prevMove != nullptr)
+        prevMove->disabled = true;
+    movingThing->AddMove(MoveType::automatic)->destination = addPoints(destination, offset);
 }
 
 bool MoveST::meat(KeyPresses keysDown) {
     if (movingThing == nullptr)
         return true;
-    if (movingThing->move->type == MoveType::automatic)
-        return movingThing->position.isWithin(movingThing->move->destination, movingThing->move->tolerance);
-    if(movingThing->move->autoMove(movingThing->position))
-        return true;
-    movingThing->position.x += movingThing->move->velocity.x;
-    movingThing->position.y += movingThing->move->velocity.y;
-    if (movingThing->animator)
-        movingThing->animate(keysDown);
-    return false;
+    return movingThing->position.isWithin(movingThing->move->destination, movingThing->move->tolerance); // break out into move function I think
 }
 
 int Task::meat(KeyPresses keysDown) {

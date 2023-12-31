@@ -1,8 +1,9 @@
 local function randomAutoMove(hostThing, args)
-    originX, originY, variance, stop = table.unpack {args["originX"], args["originY"], args["variance"], args["stop"]}
+    local originX, originY, variance, wait, stop = table.unpack {args["originX"], args["originY"], args["variance"], args["wait"], args["stop"]}
+    local x, y
     function move()
-        local x = math.random(originX - variance, originX + variance)
-        local y = math.random(originY - variance, originY + variance)
+        x = math.random(originX - variance, originX + variance)
+        y = math.random(originY - variance, originY + variance)
         _newTask({
             {
                 type = "move",
@@ -15,15 +16,17 @@ local function randomAutoMove(hostThing, args)
     while stop ~= true do
         move()
         coroutine.yield()
-        _newTask(
-            {
+        if wait ~= nil then
+            _newTask(
                 {
-                    type = "wait",
-                    frames = 150,
-                }
-            }, args["eventName"], hostThing
-        )
-        coroutine.yield()
+                    {
+                        type = "wait",
+                        frames = wait,
+                    }
+                }, args["eventName"], hostThing
+            )
+            coroutine.yield()
+        end
     end
 end
 
