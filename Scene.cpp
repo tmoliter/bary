@@ -129,7 +129,7 @@ void Scene::meat(KeyPresses keysDown) {
         // Listen for unpause
         return;
     }
-    meatThings(keysDown, activeTasks.size() > 0 && meatEvent(keysDown)); // should we actually pause all things or not?--
+    meatThings(keysDown, activeTasks.size() > 0 && meatEvent(keysDown));
 }
 
 

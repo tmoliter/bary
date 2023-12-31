@@ -116,7 +116,7 @@ void Task::addSubtasks(lua_State* L) {
 
     lua_pushnil(L);
     string currentType;
-    while (lua_next(L, -2)) { // Why not just iterate through a list of tables and pull the name off the table
+    while (lua_next(L, -2)) {
         if (!lua_istable(L, -1)) {
             cout << "subtask should be a table" << endl;
             lua_pop(L, 1);
@@ -168,7 +168,7 @@ void Task::pauseMoves(lua_State* L) {
     }
     if (luaUtils::GetTableOnStackFromTable(L, "thingNames")) {
         lua_pushnil(L);
-        while (lua_next(L, -2)) { // Why not just iterate through a list of tables and pull the name off the table
+        while (lua_next(L, -2)) {
             if (!lua_isstring(L, -1)) {
                 cout << "all list items should be strings" << endl;
                 continue;
