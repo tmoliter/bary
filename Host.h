@@ -18,20 +18,4 @@ struct Host {
         if(!luaUtils::CheckLua(L, lua_pcall(L, nargs + 1, nresults, errfunc)))
             throw exception();
     }
-
-    static bool GetHostPointerFromTable(lua_State *L, std::string key, Host*& hostPointer, int tableIndex = -1) {
-        if (lua_istable(L, tableIndex)) {
-            lua_pushstring(L, key.c_str());
-            lua_gettable(L, tableIndex - 1);
-            if (!lua_islightuserdata(L, -1)) {
-                lua_pop(L, 1);
-                return false;
-            }
-            hostPointer = static_cast<Host*>(lua_touserdata(L, -1));
-            lua_pop(L, 1);
-            return true;
-        }
-        std::cout << "PROBLEM : " << key << std::endl;
-        return false;
-    }
 };
