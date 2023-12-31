@@ -109,5 +109,6 @@ bool raysCollide(Ray &ray1, Ray &ray2);
 bool pointIsInside(Point p, Point boxP, Bounds bounds);
 vector<Ray> getRaysFromOriginAndDirection(Point origin, Direction direction);
 Ray addPointToRay(Ray ray, Point point);
+Point addPoints(Point point1, Point point2);
 
 #endif

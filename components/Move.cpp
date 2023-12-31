@@ -3,6 +3,8 @@
 using namespace std;
 
 void Move::moveFromInput(KeyPresses keysDown) {
+    if (disables)
+        return;
     if (keysDown.up)
         velocity.y -= speed;
     if (keysDown.down)
@@ -17,7 +19,9 @@ void Move::moveFromInput(KeyPresses keysDown) {
 }
 
 bool Move::autoMove(Point position) {
-    if (type == MoveType::follow)
+    if (disables)
+        return false;
+    if (type == MoveType::follow && leader != nullptr)
         destination = *leader;
     
     if (position.isWithin(destination, tolerance))

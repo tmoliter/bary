@@ -91,6 +91,22 @@ bool luaUtils::GetLuaBoolFromTable(lua_State *L, std::string key, bool &value, i
     return false;
 }
 
+bool luaUtils::CheckLuaTableForBool(lua_State *L, std::string key, int tableIndex) {
+    if (lua_istable(L, tableIndex)) {
+        lua_pushstring(L, key.c_str());
+        lua_gettable(L, tableIndex - 1);
+        if (!lua_isboolean(L, -1)) {
+            lua_pop(L, 1);
+            return false;
+        }
+        bool value = lua_toboolean(L, -1);
+        lua_pop(L, 1);
+        return value;
+    }
+    std::cout << "PROBLEM : " << key << std::endl;
+    return false;
+}
+
 bool luaUtils::GetLuaFuncOnStackFromTable(lua_State *L, std::string key, int tableIndex) {
     if (lua_istable(L, tableIndex)) {
         lua_pushstring(L, key.c_str());
@@ -111,7 +127,7 @@ bool luaUtils::GetTableOnStackFromTable(lua_State *L, std::string key, int table
         lua_pushstring(L, key.c_str());
         lua_gettable(L, tableIndex - 1);
         if (!lua_istable(L, -1)) {
-            lua_pop(L, -1);
+            lua_pop(L, 1);
             return false;
         }
         return true;

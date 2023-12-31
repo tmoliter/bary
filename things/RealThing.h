@@ -38,32 +38,16 @@ struct RealThingData {
 };
 
 struct RealThing : public Host {
-    struct ThingLists {
-        ThingLists(
-            map<string, RealThing*>& things,
-            map<string, RealThing*>& movinThings,
-            map<string, RealThing*>& animatedThings
-        ) :
-        things(things),
-        movinThings(movinThings),
-        animatedThings(animatedThings) {}
-
-        map<string, RealThing*>& things;
-        map<string, RealThing*>& movinThings;
-        map<string, RealThing*>& animatedThings;
-    };
-
     string name;
     ThingType type;
 
-    ThingLists thingLists;
+    map<string, RealThing*>& things;
     Host* parentScene;
 
     Point position;
     Bounds bounds;
 
     vector<RealThing*> subThings;
-
 
     Point getCenter();
 
@@ -74,7 +58,7 @@ struct RealThing : public Host {
     virtual void animate(KeyPresses keysDown);
     virtual void meat(KeyPresses keysDown);
 
-    RealThing(RealThingData tD, ThingLists tL);
+    RealThing(RealThingData tD, map<string, RealThing*>& tL);
     RealThing(RealThing &oldThing);
     ~RealThing();
 
@@ -86,9 +70,6 @@ struct RealThing : public Host {
     map<string, Interactable*> interactables;
     map<string, Trigger*> triggers;
 
-    void loadLuaFunc(std::string funcname);
-    void callLuaFunc(int nargs, int nresults, int errfunc);
-
     void calculateHeight();
 
     void AddToMap(map<string, RealThing*>& thingMap);
@@ -96,7 +77,7 @@ struct RealThing : public Host {
     void addComponentsFromTable();
     Animator* AddAnimator();
     Move* AddMove(MoveType type);
-    void AddStandardCollision();
+    void AddStandardCollision(vector<string> eventNames = {});
 
     Sprite* AddSprite(SpriteData SD);
     Sprite* AddRawSprite(string path);
@@ -138,6 +119,8 @@ struct RealThing : public Host {
     RealThingData getData();
 
     virtual RealThing* copyInPlace();
+
+    static int _getThingData(lua_State* L); // currently unused
 };
 
 #endif

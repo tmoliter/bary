@@ -1,120 +1,80 @@
+local standardEvents = require('scripts.standardEvents')
+
 local activeEvents = {}
-local activeBehaviors = {}
 local eventDefinitions = {}
 
-local function resumeEvent(hostScene, hostThing, eventName)
-    -- Event is not active
-    if activeEvents[eventName] == nil or
-        activeEvents[eventName]["coroutine"] == nil then
-        return true
+-- maybe make a bulk beginEvents function here
+
+local function beginEvent(hostThing, args)
+    local thingName, eventName = table.unpack { args["thingName"], args["eventName"] }
+
+    local eventDefinition = eventDefinitions[thingName][eventName]
+
+    -- Event has never been invoked
+    if activeEvents[hostThing] == nil then
+        activeEvents[hostThing] = {}
+    end
+    if activeEvents[hostThing][eventName] == nil then
+        activeEvents[hostThing][eventName] = { timesInvoked = 0 }
     end
 
-    activeEvent = activeEvents[eventName]
-
-    -- Event is already finished
-    if coroutine.status(activeEvent["coroutine"]) == 'dead' then
-        activeEvent["coroutine"] = nil
-        return true
+    local activeEvent = activeEvents[hostThing][eventName]
+    
+    -- Event is already in progress
+    if activeEvent["coroutine"] ~= nil then
+        return
     end
 
-    -- Event is in progress
-    coroutine.resume(activeEvent["coroutine"], hostScene, hostThing, activeEvent["args"], eventName)
-    if coroutine.status(activeEvent["coroutine"]) == 'dead' then
-        activeEvent["coroutine"] = nil
-        return true
+
+    activeEvent["args"] = {}
+    for k,v in pairs(eventDefinition) do activeEvent["args"][k] = v end
+    for k,v in pairs(args) do activeEvent["args"][k] = v end
+
+    if eventDefinition["type"] == "custom" then
+        activeEvent["coroutine"] = coroutine.create(eventDefinition["customCoroutine"], hostThing, activeEvent["args"], eventName)
+    else
+        activeEvent["coroutine"] = coroutine.create(standardEvents[eventDefinition["type"]], hostThing, activeEvent["args"], eventName)
     end
-    return false
+
+    activeEvent["timesInvoked"] = activeEvent["timesInvoked"] + 1
+
+    -- return task data for C++ here?
+    -- Data will be an event name, a list of subtasks, and a table of data for each subtask
+    resumeEvent(hostThing, eventName)
 end
 
 
-local function beginEvent(hostScene, hostThing, thingName, collidableName, args)
-    if eventDefinitions[thingName] == nil or eventDefinitions[thingName][collidableName] == nil then
+local function resumeEvent(hostThing, eventName)
+    -- Event is not active
+    if activeEvents[hostThing] == nil or
+        activeEvents[hostThing][eventName] == nil or
+        activeEvents[hostThing][eventName]["coroutine"] == nil
+        then
         return 0
     end
 
-    for i, eventDefinition in ipairs(eventDefinitions[thingName][collidableName]) do
-        local eventName = thingName .. "_" .. collidableName
-        
-        -- Event has never been invoked
-        if activeEvents[eventName] == nil then
-            activeEvents[eventName] = { timesInvoked = 0 }
-        end
+    local activeEvent = activeEvents[hostThing][eventName]
 
-        local activeEvent = activeEvents[eventName]
-
-        -- Event is already in progress
-        if activeEvent["coroutine"] ~= nil then
-            return
-        end
-
-        
-        activeEvent["args"] = args or eventDefinition["args"]
-
-        if eventDefinition["type"] == "custom" then
-            activeEvent["coroutine"] = coroutine.create(eventDefinition["customCoroutine"], hostScene, hostThing, activeEvent["args"])
-        elseif eventDefinition["type"] == "simpleMessages" then
-            activeEvent["coroutine"] = coroutine.create(simpleMessages, hostScene, hostThing, activeEvent["args"])
-        end
-        activeEvent["timesInvoked"] = activeEvent["timesInvoked"] + 1
-
-        -- return task data for C++ here?
-        -- Data will be an event name, a list of subtasks, and a table of data for each subtask
-        resumeEvent(hostScene, hostThing, eventName)
+    coroutine.resume(activeEvent["coroutine"], hostThing, activeEvent["args"], eventName)
+    if coroutine.status(activeEvent["coroutine"]) == 'dead' then
+        activeEvent["coroutine"] = nil
+        activeEvent["args"] = nil
+        return 0
     end
+    return 1
 end
 
-local function simpleMessages(hostScene, hostThing, args, eventName)
-    local index = 1
-    for k,v in ipairs(args["phrases"]) do
-        _newTask(v, { "phrase" }, eventName, hostThing, hostScene)
-        if index < #args["phrases"] then
-            index = index + 1
-            coroutine.yield()
-        end
+local function populateDefinitions(allThings, definitions)
+    eventDefinitions = definitions
+    for _,thing in pairs(allThings) do
+        eventDefinitions[thing["name"]] = thing["events"]
     end
-end
-
-
-local function beginAutoMove(hostScene, hostThing, originX, originY, hostThingName)
-    local autoMove = {
-        def = coroutine.create(behaviorDefinitions[hostThingName]["autoMove"]),
-        originX = originX,
-        originY = originY,
-        timesInvoked = 0
-    }
-    if activeBehaviors[hostThing] == nil then
-        activeBehaviors[hostThing] = {
-            autoMove = autoMove
-        }
-    else
-        activeBehaviors[hostThing]["autoMove"] = autoMove
-    end
-end
-
-local function doAutoMove(hostScene, hostThing)
-    local autoMove = activeBehaviors[hostThing]["autoMove"]
-    if coroutine.status(autoMove["def"]) ~= 'dead' then
-        coroutine.resume(
-            autoMove["def"],
-            hostThing,
-            autoMove["originX"],
-            autoMove["originY"]
-        )
-        autoMove["timesInvoked"] = autoMove["timesInvoked"] + 1
-    end
-end
-
-local function populateDefintions(e)
-    eventDefinitions = e
 end
 
 return {
-    resumeEvent,
     beginEvent,
-    simpleMessages,
-    beginAutoMove,
-    doAutoMove,
-    populateDefintions
+    resumeEvent,
+    populateDefinitions
 }
 
 --[[
@@ -125,7 +85,7 @@ eventSubTasks, for now
 -----
 phrase
 wait
-autoMove thing (new moveType? Or refactor behaviors to be events?)
+autoMove thing
 
 
 future
@@ -134,26 +94,5 @@ unlock door/container
 begin/end animation (add animation types: continuous, oneOff)
 teleport thing
 change scene
-
-
-each eventTask can have multiple SubTasks, and only reports back to Lua when none are left?
-
-might need to call C++ with a list of subTask types followed by tables of arguments for each..
-we'd probably want to validate the contents of tables as well with a new table validation function
-
-C++ EVENT TASK: has a regular, incrementing ID, along with pointer to RealThing and Scene, and vector of SubTasks.
-Upon construction, the Event Task calls Lua, where the ID becomes a key in the events {} table
-The value of the table contains a reference to the coroutine and other stuff.
-Coroutine serves to call C++ with a list of SubTasks and tables with arguments for those SubTasks.
-These populate the Task on construction, and each time the event exhausts its SubTasks, until the coroutine dies and the Task terminates
-Scene has a regular vector of Tasks, and if it is not empty we loop through Tasks before meatThings.
-If any Tasks are blockMeat = true, then we skip meatThings. Allowing only animation or only movement and animation are also possible.
-We only give live input to the the Task at .back() of the event task vector
-Inside the Task's meat call, we loop through SubTasks and call their meat.
-Once all SubTasks have terminated themselves, the Event Task calls lua to resume the coroutine
-
-
-12/9 There might be events that live in a neutral directory and get loaded into every scene, 
-     like inventory menu event, etc.
 
 --]]

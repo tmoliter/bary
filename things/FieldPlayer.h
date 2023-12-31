@@ -5,7 +5,7 @@
 #include "RealThing.h"
 
 struct FieldPlayer : public RealThing {
-    FieldPlayer(RealThingData tD, ThingLists tL);
+    FieldPlayer(RealThingData tD, map<string, RealThing*>& things);
     ~FieldPlayer();
 
     void meat(KeyPresses keysDown);

@@ -1,6 +1,6 @@
 #include "things/Door.h"
 
-Door::Door(RealThingData tD, ThingLists tL) : RealThing(tD, tL), 
+Door::Door(RealThingData tD, map<string, RealThing*>& t) : RealThing(tD, t), 
     opened(false),
     locked(false) {
 }

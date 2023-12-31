@@ -1,18 +1,18 @@
 #include "RealThing.h"
 
-RealThing::RealThing(RealThingData tD, ThingLists tL) :
+RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
     name(tD.name),
     position(tD.x, tD.y), 
     animator(nullptr),
     move(nullptr),
-    thingLists(tL) {
+    things(tL) {
     for (auto sd : tD.spriteDataVector)
         AddSprite(sd);
     for (auto cd : tD.obstructionData)
         addObstruction(cd.rays, cd.layer);
 }
 
-RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(oldThing.bounds), thingLists(oldThing.thingLists) {
+RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(oldThing.bounds), things(oldThing.things) {
     for (auto oldS : oldThing.sprites)
         sprites.push_back(new Sprite(*oldS, position, name));
     for (auto const& [layer, oldO] : oldThing.obstructions)
@@ -35,33 +35,13 @@ RealThing::~RealThing() {
         delete tr;
 };
 
-void RealThing::loadLuaFunc(std::string funcname) {
-    lua_getglobal(L, funcname.c_str());
-    if (!lua_isfunction(L, -1)) {
-        std::cout << funcname << " is not function" << std::endl;
-        throw std::exception();
-    }
-    lua_pushlightuserdata(L, parentScene);
-    lua_pushlightuserdata(L, this);
-}
-
-void RealThing::callLuaFunc(int nargs, int nresults, int errfunc) {
-    Host::callLuaFunc(nargs + 1, nresults, errfunc);
-}
-
 void RealThing::processMove(KeyPresses keysDown) {
-    if (move == nullptr)
+    if (move == nullptr || move->disables)
         return;
     if (move->type == MoveType::controlled)
         move->moveFromInput(keysDown);
-    if (move->type == MoveType::follow && move->leader)
+    if (move->type == MoveType::follow || move->type == MoveType::automatic)
         move->autoMove(position);
-    if (move->type == MoveType::automatic) {
-        if(move->autoMove(position)) {
-            loadLuaFunc("doAutoMove");
-            callLuaFunc(0, 0, 0);
-        }
-    }
     position.x += move->velocity.x;
     position.y += move->velocity.y;
 }
@@ -121,7 +101,12 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
 }
 
 void RealThing::animate(KeyPresses keysDown) {
-    animator->animate(move->velocity, keysDown);
+    if (move == nullptr || move->disables)
+        return; // currently all animations require a move component
+    if (move->type == MoveType::controlled)
+        animator->animate(move->velocity, keysDown);
+    else
+        animator->animate(move->velocity, KeyPresses());
     return;
 }
 
@@ -176,20 +161,39 @@ void RealThing::addComponentsFromTable() {
         return;
     }
     lua_pushnil(L);
+    string currentComponent;
     while (lua_next(L, -2)) {
-        if (!lua_isstring(L, -1)) {
-            cout << "component name is not string!" << endl;
+        if (!lua_istable(L, -1)) {
+            cout << "component def is not table!" << endl;
             continue;
         }
-        string component = lua_tostring(L, -1); // we will have more data than just component name eventually
-        if (component == "autoMove")
-            AddMove(MoveType::automatic);
-        if (component == "followMove")
-            move->type = MoveType::follow;
-        if (component == "moveAnimate")
+        luaUtils::GetLuaStringFromTable(L, "type", currentComponent);
+        if (currentComponent == "autoMove") {
+            loadLuaFunc("beginEvent");
+            lua_newtable(L);
+            luaUtils::PushStringToTable(L, "eventName", "autoMove");
+            luaUtils::PushStringToTable(L, "thingName", name);
+            luaUtils::PushIntToTable(L, "originX", position.x);
+            luaUtils::PushIntToTable(L, "originY", position.y);
+            callLuaFunc(1, 0, 0);
+        }
+        if (currentComponent == "moveAnimate") {
             AddAnimator();
-        if (component == "standardCollider")
-            AddStandardCollision();
+        }
+        if (currentComponent == "standardCollider") {
+            vector<string> eventNames = {};
+            if (luaUtils::GetTableOnStackFromTable(L, "eventNames")) {
+                lua_pushnil(L);
+                while (lua_next(L, -2)) {
+                    if (!lua_isstring(L, -1))
+                        continue;
+                    eventNames.push_back(lua_tostring(L, -1));
+                    lua_pop(L,1);
+                }
+                lua_pop(L,1);
+            }
+            AddStandardCollision(eventNames);
+        }
         lua_pop(L, 1);
     }
     lua_pop(L, 1);
@@ -209,31 +213,23 @@ Animator* RealThing::AddAnimator() {
     bounds.bottom = 0;
     bounds.left = 0 - ( sprites[0]->d.width / 2);
     bounds.right = (sprites[0]->d.width / 2);
-    AddToMap(thingLists.animatedThings);
     return animator;
 }
 
 Move* RealThing::AddMove(MoveType type) {
-    move = new Move(type, position);
-    if (type == MoveType::automatic) {
-        loadLuaFunc("beginAutoMove");
-        lua_pushnumber(L, move->origin.x);
-        lua_pushnumber(L, move->origin.y);
-        lua_pushstring(L, name.c_str());
-        callLuaFunc(3, 0, 0);
-    }
-    AddToMap(thingLists.movinThings);
+    move = new Move(type);
     return move;
 }
 
-void RealThing::AddStandardCollision() {
+void RealThing::AddStandardCollision(vector<string> eventNames) {
     vector<Ray> obstructionRays = {
         Ray(Point(bounds.right - 10, bounds.bottom), Point(bounds.left + 8, bounds.bottom)),
         Ray(Point(bounds.left + 8, bounds.bottom), Point(bounds.left + 8, bounds.bottom - 6)),
         Ray( Point(bounds.left + 8, bounds.bottom - 6), Point(bounds.right - 10, bounds.bottom - 6)),
         Ray(Point(bounds.right - 10, bounds.bottom - 6), Point(bounds.right - 10, bounds.bottom))
     };
-    addInteractable("interact", obstructionRays, 0);
+    Interactable* i = addInteractable("interact", obstructionRays, 0);
+    i->eventNames = eventNames;
     addObstruction(obstructionRays, 0);
 }
 
@@ -253,7 +249,7 @@ Sprite* RealThing::AddRawSprite(string textureName) {
 Interactable* RealThing::addInteractable(string iName, vector<Ray> rays, int layer) {
     if (interactables.count(iName))
         return interactables[iName];
-    Interactable* in = new Interactable(position, name, iName, CollidableData(rays, layer));
+    Interactable* in = new Interactable(position, name, iName, {}, CollidableData(rays, layer));
     interactables[iName] = in;
     return in;
 }
@@ -261,7 +257,7 @@ Interactable* RealThing::addInteractable(string iName, vector<Ray> rays, int lay
 Trigger* RealThing::addTrigger(string iName, vector<Ray> rays, int layer) {
     if (triggers.count(iName))
         return triggers[iName];
-    Trigger* tr = new Trigger(position, name, iName, CollidableData(rays, layer));
+    Trigger* tr = new Trigger(position, name, iName, {}, CollidableData(rays, layer));
     triggers[iName] = tr;
     return tr;
 }
@@ -345,15 +341,20 @@ void RealThing::removeAllCollidables() {
     }
 };
 
-int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) { // Someday we might want to accept a RealThing* of the incoming thing here, if we want non-players to deal with this
+ // Should only check for eventCollidables, and simply return the eventCollidable here, 
+ // so that FieldPlayer can handle the event firing
+int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) {
     switch (collidableType) {
         case (CollidableType::interactable):
             for (auto const& [cName, in] : interactables){
                 if(in->isColliding(incoming, incomingLayer)) {
-                    loadLuaFunc("beginEvent");
-                    lua_pushstring(L, name.c_str());
-                    lua_pushstring(L, cName.c_str());
-                    callLuaFunc(2, 0, 0);
+                    for (auto eventName : in->eventNames) { // could make this a bulk function in lua instead of looping
+                        loadLuaFunc("beginEvent");
+                        lua_newtable(L);
+                        luaUtils::PushStringToTable(L, "eventName", eventName);
+                        luaUtils::PushStringToTable(L, "thingName", name);
+                        callLuaFunc(1, 0, 0);
+                    }
                     return 1;
                 }
             }
@@ -361,10 +362,13 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
         case (CollidableType::trigger):
             for (auto const& [cName, tr] : triggers){
                 if(tr->isColliding(incoming, incomingLayer)) {
-                    loadLuaFunc("beginEvent");
-                    lua_pushstring(L, name.c_str());
-                    lua_pushstring(L, cName.c_str());
-                    callLuaFunc(2, 0, 0);
+                    for (auto eventName : tr->eventNames) { // could make this a bulk function in lua instead of looping
+                        loadLuaFunc("beginEvent");
+                        lua_newtable(L);
+                        luaUtils::PushStringToTable(L, "eventName", eventName);
+                        luaUtils::PushStringToTable(L, "thingName", name);
+                        callLuaFunc(1, 0, 0);
+                    }
                     return 1;
                 }
             }
@@ -526,4 +530,21 @@ RealThingData RealThing::getData() {
         }
     }
     return td;
+}
+
+int RealThing::_getThingData(lua_State* L) {
+    if(!lua_islightuserdata(L, -1))
+        luaUtils::ThrowLua(L,  "first param to _getThingData is not a host Thing!" );
+    RealThing* thing = static_cast<RealThing*>(lua_touserdata(L, -1));
+    lua_pop(L, 1);
+    if (lua_isstring(L, -1)) {
+        thing = thing->things.at(lua_tostring(L, -1));
+        lua_pop(L,1);
+    }
+
+    lua_newtable(L);
+    luaUtils::PushIntToTable(L, "x", thing->position.x);
+    luaUtils::PushIntToTable(L, "y", thing->position.y);
+    luaUtils::PushStringToTable(L, "thingName", thing->name);
+    return 1;
 }

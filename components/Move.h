@@ -7,19 +7,17 @@ enum class MoveType {
     controlled,
     automatic,
     follow,
-    disabled
 };
 
 struct Move {
-    Move(MoveType moveType, Point origin) :
+    Move(MoveType moveType) :
         type(moveType), 
-        origin(origin), 
-        destination(origin),
         currentDirection(Direction::down), 
         leader(nullptr),
         speed(1), 
         layer(0),
-        tolerance(0)
+        tolerance(0),
+        destination(Point(-1000,-1000))
     {};
 
     MoveType type;
@@ -29,8 +27,8 @@ struct Move {
     int speed;
     int layer;
     int tolerance;
+    int disables = 0;
     Point velocity;
-    Point origin;
     Point destination;
     
     void moveFromInput(KeyPresses keysDown);

@@ -23,8 +23,6 @@ struct Scene : public Host {
     string backgroundPath;
 
     map<string, RealThing*> things;
-    map<string, RealThing*> movinThings;
-    map<string, RealThing*> animatedThings;
     vector<string> thingsToDestroy;
 
     Scene(string sceneName);
@@ -34,8 +32,8 @@ struct Scene : public Host {
     void EnterLoaded(RealThing* focus);
 
     void meat(KeyPresses keysDown);
-    void meatEvent(KeyPresses keysDown);
-    void meatThings(KeyPresses keysDown);
+    bool meatEvent(KeyPresses keysDown);
+    void meatThings(KeyPresses keysDown, bool blockingEvent);
 
     RealThing* addThing(RealThingData tD, ThingType type = ThingType::thing);
     RealThing* addExistingThingToScene(RealThing* existingThing);
@@ -61,11 +59,10 @@ struct Scene : public Host {
 
     static int _loadScene(lua_State* L);
     static int _createThing(lua_State* L);
-    static int _updateMoveTarget(lua_State *L);
     static int _newTask(lua_State *L);
+    static int _pauseMoves(lua_State *L);
 
     private:
-        RealThing::ThingLists getThingLists();
         string getNewThingName(string name);
 };
 

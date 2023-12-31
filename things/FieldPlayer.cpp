@@ -4,7 +4,7 @@ using namespace std;
 
 FieldPlayer *FieldPlayer::player = nullptr;
 
-FieldPlayer::FieldPlayer(RealThingData tD, ThingLists tL) : RealThing(tD, tL) {
+FieldPlayer::FieldPlayer(RealThingData tD, map<string, RealThing*>& things) : RealThing(tD, things) {
     type = ThingType::fieldPlayer;
     AddAnimator();
     AddMove(MoveType::controlled);
@@ -61,7 +61,7 @@ void FieldPlayer::meat(KeyPresses keysDown) {
 int FieldPlayer::castRayForInteractables () {
     if (move == nullptr)
         return 0;
-    for (auto const& [name, t] : thingLists.things) {
+    for (auto const& [name, t] : things) {
         if (t == this)
             continue;
         for (auto r : getRaysFromOriginAndDirection(position, move->currentDirection))
@@ -74,7 +74,7 @@ int FieldPlayer::castRayForInteractables () {
 int FieldPlayer::castRayForTriggers () {
     if (move == nullptr)
         return 0;
-    for (auto const& [name, t] : thingLists.things) {
+    for (auto const& [name, t] : things) {
         if (t == this)
             continue;
         for (auto r : getRaysFromOriginAndDirection(position, move->currentDirection))

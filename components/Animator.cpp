@@ -16,7 +16,7 @@ void Animator::animate(Point movement, KeyPresses keysDown) {
         default:
             if (!movement.isNaught())
                 return animateMovementFromSpriteSheet(movement);
-            return face(directionFromKeyPresses(keysDown)); // This breaks non-player characters
+            return face(directionFromKeyPresses(keysDown));
     }
 }
 

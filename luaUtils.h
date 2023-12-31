@@ -24,6 +24,7 @@ namespace luaUtils {
     bool GetLuaStringFromTable(lua_State *L, std::string key, std::string &value, int tableIndex = -1);
     bool GetLuaIntFromTable(lua_State *L, std::string key, int &value, int tableIndex = -1);
     bool GetLuaBoolFromTable(lua_State *L, std::string key, bool &value, int tableIndex = -1);
+    bool CheckLuaTableForBool(lua_State *L, std::string key, int tableIndex = -1);
     bool GetLuaFuncOnStackFromTable(lua_State *L, std::string key, int tableIndex = -1);
     bool GetTableOnStackFromTable(lua_State *L, std::string key, int tableIndex = -1);
 

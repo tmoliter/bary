@@ -6,8 +6,8 @@ Scene::Scene(string sceneName) : sceneName(sceneName) {
 
     lua_register(L, "_loadScene", _loadScene);
     lua_register(L, "_createThing", _createThing);
-    lua_register(L, "_updateMoveTarget", _updateMoveTarget);
     lua_register(L, "_newTask", _newTask);
+    lua_register(L, "_getThingData", RealThing::_getThingData);
 }
 
 Scene::~Scene() {
@@ -48,14 +48,6 @@ string Scene::getNewThingName(string name) {
     return name;
 }
 
-RealThing::ThingLists Scene::getThingLists() {
-    return RealThing::ThingLists(
-        things,
-        movinThings,
-        animatedThings
-    );
-}
-
 string Scene::renameThing(RealThing* thing, string newName) {
     // This should only happen in the editor so maybe we can hoist this
     things.erase(thing->name);
@@ -69,14 +61,14 @@ RealThing* Scene::addThing(RealThingData tD, ThingType type) {
     RealThing* newThing;
     switch(type) {
         case ThingType::fieldPlayer:
-            newThing = new FieldPlayer(tD, getThingLists());
+            newThing = new FieldPlayer(tD, things);
             break;
         case ThingType::door:
-            newThing = new Door(tD, getThingLists());
+            newThing = new Door(tD, things);
             break;
         case ThingType::thing:
         default:
-            newThing = new RealThing(tD, getThingLists());
+            newThing = new RealThing(tD, things);
             break;
     }
     newThing->AddToMap(things);
@@ -102,11 +94,9 @@ void Scene::destroyThing(RealThing* thing) {
     for (auto subThing : thing->subThings)
         destroyThing(subThing);
     if (thing->animator != nullptr) {
-        animatedThings.erase(thing->name);
         delete thing->animator;
     }
     if (thing->move != nullptr) {
-        movinThings.erase(thing->name);
         delete thing->move;
     }
     things.erase(thing->name);
@@ -139,64 +129,59 @@ void Scene::meat(KeyPresses keysDown) {
         // Listen for unpause
         return;
     }
-    if (activeTasks.size() > 0) {
-        meatEvent(keysDown);
-    }
-    else
-        meatThings(keysDown); // should we actually pause all things or not?
+    meatThings(keysDown, activeTasks.size() > 0 && meatEvent(keysDown));
 }
 
 
-void Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to decide whether to block meat here
+bool Scene::meatEvent(KeyPresses keysDown) {
     vector<Task*> tasksToDelete;
-    map<string, pair<bool, RealThing*>> eventsToResume;
-    for (auto t : activeTasks) {
+    map<string, pair<bool, Host*>> eventsToResume;
+    bool blocking = false;
+    for (int i = activeTasks.size() - 1; i >= 0; i--) {
+        Task* t = activeTasks[i];
+        if (!blocking && t->blocking)
+            blocking = true;
         if (t->meat(keysDown) < 1) {
             // task has exhausted subtasks
             if (!eventsToResume.count(t->eventName))
-                eventsToResume[t->eventName] = make_pair(true, t->hostThing);
+                eventsToResume[t->eventName] = make_pair(true, t->host);
             tasksToDelete.push_back(t);
-            loadLuaFunc("resumeEvent");
-            lua_pushlightuserdata(L, t->hostThing);
-            lua_pushstring(L, t->eventName.c_str());
-            callLuaFunc(2, 1, 0);
         } else {
             if (!eventsToResume.count(t->eventName))
-                eventsToResume[t->eventName] = make_pair(false, t->hostThing);
+                eventsToResume[t->eventName] = make_pair(false, t->host);
             else
                 eventsToResume.at(t->eventName).first = false;
         }
-    }
-    for (auto e : eventsToResume) {
-        if (!e.second.first)
-            continue;
-        // All tasks for this event have exhausted subtasks, so we look for more tasks
-        loadLuaFunc("resumeEvent");
-        lua_pushlightuserdata(L, e.second.second);
-        lua_pushstring(L, e.first.c_str());
-        callLuaFunc(2, 1, 0);
+        if (blocking)
+            break;
     }
     for (auto t : tasksToDelete) {
         delete t;
         activeTasks.erase(remove(activeTasks.begin(), activeTasks.end(), t), activeTasks.end());
     }
+    for (auto e : eventsToResume) {
+        if (!e.second.first)
+            continue;
+        // All tasks for this event have exhausted subtasks, so we look for more tasks
+        loadLuaFunc("resumeEvent", e.second.second);
+        lua_pushstring(L, e.first.c_str());
+        callLuaFunc(1, 1, 0);
+    }
+    return blocking;
 }
 
 
-void Scene::meatThings(KeyPresses keysDown) {
+void Scene::meatThings(KeyPresses keysDown, bool blockingEvent) {
     if (sceneState == SceneState::pauseThings)
         return;
-    if (sceneState == SceneState::pausePlayerControl)
+    if (sceneState == SceneState::pausePlayerControl || blockingEvent)
         keysDown = KeyPresses();
-    for (auto const& [id, thing] : movinThings){
+    for (auto const& [id, thing] : things)
         thing->processMove(keysDown);
-    }
-    for (auto const& [id, thing] : movinThings){
+    for (auto const& [id, thing] : things)
         thing->processCollisions(things);
-    }
-    for (auto const& [id, thing] : things){
+    for (auto const& [id, thing] : things)
         thing->meat(keysDown);
-    }
 }
 
 
@@ -269,8 +254,11 @@ RealThing* Scene::buildThingFromTable() {
         }
         lua_pop(L, 1);
     }
-    lua_pop(L, 1);
     RealThing* newThing = addThing(td);
+    if (GetTableOnStackFromTable(L, "components")) {
+        newThing->addComponentsFromTable();
+    }
+    lua_pop(L, 1);
     return newThing;
 }
 
@@ -305,7 +293,7 @@ int Scene::_loadScene(lua_State* L) {
 }
 
 int Scene::_createThing(lua_State* L) {
-    if(!CheckParams(L, {ParamType::pointer, ParamType::table, ParamType::table })) {
+    if(!CheckParams(L, {ParamType::pointer, ParamType::table })) {
         cout << "_createThing failed!" << endl;
         throw exception();
     }
@@ -318,40 +306,23 @@ int Scene::_createThing(lua_State* L) {
     return 1;
 }
 
-int Scene::_updateMoveTarget(lua_State *L) {
-    if(!CheckParams(L, {ParamType::pointer, ParamType::number, ParamType::number}))
-        return 0;
-    RealThing* thing = static_cast<RealThing*>(lua_touserdata(L, -1));
-    Move* move = thing->move;
-    if (move == nullptr) {
-        cout << "can't update '" << thing->name << "' move target because it does not move" << endl;
-        return 0;
-    }
-    int newY = lua_tointeger(L, -2);
-    int newX = lua_tointeger(L, -3);
-    lua_settop(L, 0);
-    move->destination = Point(newX, newY);
-    return 0;
-}
-
 int Scene::_newTask(lua_State *L) {
-    if(!lua_islightuserdata(L, -1))
-        luaUtils::ThrowLua(L, "top param to _newTask is not a Scene pointer!");
-    Scene* scene = static_cast<Scene*>(lua_touserdata(L, -1));
+    if(!CheckParams(L, {ParamType::pointer, ParamType::str, ParamType::table })) {
+        cout << "_newTask failed!" << endl;
+        throw exception();
+    }
+    Host* host = static_cast<Host*>(lua_touserdata(L, -1));
     lua_pop(L, 1);
 
-    if(!lua_islightuserdata(L, -1))
-        luaUtils::ThrowLua(L,  "second param to _newTask is not an host Thing!" );
-    RealThing* hostThing = static_cast<RealThing*>(lua_touserdata(L, -1)); // should eventually pass this into task
-    lua_pop(L, 1);
-
-    if(!lua_isstring(L, -1))
-        luaUtils::ThrowLua(L, "third param to _newTask is not an event name!" );
     string eventName = lua_tostring(L, -1);
-    Task* newTask = new Task(eventName, hostThing);
+    Task* newTask = new Task(eventName, host);
     lua_pop(L, 1);
 
     newTask->addSubtasks(L);
+
+    // (assume-host) For now, we assume the host is a RealThing. We may later have Scenes host Events without things.
+    RealThing* hostThing = static_cast<RealThing*>(host);
+    Scene* scene = static_cast<Scene*>(hostThing->parentScene);
     scene->activeTasks.push_back(newTask);
     lua_settop(L, 0);
     return 0;

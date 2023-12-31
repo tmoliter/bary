@@ -4,7 +4,7 @@
 #include "things/RealThing.h"
 
 struct Door : public RealThing {
-    Door(RealThingData tD, ThingLists tL);
+    Door(RealThingData tD, map<string, RealThing*>& things);
 
     bool opened, locked;
     string lockedMessage;

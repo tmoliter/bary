@@ -20,3 +20,11 @@ print(v)
 y = x
 y["b"] = y["b"] + 10000
 print(x["b"])
+
+local w, y
+w = "poop"
+y = "pee"
+z = "earwax"
+print(w .. " " .. y .. " " .. z)
+print(_G["w"])
+print(_G["z"])
