@@ -116,7 +116,15 @@ local function zinniaTalkB(hostThing, args, eventName)
     }}, eventName, hostThing)
 end
 
-local eventDefinitions = {
+--     IDEAS FOR FUTURE OF EDITOR AND DATA STORAGE:
+--     in thing editor you can build a thing, then export it as a lua table
+
+--     all the thing definitions live in setup.lua or equivalent
+--       - thing tables should include stuff like sprite name or path as well
+    
+--     map file that gets saved is then just a list of thingNames and locations
+    
+local eventDefinitions = { -- I'd like, instead of defining loose events, to instead ONLY have a list of things, and flag whether to autoSpawn them or not. Otherwise they can be spawned later or spawned multiple times!
     followZinnia = {
         interact =  {
             type = "custom",
@@ -199,41 +207,5 @@ local customThings = {
         }
     }
 }
-
--- Manipulate things by name here for starting state that can't be stored in data.
--- Note that without some other solution, or way of writing this or other files,
--- the scene will start up exactly the same every time it is loaded.
-
--- local function setup(host) -- not currently in use
-    -- _createThing(
-    --     {
-    --         name = "otherZinnia",
-    --         spriteDataVector = {
-    --             {
-    --                 xOffset = 0,
-    --                 height = 0,
-    --                 layer = 0,
-    --                 textureName = "zinnia",
-    --                 renderOffset = 0,
-    --                 width = 0,
-    --                 yOffset = 0,
-    --                 sourceX = 0,
-    --                 sourceY = 0
-    --             }
-    --         },
-    --         x = 1000,
-    --         y = 500,
-    --         obstructionData = {},
-    --         components = {
-    --             { 
-    --                 type = "moveAnimate",
-    --                 standardCollider = true
-    --             },
-    --             { type = "autoMove" }
-    --         },
-    --     },
-    --     host
-    -- )
--- end
 
 return { customThings, eventDefinitions }
