@@ -61,7 +61,7 @@ MoveST::~MoveST() {
     if (movingThing == nullptr)
         return;
     if (prevMove != nullptr)
-        prevMove->disabled = false;
+        prevMove->disables--;
     movingThing->move = prevMove;
 }
 
@@ -86,7 +86,7 @@ void MoveST::init() {
 
     prevMove = movingThing->move;
     if (prevMove != nullptr)
-        prevMove->disabled = true;
+        prevMove->disables++;
     movingThing->AddMove(MoveType::automatic)->destination = addPoints(destination, offset);
 }
 
@@ -119,12 +119,15 @@ void Task::addSubtasks(lua_State* L) {
     while (lua_next(L, -2)) { // Why not just iterate through a list of tables and pull the name off the table
         if (!lua_istable(L, -1)) {
             cout << "subtask should be a table" << endl;
+            lua_pop(L, 1);
             continue;
         }
         if(!luaUtils::GetLuaStringFromTable(L, "type", currentType)) {
             cout << "subtask has no type!" << endl;
+            lua_pop(L, 1);
             continue;
         }
+        bool instant = false;
         if (!blocking)
             luaUtils::GetLuaBoolFromTable(L, "blocking", blocking);
         if (currentType == "move")
@@ -133,8 +136,54 @@ void Task::addSubtasks(lua_State* L) {
             subtasks.push_back(new PhraseST(L, host));
         if (currentType == "wait")
             subtasks.push_back(new Subtask(L, host));
-        subtasks.back()->init();
+        if (currentType == "pauseMoves") {
+            pauseMoves(L);
+            instant = true;
+        }
+        if (!instant)
+            subtasks.back()->init();
         lua_pop(L,1);
     }
     lua_pop(L,1);
+}
+
+void Task::pauseMoves(lua_State* L) {
+    if (!lua_istable(L, -1)) {
+        throw exception();
+    }
+    RealThing* hostThing = static_cast<RealThing*>(host);
+    int disable = luaUtils::CheckLuaTableForBool(L, "unpause") ? -1 : 1;
+    if (luaUtils::CheckLuaTableForBool(L, "all")) {
+        for (auto const& [id, thing] : hostThing->things) {
+            if (!thing->move)
+                continue;
+            thing->move->disables += disable;
+        }
+        return;
+    }
+
+    set<string> thingNames;
+    if (luaUtils::CheckLuaTableForBool(L, "hostThing")) {
+        thingNames.insert(hostThing->name);
+    }
+    if (luaUtils::GetTableOnStackFromTable(L, "thingNames")) {
+        lua_pushnil(L);
+        while (lua_next(L, -2)) { // Why not just iterate through a list of tables and pull the name off the table
+            if (!lua_isstring(L, -1)) {
+                cout << "all list items should be strings" << endl;
+                continue;
+            }
+            thingNames.insert(lua_tostring(L, -1));
+            lua_pop(L,1);
+        }
+        lua_pop(L,1);
+    }
+    for (auto thingName : thingNames) {
+        if (!hostThing->things.count(thingName))
+            continue;
+        RealThing* thing = hostThing->things.at(thingName);
+        if (!thing->move)
+            continue;
+        thing->move->disables += disable;
+    }
 }

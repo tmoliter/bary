@@ -36,7 +36,7 @@ RealThing::~RealThing() {
 };
 
 void RealThing::processMove(KeyPresses keysDown) {
-    if (move == nullptr || move->disabled)
+    if (move == nullptr || move->disables)
         return;
     if (move->type == MoveType::controlled)
         move->moveFromInput(keysDown);

@@ -60,6 +60,7 @@ struct Scene : public Host {
     static int _loadScene(lua_State* L);
     static int _createThing(lua_State* L);
     static int _newTask(lua_State *L);
+    static int _pauseMoves(lua_State *L);
 
     private:
         string getNewThingName(string name);

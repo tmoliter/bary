@@ -133,7 +133,7 @@ void Scene::meat(KeyPresses keysDown) {
 }
 
 
-bool Scene::meatEvent(KeyPresses keysDown) { // Maybe we could return a bool to decide whether to block meat here
+bool Scene::meatEvent(KeyPresses keysDown) {
     vector<Task*> tasksToDelete;
     map<string, pair<bool, Host*>> eventsToResume;
     bool blocking = false;
@@ -311,13 +311,9 @@ int Scene::_newTask(lua_State *L) {
         cout << "_newTask failed!" << endl;
         throw exception();
     }
-    if(!lua_islightuserdata(L, -1))
-        luaUtils::ThrowLua(L,  "first param to _newTask is not a host Thing!" );
     Host* host = static_cast<Host*>(lua_touserdata(L, -1));
     lua_pop(L, 1);
 
-    if(!lua_isstring(L, -1))
-        luaUtils::ThrowLua(L, "second param to _newTask is not an event name!" );
     string eventName = lua_tostring(L, -1);
     Task* newTask = new Task(eventName, host);
     lua_pop(L, 1);

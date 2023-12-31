@@ -52,13 +52,17 @@ local function zinniaTalkA(hostThing, args, eventName)
                 gridLimitsX = 1000,
                 gridLimitsY = 1000,
                 frames = 250,
-                blocking = true
             }
         }, eventName, hostThing
     )
 end
 
 local function zinniaTalkB(hostThing, args, eventName)
+    _newTask({{
+        type = "pauseMoves",
+        hostThing = true,
+        thingNames = { "otherZinnia" }
+    }}, eventName, hostThing)
     _newTask(
         {
             {
@@ -77,7 +81,6 @@ local function zinniaTalkB(hostThing, args, eventName)
                 gridLimitsX = 100,
                 gridLimitsY = 100,
                 frames = 125,
-                blocking = true
             }
         }, eventName, hostThing
     )
@@ -101,10 +104,16 @@ local function zinniaTalkB(hostThing, args, eventName)
                 gridLimitsX = 1000,
                 gridLimitsY = 1000,
                 frames = 125,
-                blocking = true
             }
         }, eventName, hostThing
     )
+    coroutine.yield()
+    _newTask({{
+        type = "pauseMoves",
+        unpause = true,
+        hostThing = true,
+        thingNames = { "otherZinnia" }
+    }}, eventName, hostThing)
 end
 
 local eventDefinitions = {
@@ -150,14 +159,14 @@ local customThings = {
             }
         },
         events = {
-            -- autoMove = {
-            --     type = "randomAutoMove",
-            --     variance = 150
-            -- },
             autoMove = {
-                type = "custom",
-                customCoroutine = zinniaAutoMove
+                type = "randomAutoMove",
+                variance = 150
             },
+            -- autoMove = {
+            --     type = "custom",
+            --     customCoroutine = zinniaAutoMove
+            -- },
             interact =  { -- This has the same effect as zinniaTalk, but is stored as data
                 type = "simpleMessages",
                 phrases = {

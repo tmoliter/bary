@@ -17,7 +17,7 @@ void Move::moveFromInput(KeyPresses keysDown) {
 }
 
 bool Move::autoMove(Point position) {
-    if (disabled)
+    if (disables)
         return false;
     if (type == MoveType::follow && leader != nullptr)
         destination = *leader;

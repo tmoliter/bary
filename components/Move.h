@@ -27,7 +27,7 @@ struct Move {
     int speed;
     int layer;
     int tolerance;
-    bool disabled = false;
+    int disables = 0;
     Point velocity;
     Point destination;
     
