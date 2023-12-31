@@ -121,22 +121,9 @@ end
 --       - thing tables should include stuff like sprite name or path as well
     
 --     map file that gets saved is then just a list of thingNames and locations
-    
-local eventDefinitions = { -- I'd like, instead of defining loose events, to instead ONLY have a list of things, and flag whether to autoSpawn them or not. Otherwise they can be spawned later or spawned multiple times!
-    followZinnia = {
-        fz_1 =  {
-            type = "custom",
-            customCoroutine = zinniaTalkA
-        },
-        fz_2 = {
-            type = "custom",
-            customCoroutine = zinniaTalkB
-        }
-    }
-}
 
 local customThings = {
-    {
+    otherZinnia = {
         name = "otherZinnia",
         spriteDataVector = {
             {
@@ -208,6 +195,49 @@ local customThings = {
                 type = "custom",
                 customCoroutine = zinniaTalkB
             },
+        }
+    },
+    followZinnia = {
+        name = "followZinnia",
+        spriteDataVector = {
+            {
+                xOffset = 0,
+                height = 0,
+                layer = 0,
+                textureName = "zinnia",
+                renderOffset = 0,
+                width = 0,
+                yOffset = 0,
+                sourceX = 0,
+                sourceY = 0
+            }
+        },
+        obstructionData = {},
+        components = {
+            {
+                type = "moveAnimate",
+            },
+            {
+                type = "standardCollider",
+                eventNames = {
+                    "talk_1",
+                    "talk_2"
+                }
+            },
+            {
+                type = "autoMove",
+                eventName = "autoMove",
+            }
+        },
+        events = {
+            fz_1 =  {
+                type = "custom",
+                customCoroutine = zinniaTalkA
+            },
+            fz_2 = {
+                type = "custom",
+                customCoroutine = zinniaTalkB
+            }
         }
     }
 }
