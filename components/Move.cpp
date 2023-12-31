@@ -3,6 +3,8 @@
 using namespace std;
 
 void Move::moveFromInput(KeyPresses keysDown) {
+    if (disables)
+        return;
     if (keysDown.up)
         velocity.y -= speed;
     if (keysDown.down)

@@ -101,7 +101,7 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
 }
 
 void RealThing::animate(KeyPresses keysDown) {
-    if (move == nullptr)
+    if (move == nullptr || move->disables)
         return; // currently all animations require a move component
     if (move->type == MoveType::controlled)
         animator->animate(move->velocity, keysDown);

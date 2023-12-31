@@ -60,8 +60,7 @@ end
 local function zinniaTalkB(hostThing, args, eventName)
     _newTask({{
         type = "pauseMoves",
-        hostThing = true,
-        thingNames = { "otherZinnia" }
+        all = true,
     }}, eventName, hostThing)
     _newTask(
         {
@@ -111,8 +110,7 @@ local function zinniaTalkB(hostThing, args, eventName)
     _newTask({{
         type = "pauseMoves",
         unpause = true,
-        hostThing = true,
-        thingNames = { "otherZinnia" }
+        all = true,
     }}, eventName, hostThing)
 end
 
