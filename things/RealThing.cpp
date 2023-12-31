@@ -179,10 +179,20 @@ void RealThing::addComponentsFromTable() {
         }
         if (currentComponent == "moveAnimate") {
             AddAnimator();
-            bool standardCollider;
-            luaUtils::GetLuaBoolFromTable(L, "standardCollider", standardCollider); // This maybe should be its own component with a list of event names
-            if (standardCollider)
-                AddStandardCollision();
+        }
+        if (currentComponent == "standardCollider") {
+            vector<string> eventNames = {};
+            if (luaUtils::GetTableOnStackFromTable(L, "eventNames")) {
+                lua_pushnil(L);
+                while (lua_next(L, -2)) {
+                    if (!lua_isstring(L, -1))
+                        continue;
+                    eventNames.push_back(lua_tostring(L, -1));
+                    lua_pop(L,1);
+                }
+                lua_pop(L,1);
+            }
+            AddStandardCollision(eventNames);
         }
         lua_pop(L, 1);
     }
@@ -211,7 +221,7 @@ Move* RealThing::AddMove(MoveType type) {
     return move;
 }
 
-void RealThing::AddStandardCollision() {
+void RealThing::AddStandardCollision(vector<string> eventNames) {
     vector<Ray> obstructionRays = {
         Ray(Point(bounds.right - 10, bounds.bottom), Point(bounds.left + 8, bounds.bottom)),
         Ray(Point(bounds.left + 8, bounds.bottom), Point(bounds.left + 8, bounds.bottom - 6)),
@@ -219,7 +229,7 @@ void RealThing::AddStandardCollision() {
         Ray(Point(bounds.right - 10, bounds.bottom - 6), Point(bounds.right - 10, bounds.bottom))
     };
     Interactable* i = addInteractable("interact", obstructionRays, 0);
-    i->eventNames = {"interact", "interact_1"}; // should use params from Lua for this
+    i->eventNames = eventNames;
     addObstruction(obstructionRays, 0);
 }
 

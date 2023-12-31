@@ -77,7 +77,7 @@ struct RealThing : public Host {
     void addComponentsFromTable();
     Animator* AddAnimator();
     Move* AddMove(MoveType type);
-    void AddStandardCollision();
+    void AddStandardCollision(vector<string> eventNames = {});
 
     Sprite* AddSprite(SpriteData SD);
     Sprite* AddRawSprite(string path);

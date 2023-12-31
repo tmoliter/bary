@@ -124,11 +124,11 @@ end
     
 local eventDefinitions = { -- I'd like, instead of defining loose events, to instead ONLY have a list of things, and flag whether to autoSpawn them or not. Otherwise they can be spawned later or spawned multiple times!
     followZinnia = {
-        interact =  {
+        fz_1 =  {
             type = "custom",
             customCoroutine = zinniaTalkA
         },
-        interact_1 = {
+        fz_2 = {
             type = "custom",
             customCoroutine = zinniaTalkB
         }
@@ -157,7 +157,13 @@ local customThings = {
         components = {
             {
                 type = "moveAnimate",
-                standardCollider = true
+            },
+            {
+                type = "standardCollider",
+                eventNames = {
+                    "talk_1",
+                    "talk_2"
+                }
             },
             {
                 type = "autoMove",
@@ -173,7 +179,7 @@ local customThings = {
             --     type = "custom",
             --     customCoroutine = zinniaAutoMove
             -- },
-            interact =  { -- This has the same effect as zinniaTalk, but is stored as data
+            talk_1 =  { -- This has the same effect as zinniaTalk, but is stored as data
                 type = "simpleMessages",
                 phrases = {
                     {
@@ -198,7 +204,7 @@ local customThings = {
                     },
                 }
             },
-            interact_1 = {
+            talk_2 = {
                 type = "custom",
                 customCoroutine = zinniaTalkB
             },

@@ -44,7 +44,7 @@ void MapBuilder::changeState(EditorState newState) {
             followThing = scene->addThing(RealThingData(Point(currentThing->position.x + 20, currentThing->position.y + 20), "followZinnia", "zinnia"));
             followThing->AddAnimator();
             followThing->AddMove(MoveType::follow);
-            followThing->AddStandardCollision();
+            followThing->AddStandardCollision({"fz_1", "fz_2"});
             followThing->move->leader = &currentThing->position;
             followThing->move->tolerance = 40;
             // END FOLLOW TESTING
