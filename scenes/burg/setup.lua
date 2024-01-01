@@ -86,12 +86,12 @@ local function zinniaTalkB(hostThing, args, eventName)
     coroutine.yield()
     _newTask(
         {
-            {
-                type = "move",
-                thingName = "otherZinnia",
-                offsetX = -300,
-                offsetY = 300
-            },
+            -- {
+            --     type = "move",
+            --     thingName = "otherZinnia",
+            --     offsetX = -300,
+            --     offsetY = 300
+            -- },
             {
                 type = "phrase",
                 text = "poopoo",
@@ -118,25 +118,9 @@ end
 --     in thing editor you can build a thing, then export it as a lua table
 
 --     all the thing definitions live in setup.lua or equivalent
---       - thing tables should include stuff like sprite name or path as well
-    
---     map file that gets saved is then just a list of thingNames and locations
-    
-local eventDefinitions = { -- I'd like, instead of defining loose events, to instead ONLY have a list of things, and flag whether to autoSpawn them or not. Otherwise they can be spawned later or spawned multiple times!
-    followZinnia = {
-        fz_1 =  {
-            type = "custom",
-            customCoroutine = zinniaTalkA
-        },
-        fz_2 = {
-            type = "custom",
-            customCoroutine = zinniaTalkB
-        }
-    }
-}
 
 local customThings = {
-    {
+    otherZinnia = {
         name = "otherZinnia",
         spriteDataVector = {
             {
@@ -151,8 +135,6 @@ local customThings = {
                 sourceY = 0
             }
         },
-        x = 1000,
-        y = 500,
         obstructionData = {},
         components = {
             {
@@ -173,7 +155,7 @@ local customThings = {
         events = {
             autoMove = {
                 type = "randomAutoMove",
-                variance = 150
+                variance = 100
             },
             -- autoMove = {
             --     type = "custom",
@@ -208,6 +190,50 @@ local customThings = {
                 type = "custom",
                 customCoroutine = zinniaTalkB
             },
+        }
+    },
+    followZinnia = {
+        name = "followZinnia",
+        spriteDataVector = {
+            {
+                xOffset = 0,
+                height = 0,
+                layer = 0,
+                textureName = "zinnia",
+                renderOffset = 0,
+                width = 0,
+                yOffset = 0,
+                sourceX = 0,
+                sourceY = 0
+            }
+        },
+        obstructionData = {},
+        components = {
+            {
+                type = "moveAnimate",
+            },
+            {
+                type = "standardCollider",
+                eventNames = {
+                    "fz_1",
+                    "fz_2"
+                }
+            },
+            {
+                type = "follow",
+                targetName = "test player",
+                tolerance = 40
+            }
+        },
+        events = {
+            fz_1 =  {
+                type = "custom",
+                customCoroutine = zinniaTalkA
+            },
+            fz_2 = {
+                type = "custom",
+                customCoroutine = zinniaTalkB
+            }
         }
     }
 }

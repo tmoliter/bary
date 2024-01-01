@@ -50,6 +50,7 @@ struct RealThing : public Host {
     vector<RealThing*> subThings;
 
     Point getCenter();
+    string getBaseName();
 
     void manuallyControl(KeyPresses keysDown);
 

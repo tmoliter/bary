@@ -135,22 +135,23 @@ void Scene::meat(KeyPresses keysDown) {
 
 bool Scene::meatEvent(KeyPresses keysDown) {
     vector<Task*> tasksToDelete;
-    map<string, pair<bool, Host*>> eventsToResume;
+    map<pair<Host*, string>, bool> eventsToResume;
     bool blocking = false;
     for (int i = activeTasks.size() - 1; i >= 0; i--) {
         Task* t = activeTasks[i];
+        pair<Host*, string> hostEventName = make_pair(t->host, t->eventName);
         if (!blocking && t->blocking)
             blocking = true;
         if (t->meat(keysDown) < 1) {
             // task has exhausted subtasks
-            if (!eventsToResume.count(t->eventName))
-                eventsToResume[t->eventName] = make_pair(true, t->host);
+            if (!eventsToResume.count(hostEventName))
+                eventsToResume[hostEventName] = true;
             tasksToDelete.push_back(t);
         } else {
-            if (!eventsToResume.count(t->eventName))
-                eventsToResume[t->eventName] = make_pair(false, t->host);
+            if (!eventsToResume.count(hostEventName))
+                eventsToResume[hostEventName] = false;
             else
-                eventsToResume.at(t->eventName).first = false;
+                eventsToResume.at(hostEventName) = false;
         }
         if (blocking)
             break;
@@ -160,11 +161,11 @@ bool Scene::meatEvent(KeyPresses keysDown) {
         activeTasks.erase(remove(activeTasks.begin(), activeTasks.end(), t), activeTasks.end());
     }
     for (auto e : eventsToResume) {
-        if (!e.second.first)
+        if (!e.second)
             continue;
         // All tasks for this event have exhausted subtasks, so we look for more tasks
-        loadLuaFunc("resumeEvent", e.second.second);
-        lua_pushstring(L, e.first.c_str());
+        loadLuaFunc("resumeEvent", e.first.first);
+        lua_pushstring(L, e.first.second.c_str());
         callLuaFunc(1, 1, 0);
     }
     return blocking;
@@ -206,6 +207,23 @@ void Scene::hideAllLines() {
 
 RealThing* Scene::findRealThing (string name) {
     return things.at(name);
+}
+
+RealThing* Scene::spawn(string baseName, Point position) {
+    loadLuaFunc("spawn");
+    lua_pushstring(L, sceneName.c_str());
+    lua_newtable(L);
+    luaUtils::PushStringToTable(L, "baseName", baseName);
+    luaUtils::PushIntToTable(L, "x", position.x);
+    luaUtils::PushIntToTable(L, "y", position.y);
+    callLuaFunc(2,1,0);
+    if (!lua_islightuserdata(L, -1)) {
+        cout << "spawn did not return a thing" << endl;
+        throw exception();
+    }
+    RealThing* spawnedThing = static_cast<RealThing*>(lua_touserdata(L,-1));
+    lua_settop(L, 0);
+    return spawnedThing;
 }
 
 RealThing* Scene::buildThingFromTable() {
@@ -300,9 +318,8 @@ int Scene::_createThing(lua_State* L) {
     Scene* scene = static_cast<Scene*>(lua_touserdata(L, -1));
     lua_pop(L, 1);
     RealThing* newThing = scene->buildThingFromTable();
-    newThing->addComponentsFromTable();
 
-    lua_pushstring(L, newThing->name.c_str());
+    lua_pushlightuserdata(L, newThing);
     return 1;
 }
 
