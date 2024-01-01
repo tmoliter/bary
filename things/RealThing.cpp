@@ -45,6 +45,12 @@ string RealThing::getBaseName() {
     return name.substr(0, i);
 }
 
+vector<RealThing*> RealThing::getSelfAndSubs() {
+    vector<RealThing*> selfAndSubs = subThings;
+    selfAndSubs.push_back(this);
+    return selfAndSubs;
+};
+
 void RealThing::processMove(KeyPresses keysDown) {
     if (move == nullptr || move->disables)
         return;
@@ -67,7 +73,7 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
         return;
     if (obstructions.count(move->layer) < 1)
         return;
-    Obstruction* ownObstruction = obstructions[move->layer];
+    Obstruction* ownObstruction = obstructions[move->layer]; // Note: does not check for collisions with own subthings when moving, should rectify
     for (auto const& [n, thing] : things) {
         if (thing == this)
             continue;
@@ -245,6 +251,10 @@ Animator* RealThing::AddAnimator() {
 }
 
 Move* RealThing::AddMove(MoveType type) {
+    if (isSub) {
+        cout << "subThings can't move themselves!" << endl;
+        throw exception();
+    }
     move = new Move(type);
     return move;
 }

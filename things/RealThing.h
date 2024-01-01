@@ -50,6 +50,7 @@ struct RealThing : public Host {
     Bounds bounds;
 
     vector<RealThing*> subThings;
+    vector<RealThing*> getSelfAndSubs();
 
     Point getCenter();
     string getBaseName();
