@@ -166,51 +166,12 @@ void MapBuilder::save() {
     }
     lua_newtable(L);
     PushTableToTable(L, "things");
-    for (int i = 0; i < allThingData.size(); i++) {
-        PushTableToTable(L, i);
-        PushStringToTable(L, "name", allThingData[i].name);
-        PushIntToTable(L, "x", allThingData[i].x);
-        PushIntToTable(L, "y", allThingData[i].y);
-        PushTableToTable(L, "spriteDataVector");
-        for (int j = 0; j < allThingData[i].spriteDataVector.size(); j++) {
-            if (!PushTableToTable(L, j)) {
-                cout << "Failed!" << endl;
-                continue;
-            };
-            PushIntToTable(L, "layer", allThingData[i].spriteDataVector[j].layer);
-            PushIntToTable(L, "renderOffset", allThingData[i].spriteDataVector[j].renderOffset);
-            PushIntToTable(L, "xOffset", allThingData[i].spriteDataVector[j].xOffset);
-            PushIntToTable(L, "yOffset", allThingData[i].spriteDataVector[j].yOffset);
-            PushIntToTable(L, "sourceX", allThingData[i].spriteDataVector[j].sourceX);
-            PushIntToTable(L, "sourceY", allThingData[i].spriteDataVector[j].sourceY);
-            PushIntToTable(L, "width", allThingData[i].spriteDataVector[j].width);
-            PushIntToTable(L, "height", allThingData[i].spriteDataVector[j].height);
-            PushStringToTable(L, "textureName", allThingData[i].spriteDataVector[j].textureName);
-            lua_pop(L, 1);
-        }
-        lua_pop(L, 1);
-        PushTableToTable(L, "obstructionData");
-        for (int j = 0; j < allThingData[i].obstructionData.size(); j++) {
-            if (!PushTableToTable(L, j)) {
-                cout << "Failed!" << endl;
-                continue;
-            };
-            PushIntToTable(L, "layer", allThingData[i].obstructionData[j].layer);
-            PushTableToTable(L, "rays");
-            for (int h = 0; h < allThingData[i].obstructionData[j].rays.size(); h++) {
-                if (!PushTableToTable(L, h)) {
-                    cout << "Failed!" << endl;
-                    continue;
-                };
-                PushIntToTable(L, "aX", allThingData[i].obstructionData[j].rays[h].a.x);
-                PushIntToTable(L, "aY", allThingData[i].obstructionData[j].rays[h].a.y);
-                PushIntToTable(L, "bX", allThingData[i].obstructionData[j].rays[h].b.x);
-                PushIntToTable(L, "bY", allThingData[i].obstructionData[j].rays[h].b.y);
-                lua_pop(L, 1);
-            }
-            lua_pop(L, 2);
-        }
-        lua_pop(L, 2);
+    int thingIndex = 0;
+    for (auto const& [i, t] : scene->things) {
+        lua_pushinteger(L, thingIndex);
+        t->PushThingDataOnStack();
+        lua_settable(L, -3);
+        thingIndex += 1;
     }
     lua_pop(L, 1);
     PushStringToTable(L, "backgroundPath", Camera::c->path);
@@ -218,5 +179,4 @@ void MapBuilder::save() {
     if (CheckLua(L, lua_pcall(L, 2, 0, 0))) {
         cout << "SAVED" << endl;
     }
-    lua_close(L);
 }

@@ -135,7 +135,8 @@ int ThingRouter::chooseEditAction(KeyPresses keysDown) {
             return 1 ;
         }
         realThing->PushThingDataOnStack();
-        if (!luaUtils::CheckLua(L, lua_pcall(L, 1, 0, 0))) {
+        lua_pushstring(L, static_cast<Scene*>(realThing->parentScene)->sceneName.c_str());
+        if (!luaUtils::CheckLua(L, lua_pcall(L, 2, 0, 0))) {
             cout << "FAILED TO PRINT!" << endl;
         }
         return 1;

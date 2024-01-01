@@ -18,8 +18,14 @@ function dump(t, scene)
    print("Map Data Computed")
    io.output("scenes/" .. scene .. "/map.lua")
    io.write("return " .. getDumpString(t))
+   io.flush()
 end
 
-function printThing(thing)
-   print(string.gsub(thing["name"], "%s+", "") .. " = " .. getDumpString(thing))
+function printThing(thing, sceneName)
+   thing["name"] = string.gsub(thing["name"], "%s+", "")
+   local output = thing["name"] .. " = " .. getDumpString(thing)
+   print(output)
+   io.output("scenes/" .. sceneName .. "/tempThings/" .. thing["name"] .. ".lua")
+   io.write(output)
+   io.flush()
 end
