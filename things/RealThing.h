@@ -40,14 +40,17 @@ struct RealThingData {
 struct RealThing : public Host {
     string name;
     ThingType type;
+    bool isSub = false;
 
     map<string, RealThing*>& things;
     Host* parentScene;
 
     Point position;
+    Point origin;
     Bounds bounds;
 
     vector<RealThing*> subThings;
+    vector<RealThing*> getSelfAndSubs();
 
     Point getCenter();
     string getBaseName();
@@ -116,7 +119,7 @@ struct RealThing : public Host {
     vector<string> findAndShowTriggerLines(string beginning);
 
 
-
+    void PushThingDataOnStack();
     RealThingData getData();
 
     virtual RealThing* copyInPlace();

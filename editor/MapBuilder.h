@@ -37,6 +37,7 @@ class MapBuilder {
         void focusDot();
         void updateLines();
         void save();
+        void print();
 
         void meat(KeyPresses keysDown);
 

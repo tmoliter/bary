@@ -34,6 +34,7 @@ void Scene::EnterLoaded(RealThing* focus) {
 }
 
 string Scene::getNewThingName(string name) {
+    name.erase(std::remove_if(name.begin(), name.end(), ::isspace), name.end()); // remove whitespace
     int i;
     for (i = 0; i < name.length(); i++)
         if (isdigit(name[i]))
@@ -231,51 +232,64 @@ RealThing* Scene::buildThingFromTable() {
     GetLuaIntFromTable(L, "x", td.x);
     GetLuaIntFromTable(L, "y", td.y);
     GetLuaStringFromTable(L, "name", td.name);
+
     GetTableOnStackFromTable(L, "spriteDataVector");
-    if(!lua_isnil(L, -1)) {
-        lua_pushnil(L);
-        while (lua_next(L, -2)) {
-            td.spriteDataVector.push_back(SpriteData());
-            SpriteData &newSpriteData = td.spriteDataVector.back();
-            GetLuaIntFromTable(L, "height", newSpriteData.height);
-            GetLuaIntFromTable(L, "width", newSpriteData.width);
-            GetLuaIntFromTable(L, "layer", newSpriteData.layer);
-            GetLuaIntFromTable(L, "renderOffset", newSpriteData.renderOffset);
-            GetLuaIntFromTable(L, "xOffset", newSpriteData.xOffset);
-            GetLuaIntFromTable(L, "yOffset", newSpriteData.yOffset);
-            GetLuaIntFromTable(L, "sourceX", newSpriteData.sourceX);
-            GetLuaIntFromTable(L, "sourceY", newSpriteData.sourceY);
-            GetLuaStringFromTable(L, "textureName", newSpriteData.textureName);
-            lua_pop(L, 1);
-        }
+    lua_pushnil(L);
+    while (lua_next(L, -2)) {
+        td.spriteDataVector.push_back(SpriteData());
+        SpriteData &newSpriteData = td.spriteDataVector.back();
+        GetLuaIntFromTable(L, "height", newSpriteData.height);
+        GetLuaIntFromTable(L, "width", newSpriteData.width);
+        GetLuaIntFromTable(L, "layer", newSpriteData.layer);
+        GetLuaIntFromTable(L, "renderOffset", newSpriteData.renderOffset);
+        GetLuaIntFromTable(L, "xOffset", newSpriteData.xOffset);
+        GetLuaIntFromTable(L, "yOffset", newSpriteData.yOffset);
+        GetLuaIntFromTable(L, "sourceX", newSpriteData.sourceX);
+        GetLuaIntFromTable(L, "sourceY", newSpriteData.sourceY);
+        GetLuaStringFromTable(L, "textureName", newSpriteData.textureName);
+        lua_pop(L, 1);
     }
     lua_pop(L, 1);
+
     GetTableOnStackFromTable(L, "obstructionData");
-    if(!lua_isnil(L, -1)) {
+    lua_pushnil(L);
+    while (lua_next(L, -2)) {
+        td.obstructionData.push_back(CollidableData());
+        CollidableData &newObstructionData = td.obstructionData.back();
+        GetLuaIntFromTable(L, "layer", newObstructionData.layer);
+        GetTableOnStackFromTable(L, "rays");
         lua_pushnil(L);
         while (lua_next(L, -2)) {
-            td.obstructionData.push_back(CollidableData());
-            CollidableData &newObstructionData = td.obstructionData.back();
-            GetLuaIntFromTable(L, "layer", newObstructionData.layer);
-            GetTableOnStackFromTable(L, "rays");
-            lua_pushnil(L);
-            while (lua_next(L, -2)) {
-                newObstructionData.rays.push_back(Ray());
-                Ray& newRay = newObstructionData.rays.back();
-                GetLuaIntFromTable(L, "aX", newRay.a.x);
-                GetLuaIntFromTable(L, "aY", newRay.a.y);
-                GetLuaIntFromTable(L, "bX", newRay.b.x);
-                GetLuaIntFromTable(L, "bY", newRay.b.y);
-                lua_pop(L, 1);
-            }
-            lua_pop(L, 2);
+            newObstructionData.rays.push_back(Ray());
+            Ray& newRay = newObstructionData.rays.back();
+            GetLuaIntFromTable(L, "aX", newRay.a.x);
+            GetLuaIntFromTable(L, "aY", newRay.a.y);
+            GetLuaIntFromTable(L, "bX", newRay.b.x);
+            GetLuaIntFromTable(L, "bY", newRay.b.y);
+            lua_pop(L, 1);
+        }
+        lua_pop(L, 2);
+    }
+    lua_pop(L, 1);
+
+    RealThing* newThing = addThing(td);
+
+    if (GetTableOnStackFromTable(L, "subThings")) {
+        lua_pushnil(L);
+        while (lua_next(L, -2)) {
+            RealThing* subThing = buildThingFromTable();
+            subThing->isSub = true;
+            subThing->position.x += td.x;
+            subThing->position.y += td.y;
+            newThing->subThings.push_back(subThing);
         }
         lua_pop(L, 1);
     }
-    RealThing* newThing = addThing(td);
+
     if (GetTableOnStackFromTable(L, "components")) {
         newThing->addComponentsFromTable();
     }
+
     lua_pop(L, 1);
     return newThing;
 }

@@ -117,9 +117,7 @@ end
 --     IDEAS FOR FUTURE OF EDITOR AND DATA STORAGE:
 --     in thing editor you can build a thing, then export it as a lua table
 
---     all the thing definitions live in setup.lua or equivalent
-
-local customThings = {
+local thingDefs = {
     otherZinnia = {
         name = "otherZinnia",
         spriteDataVector = {
@@ -235,7 +233,139 @@ local customThings = {
                 customCoroutine = zinniaTalkB
             }
         }
-    }
+    },
+    sailorShack = {
+        name = "Sailor Shack",
+        spriteDataVector = {
+            {
+                xOffset = -145,
+                height = 117,
+                layer = 0,
+                textureName = "sailorshack",
+                renderOffset = 0,
+                width = 291,
+                yOffset = -117,
+                sourceX = 0,
+                sourceY = 0
+            },
+            {
+                xOffset = 146,
+                height = 183,
+                layer = 0,
+                textureName = "sailorshack",
+                renderOffset = 33,
+                width = 33,
+                yOffset = -181,
+                sourceX = 324,
+                sourceY = 57
+            },
+            {
+                xOffset = -145,
+                height = 97,
+                layer = 2,
+                textureName = "sailorshack",
+                renderOffset = 0,
+                width = 324,
+                yOffset = -214,
+                sourceX = 0,
+                sourceY = 143
+            },
+            {
+                xOffset = -138,
+                height = 26,
+                layer = 1,
+                textureName = "sailorshack",
+                renderOffset = 0,
+                width = 309,
+                yOffset = -214,
+                sourceX = 0,
+                sourceY = 117
+            },
+            {
+                xOffset = -69,
+                height = 57,
+                layer = 2,
+                textureName = "sailorshack",
+                renderOffset = 0,
+                width = 55,
+                yOffset = -250,
+                sourceX = 291,
+                sourceY = 0
+            },
+            {
+                xOffset = 85,
+                height = 21,
+                layer = 2,
+                textureName = "sailorshack",
+                renderOffset = 0,
+                width = 29,
+                yOffset = -215,
+                sourceX = 291,
+                sourceY = 58
+            }
+        },
+        obstructionData = {
+            {
+                rays = {
+                    {aX = -106, aY = -206, bY = -168, bX = -144},
+                    {aX = 165, aY = -206, bY = -169, bX = 128},
+                    {aX = 127, aY = -168, bY = -168, bX = -143},
+                    {aX = -106, aY = -206, bY = -206, bX = 165}
+                },
+                layer = 2
+            },
+            {
+                rays = {
+                    {aX = 144, aY = -1, bY = -1, bX = 29},
+                    {aX = 146, aY = -1, bY = -33, bX = 178},
+                    {aX = -144, aY = -1, bY = -32, bX = -113},
+                    {aX = -113, aY = -32, bY = -32, bX = 176},
+                    {aX = -29, aY = -1, bY = -1, bX = -144}
+                },
+                layer = 0
+            }
+        },
+        subThings = {
+            {
+                name = "genrlStore",
+                spriteDataVector = {
+                    {
+                        xOffset = -119,
+                        height = 145,
+                        layer = 0,
+                        textureName = "genrl",
+                        renderOffset = 0,
+                        width = 236,
+                        yOffset = -145,
+                        sourceX = 0,
+                        sourceY = 0
+                    }
+                },
+                obstructionData = {
+                    {rays = {{aX = -11, aY = -2, bY = -2, bX = -119}, {aX = 119, aY = -2, bY = -2, bX = 11}}, layer = 0}
+                }
+            }
+        }
+    },
+    genrlStore = {
+        name = "genrlStore",
+        spriteDataVector = {
+            {
+                xOffset = -119,
+                height = 145,
+                layer = 0,
+                textureName = "genrl",
+                renderOffset = 0,
+                width = 236,
+                yOffset = -145,
+                sourceX = 0,
+                sourceY = 0
+            }
+        },
+        obstructionData = {
+            {rays = {{aX = -11, aY = -2, bY = -2, bX = -119}, {aX = 119, aY = -2, bY = -2, bX = 11}}, layer = 0}
+        }
+    },
 }
 
-return { customThings, eventDefinitions }
+return { thingDefs, eventDefinitions }

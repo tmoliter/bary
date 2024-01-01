@@ -2,10 +2,11 @@
 
 RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
     name(tD.name),
-    position(tD.x, tD.y), 
+    position(tD.x, tD.y),
     animator(nullptr),
     move(nullptr),
     things(tL) {
+    origin = position;
     for (auto sd : tD.spriteDataVector)
         AddSprite(sd);
     for (auto cd : tD.obstructionData)
@@ -21,6 +22,7 @@ RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(
         interactables[oldInName] = new Interactable(*oldIn, position, name);
     for (auto const& [oldTrName, oldTr] : oldThing.triggers)
         triggers[oldTrName] = new Trigger(*oldTr, position, name);
+    origin = position;
     parentScene = oldThing.parentScene;
 }
 
@@ -43,6 +45,12 @@ string RealThing::getBaseName() {
     return name.substr(0, i);
 }
 
+vector<RealThing*> RealThing::getSelfAndSubs() {
+    vector<RealThing*> selfAndSubs = subThings;
+    selfAndSubs.push_back(this);
+    return selfAndSubs;
+};
+
 void RealThing::processMove(KeyPresses keysDown) {
     if (move == nullptr || move->disables)
         return;
@@ -52,6 +60,10 @@ void RealThing::processMove(KeyPresses keysDown) {
         move->autoMove(position);
     position.x += move->velocity.x;
     position.y += move->velocity.y;
+    for (auto s : subThings) {
+        s->position.x += move->velocity.x;
+        s->position.y += move->velocity.y;
+    }
 }
 
 void RealThing::processCollisions(map<string, RealThing*>& things) {
@@ -61,7 +73,7 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
         return;
     if (obstructions.count(move->layer) < 1)
         return;
-    Obstruction* ownObstruction = obstructions[move->layer];
+    Obstruction* ownObstruction = obstructions[move->layer]; // Note: does not check for collisions with own subthings when moving, should rectify
     for (auto const& [n, thing] : things) {
         if (thing == this)
             continue;
@@ -80,8 +92,9 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
         //      https://gamedev.stackexchange.com/questions/14369/how-could-you-parallelise-a-2d-boids-simulation
         // Part of both of these solutions might involve splitting things up into more groups, based on
         // static vs. moving (already split) and/or box vs ray colliders.
+        Point adjustment = Point();
         if (move->velocity.x != 0) {
-            position.y -= move->velocity.y;
+            adjustment.y = -move->velocity.y;
             for (auto const& ray : foreignObstruction->rays) {
                 Ray adjustedRay = addPointToRay(*ray, foreignObstruction->parentPos);
                 if(ownObstruction->isColliding(adjustedRay, move->layer)) {
@@ -90,10 +103,10 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
                     break;
                 }
             }
-            position.y += move->velocity.y;
+            adjustment.y += move->velocity.y;
         }
         if (move->velocity.y != 0) {
-            position.x -= move->velocity.x;
+            adjustment.x = -move->velocity.x;
             for (auto const& ray : foreignObstruction->rays) {
                 Ray adjustedRay = addPointToRay(*ray, foreignObstruction->parentPos);
                 if(ownObstruction->isColliding(adjustedRay, move->layer)) {
@@ -102,7 +115,13 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
                     break;
                 }
             }
-            position.x += move->velocity.x;
+            adjustment.x += move->velocity.x;
+        }
+        position.x += adjustment.x;
+        position.y += adjustment.y;
+        for (auto s : subThings) {
+            s->position.x += adjustment.x;
+            s->position.y += adjustment.y;
         }
     }
     return;
@@ -232,6 +251,10 @@ Animator* RealThing::AddAnimator() {
 }
 
 Move* RealThing::AddMove(MoveType type) {
+    if (isSub) {
+        cout << "subThings can't move themselves!" << endl;
+        throw exception();
+    }
     move = new Move(type);
     return move;
 }
@@ -528,7 +551,7 @@ void RealThing::manuallyControl(KeyPresses keysDown) {
 
 RealThingData RealThing::getData() {
     RealThingData td;
-    td.name = name;
+    td.name = getBaseName();
     td.x = position.x;
     td.y = position.y;
     for (auto s : sprites) {
@@ -545,6 +568,63 @@ RealThingData RealThing::getData() {
         }
     }
     return td;
+}
+
+void RealThing::PushThingDataOnStack() {
+    RealThingData td = getData();
+    lua_newtable(L);
+    luaUtils::PushStringToTable(L, "name", td.name);
+    luaUtils::PushIntToTable(L, "x", td.x);
+    luaUtils::PushIntToTable(L, "y", td.y);
+    luaUtils::PushTableToTable(L, "spriteDataVector");
+    for (int j = 0; j < td.spriteDataVector.size(); j++) {
+        if (!luaUtils::PushTableToTable(L, j)) {
+            cout << "Failed!" << endl;
+            continue;
+        };
+        luaUtils::PushIntToTable(L, "layer", td.spriteDataVector[j].layer);
+        luaUtils::PushIntToTable(L, "renderOffset", td.spriteDataVector[j].renderOffset);
+        luaUtils::PushIntToTable(L, "xOffset", td.spriteDataVector[j].xOffset);
+        luaUtils::PushIntToTable(L, "yOffset", td.spriteDataVector[j].yOffset);
+        luaUtils::PushIntToTable(L, "sourceX", td.spriteDataVector[j].sourceX);
+        luaUtils::PushIntToTable(L, "sourceY", td.spriteDataVector[j].sourceY);
+        luaUtils::PushIntToTable(L, "width", td.spriteDataVector[j].width);
+        luaUtils::PushIntToTable(L, "height", td.spriteDataVector[j].height);
+        luaUtils::PushStringToTable(L, "textureName", td.spriteDataVector[j].textureName);
+        lua_pop(L, 1);
+    }
+    lua_pop(L, 1);
+    luaUtils::PushTableToTable(L, "obstructionData");
+    for (int j = 0; j < td.obstructionData.size(); j++) {
+        if (!luaUtils::PushTableToTable(L, j)) {
+            cout << "Failed!" << endl;
+            continue;
+        };
+        luaUtils::PushIntToTable(L, "layer", td.obstructionData[j].layer);
+        luaUtils::PushTableToTable(L, "rays");
+        for (int h = 0; h < td.obstructionData[j].rays.size(); h++) {
+            if (!luaUtils::PushTableToTable(L, h)) {
+                cout << "Failed!" << endl;
+                continue;
+            };
+            luaUtils::PushIntToTable(L, "aX", td.obstructionData[j].rays[h].a.x);
+            luaUtils::PushIntToTable(L, "aY", td.obstructionData[j].rays[h].a.y);
+            luaUtils::PushIntToTable(L, "bX", td.obstructionData[j].rays[h].b.x);
+            luaUtils::PushIntToTable(L, "bY", td.obstructionData[j].rays[h].b.y);
+            lua_pop(L, 1);
+        }
+        lua_pop(L, 2);
+    }
+    lua_pop(L, 1);
+    if (subThings.size() > 0) {
+        luaUtils::PushTableToTable(L, "subThings");
+        for (int j = 0; j < subThings.size(); j++) {
+            lua_pushinteger(L, j);
+            subThings[j]->PushThingDataOnStack();
+            lua_settable(L, -3);
+        }
+        lua_pop(L, 1);
+    }
 }
 
 int RealThing::_getThingData(lua_State* L) {

@@ -60,7 +60,7 @@ void ThingRouter::changeState(ThingRouterState newState) {
             break;
         case ThingRouterState::editOrCreateSub:
             destroyCross();
-            CommandLine::refresh({"edit", "subthings", "free"}, CLIMode::typeCommand);
+            CommandLine::refresh({"edit", "subthings", "free", "print"}, CLIMode::typeCommand);
             break;
         case ThingRouterState::edit:
             createCross();
@@ -121,6 +121,24 @@ int ThingRouter::chooseEditAction(KeyPresses keysDown) {
     }
     if (input == "free") {
         CommandLine::breakdown();
+        return 1;
+    }
+    if (input == "print") {
+        CommandLine::breakdown();
+        lua_State* L = realThing->L;
+        if (!CheckLua(L, luaL_dofile(L, "scripts/save.lua"))) {
+            return 1;
+        }
+        lua_getglobal(L, "printThing");
+        if (!lua_isfunction(L, -1)) {
+            cout << "FAILED TO PRINT! printThing is not a function!" << endl;
+            return 1 ;
+        }
+        realThing->PushThingDataOnStack();
+        lua_pushstring(L, static_cast<Scene*>(realThing->parentScene)->sceneName.c_str());
+        if (!luaUtils::CheckLua(L, lua_pcall(L, 2, 0, 0))) {
+            cout << "FAILED TO PRINT!" << endl;
+        }
         return 1;
     }
     return 0;
