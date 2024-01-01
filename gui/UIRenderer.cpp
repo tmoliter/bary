@@ -66,10 +66,11 @@ bool _compareType (Line* a, Line* b) {
     return false;
 }
 void UIRenderer::renderLines() {
-    sort(u->lines.begin(), u->lines.end(), _compareType);
-    for (auto l : u->lines) {
-        l->render();
-    }
+    // 12-31-23 commenting this out because of a bug in the editor, should investigate later
+    // sort(u->lines.begin(), u->lines.end(), _compareType);
+    // for (auto l : u->lines) {
+    //     l->render();
+    // }
 }
 
 void UIRenderer::render() {

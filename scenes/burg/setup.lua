@@ -86,12 +86,12 @@ local function zinniaTalkB(hostThing, args, eventName)
     coroutine.yield()
     _newTask(
         {
-            {
-                type = "move",
-                thingName = "otherZinnia",
-                offsetX = -300,
-                offsetY = 300
-            },
+            -- {
+            --     type = "move",
+            --     thingName = "otherZinnia",
+            --     offsetX = -300,
+            --     offsetY = 300
+            -- },
             {
                 type = "phrase",
                 text = "poopoo",
@@ -118,9 +118,6 @@ end
 --     in thing editor you can build a thing, then export it as a lua table
 
 --     all the thing definitions live in setup.lua or equivalent
---       - thing tables should include stuff like sprite name or path as well
-    
---     map file that gets saved is then just a list of thingNames and locations
 
 local customThings = {
     otherZinnia = {
@@ -138,8 +135,6 @@ local customThings = {
                 sourceY = 0
             }
         },
-        x = 1000,
-        y = 500,
         obstructionData = {},
         components = {
             {
@@ -160,7 +155,7 @@ local customThings = {
         events = {
             autoMove = {
                 type = "randomAutoMove",
-                variance = 150
+                variance = 100
             },
             -- autoMove = {
             --     type = "custom",

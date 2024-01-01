@@ -35,6 +35,14 @@ RealThing::~RealThing() {
         delete tr;
 };
 
+string RealThing::getBaseName() {
+    int i;
+    for (i = 0; i < name.length(); i++)
+        if (isdigit(name[i]))
+            break;
+    return name.substr(0, i);
+}
+
 void RealThing::processMove(KeyPresses keysDown) {
     if (move == nullptr || move->disables)
         return;
@@ -172,7 +180,7 @@ void RealThing::addComponentsFromTable() {
             loadLuaFunc("beginEvent");
             lua_newtable(L);
             luaUtils::PushStringToTable(L, "eventName", "autoMove");
-            luaUtils::PushStringToTable(L, "thingName", name);
+            luaUtils::PushStringToTable(L, "thingName", getBaseName());
             luaUtils::PushIntToTable(L, "originX", position.x);
             luaUtils::PushIntToTable(L, "originY", position.y);
             callLuaFunc(1, 0, 0);
@@ -352,7 +360,7 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
                         loadLuaFunc("beginEvent");
                         lua_newtable(L);
                         luaUtils::PushStringToTable(L, "eventName", eventName);
-                        luaUtils::PushStringToTable(L, "thingName", name);
+                        luaUtils::PushStringToTable(L, "thingName", getBaseName());
                         callLuaFunc(1, 0, 0);
                     }
                     return 1;
@@ -366,7 +374,7 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
                         loadLuaFunc("beginEvent");
                         lua_newtable(L);
                         luaUtils::PushStringToTable(L, "eventName", eventName);
-                        luaUtils::PushStringToTable(L, "thingName", name);
+                        luaUtils::PushStringToTable(L, "thingName", getBaseName());
                         callLuaFunc(1, 0, 0);
                     }
                     return 1;

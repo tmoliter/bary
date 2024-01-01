@@ -41,6 +41,9 @@ void MapBuilder::changeState(EditorState newState) {
             helpText->setText("Play");
             currentThing = scene->addThing(RealThingData(dotThing->position, "test player", "zinnia"), ThingType::fieldPlayer);
             // FOLLOW TESTING
+            scene->spawn("otherZinnia", Point(600, 700));
+            scene->spawn("otherZinnia", Point(300, 500));
+            scene->spawn("otherZinnia", Point(400, 600));
             followThing = scene->addThing(RealThingData(Point(currentThing->position.x + 20, currentThing->position.y + 20), "followZinnia", "zinnia"));
             followThing->AddAnimator();
             followThing->AddMove(MoveType::follow);
