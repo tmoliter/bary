@@ -154,8 +154,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
 
 void MapBuilder::save() {
     vector<RealThingData> allThingData = Scene::currentScene->getAllThingData();
-    lua_State* L = luaL_newstate();
-    luaL_openlibs(L);
+    lua_State* L = scene->L;
 
     if (!CheckLua(L, luaL_dofile(L, "scripts/save.lua"))) {
         return;

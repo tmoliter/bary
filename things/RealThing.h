@@ -116,7 +116,7 @@ struct RealThing : public Host {
     vector<string> findAndShowTriggerLines(string beginning);
 
 
-
+    void PushThingDataOnStack();
     RealThingData getData();
 
     virtual RealThing* copyInPlace();

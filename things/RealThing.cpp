@@ -558,6 +558,63 @@ RealThingData RealThing::getData() {
     return td;
 }
 
+void RealThing::PushThingDataOnStack() {
+    RealThingData td = getData();
+    lua_newtable(L);
+    luaUtils::PushStringToTable(L, "name", td.name);
+    luaUtils::PushIntToTable(L, "x", td.x);
+    luaUtils::PushIntToTable(L, "y", td.y);
+    luaUtils::PushTableToTable(L, "spriteDataVector");
+    for (int j = 0; j < td.spriteDataVector.size(); j++) {
+        if (!luaUtils::PushTableToTable(L, j)) {
+            cout << "Failed!" << endl;
+            continue;
+        };
+        luaUtils::PushIntToTable(L, "layer", td.spriteDataVector[j].layer);
+        luaUtils::PushIntToTable(L, "renderOffset", td.spriteDataVector[j].renderOffset);
+        luaUtils::PushIntToTable(L, "xOffset", td.spriteDataVector[j].xOffset);
+        luaUtils::PushIntToTable(L, "yOffset", td.spriteDataVector[j].yOffset);
+        luaUtils::PushIntToTable(L, "sourceX", td.spriteDataVector[j].sourceX);
+        luaUtils::PushIntToTable(L, "sourceY", td.spriteDataVector[j].sourceY);
+        luaUtils::PushIntToTable(L, "width", td.spriteDataVector[j].width);
+        luaUtils::PushIntToTable(L, "height", td.spriteDataVector[j].height);
+        luaUtils::PushStringToTable(L, "textureName", td.spriteDataVector[j].textureName);
+        lua_pop(L, 1);
+    }
+    lua_pop(L, 1);
+    luaUtils::PushTableToTable(L, "obstructionData");
+    for (int j = 0; j < td.obstructionData.size(); j++) {
+        if (!luaUtils::PushTableToTable(L, j)) {
+            cout << "Failed!" << endl;
+            continue;
+        };
+        luaUtils::PushIntToTable(L, "layer", td.obstructionData[j].layer);
+        luaUtils::PushTableToTable(L, "rays");
+        for (int h = 0; h < td.obstructionData[j].rays.size(); h++) {
+            if (!luaUtils::PushTableToTable(L, h)) {
+                cout << "Failed!" << endl;
+                continue;
+            };
+            luaUtils::PushIntToTable(L, "aX", td.obstructionData[j].rays[h].a.x);
+            luaUtils::PushIntToTable(L, "aY", td.obstructionData[j].rays[h].a.y);
+            luaUtils::PushIntToTable(L, "bX", td.obstructionData[j].rays[h].b.x);
+            luaUtils::PushIntToTable(L, "bY", td.obstructionData[j].rays[h].b.y);
+            lua_pop(L, 1);
+        }
+        lua_pop(L, 2);
+    }
+    lua_pop(L, 1);
+    if (subThings.size() > 0) {
+        luaUtils::PushTableToTable(L, "subThings");
+        for (int j = 0; j < subThings.size(); j++) {
+            lua_pushinteger(L, j);
+            subThings[j]->PushThingDataOnStack();
+            lua_settable(L, -3);
+        }
+        lua_pop(L, 1);
+    }
+}
+
 int RealThing::_getThingData(lua_State* L) {
     if(!lua_islightuserdata(L, -1))
         luaUtils::ThrowLua(L,  "first param to _getThingData is not a host Thing!" );
