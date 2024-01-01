@@ -1,6 +1,6 @@
 return { 
     backgroundPath = "./assets/backgrounds/Burg.png", 
-    allThings = { 
+    things = { 
         {
             name = "otherZinnia",
             x = 1000,

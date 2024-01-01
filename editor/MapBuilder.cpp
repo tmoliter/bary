@@ -166,7 +166,7 @@ void MapBuilder::save() {
         return;
     }
     lua_newtable(L);
-    PushTableToTable(L, "allThings");
+    PushTableToTable(L, "things");
     for (int i = 0; i < allThingData.size(); i++) {
         PushTableToTable(L, i);
         PushStringToTable(L, "name", allThingData[i].name);

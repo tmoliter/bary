@@ -117,9 +117,7 @@ end
 --     IDEAS FOR FUTURE OF EDITOR AND DATA STORAGE:
 --     in thing editor you can build a thing, then export it as a lua table
 
---     all the thing definitions live in setup.lua or equivalent
-
-local customThings = {
+local thingDefs = {
     otherZinnia = {
         name = "otherZinnia",
         spriteDataVector = {
@@ -349,4 +347,4 @@ local customThings = {
     },
 }
 
-return { customThings, eventDefinitions }
+return { thingDefs, eventDefinitions }

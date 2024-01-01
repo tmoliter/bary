@@ -64,8 +64,8 @@ local function resumeEvent(hostThing, eventName)
     return 1
 end
 
-local function populateDefinitions(allThings, definitions)
-    for _,thing in pairs(allThings) do
+local function populateDefinitions(things, definitions)
+    for _,thing in pairs(things) do
         eventDefinitions[thing["name"]] = thing["events"]
     end
 end
