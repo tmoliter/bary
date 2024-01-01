@@ -52,6 +52,10 @@ void RealThing::processMove(KeyPresses keysDown) {
         move->autoMove(position);
     position.x += move->velocity.x;
     position.y += move->velocity.y;
+    for (auto s : subThings) {
+        s->position.x += move->velocity.x;
+        s->position.y += move->velocity.y;
+    }
 }
 
 void RealThing::processCollisions(map<string, RealThing*>& things) {
@@ -80,8 +84,9 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
         //      https://gamedev.stackexchange.com/questions/14369/how-could-you-parallelise-a-2d-boids-simulation
         // Part of both of these solutions might involve splitting things up into more groups, based on
         // static vs. moving (already split) and/or box vs ray colliders.
+        Point adjustment = Point();
         if (move->velocity.x != 0) {
-            position.y -= move->velocity.y;
+            adjustment.y = -move->velocity.y;
             for (auto const& ray : foreignObstruction->rays) {
                 Ray adjustedRay = addPointToRay(*ray, foreignObstruction->parentPos);
                 if(ownObstruction->isColliding(adjustedRay, move->layer)) {
@@ -90,10 +95,10 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
                     break;
                 }
             }
-            position.y += move->velocity.y;
+            adjustment.y += move->velocity.y;
         }
         if (move->velocity.y != 0) {
-            position.x -= move->velocity.x;
+            adjustment.x = -move->velocity.x;
             for (auto const& ray : foreignObstruction->rays) {
                 Ray adjustedRay = addPointToRay(*ray, foreignObstruction->parentPos);
                 if(ownObstruction->isColliding(adjustedRay, move->layer)) {
@@ -102,7 +107,13 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
                     break;
                 }
             }
-            position.x += move->velocity.x;
+            adjustment.x += move->velocity.x;
+        }
+        position.x += adjustment.x;
+        position.y += adjustment.y;
+        for (auto s : subThings) {
+            s->position.x += adjustment.x;
+            s->position.y += adjustment.y;
         }
     }
     return;
