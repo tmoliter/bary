@@ -15,17 +15,32 @@ local function getDumpString(o)
 end
 
 function dump(t, scene)
+   local dumpString =  getDumpString(t)
    print("Map Data Computed")
    io.output("scenes/" .. scene .. "/map.lua")
-   io.write("return " .. getDumpString(t))
+   io.write("return " .. dumpString)
+   io.flush()
+end
+
+function printMap(things, sceneName)
+   local dumpString = getDumpString(things)
+   local dateString = os.date("%d-%m-%y__%H_%M_%S")
+   local output = "things = " .. dumpString
+   print("Map Data Computed")
+   print(output)
+   io.output("working_files/thingData/" .. sceneName .. "/THINGDUMP-" .. dateString .. ".lua")
+   io.write(output)
    io.flush()
 end
 
 function printThing(thing, sceneName)
    thing["name"] = string.gsub(thing["name"], "%s+", "")
-   local output = thing["name"] .. " = " .. getDumpString(thing)
+
+   local dumpString = getDumpString(thing)
+   local dateString = os.date("%d-%m-%y__%H_%M_%S")
+   local output = thing["name"] .. " = " .. dumpString
    print(output)
-   io.output("scenes/" .. sceneName .. "/tempThings/" .. thing["name"] .. ".lua")
+   io.output("working_files/thingData/" .. sceneName .. "/" .. thing["name"] .. "-" .. dateString .. ".lua")
    io.write(output)
    io.flush()
 end

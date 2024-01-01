@@ -40,11 +40,13 @@ struct RealThingData {
 struct RealThing : public Host {
     string name;
     ThingType type;
+    bool isSub = false;
 
     map<string, RealThing*>& things;
     Host* parentScene;
 
     Point position;
+    Point origin;
     Bounds bounds;
 
     vector<RealThing*> subThings;

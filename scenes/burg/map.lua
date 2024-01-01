@@ -1,1 +1,40 @@
-return {  backgroundPath = "./assets/backgrounds/Burg.png", things = { {  x = 723, spriteDataVector = { {  xOffset = 146, yOffset = -181, height = 183, width = 33, renderOffset = 33, sourceX = 324, layer = 0, sourceY = 57, textureName = "sailorshack",} ,{  xOffset = -145, yOffset = -214, height = 97, width = 324, renderOffset = 0, sourceX = 0, layer = 2, sourceY = 143, textureName = "sailorshack",} ,{  xOffset = -138, yOffset = -214, height = 26, width = 309, renderOffset = 0, sourceX = 0, layer = 1, sourceY = 117, textureName = "sailorshack",} ,{  xOffset = -69, yOffset = -250, height = 57, width = 55, renderOffset = 0, sourceX = 291, layer = 2, sourceY = 0, textureName = "sailorshack",} ,{  xOffset = 85, yOffset = -215, height = 21, width = 29, renderOffset = 0, sourceX = 291, layer = 2, sourceY = 58, textureName = "sailorshack",} ,{  xOffset = -145, yOffset = -117, height = 117, width = 291, renderOffset = 0, sourceX = 0, layer = 0, sourceY = 0, textureName = "sailorshack",} ,} , name = "Sailor Shack", obstructionData = { {  layer = 2, rays = { {  bY = -169, aY = -206, aX = 165, bX = 128,} ,{  bY = -168, aY = -168, aX = 127, bX = -143,} ,{  bY = -206, aY = -206, aX = -106, bX = 165,} ,{  bY = -168, aY = -206, aX = -106, bX = -144,} ,} ,} ,{  layer = 0, rays = { {  bY = -33, aY = -1, aX = 146, bX = 178,} ,{  bY = -32, aY = -1, aX = -144, bX = -113,} ,{  bY = -32, aY = -32, aX = -113, bX = 176,} ,{  bY = -1, aY = -1, aX = -29, bX = -144,} ,{  bY = -1, aY = -1, aX = 144, bX = 29,} ,} ,} ,} , subThings = { {  x = 723, spriteDataVector = { {  xOffset = -119, yOffset = -145, height = 145, width = 236, renderOffset = 0, sourceX = 0, layer = 0, sourceY = 0, textureName = "genrl",} ,} , name = "genrlStore", obstructionData = { {  layer = 0, rays = { {  bY = -2, aY = -2, aX = 119, bX = 11,} ,{  bY = -2, aY = -2, aX = -11, bX = -119,} ,} ,} ,} , y = 1037,} ,} , y = 1037,} ,{  x = 1500, spriteDataVector = { {  xOffset = 146, yOffset = -181, height = 183, width = 33, renderOffset = 33, sourceX = 324, layer = 0, sourceY = 57, textureName = "sailorshack",} ,{  xOffset = -145, yOffset = -214, height = 97, width = 324, renderOffset = 0, sourceX = 0, layer = 2, sourceY = 143, textureName = "sailorshack",} ,{  xOffset = -138, yOffset = -214, height = 26, width = 309, renderOffset = 0, sourceX = 0, layer = 1, sourceY = 117, textureName = "sailorshack",} ,{  xOffset = -69, yOffset = -250, height = 57, width = 55, renderOffset = 0, sourceX = 291, layer = 2, sourceY = 0, textureName = "sailorshack",} ,{  xOffset = 85, yOffset = -215, height = 21, width = 29, renderOffset = 0, sourceX = 291, layer = 2, sourceY = 58, textureName = "sailorshack",} ,{  xOffset = -145, yOffset = -117, height = 117, width = 291, renderOffset = 0, sourceX = 0, layer = 0, sourceY = 0, textureName = "sailorshack",} ,} , name = "Sailor Shack1", obstructionData = { {  layer = 2, rays = { {  bY = -169, aY = -206, aX = 165, bX = 128,} ,{  bY = -168, aY = -168, aX = 127, bX = -143,} ,{  bY = -206, aY = -206, aX = -106, bX = 165,} ,{  bY = -168, aY = -206, aX = -106, bX = -144,} ,} ,} ,{  layer = 0, rays = { {  bY = -33, aY = -1, aX = 146, bX = 178,} ,{  bY = -32, aY = -1, aX = -144, bX = -113,} ,{  bY = -32, aY = -32, aX = -113, bX = 176,} ,{  bY = -1, aY = -1, aX = -29, bX = -144,} ,{  bY = -1, aY = -1, aX = 144, bX = 29,} ,} ,} ,} , subThings = { {  x = 1500, spriteDataVector = { {  xOffset = -119, yOffset = -145, height = 145, width = 236, renderOffset = 0, sourceX = 0, layer = 0, sourceY = 0, textureName = "genrl",} ,} , name = "genrlStore1", obstructionData = { {  layer = 0, rays = { {  bY = -2, aY = -2, aX = 119, bX = 11,} ,{  bY = -2, aY = -2, aX = -11, bX = -119,} ,} ,} ,} , y = 1037,} ,} , y = 1037,} ,{  x = 723, spriteDataVector = { {  xOffset = -119, yOffset = -145, height = 145, width = 236, renderOffset = 0, sourceX = 0, layer = 0, sourceY = 0, textureName = "genrl",} ,} , name = "genrlStore", obstructionData = { {  layer = 0, rays = { {  bY = -2, aY = -2, aX = 119, bX = 11,} ,{  bY = -2, aY = -2, aX = -11, bX = -119,} ,} ,} ,} , y = 1037,} ,{  x = 1500, spriteDataVector = { {  xOffset = -119, yOffset = -145, height = 145, width = 236, renderOffset = 0, sourceX = 0, layer = 0, sourceY = 0, textureName = "genrl",} ,} , name = "genrlStore1", obstructionData = { {  layer = 0, rays = { {  bY = -2, aY = -2, aX = 119, bX = 11,} ,{  bY = -2, aY = -2, aX = -11, bX = -119,} ,} ,} ,} , y = 1037,} ,{  x = 621, spriteDataVector = { {  xOffset = -119, yOffset = -145, height = 145, width = 236, renderOffset = 0, sourceX = 0, layer = 0, sourceY = 0, textureName = "genrl",} ,} , name = "genrlStore2", obstructionData = { {  layer = 0, rays = { {  bY = -2, aY = -2, aX = 119, bX = 11,} ,{  bY = -2, aY = -2, aX = -11, bX = -119,} ,} ,} ,} , y = 510,} ,{  x = 968, spriteDataVector = { {  xOffset = -17, yOffset = -32, height = 32, width = 32, renderOffset = 0, sourceX = 128, layer = 0, sourceY = 32, textureName = "zinnia",} ,} , name = "otherZinnia", obstructionData = { {  layer = 0, rays = { {  bY = -6, aY = 0, aX = -8, bX = -8,} ,{  bY = -6, aY = -6, aX = -8, bX = 6,} ,{  bY = 0, aY = -6, aX = 6, bX = 6,} ,{  bY = 0, aY = 0, aX = 6, bX = -8,} ,} ,} ,} , y = 486,} ,{  x = 503, spriteDataVector = { {  xOffset = -17, yOffset = -32, height = 32, width = 32, renderOffset = 0, sourceX = 0, layer = 0, sourceY = 0, textureName = "zinnia",} ,} , name = "otherZinnia1", obstructionData = { {  layer = 0, rays = { {  bY = -6, aY = 0, aX = -8, bX = -8,} ,{  bY = -6, aY = -6, aX = -8, bX = 6,} ,{  bY = 0, aY = -6, aX = 6, bX = 6,} ,{  bY = 0, aY = 0, aX = 6, bX = -8,} ,} ,} ,} , y = 507,} ,{  x = 701, spriteDataVector = { {  xOffset = -17, yOffset = -32, height = 32, width = 32, renderOffset = 0, sourceX = 0, layer = 0, sourceY = 0, textureName = "zinnia",} ,} , name = "otherZinnia2", obstructionData = { {  layer = 0, rays = { {  bY = -6, aY = 0, aX = -8, bX = -8,} ,{  bY = -6, aY = -6, aX = -8, bX = 6,} ,{  bY = 0, aY = -6, aX = 6, bX = 6,} ,{  bY = 0, aY = 0, aX = 6, bX = -8,} ,} ,} ,} , y = 507,} ,{  x = 740, spriteDataVector = { {  xOffset = -17, yOffset = -32, height = 32, width = 32, renderOffset = 0, sourceX = 0, layer = 0, sourceY = 32, textureName = "zinnia",} ,} , name = "otherZinnia3", obstructionData = { {  layer = 0, rays = { {  bY = -6, aY = 0, aX = -8, bX = -8,} ,{  bY = -6, aY = -6, aX = -8, bX = 6,} ,{  bY = 0, aY = -6, aX = 6, bX = 6,} ,{  bY = 0, aY = 0, aX = 6, bX = -8,} ,} ,} ,} , y = 514,} ,{  x = 708, spriteDataVector = { {  xOffset = 0, yOffset = 0, height = 1, width = 1, renderOffset = 0, sourceX = 0, layer = 0, sourceY = 0, textureName = "singlepixel",} ,} , name = "EditorDot", obstructionData = { } , y = 711,} ,} ,} 
+return {
+	things = {
+		{
+			x = 1500,
+			y = 1037,
+			name = "SailorShack"
+		},
+		{
+			x = 621,
+			y = 510,
+			name = "genrlStore"
+		},
+		{
+			x = 1000,
+			y = 500,
+			name = "otherZinnia"
+		},
+		{
+			x = 555,
+			y = 500,
+			name = "otherZinnia"
+		},
+		{
+			x = 694,
+			y = 500,
+			name = "otherZinnia"
+		},
+		{
+			x = 800,
+			y = 500,
+			name = "otherZinnia"
+		},
+		{
+			x = 723,
+			y = 1037,
+			name = "SailorShack"
+		}
+	},
+	backgroundPath = "./assets/backgrounds/Burg.png"
+};

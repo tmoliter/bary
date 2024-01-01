@@ -2,10 +2,11 @@
 
 RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
     name(tD.name),
-    position(tD.x, tD.y), 
+    position(tD.x, tD.y),
     animator(nullptr),
     move(nullptr),
     things(tL) {
+    origin = position;
     for (auto sd : tD.spriteDataVector)
         AddSprite(sd);
     for (auto cd : tD.obstructionData)
@@ -21,6 +22,7 @@ RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(
         interactables[oldInName] = new Interactable(*oldIn, position, name);
     for (auto const& [oldTrName, oldTr] : oldThing.triggers)
         triggers[oldTrName] = new Trigger(*oldTr, position, name);
+    origin = position;
     parentScene = oldThing.parentScene;
 }
 
@@ -539,7 +541,7 @@ void RealThing::manuallyControl(KeyPresses keysDown) {
 
 RealThingData RealThing::getData() {
     RealThingData td;
-    td.name = name;
+    td.name = getBaseName();
     td.x = position.x;
     td.y = position.y;
     for (auto s : sprites) {

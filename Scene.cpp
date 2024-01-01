@@ -34,6 +34,7 @@ void Scene::EnterLoaded(RealThing* focus) {
 }
 
 string Scene::getNewThingName(string name) {
+    name.erase(std::remove_if(name.begin(), name.end(), ::isspace), name.end()); // remove whitespace
     int i;
     for (i = 0; i < name.length(); i++)
         if (isdigit(name[i]))
@@ -277,6 +278,7 @@ RealThing* Scene::buildThingFromTable() {
         lua_pushnil(L);
         while (lua_next(L, -2)) {
             RealThing* subThing = buildThingFromTable();
+            subThing->isSub = true;
             subThing->position.x += td.x;
             subThing->position.y += td.y;
             newThing->subThings.push_back(subThing);

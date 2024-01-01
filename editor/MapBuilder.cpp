@@ -48,7 +48,7 @@ void MapBuilder::changeState(EditorState newState) {
             break;
         case EditorState::commandInput:
             helpText->setText("");
-            CommandLine::refresh({"play", "new thing", "free", "save"}, CLIMode::typeCommand);
+            CommandLine::refresh({"play", "new thing", "free", "save", "print things"}, CLIMode::typeCommand);
             state = EditorState::commandInput;
             break;
         case EditorState::thingEdit:
@@ -141,6 +141,11 @@ void MapBuilder::meat(KeyPresses keysDown) {
             changeState(EditorState::freeMove);
             return;
         }
+        if (input == "print things") {
+            print();
+            changeState(EditorState::freeMove);
+            return;
+        }
     }
 
     if(state == EditorState::thingEdit) {
@@ -168,13 +173,49 @@ void MapBuilder::save() {
     PushTableToTable(L, "things");
     int thingIndex = 0;
     for (auto const& [i, t] : scene->things) {
-        lua_pushinteger(L, thingIndex);
+        if (t->isSub)
+            continue;
+        if (t->name == "EditorDot")
+            continue;
+        PushTableToTable(L, thingIndex);
+        PushIntToTable(L, "x", t->origin.x);
+        PushIntToTable(L, "y", t->origin.y);
+        PushStringToTable(L, "name", t->getBaseName());
+        thingIndex += 1;
+        lua_pop(L, 1);
+    }
+    lua_pop(L, 1);
+    PushStringToTable(L, "backgroundPath", Camera::c->path);
+    lua_pushstring(L, Scene::currentScene->sceneName.c_str());
+    if (CheckLua(L, lua_pcall(L, 2, 0, 0))) {
+        cout << "SAVED" << endl;
+    }
+}
+
+void MapBuilder::print() {
+    vector<RealThingData> allThingData = Scene::currentScene->getAllThingData();
+    lua_State* L = scene->L;
+
+    if (!CheckLua(L, luaL_dofile(L, "scripts/save.lua"))) {
+        return;
+    }
+    lua_getglobal(L, "printMap");
+    if (!lua_isfunction(L, -1)) {
+        cout << "FAILED TO SAVE! save is not a function!" << endl;
+        return;
+    }
+    lua_newtable(L);
+    int thingIndex = 0;
+    for (auto const& [i, t] : scene->things) {
+        if (t->isSub)
+            continue;
+        if (t->name == "EditorDot")
+            continue;
+        lua_pushstring(L, t->getBaseName().c_str());
         t->PushThingDataOnStack();
         lua_settable(L, -3);
         thingIndex += 1;
     }
-    lua_pop(L, 1);
-    PushStringToTable(L, "backgroundPath", Camera::c->path);
     lua_pushstring(L, Scene::currentScene->sceneName.c_str());
     if (CheckLua(L, lua_pcall(L, 2, 0, 0))) {
         cout << "SAVED" << endl;
