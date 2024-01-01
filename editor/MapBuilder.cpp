@@ -41,15 +41,7 @@ void MapBuilder::changeState(EditorState newState) {
             helpText->setText("Play");
             currentThing = scene->addThing(RealThingData(dotThing->position, "test player", "zinnia"), ThingType::fieldPlayer);
             // FOLLOW TESTING
-            scene->spawn("otherZinnia", Point(600, 700));
-            scene->spawn("otherZinnia", Point(300, 500));
-            scene->spawn("otherZinnia", Point(400, 600));
-            followThing = scene->addThing(RealThingData(Point(currentThing->position.x + 20, currentThing->position.y + 20), "followZinnia", "zinnia"));
-            followThing->AddAnimator();
-            followThing->AddMove(MoveType::follow);
-            followThing->AddStandardCollision({"fz_1", "fz_2"});
-            followThing->move->leader = &currentThing->position;
-            followThing->move->tolerance = 40;
+            followThing = scene->spawn("followZinnia", Point(currentThing->position.x + 20, currentThing->position.y + 20));
             // END FOLLOW TESTING
             FocusTracker::ftracker->setFocus(currentThing);
             state = EditorState::play;

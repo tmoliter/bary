@@ -185,6 +185,13 @@ void RealThing::addComponentsFromTable() {
             luaUtils::PushIntToTable(L, "originY", position.y);
             callLuaFunc(1, 0, 0);
         }
+        if (currentComponent == "follow") {
+            string targetName;
+            AddMove(MoveType::follow);
+            luaUtils::GetLuaIntFromTable(L, "tolerance", move->tolerance);
+            luaUtils::GetLuaStringFromTable(L, "targetName", targetName);
+            move->leader = &things.at(targetName)->position;
+        }
         if (currentComponent == "moveAnimate") {
             AddAnimator();
         }

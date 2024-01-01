@@ -215,13 +215,14 @@ local customThings = {
             {
                 type = "standardCollider",
                 eventNames = {
-                    "talk_1",
-                    "talk_2"
+                    "fz_1",
+                    "fz_2"
                 }
             },
             {
-                type = "autoMove",
-                eventName = "autoMove",
+                type = "follow",
+                targetName = "test player",
+                tolerance = 40
             }
         },
         events = {
