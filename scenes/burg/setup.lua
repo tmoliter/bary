@@ -324,6 +324,27 @@ local thingDefs = {
                 },
                 layer = 0
             }
+        },
+        subThings = {
+            {
+                name = "genrlStore",
+                spriteDataVector = {
+                    {
+                        xOffset = -119,
+                        height = 145,
+                        layer = 0,
+                        textureName = "genrl",
+                        renderOffset = 0,
+                        width = 236,
+                        yOffset = -145,
+                        sourceX = 0,
+                        sourceY = 0
+                    }
+                },
+                obstructionData = {
+                    {rays = {{aX = -11, aY = -2, bY = -2, bX = -119}, {aX = 119, aY = -2, bY = -2, bX = 11}}, layer = 0}
+                }
+            }
         }
     },
     genrlStore = {
