@@ -67,6 +67,11 @@ end
 local function populateDefinitions(things, definitions)
     for _,thing in pairs(things) do
         eventDefinitions[thing["name"]] = thing["events"]
+        if thing["subThings"] ~= nil then
+            for _,subThing in pairs(thing["subThings"]) do
+                eventDefinitions[subThing["name"]] = subThing["events"]
+            end
+        end
     end
 end
 

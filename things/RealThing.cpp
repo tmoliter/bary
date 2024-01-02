@@ -80,6 +80,8 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
         if (thing->obstructions.count(move->layer) < 1)
             continue;
         Obstruction* foreignObstruction = thing->obstructions[move->layer];
+        if (!foreignObstruction->active)
+            continue;
         // NOTE ABOUT PERFORMANCE:
         // With 41 player characters walking around and two static things,
         // this hovers around 2.5ms and sometimes spikes around 6ms. If performance becomes a concern,

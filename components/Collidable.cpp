@@ -72,6 +72,8 @@ void Collidable::hideLines() {
 
 
 bool Collidable::isColliding(Ray &incoming, int incomingLayer) {
+    if (!active)
+        return false;
     if (incomingLayer != layer)
         return false;
     for (auto r : rays) {

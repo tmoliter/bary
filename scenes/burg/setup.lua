@@ -219,7 +219,7 @@ local thingDefs = {
             },
             {
                 type = "follow",
-                targetName = "test player",
+                targetName = "testPlayer",
                 tolerance = 40
             }
         },
@@ -327,24 +327,50 @@ local thingDefs = {
         },
         subThings = {
             {
-                name = "genrlStore",
+                name = "SailorShackDoor",
+                y = -61,
+                x = -27,
                 spriteDataVector = {
                     {
-                        xOffset = -119,
-                        height = 145,
+                        width = 56,
+                        height = 60,
+                        sourceY = 60,
+                        xOffset = 0,
+                        yOffset = 0,
+                        textureName = "sailorshack",
+                        renderOffset = -1,
+                        sourceX = 357,
+                        layer = 0
+                    },
+                    {
+                        width = 56,
+                        height = 60,
+                        sourceY = 0,
+                        xOffset = 0,
+                        yOffset = 0,
+                        textureName = "sailorshack",
+                        renderOffset = -1,
+                        sourceX = 357,
                         layer = 0,
-                        textureName = "genrl",
-                        renderOffset = 0,
-                        width = 236,
-                        yOffset = -145,
-                        sourceX = 0,
-                        sourceY = 0
+                        active = false
                     }
                 },
-                obstructionData = {
-                    {rays = {{aX = -11, aY = -2, bY = -2, bX = -119}, {aX = 119, aY = -2, bY = -2, bX = 11}}, layer = 0}
+                obstructionData = {},
+                components = {
+                    {
+                        type = "standardCollider",
+                        eventNames = {
+                            "open",
+                        }
+                    },
+                },
+                events = {
+                    open = {
+                        type = "openDoor",
+                        -- locked = true
+                    }
                 }
-            }
+            },
         }
     },
     genrlStore = {
@@ -365,7 +391,7 @@ local thingDefs = {
         obstructionData = {
             {rays = {{aX = -11, aY = -2, bY = -2, bX = -119}, {aX = 119, aY = -2, bY = -2, bX = 11}}, layer = 0}
         }
-    },
+    },   
 }
 
 return { thingDefs, eventDefinitions }

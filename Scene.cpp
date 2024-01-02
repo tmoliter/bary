@@ -238,6 +238,8 @@ RealThing* Scene::buildThingFromTable() {
     while (lua_next(L, -2)) {
         td.spriteDataVector.push_back(SpriteData());
         SpriteData &newSpriteData = td.spriteDataVector.back();
+        if (!GetLuaBoolFromTable(L, "active", newSpriteData.active))
+            newSpriteData.active = true;
         GetLuaIntFromTable(L, "height", newSpriteData.height);
         GetLuaIntFromTable(L, "width", newSpriteData.width);
         GetLuaIntFromTable(L, "layer", newSpriteData.layer);
@@ -299,7 +301,7 @@ vector<RealThingData> Scene::getAllThingData() {
     for (auto const& [i, t] : things) {
         if (t->name == "EditorDot")
             continue;
-        if (t->name == "test player")
+        if (t->name == "testPlayer")
             continue;
         allData.push_back(t->getData());
     }

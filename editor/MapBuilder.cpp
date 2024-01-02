@@ -39,7 +39,7 @@ void MapBuilder::changeState(EditorState newState) {
             break;
         case EditorState::play:
             helpText->setText("Play");
-            currentThing = scene->addThing(RealThingData(dotThing->position, "test player", "zinnia"), ThingType::fieldPlayer);
+            currentThing = scene->addThing(RealThingData(dotThing->position, "testPlayer", "zinnia"), ThingType::fieldPlayer);
             // FOLLOW TESTING
             followThing = scene->spawn("followZinnia", Point(currentThing->position.x + 20, currentThing->position.y + 20));
             // END FOLLOW TESTING

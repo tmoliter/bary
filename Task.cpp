@@ -140,6 +140,36 @@ void Task::addSubtasks(lua_State* L) {
             pauseMoves(L);
             instant = true;
         }
+        if (currentType == "setActiveSprites") {
+            // a door should have an active sprite in index 0 and inactive in index 1
+            // this should set the active sprite to 1
+            RealThing* hostThing = static_cast<RealThing*>(host);
+            for (auto s : hostThing->sprites)
+                s->active = false;
+            if (luaUtils::GetTableOnStackFromTable(L, "sprites")) {
+                lua_pushnil(L);
+                while (lua_next(L, -2)) {
+                    if (!lua_isnumber(L, -1)) {
+                        cout << "all list sprite indices should be numbers" << endl;
+                        throw exception();
+                    }
+                    hostThing->sprites[lua_tonumber(L, -1)]->active = true;
+                    lua_pop(L,1);
+                }
+                lua_pop(L,1);
+            }
+            instant = true;
+        }
+        if (currentType == "disableColliders") {
+            RealThing* hostThing = static_cast<RealThing*>(host);
+            for (auto c : hostThing->obstructions)
+                c.second->active = false;
+            for (auto c : hostThing->interactables)
+                c.second->active = false;
+            for (auto c : hostThing->triggers)
+                c.second->active = false;
+            instant = true;
+        }
         if (!instant)
             subtasks.back()->init();
         lua_pop(L,1);
@@ -161,7 +191,6 @@ void Task::pauseMoves(lua_State* L) {
         }
         return;
     }
-
     set<string> thingNames;
     if (luaUtils::CheckLuaTableForBool(L, "hostThing")) {
         thingNames.insert(hostThing->name);
