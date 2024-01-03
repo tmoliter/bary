@@ -272,13 +272,10 @@ RealThing* Scene::buildThingFromTable() {
 
     RealThing* newThing;
     bool isFieldPlayer = CheckLuaTableForBool(L, "fieldPlayer");
-    if (isFieldPlayer) {
+    if (isFieldPlayer)
         newThing = addThing(td, ThingType::fieldPlayer);
-        FocusTracker::ftracker->setFocus(newThing);
-    }
-    else {
+    else
         newThing = addThing(td);
-    }
 
     if (GetTableOnStackFromTable(L, "subThings")) {
         lua_pushnil(L);

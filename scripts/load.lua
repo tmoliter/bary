@@ -3,13 +3,18 @@ function loadGame(saveFile)
     print("LOAD GAME")
     local gameState = require('state.gameState')
     local saveData = require("saves." .. saveFile)
+    gameState["spawn"] = deepcopy(saveData["spawn"])
     gameState["scenes"] = deepcopy(saveData["scenes"])
-    return saveData["spawn"]["scene"] -- should return all of spawn here
+    print("HEY #1")
+    print(gameState["spawn"])
+    return saveData["spawn"] -- should return all of spawn here
 end
 
 function loadScene(host, sceneName, isEditing)
     local setup = require('scenes.' .. sceneName .. '.setup')
     local gameState = require('state.gameState')
+    print("HEY #2")
+    print(gameState["spawn"])
     local eventModule = require("scripts.event")
     local populateDefinitions
     beginEvent, resumeEvent, populateDefinitions = table.unpack(eventModule)

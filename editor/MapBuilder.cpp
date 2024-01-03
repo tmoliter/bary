@@ -14,7 +14,6 @@ MapBuilder::MapBuilder(string sceneName, lua_State* L) : selectedSprite(-1) {
     scene->Load(true);
     currentThing = dotThing = scene->addThing(RealThingData(Point(600,600), "EditorDot"));
     scene->EnterLoaded(currentThing);
-    FocusTracker::ftracker->setFocus(currentThing);
 
     CommandLine::init();
 

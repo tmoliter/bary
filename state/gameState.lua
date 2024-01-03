@@ -1,8 +1,9 @@
 local gameState = {
-    scenes = {},
-    quests = {},
-    inventory = {},
-    status = {}
+    -- spawn = {},
+    -- scenes = {},
+    -- quests = {},
+    -- inventory = {},
+    -- status = {}
 }
 
 return gameState

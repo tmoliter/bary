@@ -133,6 +133,7 @@ local thingDefs = {
                 sourceY = 0
             }
         },
+        obstructionData = {},
         fieldPlayer = true
     },
     otherZinnia = {

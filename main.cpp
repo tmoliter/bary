@@ -74,11 +74,20 @@ int main(int argc, char* args[]) {
                     men = nullptr;
                     MapBuilder *m = new MapBuilder("burg", L);
                 } else {
+                    UIRenderer::removeMenuDisplay(men);
+                    men = nullptr;
                     lua_getglobal(L, "loadGame");
                     lua_pushstring(L, selection.c_str());
-                    if(!luaUtils::CheckLua(L, lua_pcall(L, 1, 0, 0)))
+                    if(!luaUtils::CheckLua(L, lua_pcall(L, 1, 1, 0)))
                         throw exception();
-                    
+                    string sceneName;
+                    string spawnName;
+                    luaUtils::GetLuaStringFromTable(L, "scene", sceneName);
+                    luaUtils::GetLuaStringFromTable(L, "name", spawnName);
+                    Scene* scene = new Scene(sceneName, L);
+                    scene->Load(false);
+                    scene->EnterLoaded(scene->things[spawnName]);
+                    lua_settop(L, 0);
                 }
             }
             SDL_RenderClear(renderer);
