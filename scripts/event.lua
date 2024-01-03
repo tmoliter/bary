@@ -64,7 +64,7 @@ local function resumeEvent(hostThing, eventName)
     return 1
 end
 
-local function populateDefinitions(things, definitions)
+local function populateDefinitions(things)
     for _,thing in pairs(things) do
         eventDefinitions[thing["name"]] = thing["events"]
         if thing["subThings"] ~= nil then

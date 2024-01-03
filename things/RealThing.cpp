@@ -393,6 +393,7 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
                         lua_newtable(L);
                         luaUtils::PushStringToTable(L, "eventName", eventName);
                         luaUtils::PushStringToTable(L, "thingName", getBaseName());
+                        luaUtils::PushStringToTable(L, "collisionType", "interactable");
                         callLuaFunc(1, 0, 0);
                     }
                     return 1;
@@ -407,6 +408,7 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
                         lua_newtable(L);
                         luaUtils::PushStringToTable(L, "eventName", eventName);
                         luaUtils::PushStringToTable(L, "thingName", getBaseName());
+                        luaUtils::PushStringToTable(L, "collisionType", "trigger");
                         callLuaFunc(1, 0, 0);
                     }
                     return 1;

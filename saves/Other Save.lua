@@ -2,9 +2,8 @@ return {
     spawn = {
         name = "playerZinnia",
         scene = "burg",
-        x = 20,
-        y = 20,
-        scale = 2
+        x = 200,
+        y = 200
     },
     scenes = {
         burg = { 
@@ -12,11 +11,21 @@ return {
             things = { 
                 {
                     name = "otherZinnia",
-                    x = 500,
-                    y = 500
+                    x = 1200,
+                    y = 800
                 },
                 {
-                    name = "sailorShack",
+                    name = "genrlStore",
+                    x = 723,
+                    y = 800,
+                },
+                {
+                    name = "genrlStore",
+                    x = 1500,
+                    y = 800,
+                },
+                {
+                    name = "genrlStore",
                     x = 621,
                     y = 510,
                 }

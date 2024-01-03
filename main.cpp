@@ -26,11 +26,12 @@ int main(int argc, char* args[]) {
     /* END MENU TESTING*/
 
     string sceneName = "";
-    vector<Option> startOptions = { Option("Editor") };
+    vector<Option> startOptions = { Option("Editor", "Open Map Editor") };
     for (auto saveName : saveNames)
-        startOptions.push_back(Option(saveName));
+        startOptions.push_back(Option(saveName, "Load Save File"));
     men = new MenuDisplay(startOptions, Point(64, 100), 340, 60, 2);
     men->addBox("pinkbox", {0, 0, 340, 120});
+    men->addFlavorBox("pinkinventoryfooter", {0, 0, 340, 80});
     UIRenderer::addMenuDisplay(men);
 
     while (true){
@@ -68,7 +69,6 @@ int main(int argc, char* args[]) {
         if (men != nullptr) {
             string selection = men->getCurrentSelection().selectionText;
             if (men->processInput(keysDown, selection)) {
-                cout << selection << endl;
                 if (selection == "Editor") {
                     UIRenderer::removeMenuDisplay(men);
                     men = nullptr;
@@ -84,10 +84,12 @@ int main(int argc, char* args[]) {
                     string spawnName;
                     luaUtils::GetLuaStringFromTable(L, "scene", sceneName);
                     luaUtils::GetLuaStringFromTable(L, "name", spawnName);
+                    luaUtils::GetLuaIntFromTable(L, "scale", settings.SCALE);
                     Scene* scene = new Scene(sceneName, L);
                     scene->Load(false);
                     scene->EnterLoaded(scene->things[spawnName]);
                     lua_settop(L, 0);
+                    gameState = GameState::FieldFree;
                 }
             }
             SDL_RenderClear(renderer);

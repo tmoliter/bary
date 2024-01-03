@@ -47,21 +47,23 @@ local function openDoor(hostThing, args, eventName)
     -- in args we can define what is needed, if anything, to unlock the door, and
     -- in this function we will check inventory or quest status etc
     if (args["locked"]) then
-        local phrase = args["lockedPhrase"] or {
-            type = "phrase",
-            text = "Locked.",
-            x = 300,
-            y = 150,
-            width = 100,
-            height = 30,
-            scrollType = "continuous",
-            gridLimitsX = 1000,
-            gridLimitsY = 1000,
-            blocking = true
-        }
-        _newTask(
-            { phrase }, eventName, hostThing
-        )
+        if args["collisionType"] == "interactable" then
+            local phrase = args["lockedPhrase"] or {
+                type = "phrase",
+                text = "Locked.",
+                x = 300,
+                y = 150,
+                width = 100,
+                height = 30,
+                scrollType = "continuous",
+                gridLimitsX = 1000,
+                gridLimitsY = 1000,
+                blocking = true
+            }
+            _newTask(
+                { phrase }, eventName, hostThing
+            )
+        end
         return
     end
     _newTask({

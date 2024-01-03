@@ -412,4 +412,4 @@ local thingDefs = {
     },   
 }
 
-return { thingDefs, eventDefinitions }
+return { thingDefs }
