@@ -1,9 +1,7 @@
 #include "Scene.h"
 
-Scene::Scene(string sceneName) : sceneName(sceneName) {
-    L = luaL_newstate();
-    luaL_openlibs(L);
-
+Scene::Scene(string sceneName, lua_State *L) : sceneName(sceneName) {
+    this->L = L;
     lua_register(L, "_loadScene", _loadScene);
     lua_register(L, "_createThing", _createThing);
     lua_register(L, "_newTask", _newTask);
@@ -12,16 +10,14 @@ Scene::Scene(string sceneName) : sceneName(sceneName) {
 
 Scene::~Scene() {
     destroyAllThings();
-    lua_close(L);
 }
 
-void Scene::Load() {
+void Scene::Load(bool isEditing) {
     cout << "Loading scene..." << endl;
-    if (!CheckLua(L, luaL_dofile(L, "scripts/load.lua")))
-        throw exception();
     loadLuaFunc("loadScene");
     lua_pushstring(L, sceneName.c_str());
-    callLuaFunc(1, 0, 0);
+    lua_pushboolean(L, isEditing);
+    callLuaFunc(2, 0, 0);
 }
 
 void Scene::EnterLoaded(RealThing* focus) {
@@ -274,7 +270,15 @@ RealThing* Scene::buildThingFromTable() {
     }
     lua_pop(L, 1);
 
-    RealThing* newThing = addThing(td);
+    RealThing* newThing;
+    bool isFieldPlayer = CheckLuaTableForBool(L, "fieldPlayer");
+    if (isFieldPlayer) {
+        newThing = addThing(td, ThingType::fieldPlayer);
+        FocusTracker::ftracker->setFocus(newThing);
+    }
+    else {
+        newThing = addThing(td);
+    }
 
     if (GetTableOnStackFromTable(L, "subThings")) {
         lua_pushnil(L);

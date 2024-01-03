@@ -17,7 +17,7 @@ enum class EditorState {
 
 class MapBuilder {
     public:
-        MapBuilder(string sceneName);
+        MapBuilder(string sceneName, lua_State *L);
 
         Scene* scene;
 

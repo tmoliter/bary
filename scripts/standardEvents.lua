@@ -76,10 +76,6 @@ local function openDoor(hostThing, args, eventName)
     }, eventName, hostThing)
 end
 
-local function unlockDoor(hostThing, args, eventName)
-
-end
-
 
 
 return {

@@ -73,7 +73,9 @@ void MenuDisplay::clearLists() {
     columns.clear();
 }
 
-void MenuDisplay::processInput(KeyPresses keysDown) {
+bool MenuDisplay::processInput(KeyPresses keysDown, string& selection) {
+    if (keysDown.ok)
+        return true;
     Direction d = Direction::none;
     if(keysDown.debug_up)
         d = Direction::up;
@@ -84,6 +86,9 @@ void MenuDisplay::processInput(KeyPresses keysDown) {
     if(keysDown.debug_right)
         d = Direction::right;
     moveSelection(d);
+    if (d != Direction::none)
+        selection = getCurrentSelection().selectionText;
+    return 0;
 }
 
 void MenuDisplay::moveSelection(Direction direction) {

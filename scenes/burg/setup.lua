@@ -118,6 +118,23 @@ end
 --     in thing editor you can build a thing, then export it as a lua table
 
 local thingDefs = {
+    playerZinnia = {
+        name = "playerZinnia",
+        spriteDataVector = {
+            {
+                xOffset = 0,
+                height = 0,
+                layer = 0,
+                textureName = "zinnia",
+                renderOffset = 0,
+                width = 0,
+                yOffset = 0,
+                sourceX = 0,
+                sourceY = 0
+            }
+        },
+        fieldPlayer = true
+    },
     otherZinnia = {
         name = "otherZinnia",
         spriteDataVector = {

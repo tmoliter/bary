@@ -2,7 +2,7 @@
 
 MapBuilder *MapBuilder::mapBuilder = nullptr;
 
-MapBuilder::MapBuilder(string sceneName) : selectedSprite(-1) {
+MapBuilder::MapBuilder(string sceneName, lua_State* L) : selectedSprite(-1) {
     mapBuilder = this;
     cross = nullptr;
     spriteEditor = nullptr;
@@ -10,8 +10,8 @@ MapBuilder::MapBuilder(string sceneName) : selectedSprite(-1) {
     thingRouter = nullptr;
     followThing = nullptr;
 
-    scene = new Scene(sceneName);
-    scene->Load();
+    scene = new Scene(sceneName, L);
+    scene->Load(true);
     currentThing = dotThing = scene->addThing(RealThingData(Point(600,600), "EditorDot"));
     scene->EnterLoaded(currentThing);
     FocusTracker::ftracker->setFocus(currentThing);

@@ -25,10 +25,10 @@ struct Scene : public Host {
     map<string, RealThing*> things;
     vector<string> thingsToDestroy;
 
-    Scene(string sceneName);
+    Scene(string sceneName, lua_State *L);
     ~Scene();
 
-    void Load();
+    void Load(bool isEditing);
     void EnterLoaded(RealThing* focus);
 
     void meat(KeyPresses keysDown);
