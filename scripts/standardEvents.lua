@@ -66,6 +66,13 @@ local function openDoor(hostThing, args, eventName)
         end
         return
     end
+    if args["collisionType"] == "trigger" then
+        _newTask({{
+            type = "wait",
+            frames = 20
+        }}, eventName, hostThing)
+    end
+    coroutine.yield()
     _newTask({
         {
             type = "setActiveSprites",

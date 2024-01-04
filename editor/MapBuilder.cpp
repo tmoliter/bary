@@ -165,7 +165,7 @@ void MapBuilder::save() {
     }
     lua_getglobal(L, "saveMap");
     if (!lua_isfunction(L, -1)) {
-        cout << "FAILED TO SAVE! save is not a function!" << endl;
+        cout << "FAILED TO SAVE! saveMap is not a function!" << endl;
         return;
     }
     lua_newtable(L);

@@ -217,7 +217,12 @@ void RealThing::addComponentsFromTable() {
             AddAnimator();
         }
         if (currentComponent == "standardCollider") {
+            vector<CollidableType> collidableTypes = {};
             vector<string> eventNames = {};
+            if (luaUtils::CheckLuaTableForBool(L, "trigger"))
+                collidableTypes.push_back(CollidableType::trigger);
+            if (luaUtils::CheckLuaTableForBool(L, "interactable"))
+                collidableTypes.push_back(CollidableType::interactable);
             if (luaUtils::GetTableOnStackFromTable(L, "eventNames")) {
                 lua_pushnil(L);
                 while (lua_next(L, -2)) {
@@ -228,7 +233,7 @@ void RealThing::addComponentsFromTable() {
                 }
                 lua_pop(L,1);
             }
-            AddStandardCollision(eventNames);
+            AddStandardCollision(collidableTypes, eventNames);
         }
         lua_pop(L, 1);
     }
@@ -261,15 +266,19 @@ Move* RealThing::AddMove(MoveType type) {
     return move;
 }
 
-void RealThing::AddStandardCollision(vector<string> eventNames) {
+void RealThing::AddStandardCollision(vector<CollidableType> eventCollidables, vector<string> eventNames) {
     vector<Ray> obstructionRays = {
         Ray(Point(bounds.right - 10, bounds.bottom), Point(bounds.left + 8, bounds.bottom)),
         Ray(Point(bounds.left + 8, bounds.bottom), Point(bounds.left + 8, bounds.bottom - 6)),
         Ray( Point(bounds.left + 8, bounds.bottom - 6), Point(bounds.right - 10, bounds.bottom - 6)),
         Ray(Point(bounds.right - 10, bounds.bottom - 6), Point(bounds.right - 10, bounds.bottom))
     };
-    Interactable* i = addInteractable("interact", obstructionRays, 0);
-    i->eventNames = eventNames;
+    for (auto c : eventCollidables) {
+        if (c == CollidableType::interactable)
+            addInteractable("interact", obstructionRays, 0)->eventNames = eventNames;
+        if (c == CollidableType::trigger)
+            addTrigger("trigger", obstructionRays, 0)->eventNames = eventNames;
+    }
     addObstruction(obstructionRays, 0);
 }
 

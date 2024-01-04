@@ -158,6 +158,7 @@ local thingDefs = {
             },
             {
                 type = "standardCollider",
+                interactable = true,
                 eventNames = {
                     "talk_1",
                     "talk_2"
@@ -230,6 +231,7 @@ local thingDefs = {
             },
             {
                 type = "standardCollider",
+                interactable = true,
                 eventNames = {
                     "fz_1",
                     "fz_2"
@@ -377,6 +379,8 @@ local thingDefs = {
                 components = {
                     {
                         type = "standardCollider",
+                        trigger = true,
+                        interactable = true,
                         eventNames = {
                             "open",
                         }
