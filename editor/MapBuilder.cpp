@@ -163,7 +163,7 @@ void MapBuilder::save() {
     if (!CheckLua(L, luaL_dofile(L, "scripts/save.lua"))) {
         return;
     }
-    lua_getglobal(L, "dump");
+    lua_getglobal(L, "saveMap");
     if (!lua_isfunction(L, -1)) {
         cout << "FAILED TO SAVE! save is not a function!" << endl;
         return;

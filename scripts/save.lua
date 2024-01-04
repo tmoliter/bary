@@ -14,10 +14,11 @@ local function getDumpString(o)
    end
 end
 
-function dump(t, scene)
+function saveMap(t, scene)
    local dumpString =  getDumpString(t)
+   local dateString = os.date("%d-%m-%y__%H_%M_%S")
    print("Map Data Computed")
-   io.output("scenes/" .. scene .. "/map.lua")
+   io.output("scenes/" .. scene .. "/map-" .. dateString .. ".lua")
    io.write("return " .. dumpString)
    io.flush()
 end

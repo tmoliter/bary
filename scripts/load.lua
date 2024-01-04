@@ -18,7 +18,7 @@ function loadScene(host, sceneName, isEditing)
     local mapTable
     local playerSpawn
     if isEditing == true then
-        mapTable = require('scenes.' .. sceneName .. '.newmap')
+        mapTable = require('scenes.' .. sceneName .. '.map')
     else
         mapTable = gameState["scenes"][sceneName]
         playerSpawn = thingDefs[gameState["spawn"]["name"]]
