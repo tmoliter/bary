@@ -60,9 +60,6 @@ RealThing* Scene::addThing(RealThingData tD, ThingType type) {
         case ThingType::fieldPlayer:
             newThing = new FieldPlayer(tD, things);
             break;
-        case ThingType::door:
-            newThing = new Door(tD, things);
-            break;
         case ThingType::thing:
         default:
             newThing = new RealThing(tD, things);

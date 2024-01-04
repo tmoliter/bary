@@ -1,7 +1,6 @@
 #include "editor/ThingRouter.h"
 
 ThingRouter::ThingRouter(Point p) : state(ThingRouterState::chooseThingType), newThingPosition(p), type(ThingType::thing) {
-    doorEditor = nullptr;
     thingEditor = nullptr;
     realThing = nullptr;
     cross = nullptr;
@@ -9,7 +8,6 @@ ThingRouter::ThingRouter(Point p) : state(ThingRouterState::chooseThingType), ne
 }
 
 ThingRouter::ThingRouter(RealThing *rt) : realThing(rt), state(ThingRouterState::editOrCreateSub), newThingPosition(rt->position) {
-    doorEditor = nullptr;
     thingEditor = nullptr;
     cross = nullptr;
     rt->highlightThing();
@@ -20,17 +18,9 @@ ThingRouter::ThingRouter(RealThing *rt) : realThing(rt), state(ThingRouterState:
 ThingRouter::~ThingRouter(){
     destroyCross();
     delete thingEditor;
-    delete doorEditor;
 }
 
 void ThingRouter::determineType() {
-    Door *door = dynamic_cast<Door*>(realThing);
-    if (door) {
-        doorEditor = new DoorEditor(door);
-        type = ThingType::door;
-        return;
-    }
-    // Repeat "door" pattern for other template thing types, fall back to ThingEditor
     thingEditor = new ThingEditor(realThing);
     type = ThingType::thing;
 }
@@ -56,7 +46,7 @@ void ThingRouter::changeState(ThingRouterState newState) {
     switch (newState) {
         case ThingRouterState::chooseThingType:
             destroyCross();
-            CommandLine::refresh({"thing", "door", "free"}, CLIMode::typeCommand);
+            CommandLine::refresh({"thing", "free"}, CLIMode::typeCommand);
             break;
         case ThingRouterState::editOrCreateSub:
             destroyCross();
@@ -88,14 +78,6 @@ int ThingRouter::chooseNewThingType(KeyPresses keysDown) {
         thingEditor = new ThingEditor(newThingPosition);
         realThing = thingEditor->thing;
         type = ThingType::thing;
-        changeState(ThingRouterState::edit);
-        return 0;
-    }
-    if (input == "door") {
-        CommandLine::breakdown();
-        doorEditor = new DoorEditor(newThingPosition);
-        realThing = doorEditor->door;
-        type = ThingType::door;
         changeState(ThingRouterState::edit);
         return 0;
     }
@@ -150,13 +132,6 @@ int ThingRouter::editThing(KeyPresses keysDown) {
         if (thingEditor->meat(keysDown)) {
             delete thingEditor;
             thingEditor = nullptr;
-            return 1;
-        }
-    }
-    if (type == ThingType::door) {
-        if (doorEditor->routeInput(keysDown)) {
-            delete doorEditor;
-            doorEditor = nullptr;
             return 1;
         }
     }

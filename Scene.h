@@ -2,7 +2,6 @@
 #define SCENE_H
 #include "FocusTracker.h"
 #include "things/FieldPlayer.h"
-#include "things/Door.h"
 #include "Task.h"
 
 using namespace luaUtils;

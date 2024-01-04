@@ -1,7 +1,6 @@
 #ifndef THING_ROUTER_H
 #define THING_ROUTER_H
 #include "editor/ThingEditor.h"
-#include "editor/DoorEditor.h"
 
 using namespace std;
 
@@ -13,7 +12,6 @@ enum class ThingRouterState {
 
 struct ThingRouter {
     ThingRouter(Point p);
-    ThingRouter(Door *door);
     ThingRouter(RealThing *rt);
     ~ThingRouter();
 
@@ -29,7 +27,6 @@ struct ThingRouter {
     Sprite *cross;
 
     ThingEditor *thingEditor;
-    DoorEditor *doorEditor;
 
     void determineType();
 

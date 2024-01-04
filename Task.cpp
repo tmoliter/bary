@@ -141,8 +141,6 @@ void Task::addSubtasks(lua_State* L) {
             instant = true;
         }
         if (currentType == "setActiveSprites") {
-            // a door should have an active sprite in index 0 and inactive in index 1
-            // this should set the active sprite to 1
             RealThing* hostThing = static_cast<RealThing*>(host);
             for (auto s : hostThing->sprites)
                 s->active = false;
