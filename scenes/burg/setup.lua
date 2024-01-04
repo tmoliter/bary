@@ -389,6 +389,7 @@ local thingDefs = {
                 events = {
                     open = {
                         type = "openDoor",
+                        triggerDelay = 30,
                         -- locked = true
                     }
                 }
