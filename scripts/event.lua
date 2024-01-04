@@ -64,13 +64,12 @@ local function resumeEvent(hostThing, eventName)
     return 1
 end
 
-local function populateDefinitions(things)
-    for _,thing in pairs(things) do
-        eventDefinitions[thing["name"]] = thing["events"]
-        if thing["subThings"] ~= nil then
-            for _,subThing in pairs(thing["subThings"]) do
-                eventDefinitions[subThing["name"]] = subThing["events"]
-            end
+local function populateDefinitions(thing)
+    -- we might do additional stuff with components here
+    if eventDefinitions[thing["name"]] == nil then eventDefinitions[thing["name"]] = thing["events"] end
+    if thing["subThings"] ~= nil then
+        for _,subThing in pairs(thing["subThings"]) do
+            populateDefinitions(subThing)
         end
     end
 end

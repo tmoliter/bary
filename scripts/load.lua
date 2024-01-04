@@ -26,16 +26,17 @@ function loadScene(host, sceneName, isEditing)
     end
 
     local spawnThings = {}
-    for _,thing in ipairs(mapTable["things"]) do -- We should read from something less permanent than the original maptable?
+    for _,thing in ipairs(mapTable["things"]) do
         local spawn = {}
-        for k,v in pairs(thingDefs[thing["name"]]) do spawn[k] = v end
-        for k,v in pairs(thing) do spawn[k] = v end
+        local thingDef = thingDefs[thing["name"]]
+        for k,v in pairs(thingDefs[thing["name"]]) do spawn[k] = v end -- deepMerge
+        for k,v in pairs(thing) do spawn[k] = v end -- deepMerge
+        populateDefinitions(spawn)
         table.insert(spawnThings, spawn)
     end
     if playerSpawn ~= nil then
         table.insert(spawnThings, playerSpawn)
     end
-    populateDefinitions(thingDefs)
 
     _loadScene(mapTable["backgroundPath"], spawnThings, host)
 end

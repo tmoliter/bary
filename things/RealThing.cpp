@@ -94,30 +94,30 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
         //      https://gamedev.stackexchange.com/questions/14369/how-could-you-parallelise-a-2d-boids-simulation
         // Part of both of these solutions might involve splitting things up into more groups, based on
         // static vs. moving (already split) and/or box vs ray colliders.
-        Point adjustment = Point();
+        Point adjustment;
         if (move->velocity.x != 0) {
-            adjustment.y = -move->velocity.y;
+            position.y -= move->velocity.y;
             for (auto const& ray : foreignObstruction->rays) {
                 Ray adjustedRay = addPointToRay(*ray, foreignObstruction->parentPos);
                 if(ownObstruction->isColliding(adjustedRay, move->layer)) {
-                    position.x -= move->velocity.x;
+                    adjustment.x -= move->velocity.x;
                     move->velocity.x = 0;
                     break;
                 }
             }
-            adjustment.y += move->velocity.y;
+            position.y += move->velocity.y;
         }
         if (move->velocity.y != 0) {
-            adjustment.x = -move->velocity.x;
+            position.x -= move->velocity.x;
             for (auto const& ray : foreignObstruction->rays) {
                 Ray adjustedRay = addPointToRay(*ray, foreignObstruction->parentPos);
                 if(ownObstruction->isColliding(adjustedRay, move->layer)) {
-                    position.y -= move->velocity.y;
+                    adjustment.y -= move->velocity.y;
                     move->velocity.y = 0;
                     break;
                 }
             }
-            adjustment.x += move->velocity.x;
+            position.x += move->velocity.x;
         }
         position.x += adjustment.x;
         position.y += adjustment.y;
