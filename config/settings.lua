@@ -1,7 +1,7 @@
 globals = {
     SCALE = 1,
-    SCREEN_WIDTH = 640,
-    SCREEN_HEIGHT = 480,
+    SCREEN_WIDTH = 1600,
+    SCREEN_HEIGHT = 1000,
     FULLSCREEN_MODE = false,
     LETTER_WIDTH = 8,
     LETTER_HEIGHT = 12,

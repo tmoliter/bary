@@ -12,7 +12,7 @@ return {
             things = { 
                 {
                     name = "otherZinnia",
-                    x = 500,
+                    x = 1300,
                     y = 500
                 },
                 {
