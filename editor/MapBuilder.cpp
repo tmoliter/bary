@@ -31,7 +31,7 @@ void MapBuilder::changeState(EditorState newState) {
     string prefix = currentThing != dotThing ? currentThing->name + ": " : "";
     switch (newState) {
         case EditorState::freeMove:
-            helpText->setText("Free Move");
+            helpText->setText("Free Move " + to_string(currentThing->position.x) + " : " + to_string(currentThing->position.y));
             focusDot();
             Sprite::removeHighlight();
             state = EditorState::freeMove;
@@ -98,6 +98,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
     }
 
     if (state == EditorState::freeMove) {
+        helpText->setText("Free Move " + to_string(currentThing->position.x) + " : " + to_string(currentThing->position.y));
         if (keysDown.ok) {
             vector<RealThing*> collisions = Scene::currentScene->findThingsByPoint(dotThing->position);
             for (auto t : collisions) {

@@ -91,7 +91,9 @@ struct RealThing : public Host {
 
     void removeAllCollidables();
 
-    virtual int checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType);
+    void shiftLayer(int newLayer);
+
+    virtual int checkForCollidables(Ray incoming, int incomingLayer, RealThing* incomingThing, CollidableType collidableType);
 
     void showObstructionLines(int layer = -1001);
     void showInteractableLines(int layer = -1001, string name = "");

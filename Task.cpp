@@ -96,6 +96,59 @@ bool MoveST::meat(KeyPresses keysDown) {
     return movingThing->position.isWithin(movingThing->move->destination, movingThing->move->tolerance); // break out into move function I think
 }
 
+void PortalST::init() {
+    Host* incomingThing;
+    Host::GetLuaHostFromTable(L, "thing", incomingThing);
+    thing = static_cast<RealThing*>(incomingThing);
+
+    luaUtils::GetLuaIntFromTable(L, "newLayer", newLayer);
+    Point relativeMove;
+    if (luaUtils::GetLuaIntFromTable(L, "relativeX", relativeMove.x) || 
+        luaUtils::GetLuaIntFromTable(L, "relativeY", relativeMove.y)) {
+        Point hostPosition = static_cast<RealThing*>(host)->position;
+        destination = addPoints(hostPosition, relativeMove);
+    } else {
+        Point offset;
+        if (!luaUtils::GetLuaIntFromTable(L, "destinationX", destination.x))
+            destination.x = thing->position.x;
+        if (!luaUtils::GetLuaIntFromTable(L, "destinationY", destination.y))
+            destination.y = thing->position.y;
+        if (!luaUtils::GetLuaIntFromTable(L, "offsetX", offset.x))
+            offset.x = 0;
+        if (!luaUtils::GetLuaIntFromTable(L, "offsetY", offset.y))
+            offset.y = 0;
+        destination = addPoints(destination, offset);
+    }
+
+    Camera::fadeOut(3);
+    for (auto const& [id, t] : thing->things) {
+        if (!t->move)
+            continue;
+        t->move->disables += 1;
+    }
+}
+
+PortalST::~PortalST() {
+    for (auto const& [id, t] : thing->things) {
+        if (!t->move)
+            continue;
+        t->move->disables -= 1;
+    }
+}
+
+bool PortalST::meat(KeyPresses keysDown) {
+    if (Camera::c->fadeStatus == FxStatus::applied) {
+        thing->position = destination;
+        thing->shiftLayer(newLayer);
+        Camera::c->fadeIn(3);
+        return 0;
+    }
+    if (Camera::c->fadeStatus == FxStatus::unapplied)
+        return 1;
+    return 0;
+}
+
+
 int Task::meat(KeyPresses keysDown) {
     vector<Subtask*> subtasksToDelete;
     for (auto s : subtasks) {
@@ -130,12 +183,14 @@ void Task::addSubtasks(lua_State* L) {
         bool instant = false;
         if (!blocking)
             luaUtils::GetLuaBoolFromTable(L, "blocking", blocking);
-        if (currentType == "move")
-            subtasks.push_back(new MoveST(L, host));
-        if (currentType == "phrase")
-            subtasks.push_back(new PhraseST(L, host));
         if (currentType == "wait")
             subtasks.push_back(new Subtask(L, host));
+        if (currentType == "phrase")
+            subtasks.push_back(new PhraseST(L, host));
+        if (currentType == "move")
+            subtasks.push_back(new MoveST(L, host));
+        if (currentType == "portal")
+            subtasks.push_back(new PortalST(L, host));
         if (currentType == "pauseMoves") {
             pauseMoves(L);
             instant = true;

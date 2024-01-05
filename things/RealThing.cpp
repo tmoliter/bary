@@ -295,6 +295,24 @@ Sprite* RealThing::AddRawSprite(string textureName) {
     return AddSprite(sd);
 }
 
+void RealThing::shiftLayer(int newLayer) {
+    if (move == nullptr)
+        return;
+    int oldLayer = move->layer;
+    if (newLayer < 0) {
+        cout << "can't shift to layer below 0 \n";
+        return;
+    }
+    move->layer = newLayer;
+    for (auto s : sprites)
+        s->d.layer = newLayer;
+
+    Obstruction* ob = obstructions[oldLayer];
+    ob->layer = newLayer;
+    obstructions[ob->layer] = ob;
+    obstructions.erase(oldLayer);
+}
+
 Interactable* RealThing::addInteractable(string iName, vector<Ray> rays, int layer) {
     if (interactables.count(iName))
         return interactables[iName];
@@ -390,9 +408,7 @@ void RealThing::removeAllCollidables() {
     }
 };
 
- // Should only check for eventCollidables, and simply return the eventCollidable here, 
- // so that FieldPlayer can handle the event firing
-int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) {
+int RealThing::checkForCollidables(Ray incoming, int incomingLayer, RealThing* incomingThing, CollidableType collidableType) {
     switch (collidableType) {
         case (CollidableType::interactable):
             for (auto const& [cName, in] : interactables){
@@ -403,6 +419,7 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
                         luaUtils::PushStringToTable(L, "eventName", eventName);
                         luaUtils::PushStringToTable(L, "thingName", getBaseName());
                         luaUtils::PushStringToTable(L, "collisionType", "interactable");
+                        Host::PushHostToTable(L, "incomingThing", incomingThing);
                         callLuaFunc(1, 0, 0);
                     }
                     return 1;
@@ -418,6 +435,7 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
                         luaUtils::PushStringToTable(L, "eventName", eventName);
                         luaUtils::PushStringToTable(L, "thingName", getBaseName());
                         luaUtils::PushStringToTable(L, "collisionType", "trigger");
+                        Host::PushHostToTable(L, "incomingThing", incomingThing);
                         callLuaFunc(1, 0, 0);
                     }
                     return 1;
