@@ -103,11 +103,8 @@ void PortalST::init() {
 
     luaUtils::GetLuaIntFromTable(L, "newLayer", newLayer);
     Point relativeMove;
-    if (luaUtils::GetLuaIntFromTable(L, "relativeX", relativeMove.x) || 
-        luaUtils::GetLuaIntFromTable(L, "relativeY", relativeMove.y)) {
-        Point hostPosition = static_cast<RealThing*>(host)->position;
-        destination = addPoints(hostPosition, relativeMove);
-    } else {
+    if (!luaUtils::GetLuaIntFromTable(L, "relativeX", relativeMove.x) ||
+        !luaUtils::GetLuaIntFromTable(L, "relativeY", relativeMove.y)) {
         Point offset;
         if (!luaUtils::GetLuaIntFromTable(L, "destinationX", destination.x))
             destination.x = thing->position.x;
@@ -118,6 +115,9 @@ void PortalST::init() {
         if (!luaUtils::GetLuaIntFromTable(L, "offsetY", offset.y))
             offset.y = 0;
         destination = addPoints(destination, offset);
+    } else {
+        Point hostPosition = static_cast<RealThing*>(host)->position;
+        destination = addPoints(hostPosition, relativeMove);
     }
 
     Camera::fadeOut(3);

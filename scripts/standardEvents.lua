@@ -73,15 +73,6 @@ local function openDoor(hostThing, args, eventName)
         }}, eventName, hostThing)
         coroutine.yield()
     end
-    -- portal testing
-    _newTask({{
-        type = "portal",
-        destinationX = 675,
-        destinationY = 850,
-        newLayer = 2,
-        thing = args["incomingThing"]
-    }}, eventName, hostThing)
-    -- end portal testing
     _newTask({
         {
             type = "setActiveSprites",
@@ -92,6 +83,20 @@ local function openDoor(hostThing, args, eventName)
             all = true -- should only disable the obstruction
         }
     }, eventName, hostThing)
+    if args["portal"] ~= nil then
+        coroutine.yield()
+        local portal = args["portal"]
+        portal["thing"] = args["incomingThing"]
+        portal["type"] = "portal"
+        _newTask({portal}, eventName, hostThing)
+    end
+    if args["closeAfter"] ~= nil then
+        coroutine.yield()
+        _newTask({{
+            type = "setActiveSprites",
+            sprites = { 1 }
+        }}, eventName, hostThing)
+    end
 end
 
 

@@ -390,10 +390,16 @@ local thingDefs = {
                     open = {
                         type = "openDoor",
                         triggerDelay = 30,
+                        portal = {
+                            relativeX = -25,
+                            relativeY = -131,
+                            newLayer = 2,
+                        },
+                        closeAfter = true
                         -- locked = true
                     }
                 }
-            },
+            }
         }
     },
     genrlStore = {

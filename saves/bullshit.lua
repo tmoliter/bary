@@ -2,8 +2,8 @@ return {
     spawn = {
         name = "playerZinnia",
         scene = "burg",
-        x = 20,
-        y = 20,
+        x = 700,
+        y = 530,
         scale = 2
     },
     scenes = {
