@@ -1,3 +1,28 @@
+local function sequentialTasks(hostThing, args, eventName)
+    local tasks = args["tasks"]
+    if args["pauseAllMoves"] then
+        _newTask({{
+            type = "pauseMoves",
+            all = true,
+        }}, eventName, hostThing)
+        coroutine.yield()
+    end
+    for i,task in ipairs(tasks) do
+        _newTask(tasks[i], eventName, hostThing)
+        if i < #tasks then
+            coroutine.yield()
+        end
+    end
+    if args["pauseAllMoves"] then
+        coroutine.yield()
+        _newTask({{
+            type = "pauseMoves",
+            all = true,
+            unpause = true
+        }}, eventName, hostThing)
+    end
+end 
+
 local function randomAutoMove(hostThing, args)
     local originX, originY, variance, wait, stop = table.unpack {args["originX"], args["originY"], args["variance"], args["wait"], args["stop"]}
     local x, y
@@ -7,7 +32,6 @@ local function randomAutoMove(hostThing, args)
         _newTask({
             {
                 type = "move",
-                auto = true,
                 destinationX = x,
                 destinationY = y
             },
@@ -25,19 +49,6 @@ local function randomAutoMove(hostThing, args)
                     }
                 }, args["eventName"], hostThing
             )
-            coroutine.yield()
-        end
-    end
-end
-
-local function simpleMessages(hostThing, args, eventName)
-    local index = 1
-    for k,v in ipairs(args["phrases"]) do
-        v["type"] = "phrase"
-        v["blocking"] = true
-        _newTask({ v }, eventName, hostThing)
-        if index < #args["phrases"] then
-            index = index + 1
             coroutine.yield()
         end
     end
@@ -99,10 +110,8 @@ local function openDoor(hostThing, args, eventName)
     end
 end
 
-
-
 return {
+    sequentialTasks = sequentialTasks,
     randomAutoMove = randomAutoMove,
-    simpleMessages = simpleMessages,
     openDoor = openDoor
 }

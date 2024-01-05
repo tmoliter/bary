@@ -179,28 +179,25 @@ local thingDefs = {
             --     customCoroutine = zinniaAutoMove
             -- },
             talk_1 =  { -- This has the same effect as zinniaTalk, but is stored as data
-                type = "simpleMessages",
-                phrases = {
-                    {
+                type = "sequentialTasks",
+                pauseAllMoves = true,
+                tasks = {
+                    {{
+                        type = "phrase",
                         text = "Hey what's happening bro",
                         x = 300,
                         y = 150,
                         width = 400,
                         height = 100,
-                        scrollType = "continuous",
-                        gridLimitsX = 1000,
-                        gridLimitsY = 1000,
-                    },
-                    {
+                    }},
+                    {{
+                        type = "phrase",
                         text = "Didn't I tell you not to come around here",
                         x = 150,
                         y = 150,
                         width = 400,
                         height = 100,
-                        scrollType = "continuous",
-                        gridLimitsX = 1000,
-                        gridLimitsY = 1000,
-                    },
+                    }},
                 }
             },
             talk_2 = {

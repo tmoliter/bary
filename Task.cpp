@@ -35,9 +35,12 @@ void PhraseST::init() {
     luaUtils::GetLuaIntFromTable(L, "y", point.y);
     luaUtils::GetLuaIntFromTable(L, "width", size.x);
     luaUtils::GetLuaIntFromTable(L, "height", size.y);
-    luaUtils::GetLuaStringFromTable(L, "scrollType", scrollType);
-    luaUtils::GetLuaIntFromTable(L, "gridLimitsX", gridLimits.x);
-    luaUtils::GetLuaIntFromTable(L, "gridLimitsY", gridLimits.y);
+    if (!luaUtils::GetLuaStringFromTable(L, "scrollType", scrollType))
+        scrollType = "allButLast";
+    if (!luaUtils::GetLuaIntFromTable(L, "gridLimitsX", gridLimits.x))
+        gridLimits.x = 1000;
+    if (!luaUtils::GetLuaIntFromTable(L, "gridLimitsY", gridLimits.y))
+        gridLimits.y = 1000;
     phrase = new Phrase(point, size, ScrollType::allButLast, text, gridLimits);
     UIRenderer::addPhrase(phrase);
 }
