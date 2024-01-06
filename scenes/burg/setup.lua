@@ -96,55 +96,6 @@ local zinniaTalkB = {
         }
     }
 }
-    _newTask({{
-        type = "pauseMoves",
-        all = true,
-    }}, eventName, hostThing)
-    _newTask(
-        {
-            {
-                type = "move",
-                offsetX = -100,
-                offsetY = 50
-            },
-            {
-                type = "phrase",
-                text = "doodoo",
-                x = 30,
-                y = 40, 
-                width = 80,
-                height = 50,
-                scrollType = "continuous",
-                gridLimitsX = 100,
-                gridLimitsY = 100,
-                frames = 125,
-            }
-        }, eventName, hostThing
-    )
-    coroutine.yield()
-    _newTask(
-        {
-            {
-                type = "phrase",
-                text = "poopoo",
-                x = 300,
-                y = 100, 
-                width = 100,
-                height = 50,
-                scrollType = "continuous",
-                gridLimitsX = 1000,
-                gridLimitsY = 1000,
-                frames = 125,
-            }
-        }, eventName, hostThing
-    )
-    coroutine.yield()
-    _newTask({{
-        type = "pauseMoves",
-        unpause = true,
-        all = true,
-    }}, eventName, hostThing)
-end
 
 --     IDEAS FOR FUTURE OF EDITOR AND DATA STORAGE:
 --     in thing editor you can build a thing, then export it as a lua table
@@ -228,10 +179,7 @@ local thingDefs = {
                     }},
                 }
             },
-            talk_2 = {
-                type = "custom",
-                customCoroutine = zinniaTalkB
-            },
+            talk_2 = zinniaTalkB,
         }
     },
     followZinnia = {
