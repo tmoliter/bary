@@ -1,7 +1,7 @@
 -- BEHAVIORS
 
 local function zinniaAutoMove(hostThing, args, eventName)
-    originX, originY = table.unpack {args["originX"], args["originY"]}
+    originX, originY = table.unpack { args["originX"], args["originY"] }
     while true do
         _newTask(
             {
@@ -57,7 +57,45 @@ local function zinniaTalkA(hostThing, args, eventName)
     )
 end
 
-local function zinniaTalkB(hostThing, args, eventName)
+local zinniaTalkB = {
+    type = "sequentialTasks",
+    pauseAllMoves = true,
+    tasks = {
+        {
+            {
+                type = "move",
+                offsetX = -100,
+                offsetY = 50
+            },
+            {
+                type = "phrase",
+                text = "doodoo",
+                x = 30,
+                y = 40, 
+                width = 80,
+                height = 50,
+                scrollType = "continuous",
+                gridLimitsX = 100,
+                gridLimitsY = 100,
+                frames = 125,
+            }
+        },
+        {
+            {
+                type = "phrase",
+                text = "poopoo",
+                x = 300,
+                y = 100, 
+                width = 100,
+                height = 50,
+                scrollType = "continuous",
+                gridLimitsX = 1000,
+                gridLimitsY = 1000,
+                frames = 125,
+            }
+        }
+    }
+}
     _newTask({{
         type = "pauseMoves",
         all = true,
@@ -86,12 +124,6 @@ local function zinniaTalkB(hostThing, args, eventName)
     coroutine.yield()
     _newTask(
         {
-            -- {
-            --     type = "move",
-            --     thingName = "otherZinnia",
-            --     offsetX = -300,
-            --     offsetY = 300
-            -- },
             {
                 type = "phrase",
                 text = "poopoo",
@@ -174,11 +206,7 @@ local thingDefs = {
                 type = "randomAutoMove",
                 variance = 100
             },
-            -- autoMove = {
-            --     type = "custom",
-            --     customCoroutine = zinniaAutoMove
-            -- },
-            talk_1 =  { -- This has the same effect as zinniaTalk, but is stored as data
+            talk_1 =  {
                 type = "sequentialTasks",
                 pauseAllMoves = true,
                 tasks = {
