@@ -26,12 +26,14 @@ function loadScene(host, sceneName, isEditing)
     end
 
     local spawnThings = {}
+    for _,thing in pairs(thingDefs) do
+        populateDefinitions(thing)
+    end
     for _,thing in ipairs(mapTable["things"]) do
         local spawn = {}
         local thingDef = thingDefs[thing["name"]]
         for k,v in pairs(thingDefs[thing["name"]]) do spawn[k] = v end -- deepMerge
         for k,v in pairs(thing) do spawn[k] = v end -- deepMerge
-        populateDefinitions(spawn)
         table.insert(spawnThings, spawn)
     end
     if playerSpawn ~= nil then

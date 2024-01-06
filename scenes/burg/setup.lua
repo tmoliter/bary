@@ -38,25 +38,6 @@ end
 
 -- EVENTS
 
-local function zinniaTalkA(hostThing, args, eventName)
-    _newTask(
-        {
-            {
-                type = "phrase",
-                text = "Didn't I tell you not to come around here",
-                x = 150,
-                y = 150,
-                width = 400,
-                height = 100,
-                scrollType = "continuous",
-                gridLimitsX = 1000,
-                gridLimitsY = 1000,
-                frames = 250,
-            }
-        }, eventName, hostThing
-    )
-end
-
 local zinniaTalkB = {
     type = "sequentialTasks",
     pauseAllMoves = true,
@@ -205,10 +186,7 @@ local thingDefs = {
             {
                 type = "standardCollider",
                 interactable = true,
-                eventNames = {
-                    "fz_1",
-                    "fz_2"
-                }
+                eventNames = { "fz_1" }
             },
             {
                 type = "follow",
@@ -217,14 +195,7 @@ local thingDefs = {
             }
         },
         events = {
-            fz_1 =  {
-                type = "custom",
-                customCoroutine = zinniaTalkA
-            },
-            fz_2 = {
-                type = "custom",
-                customCoroutine = zinniaTalkB
-            }
+            fz_1 = zinniaTalkB
         }
     },
     sailorShack = {
