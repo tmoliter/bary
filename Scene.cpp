@@ -1,9 +1,7 @@
 #include "Scene.h"
 
-Scene::Scene(string sceneName) : sceneName(sceneName) {
-    L = luaL_newstate();
-    luaL_openlibs(L);
-
+Scene::Scene(string sceneName, lua_State *L) : sceneName(sceneName) {
+    this->L = L;
     lua_register(L, "_loadScene", _loadScene);
     lua_register(L, "_createThing", _createThing);
     lua_register(L, "_newTask", _newTask);
@@ -12,16 +10,14 @@ Scene::Scene(string sceneName) : sceneName(sceneName) {
 
 Scene::~Scene() {
     destroyAllThings();
-    lua_close(L);
 }
 
-void Scene::Load() {
+void Scene::Load(bool isEditing) {
     cout << "Loading scene..." << endl;
-    if (!CheckLua(L, luaL_dofile(L, "scripts/load.lua")))
-        throw exception();
     loadLuaFunc("loadScene");
     lua_pushstring(L, sceneName.c_str());
-    callLuaFunc(1, 0, 0);
+    lua_pushboolean(L, isEditing);
+    callLuaFunc(2, 0, 0);
 }
 
 void Scene::EnterLoaded(RealThing* focus) {
@@ -63,9 +59,6 @@ RealThing* Scene::addThing(RealThingData tD, ThingType type) {
     switch(type) {
         case ThingType::fieldPlayer:
             newThing = new FieldPlayer(tD, things);
-            break;
-        case ThingType::door:
-            newThing = new Door(tD, things);
             break;
         case ThingType::thing:
         default:
@@ -238,6 +231,8 @@ RealThing* Scene::buildThingFromTable() {
     while (lua_next(L, -2)) {
         td.spriteDataVector.push_back(SpriteData());
         SpriteData &newSpriteData = td.spriteDataVector.back();
+        if (!GetLuaBoolFromTable(L, "active", newSpriteData.active))
+            newSpriteData.active = true;
         GetLuaIntFromTable(L, "height", newSpriteData.height);
         GetLuaIntFromTable(L, "width", newSpriteData.width);
         GetLuaIntFromTable(L, "layer", newSpriteData.layer);
@@ -272,7 +267,12 @@ RealThing* Scene::buildThingFromTable() {
     }
     lua_pop(L, 1);
 
-    RealThing* newThing = addThing(td);
+    RealThing* newThing;
+    bool isFieldPlayer = CheckLuaTableForBool(L, "fieldPlayer");
+    if (isFieldPlayer)
+        newThing = addThing(td, ThingType::fieldPlayer);
+    else
+        newThing = addThing(td);
 
     if (GetTableOnStackFromTable(L, "subThings")) {
         lua_pushnil(L);
@@ -299,7 +299,7 @@ vector<RealThingData> Scene::getAllThingData() {
     for (auto const& [i, t] : things) {
         if (t->name == "EditorDot")
             continue;
-        if (t->name == "test player")
+        if (t->name == "testPlayer")
             continue;
         allData.push_back(t->getData());
     }

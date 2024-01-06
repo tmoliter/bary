@@ -80,6 +80,8 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
         if (thing->obstructions.count(move->layer) < 1)
             continue;
         Obstruction* foreignObstruction = thing->obstructions[move->layer];
+        if (!foreignObstruction->active)
+            continue;
         // NOTE ABOUT PERFORMANCE:
         // With 41 player characters walking around and two static things,
         // this hovers around 2.5ms and sometimes spikes around 6ms. If performance becomes a concern,
@@ -92,30 +94,30 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
         //      https://gamedev.stackexchange.com/questions/14369/how-could-you-parallelise-a-2d-boids-simulation
         // Part of both of these solutions might involve splitting things up into more groups, based on
         // static vs. moving (already split) and/or box vs ray colliders.
-        Point adjustment = Point();
+        Point adjustment;
         if (move->velocity.x != 0) {
-            adjustment.y = -move->velocity.y;
+            position.y -= move->velocity.y;
             for (auto const& ray : foreignObstruction->rays) {
                 Ray adjustedRay = addPointToRay(*ray, foreignObstruction->parentPos);
                 if(ownObstruction->isColliding(adjustedRay, move->layer)) {
-                    position.x -= move->velocity.x;
+                    adjustment.x -= move->velocity.x;
                     move->velocity.x = 0;
                     break;
                 }
             }
-            adjustment.y += move->velocity.y;
+            position.y += move->velocity.y;
         }
         if (move->velocity.y != 0) {
-            adjustment.x = -move->velocity.x;
+            position.x -= move->velocity.x;
             for (auto const& ray : foreignObstruction->rays) {
                 Ray adjustedRay = addPointToRay(*ray, foreignObstruction->parentPos);
                 if(ownObstruction->isColliding(adjustedRay, move->layer)) {
-                    position.y -= move->velocity.y;
+                    adjustment.y -= move->velocity.y;
                     move->velocity.y = 0;
                     break;
                 }
             }
-            adjustment.x += move->velocity.x;
+            position.x += move->velocity.x;
         }
         position.x += adjustment.x;
         position.y += adjustment.y;
@@ -215,7 +217,12 @@ void RealThing::addComponentsFromTable() {
             AddAnimator();
         }
         if (currentComponent == "standardCollider") {
+            vector<CollidableType> collidableTypes = {};
             vector<string> eventNames = {};
+            if (luaUtils::CheckLuaTableForBool(L, "trigger"))
+                collidableTypes.push_back(CollidableType::trigger);
+            if (luaUtils::CheckLuaTableForBool(L, "interactable"))
+                collidableTypes.push_back(CollidableType::interactable);
             if (luaUtils::GetTableOnStackFromTable(L, "eventNames")) {
                 lua_pushnil(L);
                 while (lua_next(L, -2)) {
@@ -226,7 +233,7 @@ void RealThing::addComponentsFromTable() {
                 }
                 lua_pop(L,1);
             }
-            AddStandardCollision(eventNames);
+            AddStandardCollision(collidableTypes, eventNames);
         }
         lua_pop(L, 1);
     }
@@ -259,15 +266,19 @@ Move* RealThing::AddMove(MoveType type) {
     return move;
 }
 
-void RealThing::AddStandardCollision(vector<string> eventNames) {
+void RealThing::AddStandardCollision(vector<CollidableType> eventCollidables, vector<string> eventNames) {
     vector<Ray> obstructionRays = {
         Ray(Point(bounds.right - 10, bounds.bottom), Point(bounds.left + 8, bounds.bottom)),
         Ray(Point(bounds.left + 8, bounds.bottom), Point(bounds.left + 8, bounds.bottom - 6)),
         Ray( Point(bounds.left + 8, bounds.bottom - 6), Point(bounds.right - 10, bounds.bottom - 6)),
         Ray(Point(bounds.right - 10, bounds.bottom - 6), Point(bounds.right - 10, bounds.bottom))
     };
-    Interactable* i = addInteractable("interact", obstructionRays, 0);
-    i->eventNames = eventNames;
+    for (auto c : eventCollidables) {
+        if (c == CollidableType::interactable)
+            addInteractable("interact", obstructionRays, 0)->eventNames = eventNames;
+        if (c == CollidableType::trigger)
+            addTrigger("trigger", obstructionRays, 0)->eventNames = eventNames;
+    }
     addObstruction(obstructionRays, 0);
 }
 
@@ -282,6 +293,24 @@ Sprite* RealThing::AddRawSprite(string textureName) {
     SpriteData sd;
     sd.textureName = textureName;
     return AddSprite(sd);
+}
+
+void RealThing::shiftLayer(int newLayer) {
+    if (move == nullptr)
+        return;
+    int oldLayer = move->layer;
+    if (newLayer < 0) {
+        cout << "can't shift to layer below 0 \n";
+        return;
+    }
+    move->layer = newLayer;
+    for (auto s : sprites)
+        s->d.layer = newLayer;
+
+    Obstruction* ob = obstructions[oldLayer];
+    ob->layer = newLayer;
+    obstructions[ob->layer] = ob;
+    obstructions.erase(oldLayer);
 }
 
 Interactable* RealThing::addInteractable(string iName, vector<Ray> rays, int layer) {
@@ -379,9 +408,7 @@ void RealThing::removeAllCollidables() {
     }
 };
 
- // Should only check for eventCollidables, and simply return the eventCollidable here, 
- // so that FieldPlayer can handle the event firing
-int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType) {
+int RealThing::checkForCollidables(Ray incoming, int incomingLayer, RealThing* incomingThing, CollidableType collidableType) {
     switch (collidableType) {
         case (CollidableType::interactable):
             for (auto const& [cName, in] : interactables){
@@ -391,6 +418,8 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
                         lua_newtable(L);
                         luaUtils::PushStringToTable(L, "eventName", eventName);
                         luaUtils::PushStringToTable(L, "thingName", getBaseName());
+                        luaUtils::PushStringToTable(L, "collisionType", "interactable");
+                        Host::PushHostToTable(L, "incomingThing", incomingThing);
                         callLuaFunc(1, 0, 0);
                     }
                     return 1;
@@ -405,6 +434,8 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, CollidableTy
                         lua_newtable(L);
                         luaUtils::PushStringToTable(L, "eventName", eventName);
                         luaUtils::PushStringToTable(L, "thingName", getBaseName());
+                        luaUtils::PushStringToTable(L, "collisionType", "trigger");
+                        Host::PushHostToTable(L, "incomingThing", incomingThing);
                         callLuaFunc(1, 0, 0);
                     }
                     return 1;

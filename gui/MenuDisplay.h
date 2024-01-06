@@ -45,7 +45,7 @@ struct MenuDisplay {
     void createLists();
     void clearLists();
 
-    void processInput(KeyPresses keysDown);
+    bool processInput(KeyPresses keysDown, string& selection);
     void moveSelection(Direction direction);
     int getCurrentPage();
     Option getCurrentSelection();
@@ -66,8 +66,6 @@ struct MenuDisplay {
     void addBox(string textureName, SDL_Rect sourcRect);
 
     void setActive(bool a);
-
-    string getChoice();
 };
 
 #endif

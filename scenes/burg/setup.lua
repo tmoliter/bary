@@ -1,7 +1,7 @@
 -- BEHAVIORS
 
 local function zinniaAutoMove(hostThing, args, eventName)
-    originX, originY = table.unpack {args["originX"], args["originY"]}
+    originX, originY = table.unpack { args["originX"], args["originY"] }
     while true do
         _newTask(
             {
@@ -38,31 +38,10 @@ end
 
 -- EVENTS
 
-local function zinniaTalkA(hostThing, args, eventName)
-    _newTask(
-        {
-            {
-                type = "phrase",
-                text = "Didn't I tell you not to come around here",
-                x = 150,
-                y = 150,
-                width = 400,
-                height = 100,
-                scrollType = "continuous",
-                gridLimitsX = 1000,
-                gridLimitsY = 1000,
-                frames = 250,
-            }
-        }, eventName, hostThing
-    )
-end
-
-local function zinniaTalkB(hostThing, args, eventName)
-    _newTask({{
-        type = "pauseMoves",
-        all = true,
-    }}, eventName, hostThing)
-    _newTask(
+local zinniaTalkB = {
+    type = "sequentialTasks",
+    pauseAllMoves = true,
+    tasks = {
         {
             {
                 type = "move",
@@ -81,17 +60,8 @@ local function zinniaTalkB(hostThing, args, eventName)
                 gridLimitsY = 100,
                 frames = 125,
             }
-        }, eventName, hostThing
-    )
-    coroutine.yield()
-    _newTask(
+        },
         {
-            -- {
-            --     type = "move",
-            --     thingName = "otherZinnia",
-            --     offsetX = -300,
-            --     offsetY = 300
-            -- },
             {
                 type = "phrase",
                 text = "poopoo",
@@ -104,20 +74,32 @@ local function zinniaTalkB(hostThing, args, eventName)
                 gridLimitsY = 1000,
                 frames = 125,
             }
-        }, eventName, hostThing
-    )
-    coroutine.yield()
-    _newTask({{
-        type = "pauseMoves",
-        unpause = true,
-        all = true,
-    }}, eventName, hostThing)
-end
+        }
+    }
+}
 
 --     IDEAS FOR FUTURE OF EDITOR AND DATA STORAGE:
 --     in thing editor you can build a thing, then export it as a lua table
 
 local thingDefs = {
+    playerZinnia = {
+        name = "playerZinnia",
+        spriteDataVector = {
+            {
+                xOffset = 0,
+                height = 0,
+                layer = 0,
+                textureName = "zinnia",
+                renderOffset = 0,
+                width = 0,
+                yOffset = 0,
+                sourceX = 0,
+                sourceY = 0
+            }
+        },
+        obstructionData = {},
+        fieldPlayer = true
+    },
     otherZinnia = {
         name = "otherZinnia",
         spriteDataVector = {
@@ -140,6 +122,7 @@ local thingDefs = {
             },
             {
                 type = "standardCollider",
+                interactable = true,
                 eventNames = {
                     "talk_1",
                     "talk_2"
@@ -155,39 +138,29 @@ local thingDefs = {
                 type = "randomAutoMove",
                 variance = 100
             },
-            -- autoMove = {
-            --     type = "custom",
-            --     customCoroutine = zinniaAutoMove
-            -- },
-            talk_1 =  { -- This has the same effect as zinniaTalk, but is stored as data
-                type = "simpleMessages",
-                phrases = {
-                    {
+            talk_1 =  {
+                type = "sequentialTasks",
+                pauseAllMoves = true,
+                tasks = {
+                    {{
+                        type = "phrase",
                         text = "Hey what's happening bro",
                         x = 300,
                         y = 150,
                         width = 400,
                         height = 100,
-                        scrollType = "continuous",
-                        gridLimitsX = 1000,
-                        gridLimitsY = 1000,
-                    },
-                    {
+                    }},
+                    {{
+                        type = "phrase",
                         text = "Didn't I tell you not to come around here",
                         x = 150,
                         y = 150,
                         width = 400,
                         height = 100,
-                        scrollType = "continuous",
-                        gridLimitsX = 1000,
-                        gridLimitsY = 1000,
-                    },
+                    }},
                 }
             },
-            talk_2 = {
-                type = "custom",
-                customCoroutine = zinniaTalkB
-            },
+            talk_2 = zinniaTalkB,
         }
     },
     followZinnia = {
@@ -212,26 +185,17 @@ local thingDefs = {
             },
             {
                 type = "standardCollider",
-                eventNames = {
-                    "fz_1",
-                    "fz_2"
-                }
+                interactable = true,
+                eventNames = { "fz_1" }
             },
             {
                 type = "follow",
-                targetName = "test player",
+                targetName = "testPlayer",
                 tolerance = 40
             }
         },
         events = {
-            fz_1 =  {
-                type = "custom",
-                customCoroutine = zinniaTalkA
-            },
-            fz_2 = {
-                type = "custom",
-                customCoroutine = zinniaTalkB
-            }
+            fz_1 = zinniaTalkB
         }
     },
     sailorShack = {
@@ -327,22 +291,57 @@ local thingDefs = {
         },
         subThings = {
             {
-                name = "genrlStore",
+                name = "SailorShackDoor",
+                y = -61,
+                x = -27,
                 spriteDataVector = {
                     {
-                        xOffset = -119,
-                        height = 145,
+                        width = 56,
+                        height = 60,
+                        sourceY = 60,
+                        xOffset = 0,
+                        yOffset = 0,
+                        textureName = "sailorshack",
+                        renderOffset = -1,
+                        sourceX = 357,
+                        layer = 0
+                    },
+                    {
+                        width = 56,
+                        height = 60,
+                        sourceY = 0,
+                        xOffset = 0,
+                        yOffset = 0,
+                        textureName = "sailorshack",
+                        renderOffset = -1,
+                        sourceX = 357,
                         layer = 0,
-                        textureName = "genrl",
-                        renderOffset = 0,
-                        width = 236,
-                        yOffset = -145,
-                        sourceX = 0,
-                        sourceY = 0
+                        active = false
                     }
                 },
-                obstructionData = {
-                    {rays = {{aX = -11, aY = -2, bY = -2, bX = -119}, {aX = 119, aY = -2, bY = -2, bX = 11}}, layer = 0}
+                obstructionData = {},
+                components = {
+                    {
+                        type = "standardCollider",
+                        trigger = true,
+                        interactable = true,
+                        eventNames = {
+                            "open",
+                        }
+                    },
+                },
+                events = {
+                    open = {
+                        type = "openDoor",
+                        triggerDelay = 30,
+                        portal = {
+                            relativeX = -25,
+                            relativeY = -131,
+                            newLayer = 2,
+                        },
+                        closeAfter = true,
+                        -- locked = true
+                    }
                 }
             }
         }
@@ -365,7 +364,7 @@ local thingDefs = {
         obstructionData = {
             {rays = {{aX = -11, aY = -2, bY = -2, bX = -119}, {aX = 119, aY = -2, bY = -2, bX = 11}}, layer = 0}
         }
-    },
+    },   
 }
 
-return { thingDefs, eventDefinitions }
+return { thingDefs }

@@ -2,7 +2,7 @@
 
 MapBuilder *MapBuilder::mapBuilder = nullptr;
 
-MapBuilder::MapBuilder(string sceneName) : selectedSprite(-1) {
+MapBuilder::MapBuilder(string sceneName, lua_State* L) : selectedSprite(-1) {
     mapBuilder = this;
     cross = nullptr;
     spriteEditor = nullptr;
@@ -10,11 +10,10 @@ MapBuilder::MapBuilder(string sceneName) : selectedSprite(-1) {
     thingRouter = nullptr;
     followThing = nullptr;
 
-    scene = new Scene(sceneName);
-    scene->Load();
+    scene = new Scene(sceneName, L);
+    scene->Load(true);
     currentThing = dotThing = scene->addThing(RealThingData(Point(600,600), "EditorDot"));
     scene->EnterLoaded(currentThing);
-    FocusTracker::ftracker->setFocus(currentThing);
 
     CommandLine::init();
 
@@ -32,14 +31,14 @@ void MapBuilder::changeState(EditorState newState) {
     string prefix = currentThing != dotThing ? currentThing->name + ": " : "";
     switch (newState) {
         case EditorState::freeMove:
-            helpText->setText("Free Move");
+            helpText->setText("Free Move " + to_string(currentThing->position.x) + " : " + to_string(currentThing->position.y));
             focusDot();
             Sprite::removeHighlight();
             state = EditorState::freeMove;
             break;
         case EditorState::play:
             helpText->setText("Play");
-            currentThing = scene->addThing(RealThingData(dotThing->position, "test player", "zinnia"), ThingType::fieldPlayer);
+            currentThing = scene->addThing(RealThingData(dotThing->position, "testPlayer", "zinnia"), ThingType::fieldPlayer);
             // FOLLOW TESTING
             followThing = scene->spawn("followZinnia", Point(currentThing->position.x + 20, currentThing->position.y + 20));
             // END FOLLOW TESTING
@@ -99,6 +98,7 @@ void MapBuilder::meat(KeyPresses keysDown) {
     }
 
     if (state == EditorState::freeMove) {
+        helpText->setText("Free Move " + to_string(currentThing->position.x) + " : " + to_string(currentThing->position.y));
         if (keysDown.ok) {
             vector<RealThing*> collisions = Scene::currentScene->findThingsByPoint(dotThing->position);
             for (auto t : collisions) {
@@ -164,9 +164,9 @@ void MapBuilder::save() {
     if (!CheckLua(L, luaL_dofile(L, "scripts/save.lua"))) {
         return;
     }
-    lua_getglobal(L, "dump");
+    lua_getglobal(L, "saveMap");
     if (!lua_isfunction(L, -1)) {
-        cout << "FAILED TO SAVE! save is not a function!" << endl;
+        cout << "FAILED TO SAVE! saveMap is not a function!" << endl;
         return;
     }
     lua_newtable(L);

@@ -1,25 +1,16 @@
 #ifndef VISIBLE_THING_H
 #define VISIBLE_THING_H
 
-#include <iostream>
-#include <vector>
-#include <map>
-#include <algorithm>
 #include "components/Obstruction.h"
 #include "components/EventCollidable.h"
 #include "components/Animator.h"
 #include "components/Move.h"
 #include "Host.h"
 
-// dubiously from Thing.h
-#include <string>
-
 using namespace std;
 
 enum class ThingType {
     fieldPlayer,
-    door,
-    npc,
     thing,
 };
 
@@ -81,7 +72,7 @@ struct RealThing : public Host {
     void addComponentsFromTable();
     Animator* AddAnimator();
     Move* AddMove(MoveType type);
-    void AddStandardCollision(vector<string> eventNames = {});
+    void AddStandardCollision(vector<CollidableType> eventCollidables = {}, vector<string> eventNames = {});
 
     Sprite* AddSprite(SpriteData SD);
     Sprite* AddRawSprite(string path);
@@ -100,7 +91,9 @@ struct RealThing : public Host {
 
     void removeAllCollidables();
 
-    virtual int checkForCollidables(Ray incoming, int incomingLayer, CollidableType collidableType);
+    void shiftLayer(int newLayer);
+
+    virtual int checkForCollidables(Ray incoming, int incomingLayer, RealThing* incomingThing, CollidableType collidableType);
 
     void showObstructionLines(int layer = -1001);
     void showInteractableLines(int layer = -1001, string name = "");

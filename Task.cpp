@@ -35,9 +35,12 @@ void PhraseST::init() {
     luaUtils::GetLuaIntFromTable(L, "y", point.y);
     luaUtils::GetLuaIntFromTable(L, "width", size.x);
     luaUtils::GetLuaIntFromTable(L, "height", size.y);
-    luaUtils::GetLuaStringFromTable(L, "scrollType", scrollType);
-    luaUtils::GetLuaIntFromTable(L, "gridLimitsX", gridLimits.x);
-    luaUtils::GetLuaIntFromTable(L, "gridLimitsY", gridLimits.y);
+    if (!luaUtils::GetLuaStringFromTable(L, "scrollType", scrollType))
+        scrollType = "allButLast";
+    if (!luaUtils::GetLuaIntFromTable(L, "gridLimitsX", gridLimits.x))
+        gridLimits.x = 1000;
+    if (!luaUtils::GetLuaIntFromTable(L, "gridLimitsY", gridLimits.y))
+        gridLimits.y = 1000;
     phrase = new Phrase(point, size, ScrollType::allButLast, text, gridLimits);
     UIRenderer::addPhrase(phrase);
 }
@@ -96,6 +99,59 @@ bool MoveST::meat(KeyPresses keysDown) {
     return movingThing->position.isWithin(movingThing->move->destination, movingThing->move->tolerance); // break out into move function I think
 }
 
+void PortalST::init() {
+    Host* incomingThing;
+    Host::GetLuaHostFromTable(L, "thing", incomingThing);
+    thing = static_cast<RealThing*>(incomingThing);
+
+    luaUtils::GetLuaIntFromTable(L, "newLayer", newLayer);
+    Point relativeMove;
+    if (!luaUtils::GetLuaIntFromTable(L, "relativeX", relativeMove.x) ||
+        !luaUtils::GetLuaIntFromTable(L, "relativeY", relativeMove.y)) {
+        Point offset;
+        if (!luaUtils::GetLuaIntFromTable(L, "destinationX", destination.x))
+            destination.x = thing->position.x;
+        if (!luaUtils::GetLuaIntFromTable(L, "destinationY", destination.y))
+            destination.y = thing->position.y;
+        if (!luaUtils::GetLuaIntFromTable(L, "offsetX", offset.x))
+            offset.x = 0;
+        if (!luaUtils::GetLuaIntFromTable(L, "offsetY", offset.y))
+            offset.y = 0;
+        destination = addPoints(destination, offset);
+    } else {
+        Point hostPosition = static_cast<RealThing*>(host)->position;
+        destination = addPoints(hostPosition, relativeMove);
+    }
+
+    Camera::fadeOut(3);
+    for (auto const& [id, t] : thing->things) {
+        if (!t->move)
+            continue;
+        t->move->disables += 1;
+    }
+}
+
+PortalST::~PortalST() {
+    for (auto const& [id, t] : thing->things) {
+        if (!t->move)
+            continue;
+        t->move->disables -= 1;
+    }
+}
+
+bool PortalST::meat(KeyPresses keysDown) {
+    if (Camera::c->fadeStatus == FxStatus::applied) {
+        thing->position = destination;
+        thing->shiftLayer(newLayer);
+        Camera::c->fadeIn(3);
+        return 0;
+    }
+    if (Camera::c->fadeStatus == FxStatus::unapplied)
+        return 1;
+    return 0;
+}
+
+
 int Task::meat(KeyPresses keysDown) {
     vector<Subtask*> subtasksToDelete;
     for (auto s : subtasks) {
@@ -130,14 +186,52 @@ void Task::addSubtasks(lua_State* L) {
         bool instant = false;
         if (!blocking)
             luaUtils::GetLuaBoolFromTable(L, "blocking", blocking);
-        if (currentType == "move")
-            subtasks.push_back(new MoveST(L, host));
-        if (currentType == "phrase")
-            subtasks.push_back(new PhraseST(L, host));
         if (currentType == "wait")
             subtasks.push_back(new Subtask(L, host));
+        if (currentType == "phrase")
+            subtasks.push_back(new PhraseST(L, host));
+        if (currentType == "move")
+            subtasks.push_back(new MoveST(L, host));
+        if (currentType == "portal")
+            subtasks.push_back(new PortalST(L, host));
         if (currentType == "pauseMoves") {
             pauseMoves(L);
+            instant = true;
+        }
+        if (currentType == "setActiveSprites") {
+            RealThing* hostThing = static_cast<RealThing*>(host);
+            for (auto s : hostThing->sprites)
+                s->active = false;
+            if (luaUtils::GetTableOnStackFromTable(L, "sprites")) {
+                lua_pushnil(L);
+                while (lua_next(L, -2)) {
+                    if (!lua_isnumber(L, -1)) {
+                        cout << "all list sprite indices should be numbers" << endl;
+                        throw exception();
+                    }
+                    hostThing->sprites[lua_tonumber(L, -1)]->active = true;
+                    lua_pop(L,1);
+                }
+                lua_pop(L,1);
+            }
+            instant = true;
+        }
+        if (currentType == "disableColliders") {
+            bool enable = luaUtils::CheckLuaTableForBool(L, "enable");
+            bool obs, inters, trigs = luaUtils::CheckLuaTableForBool(L, "all");
+            luaUtils::GetLuaBoolFromTable(L, "obstructions", obs);
+            luaUtils::GetLuaBoolFromTable(L, "interactables", inters);
+            luaUtils::GetLuaBoolFromTable(L, "triggers", trigs);
+            RealThing* hostThing = static_cast<RealThing*>(host);
+            if (obs)
+                for (auto c : hostThing->obstructions)
+                    c.second->active = enable;
+            if (inters)
+                for (auto c : hostThing->interactables)
+                    c.second->active = enable;
+            if (trigs)
+                for (auto c : hostThing->triggers)
+                    c.second->active = enable;
             instant = true;
         }
         if (!instant)
@@ -161,7 +255,6 @@ void Task::pauseMoves(lua_State* L) {
         }
         return;
     }
-
     set<string> thingNames;
     if (luaUtils::CheckLuaTableForBool(L, "hostThing")) {
         thingNames.insert(hostThing->name);

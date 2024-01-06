@@ -5,8 +5,14 @@
 using namespace std;
 
 int main(int argc, char* args[]) {
-    barysystem::startup();
-    MapBuilder *m = new MapBuilder("burg");
+    vector<string> saveNames;
+    barysystem::startup(saveNames);
+
+    lua_State* L = luaL_newstate();
+    luaL_openlibs(L);
+    if (!CheckLua(L, luaL_dofile(L, "scripts/load.lua")))
+        throw exception();
+
     // jukebox::playSong("Boss Battle", true);
 
     gameState = GameState::FieldFree;
@@ -19,6 +25,15 @@ int main(int argc, char* args[]) {
     MenuDisplay* men = nullptr;
     /* END MENU TESTING*/
 
+    string sceneName = "";
+    vector<Option> startOptions = { Option("Editor", "Open Map Editor") };
+    for (auto saveName : saveNames)
+        startOptions.push_back(Option(saveName, "Load Save File"));
+    men = new MenuDisplay(startOptions, Point(64, 100), 340, 60, 2);
+    men->addBox("pinkbox", {0, 0, 340, 120});
+    men->addFlavorBox("pinkinventoryfooter", {0, 0, 340, 80});
+    UIRenderer::addMenuDisplay(men);
+
     while (true){
         t.startFrame();
         t.timeElapsed(&p.a);
@@ -29,24 +44,6 @@ int main(int argc, char* args[]) {
         if (keysDown.quit)
             break;
 
-        /* MENU TESTING */
-        if (keysDown.debug_1) {
-            if (men == nullptr) {
-                men = new MenuDisplay({Option("Mung Bean Juice", "Good for you.")}, Point(64, 100), 340, 60, 2);
-                men->addBox("pinkbox", {0, 0, 340, 120});
-                men->addHeader("pinkinventoryheader", {0, 0, 340, 40});
-                men->addFlavorBox("pinkinventoryfooter", {0, 0, 340, 80});
-                UIRenderer::addMenuDisplay(men);
-            } else {
-                UIRenderer::removeMenuDisplay(men);
-                men = nullptr;
-            }
-        }
-        if (men != nullptr) {
-            men->processInput(keysDown); // This needs to happen somewhere else. Are all menus in an event?
-        }
-        /* END MENU TESTING */
-
         if (men == nullptr) {
             if(MapBuilder::mapBuilder)
                 MapBuilder::mapBuilder->meat(keysDown);
@@ -56,33 +53,67 @@ int main(int argc, char* args[]) {
                 default:
                     Scene::currentScene->meat(keysDown);
                     t.timeElapsed(&p.d);
+
+                    FocusTracker::ftracker->setCameraFocalPoint();
+                    SDL_RenderClear(renderer);
+                    Camera::c->renderBackground();
+                    Sprite::renderSprites(renderer, Camera::c->getSourceRectCoords());
+                    UIRenderer::render();
+                    Camera::c->renderAfterEffects();
+
+                    SDL_SetRenderDrawColor(renderer, 0,0,0,255);
                     break;
             }
         }
 
-        FocusTracker::ftracker->setCameraFocalPoint();
-        SDL_RenderClear(renderer);
-        Camera::c->renderBackground();
-        Sprite::renderSprites(renderer, Camera::c->getSourceRectCoords());
-        UIRenderer::render();
-        Camera::c->renderAfterEffects();
+        if (men != nullptr) {
+            string selection = men->getCurrentSelection().selectionText;
+            if (men->processInput(keysDown, selection)) {
+                if (selection == "Editor") {
+                    UIRenderer::removeMenuDisplay(men);
+                    men = nullptr;
+                    MapBuilder *m = new MapBuilder("burg", L);
+                } else {
+                    UIRenderer::removeMenuDisplay(men);
+                    men = nullptr;
+                    lua_getglobal(L, "loadGame");
+                    lua_pushstring(L, selection.c_str());
+                    if(!luaUtils::CheckLua(L, lua_pcall(L, 1, 1, 0)))
+                        throw exception();
+                    string sceneName;
+                    string spawnName;
+                    luaUtils::GetLuaStringFromTable(L, "scene", sceneName);
+                    luaUtils::GetLuaStringFromTable(L, "name", spawnName);
+                    luaUtils::GetLuaIntFromTable(L, "scale", settings.SCALE);
+                    Scene* scene = new Scene(sceneName, L);
+                    scene->Load(false);
+                    scene->EnterLoaded(scene->things[spawnName]);
+                    lua_settop(L, 0);
+                    gameState = GameState::FieldFree;
+                }
+            }
+            SDL_RenderClear(renderer);
+            UIRenderer::render();
+        }
 
-
-        SDL_SetRenderDrawColor(renderer, 0,0,0,255);
-        
         t.timeElapsed(&p.e);
         t.endFrameAndWait(frameCount, p);
+
         SDL_RenderPresent(renderer);
-        Scene::currentScene->destroyThings();
+        
+        if (men == nullptr)
+            Scene::currentScene->destroyThings();
     }
     jukebox::stop();
-    Scene::currentScene->destroyThings();
+    if (Scene::currentScene)
+        delete Scene::currentScene;
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 
     delete Camera::c;
 
     Mix_CloseAudio();
+    lua_close(L);
     IMG_Quit();
     SDL_Quit();
     return 0;

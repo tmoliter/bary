@@ -38,6 +38,15 @@ struct MoveST : public Subtask {
     Move* prevMove = nullptr;
 };
 
+struct PortalST : public Subtask {
+    PortalST(lua_State* L, Host* host) : Subtask(L, host) {};
+    ~PortalST();
+    virtual void init();
+    virtual bool meat(KeyPresses keysDown);
+    RealThing* thing = nullptr;
+    Point destination;
+    int newLayer;
+};
 
 struct Task {
     Task(string eventName, Host* host) : eventName(eventName), host(host) {};

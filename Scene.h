@@ -2,7 +2,6 @@
 #define SCENE_H
 #include "FocusTracker.h"
 #include "things/FieldPlayer.h"
-#include "things/Door.h"
 #include "Task.h"
 
 using namespace luaUtils;
@@ -25,10 +24,10 @@ struct Scene : public Host {
     map<string, RealThing*> things;
     vector<string> thingsToDestroy;
 
-    Scene(string sceneName);
+    Scene(string sceneName, lua_State *L);
     ~Scene();
 
-    void Load();
+    void Load(bool isEditing);
     void EnterLoaded(RealThing* focus);
 
     void meat(KeyPresses keysDown);

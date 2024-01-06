@@ -25,30 +25,10 @@ void FieldPlayer::meat(KeyPresses keysDown) {
         castRayForInteractables();
 
     /* DEBUG MODE CONTROLS */
-    if (keysDown.debug_left && sprites[0]->d.layer > 0) {
-        // This feels pretty hacky, but I guess we could put it in a function on RealThing like this.
-        // It shouldn't happen too much.
-        int oldLayer = move->layer;
-        int newLayer = oldLayer - 1;
-        move->layer = newLayer;
-        sprites[0]->d.layer = newLayer;
-
-        Obstruction* ob = obstructions[oldLayer];
-        ob->layer = newLayer;
-        obstructions[ob->layer] = ob;
-        obstructions.erase(oldLayer);
-    }
-    if (keysDown.debug_right) {
-        int oldLayer = move->layer;
-        int newLayer = oldLayer + 1;
-        move->layer = newLayer;
-        sprites[0]->d.layer = newLayer;
-
-        Obstruction* ob = obstructions[oldLayer];
-        ob->layer = newLayer;
-        obstructions[ob->layer] = ob;
-        obstructions.erase(oldLayer);
-    }
+    if (keysDown.debug_left)
+        shiftLayer(move->layer - 1);
+    if (keysDown.debug_right) 
+        shiftLayer(move->layer + 1);
     if (keysDown.debug_up)
         move->changeSpeed(false);
     if (keysDown.debug_down)
@@ -65,7 +45,7 @@ int FieldPlayer::castRayForInteractables () {
         if (t == this)
             continue;
         for (auto r : getRaysFromOriginAndDirection(position, move->currentDirection))
-            if (t->checkForCollidables(r, move->layer, CollidableType::interactable))
+            if (t->checkForCollidables(r, move->layer, this, CollidableType::interactable))
                 return 1;
     }
     return 0;
@@ -78,7 +58,7 @@ int FieldPlayer::castRayForTriggers () {
         if (t == this)
             continue;
         for (auto r : getRaysFromOriginAndDirection(position, move->currentDirection))
-            if (t->checkForCollidables(r, move->layer, CollidableType::trigger))
+            if (t->checkForCollidables(r, move->layer, this, CollidableType::trigger))
                 return 1;
     }
     return 0;
