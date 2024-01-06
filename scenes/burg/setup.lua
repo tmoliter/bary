@@ -368,7 +368,7 @@ local thingDefs = {
                             relativeY = -131,
                             newLayer = 2,
                         },
-                        closeAfter = true
+                        closeAfter = true,
                         -- locked = true
                     }
                 }

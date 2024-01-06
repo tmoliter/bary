@@ -91,7 +91,7 @@ local function openDoor(hostThing, args, eventName)
         },
         {
             type = "disableColliders",
-            all = true -- should only disable the obstruction
+            obstructions = true
         }
     }, eventName, hostThing)
     if args["portal"] ~= nil then
@@ -103,10 +103,17 @@ local function openDoor(hostThing, args, eventName)
     end
     if args["closeAfter"] ~= nil then
         coroutine.yield()
-        _newTask({{
-            type = "setActiveSprites",
-            sprites = { 1 }
-        }}, eventName, hostThing)
+        _newTask({
+            {
+                type = "setActiveSprites",
+                sprites = { 1 }
+            },
+            {
+                type = "disableColliders",
+                enable = true,
+                obstructions = true
+            }
+    }, eventName, hostThing)
     end
 end
 

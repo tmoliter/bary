@@ -217,13 +217,21 @@ void Task::addSubtasks(lua_State* L) {
             instant = true;
         }
         if (currentType == "disableColliders") {
+            bool enable = luaUtils::CheckLuaTableForBool(L, "enable");
+            bool obs, inters, trigs = luaUtils::CheckLuaTableForBool(L, "all");
+            luaUtils::GetLuaBoolFromTable(L, "obstructions", obs);
+            luaUtils::GetLuaBoolFromTable(L, "interactables", inters);
+            luaUtils::GetLuaBoolFromTable(L, "triggers", trigs);
             RealThing* hostThing = static_cast<RealThing*>(host);
-            for (auto c : hostThing->obstructions)
-                c.second->active = false;
-            for (auto c : hostThing->interactables)
-                c.second->active = false;
-            for (auto c : hostThing->triggers)
-                c.second->active = false;
+            if (obs)
+                for (auto c : hostThing->obstructions)
+                    c.second->active = enable;
+            if (inters)
+                for (auto c : hostThing->interactables)
+                    c.second->active = enable;
+            if (trigs)
+                for (auto c : hostThing->triggers)
+                    c.second->active = enable;
             instant = true;
         }
         if (!instant)
