@@ -6,7 +6,7 @@ local eventDefinitions = {}
 -- maybe make a bulk beginEvents function here
 
 local function beginEvent(hostThing, args)
-    local thingName, eventName = table.unpack { args["thingName"], args["eventName"] }
+    local thingName, eventName = table.unpack { args["thingName"], args["eventName"] } -- we might also populate item use definitions as `thingName = inventory`
 
     local eventDefinition = eventDefinitions[thingName][eventName]
 
