@@ -23,6 +23,7 @@ inline struct Settings {
             luaUtils::GetLuaIntFromTable(L, "LETTER_HEIGHT", LETTER_HEIGHT);
             luaUtils::GetLuaIntFromTable(L, "LETTERS_PER_FONT_ROW", LETTERS_PER_FONT_ROW);
             SDL_Rect* RESOLUTION = new SDL_Rect {0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
+            lua_close(L);
         } else {
             std::cout << "couldn't find config/globals.lua" << std::endl;
         }

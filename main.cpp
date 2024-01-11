@@ -5,9 +5,6 @@
 using namespace std;
 
 int main(int argc, char* args[]) {
-    vector<string> saveNames;
-    barysystem::startup(saveNames);
-
     lua_State* L = luaL_newstate();
     luaL_openlibs(L);
     if (!CheckLua(L, luaL_dofile(L, "scripts/load.lua")))
@@ -21,18 +18,17 @@ int main(int argc, char* args[]) {
     FpsTimer t;
     ProfileData p;
 
-    /* MENU TESTING*/
-    MenuDisplay* men = nullptr;
-    /* END MENU TESTING*/
+    vector<string> saveNames;
+    barysystem::startup(saveNames);
 
-    string sceneName = "";
+    MenuDisplay* loadMenu = nullptr;
     vector<Option> startOptions = { Option("Editor", "Open Map Editor") };
     for (auto saveName : saveNames)
         startOptions.push_back(Option(saveName, "Load Save File"));
-    men = new MenuDisplay(startOptions, Point(64, 100), 340, 60, 2);
-    men->addBox("pinkbox", {0, 0, 340, 120});
-    men->addFlavorBox("pinkinventoryfooter", {0, 0, 340, 80});
-    UIRenderer::addMenuDisplay(men);
+    loadMenu = new MenuDisplay(startOptions, Point(64, 100), 340, 60, 2);
+    loadMenu->addBox("pinkbox", {0, 0, 340, 120});
+    loadMenu->addFlavorBox("pinkinventoryfooter", {0, 0, 340, 80});
+    UIRenderer::addMenuDisplay(loadMenu);
 
     while (true){
         t.startFrame();
@@ -44,7 +40,35 @@ int main(int argc, char* args[]) {
         if (keysDown.quit)
             break;
 
-        if (men == nullptr) {
+        if (loadMenu) {
+            string selection = loadMenu->getCurrentSelection().selectionText;
+            if (loadMenu->processInput(keysDown, selection)) {
+                if (selection == "Editor") {
+                    UIRenderer::removeMenuDisplay(loadMenu);
+                    loadMenu = nullptr;
+                    MapBuilder *m = new MapBuilder("burg", L);
+                } else {
+                    UIRenderer::removeMenuDisplay(loadMenu);
+                    loadMenu = nullptr;
+                    lua_getglobal(L, "loadGame");
+                    lua_pushstring(L, selection.c_str());
+                    if(!luaUtils::CheckLua(L, lua_pcall(L, 1, 1, 0)))
+                        throw exception();
+                    string sceneName;
+                    string spawnName;
+                    luaUtils::GetLuaStringFromTable(L, "scene", sceneName);
+                    luaUtils::GetLuaStringFromTable(L, "name", spawnName);
+                    luaUtils::GetLuaIntFromTable(L, "scale", settings.SCALE);
+                    Scene* scene = new Scene(sceneName, L);
+                    scene->Load(false);
+                    scene->EnterLoaded(scene->things[spawnName]);
+                    lua_settop(L, 0);
+                    gameState = GameState::FieldFree;
+                }
+            }
+            SDL_RenderClear(renderer);
+            UIRenderer::render();
+        } else if (Scene::currentScene) {
             if(MapBuilder::mapBuilder)
                 MapBuilder::mapBuilder->meat(keysDown);
             t.timeElapsed(&p.c);
@@ -64,36 +88,9 @@ int main(int argc, char* args[]) {
                     SDL_SetRenderDrawColor(renderer, 0,0,0,255);
                     break;
             }
-        }
-
-        if (men != nullptr) {
-            string selection = men->getCurrentSelection().selectionText;
-            if (men->processInput(keysDown, selection)) {
-                if (selection == "Editor") {
-                    UIRenderer::removeMenuDisplay(men);
-                    men = nullptr;
-                    MapBuilder *m = new MapBuilder("burg", L);
-                } else {
-                    UIRenderer::removeMenuDisplay(men);
-                    men = nullptr;
-                    lua_getglobal(L, "loadGame");
-                    lua_pushstring(L, selection.c_str());
-                    if(!luaUtils::CheckLua(L, lua_pcall(L, 1, 1, 0)))
-                        throw exception();
-                    string sceneName;
-                    string spawnName;
-                    luaUtils::GetLuaStringFromTable(L, "scene", sceneName);
-                    luaUtils::GetLuaStringFromTable(L, "name", spawnName);
-                    luaUtils::GetLuaIntFromTable(L, "scale", settings.SCALE);
-                    Scene* scene = new Scene(sceneName, L);
-                    scene->Load(false);
-                    scene->EnterLoaded(scene->things[spawnName]);
-                    lua_settop(L, 0);
-                    gameState = GameState::FieldFree;
-                }
-            }
-            SDL_RenderClear(renderer);
-            UIRenderer::render();
+        } else {
+            cout << "No load menu or current scene. What are we doing?" << endl;
+            throw exception();
         }
 
         t.timeElapsed(&p.e);
@@ -101,7 +98,7 @@ int main(int argc, char* args[]) {
 
         SDL_RenderPresent(renderer);
         
-        if (men == nullptr)
+        if (loadMenu == nullptr)
             Scene::currentScene->destroyThings();
     }
     jukebox::stop();

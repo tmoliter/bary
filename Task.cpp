@@ -101,8 +101,14 @@ bool MoveST::meat(KeyPresses keysDown) {
 
 void PortalST::init() {
     Host* incomingThing;
-    Host::GetLuaHostFromTable(L, "thing", incomingThing);
-    thing = static_cast<RealThing*>(incomingThing);
+    string thingName = "";
+    RealThing* hostThing = static_cast<RealThing*>(host); // (assume-host)
+    if (Host::GetLuaHostFromTable(L, "thing", incomingThing))
+        thing = static_cast<RealThing*>(incomingThing);
+    else if (luaUtils::GetLuaStringFromTable(L, "thingName", thingName))
+        thing = hostThing->things.at(thingName);
+    else
+        thing = hostThing;
 
     luaUtils::GetLuaIntFromTable(L, "newLayer", newLayer);
     Point relativeMove;
