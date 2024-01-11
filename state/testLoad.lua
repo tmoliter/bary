@@ -1,0 +1,10 @@
+local gameState = require('state.gameState')
+
+gameState:addInventory("zinnia")
+gameState.inventories.zinnia:use("mungBeanJuice", 3, "zinnia")
+gameState.inventories.zinnia:add("mungBeanJuice", 3)
+gameState.inventories.zinnia:use("mungBeanJuice", 2, "zinnia")
+gameState.inventories.zinnia:use("mungBeanJuice", 2, "zinnia")
+gameState.inventories.zinnia:use("mungBeanJuice", 1, "zinnia")
+gameState.inventories.zinnia:use("oolong", 3, "zinnia")
+gameState.inventories.zinnia:use("oolong", 4, "zinnia")
