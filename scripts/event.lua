@@ -1,14 +1,41 @@
 local standardEvents = require('scripts.standardEvents')
-
+local itemDefinitions = require('state.itemDefinitions')
 local activeEvents = {}
 local eventDefinitions = {}
+local itemEventId = 1
 
 -- maybe make a bulk beginEvents function here
 
-local function beginEvent(hostThing, args)
-    local thingName, eventName = table.unpack { args["thingName"], args["eventName"] } -- we might also populate item use definitions as `thingName = inventory`
+local function useItem(source, target, itemName, amount)
+    local sufficient, remaining = gameState.inventories[source]:use(itemName, amount, target)
+    if sufficient ~= true then
+        return
+    end
+    local args = {
+        eventDefinition = { 
+            type = "custom", 
+            customCoroutine = itemDefinitions[itemName].use,
+            amount = amount,
+            itemName = itemName,
+            target = target,
+            source = source
+        },
+        eventName = "item_" .. itemEventId,
+        catalyst = "item"
+    }
+    itemEventId = itemEventId + 1
+    beginEvent(sceneManager, args)
+end
 
-    local eventDefinition = eventDefinitions[thingName][eventName]
+local function beginEvent(hostThing, args)
+    local eventName = args["eventName"]
+    local eventDefinition
+    if args["eventDefinition"] ~= nil then
+        eventDefinition = args["eventDefinition"]
+        itemEventId = itemEventId + 1
+    else
+        eventDefinition = eventDefinitions[args["thingName"]][eventName]
+    end
 
     -- Event has never been invoked
     if activeEvents[hostThing] == nil then
@@ -26,14 +53,16 @@ local function beginEvent(hostThing, args)
     end
 
 
-    activeEvent["args"] = {}
+    activeEvent["args"] = { gameState = gameState }
     for k,v in pairs(eventDefinition) do activeEvent["args"][k] = v end
     for k,v in pairs(args) do activeEvent["args"][k] = v end
 
     if eventDefinition["type"] == "custom" then
         activeEvent["coroutine"] = coroutine.create(eventDefinition["customCoroutine"], hostThing, activeEvent["args"], eventName)
-    else
+    elseif eventDefinition["type"] ~= nil then
         activeEvent["coroutine"] = coroutine.create(standardEvents[eventDefinition["type"]], hostThing, activeEvent["args"], eventName)
+    else -- item case
+        activeEvent["coroutine"] = coroutine.create(eventDefinition, hostThing, activeEvent["args"], eventName)
     end
 
     activeEvent["timesInvoked"] = activeEvent["timesInvoked"] + 1
@@ -64,20 +93,28 @@ local function resumeEvent(hostThing, eventName)
     return 1
 end
 
-local function populateDefinitions(thing)
+local function populateEvents(thing)
     -- we might do additional stuff with components here
     if eventDefinitions[thing["name"]] == nil then eventDefinitions[thing["name"]] = thing["events"] end
     if thing["subThings"] ~= nil then
         for _,subThing in pairs(thing["subThings"]) do
-            populateDefinitions(subThing)
+            populateEvents(subThing)
         end
     end
 end
 
+local function populate(thingDefs) 
+    eventDefinitions = {}
+    for _,thing in pairs(thingDefs) do
+        populateEvents(thing)
+    end
+end
+
 return {
-    beginEvent,
-    resumeEvent,
-    populateDefinitions
+    useItem = useItem,
+    beginEvent = beginEvent,
+    resumeEvent = resumeEvent,
+    populate = populate
 }
 
 --[[

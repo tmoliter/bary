@@ -58,7 +58,7 @@ local function openDoor(hostThing, args, eventName)
     -- in args we can define what is needed, if anything, to unlock the door, and
     -- in this function we will check inventory or quest status etc
     if (args["locked"]) then
-        if args["collisionType"] == "interactable" then
+        if args["catalyst"] == "interactable" then
             local phrase = args["lockedPhrase"] or {
                 type = "phrase",
                 text = "Locked.",
@@ -77,7 +77,7 @@ local function openDoor(hostThing, args, eventName)
         end
         return
     end
-    if args["collisionType"] == "trigger" and args["triggerDelay"] then
+    if args["catalyst"] == "trigger" and args["triggerDelay"] then
         _newTask({{
             type = "wait",
             frames = args["triggerDelay"],

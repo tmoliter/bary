@@ -49,3 +49,11 @@ a:doStuff("ok")
 a:doStuff("shut up")
 b.c.Z["something"] = 100
 print(b.c.Z["something"])
+
+if false then
+    print("NO")
+elseif false then
+    print("NOOOO")
+else
+    print("YESSS")
+end

@@ -27,6 +27,8 @@ struct Scene : public Host {
     Scene(string sceneName, lua_State *L);
     ~Scene();
 
+    RealThing* sceneManager;
+
     void Load(bool isEditing);
     void EnterLoaded(RealThing* focus);
 
