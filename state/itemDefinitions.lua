@@ -1,6 +1,6 @@
 local itemDefinitions = {
     mungBeanJuice = {
-        use = function(hostThing, args, eventName)
+        use = function(hostThing, args)
             print("USING " .. args.amount .. " MUNG BEAN JUICES ON " .. args.target)
             gameState.inventories[args.target]:add("oolong", args.amount * 2)
             local text = args.target .. " NOW HAS " .. gameState.inventories[args.target]:count("oolong") .. " OOLONGS"
@@ -18,13 +18,13 @@ local itemDefinitions = {
                 blocking = true
             }
             _newTask(
-                { phrase }, eventName, hostThing
+                { phrase }, args.eventName, hostThing
             )
             coroutine.yield()
             phrase.text = args.source .. " NOW HAS " .. gameState.inventories[args.source]:count("mungBeanJuice") .. " MUNG BEAN JUICES"
             phrase.x = 400
             phrase.y = 400
-            _newTask({ phrase }, eventName, hostThing)
+            _newTask({ phrase }, args.eventName, hostThing)
         end
     },
     oolong = {

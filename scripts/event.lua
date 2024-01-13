@@ -28,24 +28,23 @@ local function useItem(source, target, itemName, amount)
 end
 
 local function beginEvent(hostThing, args)
-    local eventName = args["eventName"]
     local eventDefinition
     if args["eventDefinition"] ~= nil then
         eventDefinition = args["eventDefinition"]
         itemEventId = itemEventId + 1
     else
-        eventDefinition = eventDefinitions[args["thingName"]][eventName]
+        eventDefinition = eventDefinitions[args["thingName"]][args.eventName]
     end
 
     -- Event has never been invoked
     if activeEvents[hostThing] == nil then
         activeEvents[hostThing] = {}
     end
-    if activeEvents[hostThing][eventName] == nil then
-        activeEvents[hostThing][eventName] = { timesInvoked = 0 }
+    if activeEvents[hostThing][args.eventName] == nil then
+        activeEvents[hostThing][args.eventName] = { timesInvoked = 0 }
     end
 
-    local activeEvent = activeEvents[hostThing][eventName]
+    local activeEvent = activeEvents[hostThing][args.eventName]
     
     -- Event is already in progress
     if activeEvent["coroutine"] ~= nil then
@@ -58,33 +57,33 @@ local function beginEvent(hostThing, args)
     for k,v in pairs(args) do activeEvent["args"][k] = v end
 
     if eventDefinition["type"] == "custom" then
-        activeEvent["coroutine"] = coroutine.create(eventDefinition["customCoroutine"], hostThing, activeEvent["args"], eventName)
+        activeEvent["coroutine"] = coroutine.create(eventDefinition["customCoroutine"], hostThing, activeEvent["args"])
     elseif eventDefinition["type"] ~= nil then
-        activeEvent["coroutine"] = coroutine.create(standardEvents[eventDefinition["type"]], hostThing, activeEvent["args"], eventName)
+        activeEvent["coroutine"] = coroutine.create(standardEvents[eventDefinition["type"]], hostThing, activeEvent["args"])
     else -- item case
-        activeEvent["coroutine"] = coroutine.create(eventDefinition, hostThing, activeEvent["args"], eventName)
+        activeEvent["coroutine"] = coroutine.create(eventDefinition, hostThing, activeEvent["args"])
     end
 
     activeEvent["timesInvoked"] = activeEvent["timesInvoked"] + 1
 
     -- return task data for C++ here?
     -- Data will be an event name, a list of subtasks, and a table of data for each subtask
-    resumeEvent(hostThing, eventName)
+    resumeEvent(hostThing, activeEvent["args"])
 end
 
 
-local function resumeEvent(hostThing, eventName)
+local function resumeEvent(hostThing, args)
     -- Event is not active
     if activeEvents[hostThing] == nil or
-        activeEvents[hostThing][eventName] == nil or
-        activeEvents[hostThing][eventName]["coroutine"] == nil
+        activeEvents[hostThing][args.eventName] == nil or
+        activeEvents[hostThing][args.eventName]["coroutine"] == nil
         then
         return 0
     end
 
-    local activeEvent = activeEvents[hostThing][eventName]
+    local activeEvent = activeEvents[hostThing][args.eventName]
 
-    coroutine.resume(activeEvent["coroutine"], hostThing, activeEvent["args"], eventName)
+    coroutine.resume(activeEvent["coroutine"], hostThing, args)
     if coroutine.status(activeEvent["coroutine"]) == 'dead' then
         activeEvent["coroutine"] = nil
         activeEvent["args"] = nil

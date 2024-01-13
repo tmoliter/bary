@@ -161,7 +161,8 @@ bool Scene::meatEvent(KeyPresses keysDown) {
             continue;
         // All tasks for this event have exhausted subtasks, so we look for more tasks
         loadLuaFunc("resumeEvent", e.first.first);
-        lua_pushstring(L, e.first.second.c_str());
+        lua_newtable(L);
+        luaUtils::PushStringToTable(L, "eventName", e.first.second);
         callLuaFunc(1, 1, 0);
     }
     return blocking;

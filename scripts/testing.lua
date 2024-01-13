@@ -29,31 +29,41 @@
 -- print(_G["w"])
 -- print(_G["z"])
 
-local b = {
-    c = {
-        f = 5
-    },
-    doStuff = function (self, stuff)
-        self.d = self.d + 1;
-        print(self.d)
-        print(stuff) 
-    end,
-}
-local a = {}
+-- local b = {
+--     c = {
+--         f = 5
+--     },
+--     doStuff = function (self, stuff)
+--         self.d = self.d + 1;
+--         print(self.d)
+--         print(stuff) 
+--     end,
+-- }
+-- local a = {}
 
-setmetatable (b, { __index = function (t,k) t[k] = 0; return t[k] end })
-setmetatable(a, { __index = b })
-setmetatable(b.c, { __index = function(t,k) print("YOOOO"); return {} end })
-a:doStuff("whatever")
-a:doStuff("ok")
-a:doStuff("shut up")
-b.c.Z["something"] = 100
-print(b.c.Z["something"])
+-- setmetatable (b, { __index = function (t,k) t[k] = 0; return t[k] end })
+-- setmetatable(a, { __index = b })
+-- setmetatable(b.c, { __index = function(t,k) print("YOOOO"); return {} end })
+-- a:doStuff("whatever")
+-- a:doStuff("ok")
+-- a:doStuff("shut up")
+-- b.c.Z["something"] = 100
+-- print(b.c.Z["something"])
 
-if false then
-    print("NO")
-elseif false then
-    print("NOOOO")
-else
-    print("YESSS")
+-- if false then
+--     print("NO")
+-- elseif false then
+--     print("NOOOO")
+-- else
+--     print("YESSS")
+-- end
+
+function a (arg1)
+    print(arg1)
+    coroutine.yield()
+    print(arg1)
 end
+
+b = coroutine.create(a, 5)
+coroutine.resume(b, 5)
+coroutine.resume(b)

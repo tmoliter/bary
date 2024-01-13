@@ -1,14 +1,14 @@
-local function sequentialTasks(hostThing, args, eventName)
+local function sequentialTasks(hostThing, args)
     local tasks = args["tasks"]
     if args["pauseAllMoves"] then
         _newTask({{
             type = "pauseMoves",
             all = true,
-        }}, eventName, hostThing)
+        }}, args.eventName, hostThing)
         coroutine.yield()
     end
     for i,task in ipairs(tasks) do
-        _newTask(tasks[i], eventName, hostThing)
+        _newTask(tasks[i], args.eventName, hostThing)
         if i < #tasks then
             coroutine.yield()
         end
@@ -19,9 +19,9 @@ local function sequentialTasks(hostThing, args, eventName)
             type = "pauseMoves",
             all = true,
             unpause = true
-        }}, eventName, hostThing)
+        }}, args.eventName, hostThing)
     end
-end 
+end
 
 local function randomAutoMove(hostThing, args)
     local originX, originY, variance, wait, stop = table.unpack {args["originX"], args["originY"], args["variance"], args["wait"], args["stop"]}
@@ -35,7 +35,7 @@ local function randomAutoMove(hostThing, args)
                 destinationX = x,
                 destinationY = y
             },
-        }, args["eventName"], hostThing)
+        }, args.eventName, hostThing)
     end
     while stop ~= true do
         move()
@@ -47,14 +47,14 @@ local function randomAutoMove(hostThing, args)
                         type = "wait",
                         frames = wait,
                     }
-                }, args["eventName"], hostThing
+                }, args.eventName, hostThing
             )
             coroutine.yield()
         end
     end
 end
 
-local function openDoor(hostThing, args, eventName)
+local function openDoor(hostThing, args)
     -- in args we can define what is needed, if anything, to unlock the door, and
     -- in this function we will check inventory or quest status etc
     if (args["locked"]) then
@@ -72,7 +72,7 @@ local function openDoor(hostThing, args, eventName)
                 blocking = true
             }
             _newTask(
-                { phrase }, eventName, hostThing
+                { phrase }, args.eventName, hostThing
             )
         end
         return
@@ -81,7 +81,7 @@ local function openDoor(hostThing, args, eventName)
         _newTask({{
             type = "wait",
             frames = args["triggerDelay"],
-        }}, eventName, hostThing)
+        }}, args.eventName, hostThing)
         coroutine.yield()
     end
     _newTask({
@@ -93,13 +93,13 @@ local function openDoor(hostThing, args, eventName)
             type = "disableColliders",
             obstructions = true
         }
-    }, eventName, hostThing)
+    }, args.eventName, hostThing)
     if args["portal"] ~= nil then
         coroutine.yield()
         local portal = args["portal"]
         portal["thing"] = args["incomingThing"]
         portal["type"] = "portal"
-        _newTask({portal}, eventName, hostThing)
+        _newTask({portal}, args.eventName, hostThing)
     end
     if args["closeAfter"] ~= nil then
         coroutine.yield()
@@ -113,7 +113,7 @@ local function openDoor(hostThing, args, eventName)
                 enable = true,
                 obstructions = true
             }
-    }, eventName, hostThing)
+    }, args.eventName, hostThing)
     end
 end
 

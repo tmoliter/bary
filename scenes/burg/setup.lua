@@ -1,6 +1,6 @@
 -- BEHAVIORS
 
-local function zinniaAutoMove(hostThing, args, eventName)
+local function zinniaAutoMove(hostThing, args)
     originX, originY = table.unpack { args["originX"], args["originY"] }
     while true do
         _newTask(
@@ -10,7 +10,7 @@ local function zinniaAutoMove(hostThing, args, eventName)
                     destinationX = originX - 150,
                     destinationY = originY - 150
                 },
-            }, eventName, hostThing
+            }, args.eventName, hostThing
         )
         coroutine.yield()
         _newTask(
@@ -20,7 +20,7 @@ local function zinniaAutoMove(hostThing, args, eventName)
                     destinationX = originX + 35,
                     destinationY = originY - 150
                 },
-            }, eventName, hostThing
+            }, args.eventName, hostThing
         )
         coroutine.yield()
         _newTask(
@@ -30,7 +30,7 @@ local function zinniaAutoMove(hostThing, args, eventName)
                     destinationX = originX,
                     destinationY = originY
                 },
-            }, eventName, hostThing
+            }, args.eventName, hostThing
         )
         coroutine.yield()
     end
