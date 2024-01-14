@@ -72,7 +72,7 @@ end
 
 
 function spawn(host, sceneName, args)
-    local setup = require('scenes.' .. sceneName .. '.setup')
+    local setup = require(settings.GAME_NAME .. '.scenes.' .. sceneName .. '.setup')
     local thingDefs, _ = table.unpack(setup)
     local spawn = {}
     for k,v in pairs(thingDefs[args["baseName"]]) do if k ~= "events" then spawn[k] = v end end
