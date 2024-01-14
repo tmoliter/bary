@@ -1,6 +1,7 @@
 #include "barysystem.h"
 
 void barysystem::startup(vector<string>& saveNames) {
+    settings.init();
     char* basePath = SDL_GetBasePath();
     if (basePath) {
         if (0 == cd(basePath)) {
@@ -12,7 +13,7 @@ void barysystem::startup(vector<string>& saveNames) {
 
     const regex base_regex(R"(^.*\/([^\/]+)\.lua)");
     string basePathString(basePath);
-    string savePath = basePathString + "/saves";
+    string savePath = basePathString + "/" + settings.GAME_NAME + "/saves";
 
     smatch base_match;
     for (const auto & entry : fs::directory_iterator(savePath)) {
@@ -21,7 +22,6 @@ void barysystem::startup(vector<string>& saveNames) {
                 saveNames.push_back(base_match[1].str());
     }
 
-    settings.init();
 
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     IMG_Init(IMG_INIT_PNG);

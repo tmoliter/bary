@@ -14,7 +14,7 @@ inline struct Settings {
         lua_State* L = luaL_newstate();
         if (luaUtils::CheckLua(L, luaL_dofile(L, "config/settings.lua"))) {
             std::cout << "Loading settings..." << std::endl;
-            lua_getglobal(L, "globals");
+            lua_getglobal(L, "settings");
             luaUtils::GetLuaIntFromTable(L, "SCALE", SCALE);
             luaUtils::GetLuaIntFromTable(L, "SCREEN_WIDTH", SCREEN_WIDTH);
             luaUtils::GetLuaIntFromTable(L, "SCREEN_HEIGHT", SCREEN_HEIGHT);
@@ -23,6 +23,7 @@ inline struct Settings {
             luaUtils::GetLuaIntFromTable(L, "LETTER_HEIGHT", LETTER_HEIGHT);
             luaUtils::GetLuaIntFromTable(L, "LETTERS_PER_FONT_ROW", LETTERS_PER_FONT_ROW);
             SDL_Rect* RESOLUTION = new SDL_Rect {0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
+            luaUtils::GetLuaStringFromTable(L, "GAME_NAME", GAME_NAME);
             lua_close(L);
         } else {
             std::cout << "couldn't find config/globals.lua" << std::endl;
@@ -36,6 +37,7 @@ inline struct Settings {
     int LETTERS_PER_FONT_ROW;
     bool FULLSCREEN_MODE;
     SDL_Rect* RESOLUTION;
+    std::string GAME_NAME;
 } settings;
 
 inline SDL_Window* window;

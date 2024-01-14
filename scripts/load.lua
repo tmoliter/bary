@@ -1,4 +1,5 @@
 require("scripts.copy")
+require("config.settings")
 gameState = require('state.gameState')
 sceneManager = nil
 local eventModule = require("scripts.event")
@@ -6,7 +7,7 @@ beginEvent = eventModule.beginEvent
 resumeEvent = eventModule.resumeEvent
 
 function loadGame(saveFile)
-    local saveData = require("saves." .. saveFile)
+    local saveData = require(settings.GAME_NAME .. ".saves." .. saveFile)
 
     gameState:fresh()
     gameState["spawn"] = deepcopy(saveData["spawn"])
@@ -16,14 +17,14 @@ end
 
 function loadScene(host, sceneName, isEditing, newSceneManager)
     sceneManager = newSceneManager
-    local setup = require('scenes.' .. sceneName .. '.setup')
+    local setup = require(settings.GAME_NAME .. '.scenes.' .. sceneName .. '.setup')
     local thingDefs = table.unpack(setup)
 
     local mapTable
     local playerSpawn
 
     if isEditing == true then
-        mapTable = require('scenes.' .. sceneName .. '.map')
+        mapTable = require(settings.GAME_NAME .. '.scenes.' .. sceneName .. '.map')
     else
         mapTable = gameState["scenes"][sceneName]
         playerSpawn = thingDefs[gameState["spawn"]["name"]]

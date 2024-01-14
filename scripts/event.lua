@@ -1,5 +1,5 @@
 local standardEvents = require('scripts.standardEvents')
-local itemDefinitions = require('state.itemDefinitions')
+local itemDefinitions = require(settings.GAME_NAME .. '.itemDefinitions')
 local activeEvents = {}
 local eventDefinitions = {}
 local itemEventId = 1
