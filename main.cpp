@@ -89,7 +89,7 @@ int main(int argc, char* args[]) {
                     break;
             }
         } else {
-            cout << "No load menu or current sWcene. What are we doing?" << endl;
+            cout << "No load menu or current scene. What are we doing?" << endl;
             throw exception();
         }
         lua_settop(L, 0);
