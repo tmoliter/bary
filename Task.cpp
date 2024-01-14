@@ -19,8 +19,8 @@ Subtask::~Subtask() {
     if (timer)
         delete timer;
 }
+
 PhraseST::~PhraseST() {
-    phrase = nullptr;
     UIRenderer::removePhrase(phrase);
 }
 
@@ -59,6 +59,52 @@ bool PhraseST::meat(KeyPresses keysDown) {
         phrase->advance();
     return false;
 }
+
+MenuST::~MenuST() {
+    if (closeOnDestroy) {
+        UIRenderer::removeMenuDisplay(menu);
+    }
+}
+
+void MenuST::init() {
+    vector<Option> options;
+    Point point;
+    Point size;
+    int maxColumns;
+    if (luaUtils::GetTableOnStackFromTable(L, "options")) {
+        lua_pushnil(L);
+        while (lua_next(L, -2)) {
+            Option newOption = Option();
+            luaUtils::GetLuaStringFromTable(L, "selectionText", newOption.selectionText);
+            luaUtils::GetLuaStringFromTable(L, "flavorText", newOption.flavorText);
+            luaUtils::GetLuaStringFromTable(L, "value", newOption.value);
+            options.push_back(newOption);
+            lua_pop(L,1);
+        }
+        lua_pop(L,1);
+    }
+    luaUtils::GetLuaIntFromTable(L, "x", point.x);
+    luaUtils::GetLuaIntFromTable(L, "y", point.y);
+    luaUtils::GetLuaIntFromTable(L, "width", size.x);
+    luaUtils::GetLuaIntFromTable(L, "height", size.y);
+    luaUtils::GetLuaIntFromTable(L, "maxColumns", maxColumns);
+    luaUtils::GetLuaBoolFromTable(L, "closeOnDestroy", closeOnDestroy);
+    menu = new MenuDisplay(options, point, size, maxColumns);
+    menu->addBox("pinkbox", {0, 0, 340, 120});
+    selection = menu->getCurrentSelection().value; // This way of doing things could probably be improved
+    UIRenderer::addMenuDisplay(menu);
+}
+
+bool MenuST::meat(KeyPresses keysDown) {
+    if (menu->processInput(keysDown, selection))
+        return true;
+    return false;
+}
+
+bool MenuST::pushArgs() { 
+    luaUtils::PushStringToTable(L, "selection", selection);
+    return true; 
+};
 
 MoveST::~MoveST() {
     if (movingThing == nullptr)
@@ -198,6 +244,8 @@ void Task::addSubtasks(lua_State* L) {
             subtasks.push_back(new Subtask(L, host));
         if (currentType == "phrase")
             subtasks.push_back(new PhraseST(L, host));
+        if (currentType == "menu")
+            subtasks.push_back(new MenuST(L, host));
         if (currentType == "move")
             subtasks.push_back(new MoveST(L, host));
         if (currentType == "portal")

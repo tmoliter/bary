@@ -22,10 +22,10 @@ int main(int argc, char* args[]) {
     barysystem::startup(saveNames);
 
     MenuDisplay* loadMenu = nullptr;
-    vector<Option> startOptions = { Option("Editor", "Open Map Editor") };
+    vector<Option> startOptions = { Option("Editor", "Open Map Editor", "editor") };
     for (auto saveName : saveNames)
-        startOptions.push_back(Option(saveName, "Load Save File"));
-    loadMenu = new MenuDisplay(startOptions, Point(64, 100), 340, 60, 2);
+        startOptions.push_back(Option(saveName, "Load Save File", saveName));
+    loadMenu = new MenuDisplay(startOptions, Point(64, 100), Point(340, 60), 2);
     loadMenu->addBox("pinkbox", {0, 0, 340, 120});
     loadMenu->addFlavorBox("pinkinventoryfooter", {0, 0, 340, 80});
     UIRenderer::addMenuDisplay(loadMenu);
@@ -89,7 +89,7 @@ int main(int argc, char* args[]) {
                     break;
             }
         } else {
-            cout << "No load menu or current scene. What are we doing?" << endl;
+            cout << "No load menu or current sWcene. What are we doing?" << endl;
             throw exception();
         }
         lua_settop(L, 0);

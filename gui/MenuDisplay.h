@@ -9,15 +9,17 @@
 using namespace std;
 
 struct Option {
-    Option(string sT) : selectionText(sT), flavorText("") {};
-    Option(string sT, string fT) : selectionText(sT), flavorText(fT) {};
+    Option() : selectionText(""), flavorText(""), value("") {};
+    Option(string sT) : selectionText(sT), value(sT), flavorText("") {};
+    Option(string sT, string fT, string value) : selectionText(sT), flavorText(fT), value(value) {};
 
     string selectionText;
     string flavorText;
+    string value;
 };
 
 struct MenuDisplay {
-    MenuDisplay(vector<Option> o, Point p, int w, int h, int mC, bool a = true);
+    MenuDisplay(vector<Option> o, Point p, Point size, int mC, bool a = true);
     ~MenuDisplay();
 
     bool active;

@@ -1,6 +1,6 @@
 #include "MenuDisplay.h"
 
-MenuDisplay::MenuDisplay(vector<Option> o, Point p, int w, int h, int mC, bool a) : 
+MenuDisplay::MenuDisplay(vector<Option> o, Point p, Point size, int mC, bool a) : 
     allOptions(o), 
     position(p), 
     maxColumns(mC), 
@@ -16,8 +16,8 @@ MenuDisplay::MenuDisplay(vector<Option> o, Point p, int w, int h, int mC, bool a
     header = nullptr;
     flavorBox = nullptr;
     // These need to happen first
-    setHeight(h);
-    setWidth(w);
+    setHeight(size.y);
+    setWidth(size.x);
 
     // This might get called again in a "updateOptions" function later
     buildPages();
@@ -87,7 +87,7 @@ bool MenuDisplay::processInput(KeyPresses keysDown, string& selection) {
         d = Direction::right;
     moveSelection(d);
     if (d != Direction::none)
-        selection = getCurrentSelection().selectionText;
+        selection = getCurrentSelection().value;
     return 0;
 }
 
