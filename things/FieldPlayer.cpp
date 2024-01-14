@@ -21,7 +21,7 @@ FieldPlayer::~FieldPlayer() {
 void FieldPlayer::meat(KeyPresses keysDown) {
     if (!move->velocity.isNaught())
         castRayForTriggers();
-    if(keysDown.ok && gameState == GameState::FieldFree)
+    if(keysDown.ok && !move->disables)
         castRayForInteractables();
 
     /* DEBUG MODE CONTROLS */
@@ -63,4 +63,3 @@ int FieldPlayer::castRayForTriggers () {
     }
     return 0;
 }
-
