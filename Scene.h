@@ -17,6 +17,7 @@ struct Scene : public Host {
     } sceneState;
 
     vector<Task*> activeTasks;
+    map<pair<Host*, string> ,int> eventArgKeys;
 
     string sceneName;
     string backgroundPath;

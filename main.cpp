@@ -92,7 +92,7 @@ int main(int argc, char* args[]) {
             cout << "No load menu or current scene. What are we doing?" << endl;
             throw exception();
         }
-
+        lua_settop(L, 0);
         t.timeElapsed(&p.e);
         t.endFrameAndWait(frameCount, p);
 

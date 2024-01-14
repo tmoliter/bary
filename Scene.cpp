@@ -131,7 +131,7 @@ void Scene::meat(KeyPresses keysDown) {
 
 bool Scene::meatEvent(KeyPresses keysDown) {
     vector<Task*> tasksToDelete;
-    map<pair<Host*, string>, bool> eventsToResume;
+    map<pair<Host*, string>, int> eventsToResume;
     bool blocking = false;
     for (int i = activeTasks.size() - 1; i >= 0; i--) {
         Task* t = activeTasks[i];
@@ -141,13 +141,13 @@ bool Scene::meatEvent(KeyPresses keysDown) {
         if (t->meat(keysDown) < 1) {
             // task has exhausted subtasks
             if (!eventsToResume.count(hostEventName))
-                eventsToResume[hostEventName] = true;
+                eventsToResume[hostEventName] = eventArgKeys.at(hostEventName);
             tasksToDelete.push_back(t);
         } else {
             if (!eventsToResume.count(hostEventName))
-                eventsToResume[hostEventName] = false;
+                eventsToResume[hostEventName] = LUA_NOREF;
             else
-                eventsToResume.at(hostEventName) = false;
+                eventsToResume.at(hostEventName) = LUA_NOREF;
         }
         if (blocking)
             break;
@@ -157,13 +157,15 @@ bool Scene::meatEvent(KeyPresses keysDown) {
         activeTasks.erase(remove(activeTasks.begin(), activeTasks.end(), t), activeTasks.end());
     }
     for (auto e : eventsToResume) {
-        if (!e.second)
+        if (e.second == LUA_NOREF)
             continue;
+        eventArgKeys.erase(e.first);
         // All tasks for this event have exhausted subtasks, so we look for more tasks
         loadLuaFunc("resumeEvent", e.first.first);
-        lua_newtable(L);
+        lua_geti(L, LUA_REGISTRYINDEX, e.second);
         luaUtils::PushStringToTable(L, "eventName", e.first.second);
         callLuaFunc(1, 1, 0);
+        luaL_unref(L, LUA_REGISTRYINDEX, e.second);
     }
     return blocking;
 }
@@ -348,15 +350,22 @@ int Scene::_newTask(lua_State *L) {
     Host* host = static_cast<Host*>(lua_touserdata(L, -1));
     lua_pop(L, 1);
 
-    string eventName = lua_tostring(L, -1);
-    Task* newTask = new Task(eventName, host);
-    lua_pop(L, 1);
-
-    newTask->addSubtasks(L);
-
-    // (assume-host) For now, we assume the host is a RealThing. We may later have Scenes host Events without things.
     RealThing* hostThing = static_cast<RealThing*>(host);
     Scene* scene = static_cast<Scene*>(hostThing->parentScene);
+
+    string eventName = lua_tostring(L, -1);
+    pair<Host*, string> hostEventName = make_pair(hostThing, eventName);
+    if (!scene->eventArgKeys.count(hostEventName)) {
+        lua_newtable(host->L);
+        scene->eventArgKeys[hostEventName] = luaL_ref(host->L, LUA_REGISTRYINDEX);
+    }
+    Task* newTask = new Task(eventName, host, scene->eventArgKeys[hostEventName]);
+    lua_pop(L, 1);
+
+    lua_xmove(L, host->L, 1);
+
+    newTask->addSubtasks(host->L);
+
     scene->activeTasks.push_back(newTask);
     lua_settop(L, 0);
     return 0;

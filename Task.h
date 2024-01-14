@@ -14,6 +14,7 @@ struct Subtask {
     virtual ~Subtask();
     lua_State* L;
     Host* host;
+    virtual bool pushArgs() { return false; };
     virtual void init() {};
     virtual bool meat(KeyPresses keysDown);
     Timer *timer;
@@ -36,6 +37,12 @@ struct MoveST : public Subtask {
     RealThing* movingThing = nullptr;
     Move* move = nullptr;
     Move* prevMove = nullptr;
+
+    // TESTING
+    virtual bool pushArgs() { 
+        luaUtils::PushIntToTable(L, "someBullshit", 69);
+        return true; 
+    };
 };
 
 struct PortalST : public Subtask {
@@ -49,12 +56,12 @@ struct PortalST : public Subtask {
 };
 
 struct Task {
-    Task(string eventName, Host* host) : eventName(eventName), host(host) {};
+    Task(string eventName, Host* host, int argKey) : eventName(eventName), host(host), argKey(argKey) {};
     string eventName;
     std::vector<Subtask*> subtasks;
     Host* host;
+    int argKey = LUA_NOREF;
     bool blocking = false; // blocking stops any older events from being executed. If we just want to pause movement, that can be done with the `pauseMoves` subtask
-
     int meat(KeyPresses keysDown);
 
     void addSubtasks(lua_State* L);

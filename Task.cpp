@@ -157,11 +157,13 @@ bool PortalST::meat(KeyPresses keysDown) {
     return 0;
 }
 
-
 int Task::meat(KeyPresses keysDown) {
     vector<Subtask*> subtasksToDelete;
     for (auto s : subtasks) {
         if (s->meat(keysDown)) {
+            lua_geti(host->L, LUA_REGISTRYINDEX, argKey);
+            s->pushArgs();
+            lua_pop(host->L, 1);
             subtasksToDelete.push_back(s);
         }
     }
