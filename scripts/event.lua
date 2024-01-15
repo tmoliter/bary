@@ -82,6 +82,11 @@ local function populate(thingDefs)
     for _,thing in pairs(thingDefs) do
         populateEvents(thing)
     end
+    eventDefinitions.sceneManager = {
+        inventoryMenu = {
+            type = "inventoryMenu"
+        }
+    }
 end
 
 return {

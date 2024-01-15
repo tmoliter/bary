@@ -24,6 +24,16 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     if(keysDown.ok && !move->disables)
         castRayForInteractables();
 
+    if (keysDown.menu1) {
+        loadLuaFunc("beginEvent");
+        lua_newtable(L);
+        luaUtils::PushStringToTable(L, "eventName", "inventoryMenu");
+        luaUtils::PushStringToTable(L, "thingName", "sceneManager");
+        luaUtils::PushStringToTable(L, "catalyst", "input");
+        luaUtils::PushStringToTable(L, "inventoryName", "zinnia");
+        callLuaFunc(1,0,0);
+    }
+
     /* DEBUG MODE CONTROLS */
     if (keysDown.debug_left)
         shiftLayer(move->layer - 1);
