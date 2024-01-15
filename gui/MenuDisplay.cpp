@@ -74,21 +74,25 @@ void MenuDisplay::clearLists() {
 }
 
 bool MenuDisplay::processInput(KeyPresses keysDown, string& selection) {
+    if (keysDown.cancel) {
+        selection = "";
+        return true;
+    }
     if (keysDown.ok)
         return true;
     Direction d = Direction::none;
-    if(keysDown.debug_up)
+    if(keysDown.nav_up)
         d = Direction::up;
-    if(keysDown.debug_down)
+    if(keysDown.nav_down)
         d = Direction::down;
-    if(keysDown.debug_left)
+    if(keysDown.nav_left)
         d = Direction::left;
-    if(keysDown.debug_right)
+    if(keysDown.nav_right)
         d = Direction::right;
     moveSelection(d);
     if (d != Direction::none)
         selection = getCurrentSelection().value;
-    return 0;
+    return false;
 }
 
 void MenuDisplay::moveSelection(Direction direction) {

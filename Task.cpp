@@ -102,8 +102,9 @@ bool MenuST::meat(KeyPresses keysDown) {
 }
 
 bool MenuST::pushArgs() { 
-    luaUtils::PushStringToTable(L, "selection", selection);
-    return true; 
+    if (selection != "")
+        luaUtils::PushStringToTable(L, "selection", selection);
+    return false;
 };
 
 MoveST::~MoveST() {

@@ -134,6 +134,10 @@ local function inventoryMenu(hostThing, args)
     end
     _newTask({
         {
+            type = "pauseMoves",
+            all = true,
+        },
+        {
             type = "menu",
             options = options,
             x = 300,
@@ -146,6 +150,14 @@ local function inventoryMenu(hostThing, args)
         }
     }, args.eventName, hostThing)
     local _, itemChoice = coroutine.yield()
+    if itemChoice.selection == nil then 
+        _newTask({{
+            type = "pauseMoves",
+            all = true,
+            unpause = true
+        }}, args.eventName, hostThing)
+        return 
+    end
 
     ------------
     local sufficient, remaining = gameState.inventories[args.inventoryName]:use(itemChoice.selection, 1, "jordan")
@@ -165,10 +177,17 @@ local function inventoryMenu(hostThing, args)
         catalyst = "item"
     }
     print("firing event")
-    _newTask({{
-        type = "fireEvent",
-        args = args
-    }}, args.eventName, hostThing)
+    _newTask({
+        {
+            type = "pauseMoves",
+            all = true,
+            unpause = true
+        },
+        {
+            type = "fireEvent",
+            args = args
+        }
+    }, args.eventName, hostThing)
 end
 
 return {

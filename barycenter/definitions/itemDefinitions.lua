@@ -22,16 +22,28 @@ itemDefinitions.mungBeanJuice.use = function(hostThing, args)
         scrollType = "continuous",
         gridLimitsX = 1000,
         gridLimitsY = 1000,
-        blocking = true
     }
     _newTask(
-        { phrase }, args.eventName, hostThing
+        { 
+            {
+                type = "pauseMoves",
+                all = true,
+            },
+            phrase
+        }, args.eventName, hostThing
     )
     coroutine.yield()
     phrase.text = args.source .. " NOW HAS " .. gameState.inventories[args.source]:count("mungBeanJuice") .. " MUNG BEAN JUICES"
     phrase.x = 400
     phrase.y = 400
     _newTask({ phrase }, args.eventName, hostThing)
+    coroutine.yield()
+    _newTask({{
+        type = "pauseMoves",
+        all = true,
+        unpause = true
+    }}, args.eventName, hostThing
+    )
 end
 
 itemDefinitions.oolong.use = function(args)

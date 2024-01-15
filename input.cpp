@@ -9,6 +9,10 @@ KeyPresses& Input::getInput () {
     keysDown.menu1 = false;
     keysDown.menu2 = false;
     keysDown.start = false;
+    keysDown.nav_up = false;
+    keysDown.nav_down = false;
+    keysDown.nav_left = false;
+    keysDown.nav_right = false;
     
     keysDown.textInput = false;
     keysDown.del = false;
@@ -58,20 +62,28 @@ KeyPresses& Input::getInput () {
                         keysDown.quit = true;
                     break;
                 case SDLK_a:
-                    if (input.key.repeat == 0)
+                    if (input.key.repeat == 0) {
                         keysDown.left = true;
+                        keysDown.nav_left = true;
+                    }
                     break;
                 case SDLK_d:
-                    if (input.key.repeat == 0)
+                    if (input.key.repeat == 0) {
                         keysDown.right = true;
+                        keysDown.nav_right = true;
+                    }
                     break;
                 case SDLK_w:
-                    if (input.key.repeat == 0)
+                    if (input.key.repeat == 0) {
                         keysDown.up = true;
+                        keysDown.nav_up = true;
+                    }
                     break;
                 case SDLK_s:
-                    if (input.key.repeat == 0)
+                    if (input.key.repeat == 0) {
                         keysDown.down = true;
+                        keysDown.nav_down = true;
+                    }
                     break;
                 case SDLK_j:
                     if (input.key.repeat == 0)
