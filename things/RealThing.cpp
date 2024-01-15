@@ -202,6 +202,7 @@ void RealThing::addComponentsFromTable() {
             lua_newtable(L);
             luaUtils::PushStringToTable(L, "eventName", "autoMove");
             luaUtils::PushStringToTable(L, "thingName", getBaseName());
+            luaUtils::PushStringToTable(L, "catalyst", "automation");
             luaUtils::PushIntToTable(L, "originX", position.x);
             luaUtils::PushIntToTable(L, "originY", position.y);
             callLuaFunc(1, 0, 0);

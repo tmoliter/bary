@@ -250,6 +250,15 @@ void Task::addSubtasks(lua_State* L) {
             subtasks.push_back(new MoveST(L, host));
         if (currentType == "portal")
             subtasks.push_back(new PortalST(L, host));
+        if (currentType == "fireEvent") {
+            luaUtils::GetTableOnStackFromTable(L, "args");
+            int ref = luaL_ref(L, LUA_REGISTRYINDEX);
+            host->loadLuaFunc("beginEvent");
+            lua_geti(L, LUA_REGISTRYINDEX, ref);
+            host->callLuaFunc(1, 0, 0);
+            luaL_unref(L, LUA_REGISTRYINDEX, ref);
+            instant = true;
+        }
         if (currentType == "pauseMoves") {
             pauseMoves(L);
             instant = true;

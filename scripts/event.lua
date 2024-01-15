@@ -1,37 +1,12 @@
-local standardEvents = require('scripts.standardEvents')
-local itemDefinitions = require(settings.GAME_NAME .. '.itemDefinitions')
 local activeEvents = {}
 local eventDefinitions = {}
-local itemEventId = 1
 
 -- maybe make a bulk beginEvents function here
-
-local function useItem(source, target, itemName, amount)
-    local sufficient, remaining = gameState.inventories[source]:use(itemName, amount, target)
-    if sufficient ~= true then
-        return
-    end
-    local args = {
-        eventDefinition = { 
-            type = "custom", 
-            customCoroutine = itemDefinitions[itemName].use,
-            amount = amount,
-            itemName = itemName,
-            target = target,
-            source = source
-        },
-        eventName = "item_" .. itemEventId,
-        catalyst = "item"
-    }
-    itemEventId = itemEventId + 1
-    beginEvent(sceneManager, args)
-end
 
 local function beginEvent(hostThing, args)
     local eventDefinition
     if args["eventDefinition"] ~= nil then
         eventDefinition = args["eventDefinition"]
-        itemEventId = itemEventId + 1
     else
         eventDefinition = eventDefinitions[args["thingName"]][args.eventName]
     end
@@ -110,7 +85,6 @@ local function populate(thingDefs)
 end
 
 return {
-    useItem = useItem,
     beginEvent = beginEvent,
     resumeEvent = resumeEvent,
     populate = populate

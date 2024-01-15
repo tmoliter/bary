@@ -4,8 +4,8 @@ local GameState = {
         self.inventories[name] = Inventory.new(
             startingItems and { items = startingItems } or {}
         )
-    
-    end
+    end,
+    itemEventId = 0
 }
 
 local gameStateTemplate = {
@@ -21,6 +21,14 @@ GameState.fresh = function(self)
 end
 
 local gameState = deepcopy(gameStateTemplate)
-setmetatable(gameState, {__index = GameState})
+setmetatable(gameState, {
+        __index = function(t,k)
+            if k == "itemEventId" then
+                GameState.itemEventId = GameState.itemEventId + 1;
+            end
+            return GameState[k]
+        end
+    }
+)
 
 return gameState

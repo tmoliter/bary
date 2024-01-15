@@ -117,8 +117,63 @@ local function openDoor(hostThing, args)
     end
 end
 
+local function inventoryMenu(hostThing, args)
+    local function nameAndAmount (itemDef, amount)
+        if amount == 1 then
+            return amount .. " " .. itemDef.name
+        end
+        return  amount .. " " .. itemDef.plural
+    end
+    local options = {}
+    local i = 1
+    for itemKey, amount in pairs(gameState.inventories[args.inventoryName].items) do
+        options[i] = { 
+            selectionText = nameAndAmount(itemDefinitions[itemKey], amount), value = itemKey 
+        }
+        i = i+1
+    end
+    _newTask({
+        {
+            type = "menu",
+            options = options,
+            x = 300,
+            y = 150,
+            width = 340,
+            height = 60,
+            maxColumns = 2,
+            closeOnDestroy = true,
+            blocking = true
+        }
+    }, args.eventName, hostThing)
+    local _, itemChoice = coroutine.yield()
+
+    ------------
+    local sufficient, remaining = gameState.inventories[args.inventoryName]:use(itemChoice.selection, 1, "jordan")
+    if sufficient ~= true then
+        print("INSUFFICIENT")
+        return
+    end
+    local args = {
+        eventDefinition = {
+            type = "custom", 
+            customCoroutine = itemDefinitions[itemChoice.selection].use,
+            amount = 1,
+            target = "jordan",
+            source = args.inventoryName
+        },
+        eventName = "item_" .. gameState.itemEventId,
+        catalyst = "item"
+    }
+    print("firing event")
+    _newTask({{
+        type = "fireEvent",
+        args = args
+    }}, args.eventName, hostThing)
+end
+
 return {
     sequentialTasks = sequentialTasks,
     randomAutoMove = randomAutoMove,
-    openDoor = openDoor
+    openDoor = openDoor,
+    inventoryMenu = inventoryMenu
 }

@@ -124,8 +124,9 @@ local thingDefs = {
                 type = "standardCollider",
                 interactable = true,
                 eventNames = {
-                    "talk_1",
-                    "talk_2"
+                    -- "talk_1",
+                    -- "talk_2",
+                    "inventoryTest"
                 }
             },
             {
@@ -138,29 +139,33 @@ local thingDefs = {
                 type = "randomAutoMove",
                 variance = 100
             },
-            talk_1 =  {
-                type = "sequentialTasks",
-                pauseAllMoves = true,
-                tasks = {
-                    {{
-                        type = "phrase",
-                        text = "Hey what's happening bro",
-                        x = 300,
-                        y = 150,
-                        width = 400,
-                        height = 100,
-                    }},
-                    {{
-                        type = "phrase",
-                        text = "Didn't I tell you not to come around here",
-                        x = 150,
-                        y = 150,
-                        width = 400,
-                        height = 100,
-                    }},
-                }
-            },
-            talk_2 = zinniaTalkB,
+            inventoryTest = {
+                type = "inventoryMenu",
+                inventoryName = "zinnia"
+            }
+            -- talk_1 =  {
+            --     type = "sequentialTasks",
+            --     pauseAllMoves = true,
+            --     tasks = {
+            --         {{
+            --             type = "phrase",
+            --             text = "Hey what's happening bro",
+            --             x = 300,
+            --             y = 150,
+            --             width = 400,
+            --             height = 100,
+            --         }},
+            --         {{
+            --             type = "phrase",
+            --             text = "Didn't I tell you not to come around here",
+            --             x = 150,
+            --             y = 150,
+            --             width = 400,
+            --             height = 100,
+            --         }},
+            --     }
+            -- },
+            -- talk_2 = zinniaTalkB,
         }
     },
     followZinnia = {

@@ -13,7 +13,9 @@ Scene::~Scene() {
 }
 
 void Scene::Load(bool isEditing) {
-    sceneManager = addThing(RealThingData());
+    RealThingData sceneManagerTD = RealThingData();
+    sceneManagerTD.name = "sceneManager";
+    sceneManager = addThing(sceneManagerTD);
     loadLuaFunc("loadScene");
     lua_pushstring(L, sceneName.c_str());
     lua_pushboolean(L, isEditing);

@@ -58,12 +58,23 @@
 --     print("YESSS")
 -- end
 
-function a (arg1)
-    print(arg1)
-    coroutine.yield()
-    print(arg1)
-end
+-- function a (arg1)
+--     print(arg1)
+--     coroutine.yield()
+--     print(arg1)
+-- end
+-- b = coroutine.create(a, 5)
+-- coroutine.resume(b, 5)
+-- coroutine.resume(b)
 
-b = coroutine.create(a, 5)
-coroutine.resume(b, 5)
-coroutine.resume(b)
+-- local a = {}
+-- setmetatable(a, {
+--         __index = function(k,t) do
+--             if k == "something" then
+--                 print("YO")
+--                 -- GameState.itemEventId = GameState.itemEventId + 1;
+--             end
+--             return a[k]
+--         end
+--     }
+-- )
