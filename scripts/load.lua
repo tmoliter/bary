@@ -12,9 +12,12 @@ function loadGame(saveFile)
     local saveData = require(settings.GAME_NAME .. ".saves." .. saveFile)
 
     gameState:fresh()
-    gameState["spawn"] = deepcopy(saveData["spawn"])
-    gameState["scenes"] = deepcopy(saveData["scenes"])
-    return saveData["spawn"]
+    gameState.spawn = deepcopy(saveData.spawn)
+    gameState.scenes = deepcopy(saveData.scenes)
+    for inventoryName,items in pairs(saveData.inventories) do
+        gameState:addInventory(inventoryName, items)
+    end
+    return saveData.spawn
 end
 
 function loadScene(host, sceneName, isEditing, newSceneManager)
@@ -26,6 +29,10 @@ function loadScene(host, sceneName, isEditing, newSceneManager)
     local playerSpawn
 
     if isEditing == true then
+        -- TESTING
+        gameState:addInventory("zinnia", {oolong = 100, mungBeanJuice = 3})
+        gameState:addInventory("jordan")
+        -- END TESTING
         mapTable = require(settings.GAME_NAME .. '.scenes.' .. sceneName .. '.map')
     else
         mapTable = gameState["scenes"][sceneName]
@@ -48,11 +55,6 @@ function loadScene(host, sceneName, isEditing, newSceneManager)
     end
 
     _loadScene(mapTable["backgroundPath"], spawnThings, host)
-
-    -- TESTING
-    gameState:addInventory("zinnia", {oolong = 100, mungBeanJuice = 3})
-    gameState:addInventory("jordan")
-    -- END TESTING
 end
 
 
