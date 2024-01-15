@@ -8,9 +8,12 @@ local Inventory = {
             return self.items[itemName]
         end,
         drop = function(self, itemName, amount)
-            if self.items[itemName] == 0 then
-                return false, 0 end
+            if self.items[itemName] - amount < 0 then
+                self.items[itemName] = nil
+                return false, 0
+            end
             self.items[itemName] = self.items[itemName] - amount
+            if self.items[itemName] < 1 then self.items[itemName] = nil end
             return true, self.items[itemName]
         end,
         use = function(self, itemName, amount, target)
@@ -28,8 +31,7 @@ Inventory.new = function(o)
     o.items = o.items or {}
     setmetatable(o.items, {
         __index = function(t,k) 
-            t[k] = 0
-            return t[k]
+            return 0
         end
     })
     setmetatable(o, Inventory.mt)
