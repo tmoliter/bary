@@ -43,6 +43,24 @@ bool luaUtils::CheckParams(lua_State* L, std::vector<ParamType> params) {
     return true;
 }
 
+
+bool luaUtils::GetLuaPointerFromTable(lua_State *L, std::string key, void* &value, int tableIndex) {
+    if (lua_istable(L, tableIndex)) {
+        lua_pushstring(L, key.c_str());
+        lua_gettable(L, tableIndex - 1);
+        if (!lua_islightuserdata(L, -1)) {
+            lua_pop(L, 1);
+            return false;
+        }
+        value = lua_touserdata(L, -1);
+        lua_pop(L, 1);
+        return true;
+    }
+    std::cout << "PROBLEM : " << key << std::endl;
+    return false;
+}
+
+
 bool luaUtils::GetLuaStringFromTable(lua_State *L, std::string key, std::string &value, int tableIndex) {
     if (lua_istable(L, tableIndex)) {
         lua_pushstring(L, key.c_str());
@@ -136,6 +154,28 @@ bool luaUtils::GetTableOnStackFromTable(lua_State *L, std::string key, int table
     return false;
 }
 
+
+bool luaUtils::PushPointerToTable(lua_State* L , std::string key , void* value, int tableIndex) {
+    if (!lua_istable(L, tableIndex)) {
+      std::cout << "PROBLEM : " << key << std::endl;
+      return false;
+    }
+    lua_pushstring(L, key.c_str());
+    lua_pushlightuserdata(L, value);
+    lua_settable(L, tableIndex - 2);
+    return true;
+}
+
+bool luaUtils::PushPointerToTable(lua_State* L , int key , void* value, int tableIndex) {
+    if (!lua_istable(L, tableIndex)) {
+      std::cout << "PROBLEM : " << key << std::endl;
+      return false;
+    }
+    lua_pushinteger(L, key);
+    lua_pushlightuserdata(L, value);
+    lua_settable(L, tableIndex - 2);
+    return true;
+}
 
 bool luaUtils::PushStringToTable(lua_State* L , std::string key , std::string value, int tableIndex) {
     if (!lua_istable(L, tableIndex)) {

@@ -146,85 +146,96 @@ local function inventoryMenu(hostThing, args)
             width = 340,
             height = 60,
             maxColumns = 2,
-            closeOnDestroy = true,
             blocking = true
         }
     }, args.eventName, hostThing)
-    local _, itemChoice = coroutine.yield()
-    if itemChoice.selection == nil then 
-        _newTask({{
-            type = "pauseMoves",
-            all = true,
-            unpause = true
-        }}, args.eventName, hostThing)
-        return 
-    end
+    local _, invMenuArgs = coroutine.yield()
+    while invMenuArgs.selection ~= "" do
+        _newTask({
+            {
+                type = "menu",
+                options = {
+                    {
+                        selectionText = "use 1",
+                        value = "use"
+                    },
+                    {
+                        selectionText = "drop 1",
+                        value = "drop"
+                    },
+                },
+                x = 350,
+                y = 250,
+                width = 80,
+                height = 60,
+                maxColumns = 1,
+                closeOnDestroy = true,
+                blocking = true
+            }
+        }, args.eventName, hostThing)
 
+        local _, actionMenuArgs = coroutine.yield()
+        local action = actionMenuArgs.selection
+
+        ------------
+        if action == "use" then
+            local sufficient, remaining = gameState.inventories[args.inventoryName]:use(invMenuArgs.selection, 1, "jordan")
+            if sufficient ~= true then
+                print("INSUFFICIENT")
+                return
+            end
+            local args = {
+                eventDefinition = {
+                    type = "custom", 
+                    customCoroutine = itemDefinitions[invMenuArgs.selection].use,
+                    amount = 1,
+                    target = "jordan",
+                    source = args.inventoryName
+                },
+                eventName = "item_" .. gameState.itemEventId,
+                catalyst = "item"
+            }
+            _newTask({
+                {
+                    type = "pauseMoves",
+                    all = true,
+                    unpause = true
+                },
+                {
+                    type = "fireEvent",
+                    args = args
+                },
+                {
+                    type = "menu",
+                    menu = invMenuArgs.menu,
+                    close = true
+                }
+            }, args.eventName, hostThing)
+            return
+        elseif action == "drop" then
+            gameState.inventories[args.inventoryName]:drop(invMenuArgs.selection, 1, "jordan")
+            _newTask({
+                {
+                    type = "menu",
+                    menu = invMenuArgs.menu,
+                    blocking = true
+                },
+            }, args.eventName, hostThing)
+            _, invMenuArgs = coroutine.yield()
+        end
+    end
     _newTask({
         {
             type = "menu",
-            options = {
-                {
-                    selectionText = "use 1",
-                    value = "use"
-                },
-                {
-                    selectionText = "drop 1",
-                    value = "drop"
-                },
-            },
-            x = 350,
-            y = 250,
-            width = 80,
-            height = 60,
-            maxColumns = 1,
-            closeOnDestroy = true,
-            blocking = true
+            menu = invMenuArgs.menu,
+            close = true
+        },
+        {
+            type = "pauseMoves",
+            all = true,
+            unpause = true
         }
     }, args.eventName, hostThing)
-
-    local _, actionArgs = coroutine.yield()
-    local action = actionArgs.selection
-
-    ------------
-    if action == "use" then
-        local sufficient, remaining = gameState.inventories[args.inventoryName]:use(itemChoice.selection, 1, "jordan")
-        if sufficient ~= true then
-            print("INSUFFICIENT")
-            return
-        end
-        local args = {
-            eventDefinition = {
-                type = "custom", 
-                customCoroutine = itemDefinitions[itemChoice.selection].use,
-                amount = 1,
-                target = "jordan",
-                source = args.inventoryName
-            },
-            eventName = "item_" .. gameState.itemEventId,
-            catalyst = "item"
-        }
-        print("firing event")
-        _newTask({
-            {
-                type = "pauseMoves",
-                all = true,
-                unpause = true
-            },
-            {
-                type = "fireEvent",
-                args = args
-            }
-        }, args.eventName, hostThing)
-        return
-    elseif action == "drop" then
-        gameState.inventories[args.inventoryName]:drop(itemChoice.selection, 1, "jordan")
-    end
-    _newTask({{
-        type = "pauseMoves",
-        all = true,
-        unpause = true
-    }}, args.eventName, hostThing)
 end
 
 return {

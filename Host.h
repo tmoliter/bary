@@ -21,8 +21,8 @@ struct Host {
 
     static bool PushHostToTable(lua_State* L , std::string key, Host* value, int tableIndex = -1) {
         if (!lua_istable(L, tableIndex)) {
-        std::cout << "PROBLEM : " << key << std::endl;
-        return false;
+            std::cout << "PROBLEM : " << key << std::endl;
+            return false;
         }
         lua_pushstring(L, key.c_str());
         lua_pushlightuserdata(L, value);
@@ -32,8 +32,8 @@ struct Host {
 
     static bool PushHostToTable(lua_State* L , int key , Host* value, int tableIndex = -1) {
         if (!lua_istable(L, tableIndex)) {
-        std::cout << "PROBLEM : " << key << std::endl;
-        return false;
+            std::cout << "PROBLEM : " << key << std::endl;
+            return false;
         }
         lua_pushinteger(L, key);
         lua_pushlightuserdata(L, value);

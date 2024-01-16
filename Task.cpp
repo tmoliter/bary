@@ -67,6 +67,15 @@ MenuST::~MenuST() {
 }
 
 void MenuST::init() {
+    void* menRef = static_cast<void*>(menu);
+    if (luaUtils::GetLuaPointerFromTable(L, "menu", menRef)) {
+        cout << "received menu " << menRef << endl;
+        menu = static_cast<MenuDisplay*>(menRef);
+        if(luaUtils::CheckLuaTableForBool(L, "close")) {
+            UIRenderer::removeMenuDisplay(menu);
+            menu = nullptr;
+        }
+    }
     vector<Option> options;
     Point point;
     Point size;
@@ -89,6 +98,9 @@ void MenuST::init() {
     luaUtils::GetLuaIntFromTable(L, "height", size.y);
     luaUtils::GetLuaIntFromTable(L, "maxColumns", maxColumns);
     luaUtils::GetLuaBoolFromTable(L, "closeOnDestroy", closeOnDestroy);
+
+    // need method in MenuDisplay to update and reset menu
+
     menu = new MenuDisplay(options, point, size, maxColumns);
     menu->addBox("pinkbox", {0, 0, 340, 120});
     selection = menu->getCurrentSelection().value; // This way of doing things could probably be improved
@@ -96,15 +108,21 @@ void MenuST::init() {
 }
 
 bool MenuST::meat(KeyPresses keysDown) {
-    if (menu->processInput(keysDown, selection))
+    if (menu == nullptr)
         return true;
+    if (menu->processInput(keysDown, selection)) {
+        return true;
+    }
     return false;
 }
 
 bool MenuST::pushArgs() { 
-    if (selection != "")
-        luaUtils::PushStringToTable(L, "selection", selection);
-    return false;
+    luaUtils::PushStringToTable(L, "selection", selection);
+    cout << "pushing menu " << menu << endl;
+    if (!closeOnDestroy)
+        luaUtils::PushPointerToTable(L, "menu", static_cast<void*>(menu));
+    cout << "pushed" << endl;
+    return true; // these return values don't do anything rn
 };
 
 MoveST::~MoveST() {
