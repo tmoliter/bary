@@ -35,5 +35,9 @@ return {
     inventories = {
         zinnia = {oolong = 59, mungBeanJuice = 200},
         jordan = {}
+    },
+    party = {
+        "jordan",
+        "zinnia"
     }
 }

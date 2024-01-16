@@ -17,6 +17,9 @@ function loadGame(saveFile)
     for inventoryName,items in pairs(saveData.inventories) do
         gameState:addInventory(inventoryName, items)
     end
+    for _,partyMemberName in ipairs(saveData.party) do
+        table.insert(gameState.party, partyMemberName)
+    end
     return saveData.spawn
 end
 
@@ -30,6 +33,7 @@ function loadScene(host, sceneName, isEditing, newSceneManager)
 
     if isEditing == true then
         -- TESTING
+        gameState.party = { "jordan", "zinnia" }
         gameState:addInventory("zinnia", {oolong = 100, mungBeanJuice = 3})
         gameState:addInventory("jordan")
         -- END TESTING

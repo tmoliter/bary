@@ -1,7 +1,8 @@
 local itemDefinitions = {
     mungBeanJuice = {
         name = "Mung Bean Juice",
-        plural = "Mung Bean Juices"
+        plural = "Mung Bean Juices",
+        needsTarget = true
     },
     oolong = {
         name = "Oolong Tea",

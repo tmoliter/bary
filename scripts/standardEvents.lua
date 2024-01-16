@@ -128,8 +128,6 @@ local function inventoryMenu(hostThing, args)
         local options = {}
         local i = 1
         for itemKey, amount in pairs(gameState.inventories[args.inventoryName].items) do
-            print(itemKey)
-            print(amount)
             options[i] = { 
                 selectionText = nameAndAmount(itemDefinitions[itemKey], amount), 
                 value = itemKey
@@ -157,20 +155,22 @@ local function inventoryMenu(hostThing, args)
 
     local _, invMenuArgs = coroutine.yield()
 
+    local actionOptions = {
+        {
+            selectionText = "use",
+            value = "use"
+        },
+        {
+            selectionText = "drop",
+            value = "drop"
+        }
+    }
     while invMenuArgs.selection ~= "" do
+        ::continue::
         _newTask({
             {
                 type = "menu",
-                options = {
-                    {
-                        selectionText = "use 1",
-                        value = "use"
-                    },
-                    {
-                        selectionText = "drop 1",
-                        value = "drop"
-                    },
-                },
+                options = actionOptions,
                 x = 350,
                 y = 250,
                 width = 80,
@@ -183,18 +183,48 @@ local function inventoryMenu(hostThing, args)
         local _, actionMenuArgs = coroutine.yield()
 
         local action = actionMenuArgs.selection
+        local target = nil
         if action == "use" then
             local sufficient, remaining = gameState.inventories[args.inventoryName]:use(invMenuArgs.selection, 1, "jordan")
             if sufficient ~= true then
                 print("INSUFFICIENT")
                 return
             end
+
+            if itemDefinitions[invMenuArgs.selection].needsTarget then
+                local targetOptions = {}
+                for _,partyMemberName in ipairs(gameState.party) do 
+                    table.insert(targetOptions, {
+                    selectionText = partyMemberName,
+                    value = partyMemberName
+                    })
+                end
+                _newTask({{
+                    type = "menu",
+                    menu = actionMenuArgs.menu,
+                    options = targetOptions
+                }}, args.eventName, hostThing)
+
+                local _, actionMenuArgs = coroutine.yield()
+                
+                if actionMenuArgs.selection ~= "" then
+                    target = actionMenuArgs.selection
+                else
+                    _newTask({{
+                        type = "menu",
+                        menu = actionMenuArgs.menu,
+                        close = true
+                    }}, args.eventName, hostThing)
+                    goto continue
+                end
+            end
+
             local args = {
                 eventDefinition = {
                     type = "custom", 
                     customCoroutine = itemDefinitions[invMenuArgs.selection].use,
                     amount = 1,
-                    target = "jordan",
+                    target = target,
                     source = args.inventoryName
                 },
                 eventName = "item_" .. gameState.itemEventId,
@@ -229,7 +259,6 @@ local function inventoryMenu(hostThing, args)
         }, args.eventName, hostThing)
 
         _, invMenuArgs = coroutine.yield()
-
     end
     _newTask({
         {

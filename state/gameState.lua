@@ -13,7 +13,7 @@ local gameStateTemplate = {
     scenes = {},
     -- quests = {},
     inventories = {},
-    -- party = {},
+    party = {},
     -- status = {}
 }
 GameState.fresh = function(self)
