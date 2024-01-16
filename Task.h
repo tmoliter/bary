@@ -31,11 +31,9 @@ struct PhraseST : public Subtask {
 
 struct MenuST : public Subtask {
     MenuST(lua_State* L, Host* host) : Subtask(L, host) {};
-    ~MenuST();
     virtual void init();
     virtual bool meat(KeyPresses keysDown);
     virtual bool pushArgs();
-    bool closeOnDestroy = false;
     string selection;
     MenuDisplay* menu = nullptr;
 };

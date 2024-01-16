@@ -60,12 +60,6 @@ bool PhraseST::meat(KeyPresses keysDown) {
     return false;
 }
 
-MenuST::~MenuST() {
-    if (closeOnDestroy) {
-        UIRenderer::removeMenuDisplay(menu);
-    }
-}
-
 void MenuST::init() {
     void* menRef = static_cast<void*>(menu);
     if (luaUtils::GetLuaPointerFromTable(L, "menu", menRef)) {
@@ -74,13 +68,23 @@ void MenuST::init() {
         if(luaUtils::CheckLuaTableForBool(L, "close")) {
             UIRenderer::removeMenuDisplay(menu);
             menu = nullptr;
+            return;
         }
     }
     vector<Option> options;
     Point point;
     Point size;
     int maxColumns;
+    if (menu != nullptr) {
+        // Man this is so ugly
+        options = menu->allOptions;
+        point = menu->position;
+        size.x = menu->width;
+        size.y = menu->height;
+        maxColumns = menu->maxColumns;
+    }
     if (luaUtils::GetTableOnStackFromTable(L, "options")) {
+        options.clear();
         lua_pushnil(L);
         while (lua_next(L, -2)) {
             Option newOption = Option();
@@ -97,9 +101,20 @@ void MenuST::init() {
     luaUtils::GetLuaIntFromTable(L, "width", size.x);
     luaUtils::GetLuaIntFromTable(L, "height", size.y);
     luaUtils::GetLuaIntFromTable(L, "maxColumns", maxColumns);
-    luaUtils::GetLuaBoolFromTable(L, "closeOnDestroy", closeOnDestroy);
 
-    // need method in MenuDisplay to update and reset menu
+    if (menu != nullptr) {
+        // Man this is so ugly
+        menu->allOptions = options;
+        menu->position = point;
+        menu->width = size.x;
+        menu->height = size.y;
+        menu->maxColumns = maxColumns;
+        menu->paginatedOptions.clear();
+        menu->buildPages();
+        menu->createLists();
+        selection = menu->getCurrentSelection().value;
+        return;
+    }
 
     menu = new MenuDisplay(options, point, size, maxColumns);
     menu->addBox("pinkbox", {0, 0, 340, 120});
@@ -119,8 +134,7 @@ bool MenuST::meat(KeyPresses keysDown) {
 bool MenuST::pushArgs() { 
     luaUtils::PushStringToTable(L, "selection", selection);
     cout << "pushing menu " << menu << endl;
-    if (!closeOnDestroy)
-        luaUtils::PushPointerToTable(L, "menu", static_cast<void*>(menu));
+    luaUtils::PushPointerToTable(L, "menu", static_cast<void*>(menu));
     cout << "pushed" << endl;
     return true; // these return values don't do anything rn
 };

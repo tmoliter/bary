@@ -6,6 +6,11 @@ local itemDefinitions = {
     oolong = {
         name = "Oolong Tea",
         plural = "Oolong Teas"
+    },
+    tpRoll = {
+        name = "TP Roll",
+        plural = "TP Rolls",
+        use = function() print("used tp roll") end
     }
 }
 
