@@ -117,6 +117,57 @@ local function openDoor(hostThing, args)
     end
 end
 
+local function menu(hostThing, args)
+    local taskArgs = deepcopy(args)
+    taskArgs.options = args.getContents(args)
+    _newTask({
+        {
+            type = "menu",
+            options = args.getContents(args),
+            x = 300,
+            y = 150,
+            width = 340,
+            height = 60,
+            maxColumns = 2,
+            blocking = true
+        },
+        {
+            type = "pauseMoves",
+            all = true,
+        }
+    }, args.eventName, hostThing)
+
+    local close = function(self)
+        self.menu = nil
+    end
+
+    while true do
+        local _, selectionArgs = coroutine.yield()
+        selectionArgs.close = close
+        onSelect(hostThing, args, selectionArgs)
+
+        if not selectionArgs.menu then break end
+        _newTask({
+            type = "menu",
+            menu = selectionArgs.menu
+        }, args.eventName, hostThing)
+    end
+
+    _newTask({
+        {
+            type = "menu",
+            menu = selectionArgs.menu,
+            close = true,
+        },
+        {
+            type = "pauseMoves",
+            all = true,
+            unpause = true
+        }
+    }, args.eventName, hostThing)
+    return
+end
+
 local function inventoryMenu(hostThing, args)
     local function nameAndAmount (itemDef, amount)
         if amount == 1 then
@@ -136,6 +187,18 @@ local function inventoryMenu(hostThing, args)
         end
         return options
     end
+    local actionOptions = {
+        {
+            selectionText = "use",
+            value = "use"
+        },
+        {
+            selectionText = "drop",
+            value = "drop"
+        }
+    }
+
+
     _newTask({
         {
             type = "pauseMoves",
@@ -155,18 +218,7 @@ local function inventoryMenu(hostThing, args)
 
     local _, invMenuArgs = coroutine.yield()
 
-    local actionOptions = {
-        {
-            selectionText = "use",
-            value = "use"
-        },
-        {
-            selectionText = "drop",
-            value = "drop"
-        }
-    }
     while invMenuArgs.selection ~= "" do
-        ::continue::
         _newTask({
             {
                 type = "menu",
@@ -185,7 +237,7 @@ local function inventoryMenu(hostThing, args)
         local action = actionMenuArgs.selection
         local target = nil
         if action == "use" then
-            local sufficient, remaining = gameState.inventories[args.inventoryName]:use(invMenuArgs.selection, 1, "jordan")
+            local sufficient, remaining = gameState.inventories[args.inventoryName]:use(invMenuArgs.selection, 1)
             if sufficient ~= true then
                 print("INSUFFICIENT")
                 return
@@ -243,7 +295,7 @@ local function inventoryMenu(hostThing, args)
             }, args.eventName, hostThing)
             break
         elseif action == "drop" then
-            gameState.inventories[args.inventoryName]:drop(invMenuArgs.selection, 1, "jordan")
+            gameState.inventories[args.inventoryName]:drop(invMenuArgs.selection, 1)
         end
         _newTask({
             {
@@ -259,6 +311,7 @@ local function inventoryMenu(hostThing, args)
         }, args.eventName, hostThing)
 
         _, invMenuArgs = coroutine.yield()
+        ::continue::
     end
     _newTask({
         {

@@ -16,7 +16,7 @@ local Inventory = {
             if self.items[itemName] < 1 then self.items[itemName] = nil end
             return true, self.items[itemName]
         end,
-        use = function(self, itemName, amount, target)
+        use = function(self, itemName, amount) -- this is realy just a wrapper around `drop` atm. should be probably combine them
             if self.items[itemName] < amount then
                 print("OUT OF " .. itemName)
                 return false, amount end

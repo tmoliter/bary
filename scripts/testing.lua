@@ -78,3 +78,19 @@
 --         end
 --     }
 -- )
+
+-- local c = function(self) print(self.b) end
+
+-- local a = {
+--     b = 3,
+-- }
+-- a.c = c
+
+-- a:c()
+
+
+local a = { c = nil}
+local b = a
+local c = a.c
+a.c = 5
+print(c)
