@@ -26,7 +26,7 @@ end
 function loadScene(host, sceneName, isEditing, newSceneManager)
     sceneManager = newSceneManager
     local setup = require(settings.GAME_NAME .. '.scenes.' .. sceneName .. '.setup')
-    local thingDefs = table.unpack(setup)
+    local thingDefs, sceneEvents = table.unpack(setup)
 
     local mapTable
     local playerSpawn
@@ -44,7 +44,7 @@ function loadScene(host, sceneName, isEditing, newSceneManager)
         for k,v in pairs(gameState["spawn"]) do playerSpawn[k] = v end
     end
 
-    eventModule.populate(thingDefs)
+    eventModule.populate(thingDefs, sceneEvents)
 
     local spawnThings = {}
     for _,savedThing in ipairs(mapTable["things"]) do

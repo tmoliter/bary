@@ -78,8 +78,13 @@ local zinniaTalkB = {
     }
 }
 
---     IDEAS FOR FUTURE OF EDITOR AND DATA STORAGE:
---     in thing editor you can build a thing, then export it as a lua table
+local globalEvents = require(settings.GAME_NAME .. ".definitions.globalEvents")
+local sceneEvents = {
+    inventoryMenu = {
+        type = "custom",
+        customCoroutine = globalEvents.inventoryMenu
+    }
+}
 
 local thingDefs = {
     playerZinnia = {
@@ -364,7 +369,7 @@ local thingDefs = {
         obstructionData = {
             {rays = {{aX = -11, aY = -2, bY = -2, bX = -119}, {aX = 119, aY = -2, bY = -2, bX = 11}}, layer = 0}
         }
-    },   
+    },
 }
 
-return { thingDefs }
+return { thingDefs, sceneEvents }
