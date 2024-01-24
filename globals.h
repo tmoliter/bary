@@ -3,6 +3,13 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 #include "luaUtils.h"
+#ifdef _WIN32
+#include <direct.h>
+#define cd _chdir
+#else
+#include "unistd.h"
+#define cd chdir
+#endif
 
 inline int frameCount = 0;
 
@@ -28,6 +35,15 @@ inline struct Settings {
         } else {
             std::cout << "couldn't find config/globals.lua" << std::endl;
         }
+        char* basePath = SDL_GetBasePath();
+        if (basePath) {
+            if (0 == cd(basePath)) {
+                std::cout << "CWD changed successfully" << std::endl;
+            }
+        } else {
+            std::cout << "Couldn't find application directory" << std::endl;
+        }
+        BASE_PATH = std::string(basePath);
     }
     int SCALE;
     int SCREEN_WIDTH;
@@ -38,6 +54,7 @@ inline struct Settings {
     bool FULLSCREEN_MODE;
     SDL_Rect* RESOLUTION;
     std::string GAME_NAME;
+    std::string BASE_PATH;
 } settings;
 
 inline SDL_Window* window;

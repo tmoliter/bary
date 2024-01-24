@@ -1,10 +1,10 @@
 local resources = {
     textures = {
-        sailorshack = "assets/sheets/Burg/SailorShack.png",
-        genrl = "assets/x.png",
-        pinkbox = "assets/menus/blankPink.png",
-        pinkboxheader = "assets/menus/pinkInventoryHeader.png",
-        pinkinventoryfooter = "assets/menus/pinkInventoryFooter.png"
+        sailorshack = "sheets/Burg/SailorShack",
+        genrl = "x",
+        pinkbox = "menus/blankPink",
+        pinkboxheader = "menus/pinkInventoryHeader",
+        pinkinventoryfooter = "menus/pinkInventoryFooter"
     },
 }
 

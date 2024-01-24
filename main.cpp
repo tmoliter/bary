@@ -20,9 +20,9 @@ int main(int argc, char* args[]) {
 
     vector<string> saveNames;
     barysystem::startup(saveNames);
-    resourceDepository::textureNameToPath = {
-        {"pinkbox", "assets/menus/blankPink.png"},
-        {"pinkinventoryfooter", "assets/menus/pinkInventoryFooter.png"}
+    resourceDepository::textures = {
+        { "pinkbox", make_pair(0, new Texture("pinkbox", "assets/menus/blankPink.png"))},
+        { "pinkinventoryfooter", make_pair(0, new Texture("pinkinventoryfooter", "assets/menus/pinkInventoryFooter.png"))}
     };
 
     MenuDisplay* loadMenu = nullptr;
@@ -52,7 +52,7 @@ int main(int argc, char* args[]) {
                     loadMenu = nullptr;
                     MapBuilder *m = new MapBuilder("burg", L);
                 } else {
-                    resourceDepository::endScene();
+                    resourceDepository::removeUnreferencedTextures();
                     UIRenderer::removeMenuDisplay(loadMenu);
                     loadMenu = nullptr;
                     lua_getglobal(L, "loadGame");

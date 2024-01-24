@@ -2,20 +2,10 @@
 
 void barysystem::startup(vector<string>& saveNames) {
     settings.init();
-    char* basePath = SDL_GetBasePath();
-    if (basePath) {
-        if (0 == cd(basePath)) {
-            std::cout << "CWD changed successfully" << std::endl;
-        }
-    } else {
-        std::cout << "Couldn't find application directory" << std::endl;
-    }
 
-    const regex base_regex(R"(^.*\/([^\/]+)\.lua)");
-    string basePathString(basePath);
-    string savePath = basePathString + "/" + settings.GAME_NAME + "/saves";
-
+    string savePath = settings.BASE_PATH + "/" + settings.GAME_NAME + "/saves";
     smatch base_match;
+    const regex base_regex(R"(^.*\/([^\/]+)\.lua)");
     for (const auto & entry : fs::directory_iterator(savePath)) {
         string path(entry.path());
         if (regex_match(path, base_match, base_regex) && base_match.size() == 2)

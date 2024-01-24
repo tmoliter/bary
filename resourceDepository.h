@@ -25,14 +25,8 @@ namespace resourceDepository {
     inline map<string, pair<int, Texture*>> textures;
     inline map<string, pair<int, Sfx*>> chunks;
 
-    inline map<string, string> textureNameToPath;
-    inline map<string, string> soundNameToPath;
-
     void loadScene(lua_State *L);
-    void endScene();
-
-    Sfx* initializeSfx(string name);
-    Texture* initializeTexture(string name);
+    void removeUnreferencedTextures();
 
     // Maybe have prefetch functions that take a list of names and loads all of them, and releases them after
 

@@ -1,9 +1,9 @@
 return {
     textures = {
-        editorCross = "assets/debug/9x9cross.png",
-        singlepixel = "assets/debug/onePixel.png",
+        editorCross = "debug/9x9cross",
+        singlepixel = "debug/onePixel",
     },
     sounds = {
-        fart = "assets/sfx/fart.mp3"
+        fart = "sfx/fart"
     }
 }

@@ -1,5 +1,5 @@
 return {
     textures = {
-        zinnia = "assets/sheets/SDL_TestSS.png"
+        zinnia = "sheets/SDL_TestSS"
     }
 }
