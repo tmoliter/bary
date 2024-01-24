@@ -212,14 +212,26 @@ void MenuDisplay::setWidth(int newWidth) {
 }
 
 void MenuDisplay::addBox(string textureName, SDL_Rect sourcRect) {
+    if (box) {
+        cout << "Menu already has a box! \n";
+        throw exception();
+    }
     box = new Image(textureName, sourcRect);
 }
 
 void MenuDisplay::addHeader(string textureName, SDL_Rect sourcRect) {
+    if (header) {
+        cout << "Menu already has a header! \n";
+        throw exception();
+    }
     header = new Image(textureName, sourcRect);
 }
 
 void MenuDisplay::addFlavorBox(string textureName, SDL_Rect sourcRect) {
+    if (flavorBox) {
+        cout << "Menu already has a flavorBox! \n";
+        throw exception();
+    }
     flavorBox = new Image(textureName, sourcRect);
 }
 

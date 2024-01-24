@@ -1,6 +1,6 @@
 return {
     spawn = {
-        name = "playerZinnia",
+        name = "zinnia",
         scene = "burg",
         x = 200,
         y = 200

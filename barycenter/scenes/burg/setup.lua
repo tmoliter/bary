@@ -87,8 +87,8 @@ local sceneEvents = {
 }
 
 local thingDefs = {
-    playerZinnia = {
-        name = "playerZinnia",
+    zinnia = {
+        name = "zinnia",
         spriteDataVector = {
             {
                 xOffset = 0,

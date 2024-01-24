@@ -109,6 +109,7 @@ void MenuST::init() {
         menu->width = size.x;
         menu->height = size.y;
         menu->maxColumns = maxColumns;
+
         menu->paginatedOptions.clear();
         menu->buildPages();
         menu->createLists();

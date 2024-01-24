@@ -30,7 +30,7 @@ void FieldPlayer::meat(KeyPresses keysDown) {
         luaUtils::PushStringToTable(L, "eventName", "inventoryMenu");
         luaUtils::PushStringToTable(L, "thingName", "sceneManager");
         luaUtils::PushStringToTable(L, "catalyst", "input");
-        luaUtils::PushStringToTable(L, "inventoryName", "zinnia");
+        luaUtils::PushStringToTable(L, "inventoryName", name);
         callLuaFunc(1,0,0);
     }
 

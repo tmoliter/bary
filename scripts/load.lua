@@ -32,11 +32,6 @@ function loadScene(host, sceneName, isEditing, newSceneManager)
     local playerSpawn
 
     if isEditing == true then
-        -- TESTING
-        gameState.party = { "jordan", "zinnia" }
-        gameState:addInventory("zinnia", {oolong = 100, mungBeanJuice = 3})
-        gameState:addInventory("jordan")
-        -- END TESTING
         mapTable = require(settings.GAME_NAME .. '.scenes.' .. sceneName .. '.map')
     else
         mapTable = gameState["scenes"][sceneName]
