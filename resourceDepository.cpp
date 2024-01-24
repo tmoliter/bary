@@ -5,7 +5,6 @@ Texture::Texture(string n, string path) : name(n) {
         texture = nullptr;
         return;
     }
-    // pull from game name path here
     SDL_Surface* temp = IMG_Load(path.c_str());
     texture = SDL_CreateTextureFromSurface(renderer, temp);
     SDL_FreeSurface(temp);
@@ -16,8 +15,14 @@ Sfx::Sfx(string n, string path) : name(n) {
         sound = nullptr;
         return;
     }
-    // pull from game name path here
     sound = Mix_LoadWAV(path.c_str());
+}
+void resourceDepository::loadTexture(string name, string simplePath) {
+    string path = "/assets/" + simplePath + ".png";
+    if(!textures.count(name))
+        textures[name] = make_pair(0,new Texture(name, path));
+    else
+        cout << "texture " << name << " is already loaded, skipping\n";
 }
 
 Texture* resourceDepository::getTexture(string name) {
@@ -65,11 +70,7 @@ void resourceDepository::loadScene(lua_State *L) {
     while (lua_next(L, -2)) {
         string name = lua_tostring(L, -2);
         string simplePath = lua_tostring(L, -1);
-        string path = "assets/" + simplePath + ".png";
-        if(!textures.count(name))
-            textures[name] = make_pair(0,new Texture(name, path));
-        else
-            cout << "texture " << name << " is already loaded, skipping\n";
+        loadTexture(name, simplePath);
         lua_pop(L,1);
     }
     lua_pop(L,1);

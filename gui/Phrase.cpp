@@ -16,14 +16,12 @@ Phrase::Phrase(Point p, Point pixelSize, ScrollType type, string t, Point gL, in
     state(PhrasePhase::standby) {
     id = "phrase " + to_string(currentID++);
     if (!font) {
-        SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
-        font = SDL_CreateTextureFromSurface(renderer, temp);
-        SDL_FreeSurface(temp);
+        resourceDepository::loadTexture("font","fonts/paryfont4rows");
+        font = resourceDepository::getTexture("font")->texture;
     }
     if (!defaultSpeechBubble) {
-        SDL_Surface* temp = IMG_Load("assets/speechBubbles/defaultSpeechBubble.png");
-        defaultSpeechBubble = SDL_CreateTextureFromSurface(renderer, temp);
-        SDL_FreeSurface(temp);
+        resourceDepository::loadTexture("defaultSpeechBubble","speechBubbles/defaultSpeechBubble");
+        defaultSpeechBubble = resourceDepository::getTexture("defaultSpeechBubble")->texture;
     }
     box = SDL_Rect { p.x, p.y, pixelSize.x, pixelSize.y };
 }

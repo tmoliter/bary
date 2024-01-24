@@ -20,10 +20,8 @@ int main(int argc, char* args[]) {
 
     vector<string> saveNames;
     barysystem::startup(saveNames);
-    resourceDepository::textures = {
-        { "pinkbox", make_pair(0, new Texture("pinkbox", "assets/menus/blankPink.png"))},
-        { "pinkinventoryfooter", make_pair(0, new Texture("pinkinventoryfooter", "assets/menus/pinkInventoryFooter.png"))}
-    };
+    resourceDepository::loadTexture("pinkbox", "menus/blankPink");
+    resourceDepository::loadTexture("pinkinventoryfooter", "menus/pinkInventoryFooter");
 
     MenuDisplay* loadMenu = nullptr;
     vector<Option> startOptions = { Option("Editor", "Open Map Editor", "editor") };

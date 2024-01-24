@@ -3,7 +3,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "resourceDepository.h"
 #include "./Text.h"
 
 using namespace std;

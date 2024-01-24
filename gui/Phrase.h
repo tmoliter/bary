@@ -5,6 +5,7 @@
 #include <cmath>
 #include "Ray.h"
 #include "Timer.h"
+#include "resourceDepository.h"
 
 using namespace std;
 

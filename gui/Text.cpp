@@ -5,9 +5,8 @@ using namespace std;
 Text::Text(Point p, string t, int lL) :
     position(p), text(t), lineLength(lL) {
     if (!font) {
-        SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
-        font = SDL_CreateTextureFromSurface(renderer, temp);
-        SDL_FreeSurface(temp);
+        resourceDepository::loadTexture("font","fonts/paryfont4rows");
+        font = resourceDepository::getTexture("font")->texture;
     }
     if (lineLength < 0)
         resetLineLength();

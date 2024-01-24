@@ -2,6 +2,7 @@
 #define TEXT_H
 #include <string>
 #include "Ray.h"
+#include "resourceDepository.h"
 
 using namespace std;
 

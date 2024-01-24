@@ -29,7 +29,7 @@ namespace resourceDepository {
     void removeUnreferencedTextures();
 
     // Maybe have prefetch functions that take a list of names and loads all of them, and releases them after
-
+    void loadTexture(string name, string simplePath);
     Texture* getTexture(string name);
     void releaseTexture(string name);
 

@@ -8,9 +8,8 @@ MenuDisplay::MenuDisplay(vector<Option> o, Point p, Point size, int mC, bool a) 
     active(a)
 {
     if (!font) {
-        SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
-        font = SDL_CreateTextureFromSurface(renderer, temp);
-        SDL_FreeSurface(temp);
+        resourceDepository::loadTexture("font","fonts/paryfont4rows");
+        font = resourceDepository::getTexture("font")->texture;
     }
     box = nullptr;
     header = nullptr;
