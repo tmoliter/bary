@@ -14,6 +14,13 @@ local itemDefinitions = {
         use = function() print("used tp roll") end
     }
 }
+setmetatable(itemDefinitions, {
+    __index = function(t,k)
+        print("No item definition for " .. k .. " found!")
+        error()
+    end
+})
+
 
 itemDefinitions.mungBeanJuice.use = function(hostThing, args)
     print("USING " .. args.amount .. " MUNG BEAN JUICES ON " .. args.target)
@@ -55,13 +62,5 @@ end
 itemDefinitions.oolong.use = function(args)
     print("used " .. args.amount .. " oolong")
 end
-
-
-setmetatable(itemDefinitions, {
-    __index = function(t,k)
-        print("No item definition for " .. k .. " found!")
-        error()
-    end
-})
 
 return itemDefinitions

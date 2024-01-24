@@ -15,7 +15,7 @@ RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
 
 RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(oldThing.bounds), things(oldThing.things) {
     for (auto oldS : oldThing.sprites)
-        sprites.push_back(new Sprite(*oldS, position, name));
+        sprites.push_back(new Sprite(*oldS, position, name)); // should probably be AddSprite
     for (auto const& [layer, oldO] : oldThing.obstructions)
         obstructions[layer] = new Obstruction(*oldO, position, name);
     for (auto const& [oldInName, oldIn] : oldThing.interactables)

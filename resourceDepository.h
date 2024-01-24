@@ -25,6 +25,12 @@ namespace resourceDepository {
     inline map<string, pair<int, Texture*>> textures;
     inline map<string, pair<int, Sfx*>> chunks;
 
+    inline map<string, string> textureNameToPath;
+    inline map<string, string> soundNameToPath;
+
+    void loadScene(lua_State *L);
+    void endScene();
+
     Sfx* initializeSfx(string name);
     Texture* initializeTexture(string name);
 

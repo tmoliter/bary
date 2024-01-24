@@ -5,6 +5,7 @@ Texture::Texture(string n, string path) : name(n) {
         texture = nullptr;
         return;
     }
+    // pull from game name path here
     SDL_Surface* temp = IMG_Load(path.c_str());
     texture = SDL_CreateTextureFromSurface(renderer, temp);
     SDL_FreeSurface(temp);
@@ -15,34 +16,24 @@ Sfx::Sfx(string n, string path) : name(n) {
         sound = nullptr;
         return;
     }
+    // pull from game name path here
     sound = Mix_LoadWAV(path.c_str());
 }
 
 Texture* resourceDepository::initializeTexture(string name) {
-    if (name == "sailorshack")
-        return new Texture( "sailorshack", "assets/sheets/Burg/SailorShack.png");
-    if (name == "genrl")
-        return new Texture("genrl", "assets/x.png");
-    if (name == "zinnia")
-        return new Texture("zinnia", "assets/sheets/SDL_TestSS.png");
-    if (name == "editorCross")
-        return new Texture("editorCross", "assets/debug/9x9cross.png");
-    if (name == "singlepixel")
-        return new Texture("singlepixel", "assets/debug/onePixel.png");
-    if (name == "pinkbox")
-        return new Texture("pinkbox", "assets/menus/blankPink.png");
-    if (name == "pinkinventoryheader")
-        return new Texture("pinkboxheader", "assets/menus/pinkInventoryHeader.png");
-    if (name == "pinkinventoryfooter")
-        return new Texture("pinkboxfooter", "assets/menus/pinkInventoryFooter.png");
-    cout << "NO SPRITE WITH NAME '" << name << "' found!";
-    throw exception();
+    if (!resourceDepository::textureNameToPath.count(name)) {
+        cout << "No texture with name " << name << "found\n";
+        throw exception();
+    }
+    return new Texture(name, resourceDepository::textureNameToPath.at(name));
 }
 
 Sfx* resourceDepository::initializeSfx(string name) {
-    if (name == "fart")
-        return new Sfx("fart", "assets/sfx/fart.mp3");
-    return nullptr;
+    if (!resourceDepository::soundNameToPath.count(name)) {
+        cout << "No sound with name " << name << "found\n";
+        throw exception();
+    }
+    return new Sfx(name, resourceDepository::soundNameToPath.at(name));
 }
 
 Texture* resourceDepository::getTexture(string name) {
@@ -84,4 +75,37 @@ void resourceDepository::releaseChunk(string name) {
         delete chunks[name].second;
         chunks.erase(name);
     }
+}
+
+void resourceDepository::loadScene(lua_State *L) {
+    cout << "LOADING RESOURCES\n";
+    if (!luaUtils::GetTableOnStackFromTable(L, "textures")) {
+        cout << "no textures found\n";
+        return;
+    }
+    lua_pushnil(L);
+    while (lua_next(L, -2)) {
+        string name = lua_tostring(L, -2);
+        string path = lua_tostring(L, -1);
+        resourceDepository::textureNameToPath[name] = path;
+        lua_pop(L,1);
+    }
+    lua_pop(L,1);
+    if (!luaUtils::GetTableOnStackFromTable(L, "sounds")) {
+        cout << "no sounds found\n";
+        return;
+    }
+    lua_pushnil(L);
+    while (lua_next(L, -2)) {
+        string name = lua_tostring(L, -2);
+        string path = lua_tostring(L, -1);
+        resourceDepository::soundNameToPath[name] = path;
+        lua_pop(L,1);
+    }
+    lua_pop(L,1);
+}
+
+void resourceDepository::endScene() {
+    resourceDepository::textureNameToPath.clear();
+    resourceDepository::soundNameToPath.clear();
 }

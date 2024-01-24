@@ -20,6 +20,10 @@ int main(int argc, char* args[]) {
 
     vector<string> saveNames;
     barysystem::startup(saveNames);
+    resourceDepository::textureNameToPath = {
+        {"pinkbox", "assets/menus/blankPink.png"},
+        {"pinkinventoryfooter", "assets/menus/pinkInventoryFooter.png"}
+    };
 
     MenuDisplay* loadMenu = nullptr;
     vector<Option> startOptions = { Option("Editor", "Open Map Editor", "editor") };
@@ -48,6 +52,7 @@ int main(int argc, char* args[]) {
                     loadMenu = nullptr;
                     MapBuilder *m = new MapBuilder("burg", L);
                 } else {
+                    resourceDepository::endScene();
                     UIRenderer::removeMenuDisplay(loadMenu);
                     loadMenu = nullptr;
                     lua_getglobal(L, "loadGame");

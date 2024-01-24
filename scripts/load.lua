@@ -26,6 +26,8 @@ end
 function loadScene(host, sceneName, isEditing, newSceneManager)
     sceneManager = newSceneManager
     local setup = require(settings.GAME_NAME .. '.scenes.' .. sceneName .. '.setup')
+    local resources = require(settings.GAME_NAME .. '.scenes.' .. sceneName .. '.resources')
+    printtable(resources)
     local thingDefs, sceneEvents = table.unpack(setup)
 
     local mapTable
@@ -53,7 +55,7 @@ function loadScene(host, sceneName, isEditing, newSceneManager)
         table.insert(spawnThings, playerSpawn)
     end
 
-    _loadScene(mapTable["backgroundPath"], spawnThings, host)
+    _loadScene(mapTable["backgroundPath"], spawnThings, resources, host)
 end
 
 

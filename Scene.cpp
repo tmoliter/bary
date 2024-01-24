@@ -315,11 +315,13 @@ vector<RealThingData> Scene::getAllThingData() {
 
 // Lua registered functions
 int Scene::_loadScene(lua_State* L) {
-    if(!CheckParams(L, {ParamType::pointer, ParamType::table, ParamType::str})) {
+    if(!CheckParams(L, {ParamType::pointer, ParamType::table, ParamType::table, ParamType::str})) {
         cout << "_loadScene failed!" << endl;
         throw exception();
     }
     Scene* scene = static_cast<Scene*>(lua_touserdata(L, -1));
+    lua_pop(L, 1);
+    resourceDepository::loadScene(L);
     lua_pop(L, 1);
     lua_pushnil(L);
     while (lua_next(L, -2))
