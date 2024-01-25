@@ -163,7 +163,7 @@ void MenuDisplay::renderBox() {
 void MenuDisplay::renderFlavorBox() {
     if (flavorBox == nullptr || box == nullptr || flavorText.text == "")
         return;
-    SDL_Rect renderRect = { position.x, position.y + height, flavorBox->sourceRect.w, flavorBox->sourceRect.h };
+    SDL_Rect renderRect = { position.x, position.y + height, width, height };
     SDL_RenderCopy(renderer, flavorBox->texture->texture, &flavorBox->sourceRect, &renderRect);
     flavorText.render();
 }

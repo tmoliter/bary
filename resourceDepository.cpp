@@ -92,7 +92,7 @@ void resourceDepository::loadScene(lua_State *L) {
     lua_pop(L,1);
 }
 
-void resourceDepository::removeUnreferencedTextures() {
+void resourceDepository::removeUnreferencedTextures() { // this shits broken
     map<string, pair<int, Texture*>>::iterator tItr = textures.begin();
     while (tItr != textures.end()) {
         string name = tItr->first;

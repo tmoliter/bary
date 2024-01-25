@@ -20,8 +20,7 @@ int main(int argc, char* args[]) {
 
     vector<string> saveNames;
     barysystem::startup(saveNames);
-    resourceDepository::loadTexture("pinkbox", "menus/blankPink");
-    resourceDepository::loadTexture("pinkinventoryfooter", "menus/pinkInventoryFooter");
+    resourceDepository::loadTexture("defaultSpeechBubble", "speechBubbles/defaultSpeechBubble");
 
     MenuDisplay* loadMenu = nullptr;
     vector<Option> startOptions;
@@ -30,8 +29,8 @@ int main(int argc, char* args[]) {
     for (auto saveName : saveNames)
         startOptions.push_back(Option(saveName, "Load Save File", saveName));
     loadMenu = new MenuDisplay(startOptions, Point(64, 100), Point(340, 60), 2);
-    loadMenu->addBox("pinkbox", {0, 0, 340, 120});
-    loadMenu->addFlavorBox("pinkinventoryfooter", {0, 0, 340, 80});
+    loadMenu->addBox("defaultSpeechBubble", {0, 0, 640, 480});
+    loadMenu->addFlavorBox("defaultSpeechBubble", {0, 0, 640, 480});
     UIRenderer::addMenuDisplay(loadMenu);
 
     while (true){
@@ -52,9 +51,6 @@ int main(int argc, char* args[]) {
                     loadMenu = nullptr;
                     MapBuilder *m = new MapBuilder("burg", L);
                 } else {
-                    resourceDepository::releaseTexture("pinkbox");
-                    resourceDepository::releaseTexture("pinkinventoryfooter");
-                    resourceDepository::removeUnreferencedTextures();
                     UIRenderer::removeMenuDisplay(loadMenu);
                     loadMenu = nullptr;
                     lua_getglobal(L, "loadGame");
