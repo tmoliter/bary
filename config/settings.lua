@@ -8,3 +8,5 @@ settings = {
     LETTERS_PER_FONT_ROW = 24,
     GAME_NAME = 'barycenter'
 }
+
+GAME_PATH = 'games.' .. settings.GAME_NAME

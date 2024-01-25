@@ -78,7 +78,7 @@ local zinniaTalkB = {
     }
 }
 
-local globalEvents = require(settings.GAME_NAME .. ".definitions.globalEvents")
+local globalEvents = require(GAME_PATH .. ".definitions.globalEvents")
 local sceneEvents = {
     inventoryMenu = {
         type = "custom",

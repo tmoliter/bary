@@ -8,7 +8,7 @@ local resources = {
     },
 }
 
-deepmerge(resources, require('barycenter.resources.editor'))
-deepmerge(resources, require('barycenter.resources.characters'))
+deepmerge(resources, require('games.barycenter.resources.editor'))
+deepmerge(resources, require('games.barycenter.resources.characters'))
 
 return resources

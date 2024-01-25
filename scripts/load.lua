@@ -2,14 +2,14 @@ require("scripts.copy")
 require("config.settings")
 gameState = require('state.gameState')
 standardEvents = require('scripts.standardEvents')
-itemDefinitions = require(settings.GAME_NAME .. ".definitions.itemDefinitions")
+itemDefinitions = require(GAME_PATH .. ".definitions.itemDefinitions")
 sceneManager = nil
 local eventModule = require("scripts.event")
 beginEvent = eventModule.beginEvent
 resumeEvent = eventModule.resumeEvent
 
 function loadGame(saveFile)
-    local saveData = require(settings.GAME_NAME .. ".saves." .. saveFile)
+    local saveData = require(GAME_PATH .. ".saves." .. saveFile)
 
     gameState:fresh()
     gameState.spawn = deepcopy(saveData.spawn)
@@ -25,8 +25,8 @@ end
 
 function loadScene(host, sceneName, isEditing, newSceneManager)
     sceneManager = newSceneManager
-    local setup = require(settings.GAME_NAME .. '.scenes.' .. sceneName .. '.setup')
-    local resources = require(settings.GAME_NAME .. '.scenes.' .. sceneName .. '.resources')
+    local setup = require(GAME_PATH .. '.scenes.' .. sceneName .. '.setup')
+    local resources = require(GAME_PATH .. '.scenes.' .. sceneName .. '.resources')
     printtable(resources)
     local thingDefs, sceneEvents = table.unpack(setup)
 
@@ -34,7 +34,7 @@ function loadScene(host, sceneName, isEditing, newSceneManager)
     local playerSpawn
 
     if isEditing == true then
-        mapTable = require(settings.GAME_NAME .. '.scenes.' .. sceneName .. '.map')
+        mapTable = require(GAME_PATH .. '.scenes.' .. sceneName .. '.map')
     else
         mapTable = gameState["scenes"][sceneName]
         playerSpawn = thingDefs[gameState["spawn"]["name"]]
@@ -60,7 +60,7 @@ end
 
 
 function spawn(host, sceneName, args)
-    local setup = require(settings.GAME_NAME .. '.scenes.' .. sceneName .. '.setup')
+    local setup = require(GAME_PATH .. '.scenes.' .. sceneName .. '.setup')
     local thingDefs, _ = table.unpack(setup)
     local spawn = {}
     for k,v in pairs(thingDefs[args["baseName"]]) do if k ~= "events" then spawn[k] = v end end

@@ -18,7 +18,7 @@ function saveMap(t, scene)
    local dumpString =  getDumpString(t)
    local dateString = os.date("%d-%m-%y__%H_%M_%S")
    print("Map Data Computed")
-   io.output(settings.GAME_NAME .. "/scenes/" .. scene .. "/map-" .. dateString .. ".lua")
+   io.output("games/" .. settings.GAME_NAME .. "/scenes/" .. scene .. "/map-" .. dateString .. ".lua")
    io.write("return " .. dumpString)
    io.flush()
 end

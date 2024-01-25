@@ -3,7 +3,7 @@
 void barysystem::startup(vector<string>& saveNames) {
     settings.init();
 
-    string savePath = settings.BASE_PATH + "/" + settings.GAME_NAME + "/saves";
+    string savePath = settings.BASE_PATH + "/games/" + settings.GAME_NAME + "/saves";
     smatch base_match;
     const regex base_regex(R"(^.*\/([^\/]+)\.lua)");
     for (const auto & entry : fs::directory_iterator(savePath)) {
