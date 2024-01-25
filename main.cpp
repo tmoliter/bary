@@ -24,7 +24,9 @@ int main(int argc, char* args[]) {
     resourceDepository::loadTexture("pinkinventoryfooter", "menus/pinkInventoryFooter");
 
     MenuDisplay* loadMenu = nullptr;
-    vector<Option> startOptions = { Option("Editor", "Open Map Editor", "editor") };
+    vector<Option> startOptions;
+    if (settings.BUILD_MODE)
+        startOptions.push_back(Option("Editor", "Open Map Editor", "editor"));
     for (auto saveName : saveNames)
         startOptions.push_back(Option(saveName, "Load Save File", saveName));
     loadMenu = new MenuDisplay(startOptions, Point(64, 100), Point(340, 60), 2);
@@ -50,6 +52,8 @@ int main(int argc, char* args[]) {
                     loadMenu = nullptr;
                     MapBuilder *m = new MapBuilder("burg", L);
                 } else {
+                    resourceDepository::releaseTexture("pinkbox");
+                    resourceDepository::releaseTexture("pinkinventoryfooter");
                     resourceDepository::removeUnreferencedTextures();
                     UIRenderer::removeMenuDisplay(loadMenu);
                     loadMenu = nullptr;

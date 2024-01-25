@@ -30,6 +30,7 @@ inline struct Settings {
             luaUtils::GetLuaIntFromTable(L, "LETTER_HEIGHT", LETTER_HEIGHT);
             luaUtils::GetLuaIntFromTable(L, "LETTERS_PER_FONT_ROW", LETTERS_PER_FONT_ROW);
             SDL_Rect* RESOLUTION = new SDL_Rect {0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
+            luaUtils::GetLuaBoolFromTable(L, "BUILD_MODE", BUILD_MODE);
             luaUtils::GetLuaStringFromTable(L, "GAME_NAME", GAME_NAME);
             lua_close(L);
         } else {
@@ -52,6 +53,7 @@ inline struct Settings {
     int LETTER_HEIGHT;
     int LETTERS_PER_FONT_ROW;
     bool FULLSCREEN_MODE;
+    bool BUILD_MODE;
     SDL_Rect* RESOLUTION;
     std::string GAME_NAME;
     std::string BASE_PATH;
