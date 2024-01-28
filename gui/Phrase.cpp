@@ -16,11 +16,11 @@ Phrase::Phrase(Point p, Point pixelSize, ScrollType type, string t, Point gL, in
     state(PhrasePhase::standby) {
     id = "phrase " + to_string(currentID++);
     if (!font) {
-        resourceDepository::loadTexture("font","fonts/paryfont4rows");
+        resourceDepository::loadTexture("font","games/barycenter/assets/fonts/paryfont4rows.png");
         font = resourceDepository::getTexture("font")->texture;
     }
     if (!defaultSpeechBubble) {
-        resourceDepository::loadTexture("defaultSpeechBubble","speechBubbles/defaultSpeechBubble");
+        resourceDepository::loadTexture("defaultSpeechBubble","base/assets/speechBubbles/defaultSpeechBubble.png");
         defaultSpeechBubble = resourceDepository::getTexture("defaultSpeechBubble")->texture;
     }
     box = SDL_Rect { p.x, p.y, pixelSize.x, pixelSize.y };

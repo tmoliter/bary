@@ -4,6 +4,7 @@ gameState = require('state.gameState')
 standardEvents = require('scripts.standardEvents')
 itemDefinitions = require(GAME_PATH .. ".definitions.itemDefinitions")
 sceneManager = nil
+-- local baseResources = require('base.resources')
 local eventModule = require("scripts.event")
 beginEvent = eventModule.beginEvent
 resumeEvent = eventModule.resumeEvent
@@ -26,14 +27,16 @@ end
 function loadScene(host, sceneName, isEditing, newSceneManager)
     sceneManager = newSceneManager
     local setup = require(GAME_PATH .. '.scenes.' .. sceneName .. '.setup')
-    local resources = require(GAME_PATH .. '.scenes.' .. sceneName .. '.resources')
-    printtable(resources)
+    local resources = require(GAME_PATH .. '.scenes.' .. sceneName .. '.resources') -- if this tries to cache we might have to dofile
+    -- deepmerge(resources, baseResources.defaults) -- do this in Resources prototype
+    printtable(resources:getTextures())
     local thingDefs, sceneEvents = table.unpack(setup)
 
     local mapTable
     local playerSpawn
 
     if isEditing == true then
+        -- deepmerge(resources, baseResources.editor)
         mapTable = require(GAME_PATH .. '.scenes.' .. sceneName .. '.map')
     else
         mapTable = gameState["scenes"][sceneName]
@@ -55,7 +58,7 @@ function loadScene(host, sceneName, isEditing, newSceneManager)
         table.insert(spawnThings, playerSpawn)
     end
 
-    _loadScene(mapTable["backgroundPath"], spawnThings, resources, host)
+    _loadScene(mapTable["backgroundPath"], spawnThings, { textures = resources:getTextures() }, host)
 end
 
 

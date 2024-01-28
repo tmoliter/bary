@@ -5,7 +5,7 @@ using namespace std;
 Text::Text(Point p, string t, int lL) :
     position(p), text(t), lineLength(lL) {
     if (!font) {
-        resourceDepository::loadTexture("font","fonts/paryfont4rows");
+        resourceDepository::loadTexture("font","games/barycenter/assets/fonts/paryfont4rows.png");
         font = resourceDepository::getTexture("font")->texture;
     }
     if (lineLength < 0)

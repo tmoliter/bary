@@ -26,7 +26,7 @@ Point Camera::getSourceRectCoords() {
 }
 
 void Camera::init() {
-    resourceDepository::loadTexture(path, path); // this is not a good solution at all
+    resourceDepository::loadTexture(path, "games/barycenter/assets/" + path + ".png"); // this is not a good solution at all
     bgTexture = resourceDepository::getTexture(path)->texture;
     SDL_QueryTexture(bgTexture, NULL, NULL, &bgWidth, &bgHeight);
     sourceRect = { 0 , 0, scaledScreenWidth, scaledScreenHeight };

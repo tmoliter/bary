@@ -18,9 +18,9 @@ Sfx::Sfx(string n, string path) : name(n) {
     sound = Mix_LoadWAV(path.c_str());
 }
 void resourceDepository::loadTexture(string name, string simplePath) {
-    string path = "games/" + settings.GAME_NAME + "/assets/" + simplePath + ".png";
+    cout << simplePath << endl;
     if(!textures.count(name))
-        textures[name] = make_pair(0,new Texture(name, path));
+        textures[name] = make_pair(0,new Texture(name, simplePath));
     else
         cout << "texture " << name << " is already loaded, skipping\n";
 }

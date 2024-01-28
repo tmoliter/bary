@@ -89,8 +89,59 @@
 -- a:c()
 
 
-local a = { c = nil}
-local b = a
-local c = a.c
-a.c = 5
-print(c)
+-- local a = { c = nil}
+-- local b = a
+-- local c = a.c
+-- a.c = 5
+-- print(c)
+
+
+-- local a = {
+--      b = { 
+--         c = 1, d = 2 
+--     },
+--     c = {}
+-- }
+
+-- setmetatable(a.c, {
+--     __index = function(t,k)
+--         print("NA")
+--         return "nothing"
+--     end
+-- })
+
+-- print(a["c"].c)
+
+local exampleBase = {
+    ""
+}
+
+local resources = {
+    ownTextures = {
+        sailorshack = "sheets/Burg/SailorShack",
+        genrl = "x",
+        pinkbox = "menus/blankPink",
+        pinkboxheader = "menus/pinkInventoryHeader",
+        pinkinventoryfooter = "menus/pinkInventoryFooter"
+    },
+    baseTextures = {
+
+    }
+    textures = {}
+    getTexture = function(self,key)
+        local ownTexture = self.textures[key]
+        if ownTexture then return GAME_NAME .. "/" .. ownTexture .. ".png" end
+        return self.baseTextures = 
+}
+
+setmetatable(resources.textures, {
+    __index = function(t,k)
+        local ownTexturePath = self.textures[key] and GAME_NAME .. "/assets/" .. ownTexture .. ".png" 
+        if ownTexturePath then 
+            return ownTexturePath
+        end
+        return self.baseTextures[key] and "base/assets/" .. self.textures[key] .. ".png"
+    end
+})
+
+print(resources)
