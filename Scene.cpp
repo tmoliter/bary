@@ -10,7 +10,9 @@ Scene::Scene(string sceneName, lua_State *L) : sceneName(sceneName) {
 
 Scene::~Scene() {
     destroyAllThings();
-    // resourceDepository::removeUnreferencedTextures; // should revisit what this does
+    cout << backgroundPath << endl;
+    // resourceDepository::releaseTexture(Camera::c->path);
+    resourceDepository::removeUnreferencedTextures(); // should revisit what this does
 }
 
 void Scene::Load(bool isEditing) {

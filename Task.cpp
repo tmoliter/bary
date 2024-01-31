@@ -118,7 +118,7 @@ void MenuST::init() {
     }
 
     menu = new MenuDisplay(options, point, size, maxColumns);
-    menu->addBox("pinkbox", {0, 0, 340, 120});
+    menu->addBox("defaultSpeechBubble", {0, 0, 640, 480});
     selection = menu->getCurrentSelection().value; // This way of doing things could probably be improved
     UIRenderer::addMenuDisplay(menu);
 }
