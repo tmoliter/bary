@@ -24,7 +24,7 @@ local function sequentialTasks(hostThing, args)
 end
 
 local function randomAutoMove(hostThing, args)
-    local originX, originY, variance, wait, stop = table.unpack {args["originX"], args["originY"], args["variance"], args["wait"], args["stop"]}
+    local originX, originY, variance, wait = table.unpack {args["originX"], args["originY"], args["variance"], args["wait"]}
     local x, y
     local function move()
         x = math.random(originX - variance, originX + variance)
@@ -39,7 +39,7 @@ local function randomAutoMove(hostThing, args)
     end
     while stop ~= true do
         move()
-        coroutine.yield()
+        stop = coroutine.yield()
         if wait ~= nil then
             _newTask(
                 {

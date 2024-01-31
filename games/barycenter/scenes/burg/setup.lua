@@ -8,46 +8,6 @@ local resources = Resources.new({
     baseTextures = {}
 })
 
--- BEHAVIORS
-
-local function zinniaAutoMove(hostThing, args)
-    originX, originY = table.unpack { args["originX"], args["originY"] }
-    while true do
-        _newTask(
-            {
-                {
-                    type = "move",
-                    destinationX = originX - 150,
-                    destinationY = originY - 150
-                },
-            }, args.eventName, hostThing
-        )
-        coroutine.yield()
-        _newTask(
-            {
-                {
-                    type = "move",
-                    destinationX = originX + 35,
-                    destinationY = originY - 150
-                },
-            }, args.eventName, hostThing
-        )
-        coroutine.yield()
-        _newTask(
-            {
-                {
-                    type = "move",
-                    destinationX = originX,
-                    destinationY = originY
-                },
-            }, args.eventName, hostThing
-        )
-        coroutine.yield()
-    end
-end
-
--- EVENTS
-
 local zinniaTalkB = {
     type = "sequentialTasks",
     pauseAllMoves = true,
