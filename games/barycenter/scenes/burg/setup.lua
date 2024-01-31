@@ -1,3 +1,16 @@
+local Resources = require('scripts.resourceobject')
+local resources = Resources.new({
+    ownTextures = {
+        sailorshack = "sheets/Burg/SailorShack",
+        genrl = "x",
+        pinkbox = "menus/blankPink",
+        pinkboxheader = "menus/pinkInventoryHeader",
+        pinkinventoryfooter = "menus/pinkInventoryFooter",
+        zinnia = "sheets/SDL_TestSS"
+    },
+    baseTextures = {}
+})
+
 -- BEHAVIORS
 
 local function zinniaAutoMove(hostThing, args)
@@ -372,4 +385,4 @@ local thingDefs = {
     },
 }
 
-return { thingDefs, sceneEvents }
+return { resources, thingDefs, sceneEvents }

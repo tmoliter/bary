@@ -20,7 +20,7 @@ int main(int argc, char* args[]) {
 
     vector<string> saveNames;
     barysystem::startup(saveNames);
-    resourceDepository::loadTexture("defaultSpeechBubble", "base/assets/speechBubbles/defaultSpeechBubble.png");
+    resourceDepository::loadTexture("defaultSpeechBubble", "base/assets/default/defaultSpeechBubble.png");
 
     MenuDisplay* loadMenu = nullptr;
     vector<Option> startOptions;

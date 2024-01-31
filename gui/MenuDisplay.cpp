@@ -8,7 +8,7 @@ MenuDisplay::MenuDisplay(vector<Option> o, Point p, Point size, int mC, bool a) 
     active(a)
 {
     if (!font) {
-        resourceDepository::loadTexture("font","games/barycenter/assets/fonts/paryfont4rows.png");
+        resourceDepository::loadTexture("font","base/assets/fonts/paryfont4rows.png");
         font = resourceDepository::getTexture("font")->texture;
     }
     box = nullptr;

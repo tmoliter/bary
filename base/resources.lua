@@ -1,17 +1,11 @@
-local editor = {
-    textures = {
-        editorCross = "editor/9x9cross",
-        singlepixel = "editor/onePixel",
-    },
-    sounds = {
-        fart = "sfx/fart"
-    }
+local editorTextures = {
+    editorCross = "editor/9x9cross",
+    singlepixel = "editor/onePixel",
 }
 
-local defaults = {
-    textures = {
-        defaultSpeechBubble = "defaults/defaultSpeechBubble"
-    }
+local UI = {
+    defaultSpeechBubble = "defaults/defaultSpeechBubble",
+    font = "fonts/paryfont4rows"
 }
 
-return { editor = editor }
+return { editorTextures = editorTextures }

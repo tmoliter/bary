@@ -16,7 +16,7 @@ Phrase::Phrase(Point p, Point pixelSize, ScrollType type, string t, Point gL, in
     state(PhrasePhase::standby) {
     id = "phrase " + to_string(currentID++);
     if (!font) {
-        resourceDepository::loadTexture("font","games/barycenter/assets/fonts/paryfont4rows.png");
+        resourceDepository::loadTexture("font","base/assets/fonts/paryfont4rows.png");
         font = resourceDepository::getTexture("font")->texture;
     }
     if (!defaultSpeechBubble) {
