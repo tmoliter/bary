@@ -98,13 +98,13 @@ void resourceDepository::removeUnreferencedTextures() { // this shits broken
         string name = tItr->first;
         int references = tItr->second.first;
         Texture* texture = tItr->second.second;
+        tItr++;
         if (references > 0) {
             cout << "will not destroy texture " << name << " that has " << references << " references!\n";
-            tItr++;
             continue;
         }
-        SDL_DestroyTexture(textures[name].second->texture);
-        delete textures[name].second;
+        SDL_DestroyTexture(texture->texture);
+        delete texture;
         textures.erase(name);
     }
 
@@ -113,9 +113,9 @@ void resourceDepository::removeUnreferencedTextures() { // this shits broken
         string name = sItr->first;
         int references = sItr->second.first;
         Sfx* texture = sItr->second.second;
+        sItr++;
         if (references > 0) {
             cout << "will not destroy sound chunk " << name << " that has " << references << " references!\n";
-            sItr++;
             continue;
         }
         Mix_FreeChunk(chunks[name].second->sound);
