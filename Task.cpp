@@ -103,6 +103,8 @@ void MenuST::init() {
     luaUtils::GetLuaIntFromTable(L, "maxColumns", maxColumns);
 
     if (menu != nullptr) {
+        // Focusing and/or modifying an existing menu
+
         // Man this is so ugly
         menu->allOptions = options;
         menu->position = point;
@@ -117,8 +119,16 @@ void MenuST::init() {
         return;
     }
 
+    // Making a new menu
+    string boxTexture = "defaultSpeechBubble";
+
+    luaUtils::GetLuaStringFromTable(L, "boxTexture", boxTexture);
     menu = new MenuDisplay(options, point, size, maxColumns);
-    menu->addBox("defaultSpeechBubble", {0, 0, 640, 480});
+    menu->addBox(boxTexture, {0, 0, 640, 480});
+    if (luaUtils::CheckLuaTableForBool(L, "flavorText")) {
+        menu->addFlavorBox(boxTexture, {0, 0, 640, 480});
+    }
+
     selection = menu->getCurrentSelection().value; // This way of doing things could probably be improved
     UIRenderer::addMenuDisplay(menu);
 }

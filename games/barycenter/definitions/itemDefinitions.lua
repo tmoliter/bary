@@ -2,11 +2,13 @@ local itemDefinitions = {
     mungBeanJuice = {
         name = "Mung Bean Juice",
         plural = "Mung Bean Juices",
+        flavorText = "Good and good for you",
         needsTarget = true
     },
     oolong = {
         name = "Oolong Tea",
-        plural = "Oolong Teas"
+        plural = "Oolong Teas",
+        flavorText = "Smooth and refereshing. Get a little pep in your step"
     },
     tpRoll = {
         name = "TP Roll",

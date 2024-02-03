@@ -10,7 +10,8 @@ function inventoryMenu(hostThing, args)
         local i = 1
         for itemKey, amount in pairs(gameState.inventories[args.inventoryName].items) do
             options[i] = { 
-                selectionText = nameAndAmount(itemDefinitions[itemKey], amount), 
+                selectionText = nameAndAmount(itemDefinitions[itemKey], amount),
+                flavorText = itemDefinitions[itemKey].flavorText or "",
                 value = itemKey
             }
             i = i+1
@@ -42,6 +43,7 @@ function inventoryMenu(hostThing, args)
             width = 340,
             height = 60,
             maxColumns = 2,
+            flavorText = true,
             blocking = true
         }
     }, args.eventName, hostThing)
