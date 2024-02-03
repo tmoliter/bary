@@ -20,7 +20,7 @@ struct Scene : public Host {
     map<pair<Host*, string> ,int> eventArgKeys;
 
     string sceneName;
-    string backgroundPath;
+    string bgTextureName;
 
     map<string, RealThing*> things;
     vector<string> thingsToDestroy;

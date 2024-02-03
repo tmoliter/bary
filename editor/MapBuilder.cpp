@@ -185,7 +185,7 @@ void MapBuilder::save() {
         lua_pop(L, 1);
     }
     lua_pop(L, 1);
-    PushStringToTable(L, "backgroundPath", Camera::c->path);
+    PushStringToTable(L, "bgTextureName", Camera::c->bgTextureName);
     lua_pushstring(L, Scene::currentScene->sceneName.c_str());
     if (CheckLua(L, lua_pcall(L, 2, 0, 0))) {
         cout << "SAVED" << endl;

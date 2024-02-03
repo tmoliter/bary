@@ -1,5 +1,4 @@
-return { 
-    backgroundPath = "backgrounds/Burg", 
+return {
     things = { 
         {
             name = "otherZinnia",

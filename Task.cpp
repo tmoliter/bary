@@ -63,7 +63,6 @@ bool PhraseST::meat(KeyPresses keysDown) {
 void MenuST::init() {
     void* menRef = static_cast<void*>(menu);
     if (luaUtils::GetLuaPointerFromTable(L, "menu", menRef)) {
-        cout << "received menu " << menRef << endl;
         menu = static_cast<MenuDisplay*>(menRef);
         if(luaUtils::CheckLuaTableForBool(L, "close")) {
             UIRenderer::removeMenuDisplay(menu);
@@ -144,9 +143,7 @@ bool MenuST::meat(KeyPresses keysDown) {
 
 bool MenuST::pushArgs() { 
     luaUtils::PushStringToTable(L, "selection", selection);
-    cout << "pushing menu " << menu << endl;
     luaUtils::PushPointerToTable(L, "menu", static_cast<void*>(menu));
-    cout << "pushed" << endl;
     return true; // these return values don't do anything rn
 };
 

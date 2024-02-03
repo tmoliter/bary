@@ -6,8 +6,7 @@ return {
         y = 200
     },
     scenes = {
-        burg = { 
-            backgroundPath = "backgrounds/Burg", 
+        burg = {
             things = { 
                 {
                     name = "otherZinnia",

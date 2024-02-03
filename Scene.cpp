@@ -10,8 +10,7 @@ Scene::Scene(string sceneName, lua_State *L) : sceneName(sceneName) {
 
 Scene::~Scene() {
     destroyAllThings();
-    cout << backgroundPath << endl;
-    // resourceDepository::releaseTexture(Camera::c->path);
+    resourceDepository::releaseTexture(bgTextureName);
     resourceDepository::removeUnreferencedTextures(); // should revisit what this does
 }
 
@@ -29,7 +28,7 @@ void Scene::Load(bool isEditing) {
 
 void Scene::EnterLoaded(RealThing* focus) {
     new Camera();
-    Camera::c->path = backgroundPath;
+    Camera::c->bgTextureName = bgTextureName;
 
     Camera::c->init();
     new FocusTracker(focus);
@@ -330,7 +329,7 @@ int Scene::_loadScene(lua_State* L) {
     while (lua_next(L, -2))
         scene->buildThingFromTable();
     lua_pop(L,1);
-    scene->backgroundPath = lua_tostring(L, -1);
+    scene->bgTextureName = lua_tostring(L, -1);
     lua_settop(L, 0);
     cout << "Scene Loaded!" << endl;
     return 0;

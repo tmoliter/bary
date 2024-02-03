@@ -56,7 +56,7 @@ function loadScene(host, sceneName, isEditing, newSceneManager)
     end
 
     printtable(resources:getTextures())
-    _loadScene(mapTable["backgroundPath"], spawnThings, { textures = resources:getTextures() }, host)
+    _loadScene(resources.background, spawnThings, { textures = resources:getTextures() }, host)
 end
 
 

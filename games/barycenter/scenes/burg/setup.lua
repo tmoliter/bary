@@ -1,6 +1,8 @@
 local Resources = require('scripts.resourceobject')
 local resources = Resources.new({
+    background = "burg",
     ownTextures = {
+        burg = "backgrounds/Burg",
         genrl = "sheets/Burg/genrl",
         sailorshack = "sheets/Burg/SailorShack",
         zinnia = "sheets/SDL_TestSS"

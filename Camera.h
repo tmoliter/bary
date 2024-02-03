@@ -26,7 +26,7 @@ class Camera {
             bgWidth, bgHeight, 
             scaledScreenWidth, scaledScreenHeight,  
             fadeMultiplier, warpMultiplier;
-        string path;
+        string bgTextureName;
         bool initialized;
 
         Camera() : 
