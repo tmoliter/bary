@@ -7,7 +7,6 @@ local resources = Resources.new({
         sailorshack = "sheets/Burg/SailorShack",
         zinnia = "sheets/SDL_TestSS"
     },
-    baseTextures = {}
 })
 
 local zinniaTalkB = {

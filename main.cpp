@@ -20,7 +20,11 @@ int main(int argc, char* args[]) {
 
     vector<string> saveNames;
     barysystem::startup(saveNames);
-    resourceDepository::loadTexture("defaultSpeechBubble", "base/assets/default/defaultSpeechBubble.png");
+    lua_getglobal(L, "loadBaseResources");
+    if(!luaUtils::CheckLua(L, lua_pcall(L, 0, 1, 0)))
+        throw exception();
+    resourceDepository::loadTexturesFromTable(L);
+    lua_settop(L, 0);
 
     MenuDisplay* loadMenu = nullptr;
     vector<Option> startOptions;

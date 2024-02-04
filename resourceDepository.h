@@ -25,6 +25,7 @@ namespace resourceDepository {
     inline map<string, pair<int, Texture*>> textures;
     inline map<string, pair<int, Sfx*>> chunks;
 
+    void loadTexturesFromTable(lua_State *L);
     void loadScene(lua_State *L);
     void removeUnreferencedTextures();
 

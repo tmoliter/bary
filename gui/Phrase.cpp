@@ -15,14 +15,11 @@ Phrase::Phrase(Point p, Point pixelSize, ScrollType type, string t, Point gL, in
     gridLimits(gL),
     state(PhrasePhase::standby) {
     id = "phrase " + to_string(currentID++);
-    if (!font) {
-        resourceDepository::loadTexture("font","base/assets/fonts/paryfont4rows.png");
-        font = resourceDepository::getTexture("font")->texture;
-    }
-    if (!defaultSpeechBubble) {
-        resourceDepository::loadTexture("defaultSpeechBubble","base/assets/speechBubbles/defaultSpeechBubble.png");
-        defaultSpeechBubble = resourceDepository::getTexture("defaultSpeechBubble")->texture;
-    }
+    
+    // These are a defaults, but we could allow this to be customized as well in the future
+    font = resourceDepository::getTexture("defaultFont");
+    speechBubble = resourceDepository::getTexture("defaultSpeechBubble");
+
     box = SDL_Rect { p.x, p.y, pixelSize.x, pixelSize.y };
 }
 
@@ -37,6 +34,10 @@ Phrase::Phrase(const Phrase& ph) :
     topPad(ph.topPad),
     gridLimits(ph.gridLimits),
     state(PhrasePhase::standby) {
+
+    font = resourceDepository::getTexture(ph.font->name);
+    speechBubble = resourceDepository::getTexture(ph.speechBubble->name);
+
     id = "phrase " + to_string(currentID++);
 }
 
@@ -169,7 +170,7 @@ int Phrase::progDisplay() {
             state = PhrasePhase::textDisplay;
         }
     }
-    SDL_RenderCopy(renderer, defaultSpeechBubble, &sourceRect, &box);
+    SDL_RenderCopy(renderer, speechBubble->texture, &sourceRect, &box);
     queue<string> tmpLines = lines;
     int linesSize = tmpLines.size();
     int total = 0;
@@ -290,7 +291,7 @@ void Phrase::popBubble(SDL_Rect sourceRect, float time) {
     int x = round(xF);
     int y = round(yF);
     SDL_Rect renderRect = SDL_Rect { x, y, w, h };
-    SDL_RenderCopy(renderer, defaultSpeechBubble, &sourceRect, &renderRect);
+    SDL_RenderCopy(renderer, speechBubble->texture, &sourceRect, &renderRect);
 }
 
 void Phrase::renderLetter(int lineNumber, int charPosition, int asciiValue, int occlusion, int raise) {
@@ -304,7 +305,7 @@ void Phrase::renderLetter(int lineNumber, int charPosition, int asciiValue, int 
     int yPosition = box.y + topPad + (lineNumber * settings.LETTER_HEIGHT * phraseScale) - (raise * phraseScale);
     SDL_Rect renderRect = { xPosition, yPosition + occlusion, settings.LETTER_WIDTH * phraseScale, (settings.LETTER_HEIGHT - occlusion) * phraseScale };
 
-    SDL_RenderCopy(renderer, font, &sourceRect, &renderRect);
+    SDL_RenderCopy(renderer, font->texture, &sourceRect, &renderRect);
 }
 
 SDL_Rect& Phrase::getBox() {

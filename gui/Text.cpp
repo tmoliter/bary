@@ -4,10 +4,10 @@ using namespace std;
 
 Text::Text(Point p, string t, int lL) :
     position(p), text(t), lineLength(lL) {
-    if (!font) {
-        resourceDepository::loadTexture("font","base/assets/fonts/paryfont4rows.png");
-        font = resourceDepository::getTexture("font")->texture;
-    }
+
+    // This is a default font, but we could allow this to be customized
+    font = resourceDepository::getTexture("defaultFont");
+
     if (lineLength < 0)
         resetLineLength();
 }
@@ -37,7 +37,7 @@ void Text::render() {
         int yPosition = position.y + (line * settings.LETTER_HEIGHT);
         SDL_Rect renderRect = { xPosition, yPosition, settings.LETTER_WIDTH, settings.LETTER_HEIGHT };
 
-        SDL_RenderCopy(renderer, font, &sourceRect, &renderRect);
+        SDL_RenderCopy(renderer, font->texture, &sourceRect, &renderRect);
         currentLinesLettercount++;
     }
 }

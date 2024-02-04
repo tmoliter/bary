@@ -4,8 +4,8 @@ local editorTextures = {
 }
 
 local UI = {
-    defaultSpeechBubble = "defaults/defaultSpeechBubble",
-    font = "fonts/paryfont4rows"
+    defaultSpeechBubble = "default/defaultSpeechBubble",
+    defaultFont = "fonts/paryfont4rows"
 }
 
-return { editorTextures = editorTextures }
+return { editorTextures = editorTextures, UI = UI }

@@ -7,6 +7,13 @@ sceneManager = nil
 local eventModule = require("scripts.event")
 beginEvent = eventModule.beginEvent
 resumeEvent = eventModule.resumeEvent
+local baseResources = require('base.resources')
+
+function loadBaseResources()
+    local Resources = require('scripts.resourceobject')
+    local baseResources = Resources.new({ baseTextures = baseResources.UI })
+    return baseResources:getTextures()
+end
 
 function loadGame(saveFile)
     local saveData = require(GAME_PATH .. ".saves." .. saveFile)
@@ -32,7 +39,6 @@ function loadScene(host, sceneName, isEditing, newSceneManager)
     local playerSpawn
 
     if isEditing == true then
-        local baseResources = require('base.resources')
         resources.baseTextures = getMerge({resources.baseTextures, baseResources.editorTextures})
         mapTable = require(GAME_PATH .. '.scenes.' .. sceneName .. '.map')
     else
@@ -55,7 +61,6 @@ function loadScene(host, sceneName, isEditing, newSceneManager)
         table.insert(spawnThings, playerSpawn)
     end
 
-    printtable(resources:getTextures())
     _loadScene(resources.background, spawnThings, { textures = resources:getTextures() }, host)
 end
 

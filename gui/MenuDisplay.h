@@ -32,6 +32,8 @@ struct MenuDisplay {
     Image* box;
     Image* flavorBox;
 
+    Texture *font = nullptr;
+
     Point position;
     Text flavorText;
 

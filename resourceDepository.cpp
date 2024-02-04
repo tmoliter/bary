@@ -60,20 +60,24 @@ void resourceDepository::releaseChunk(string name) {
     chunks[name].first--;
 }
 
+void resourceDepository::loadTexturesFromTable(lua_State *L) {
+    lua_pushnil(L);
+    while (lua_next(L, -2)) {
+        string name = lua_tostring(L, -2);
+        string path = lua_tostring(L, -1);
+        loadTexture(name, path);
+        lua_pop(L,1);
+    }
+    lua_pop(L,1);
+}
+
 void resourceDepository::loadScene(lua_State *L) {
     cout << "LOADING RESOURCES\n";
     if (!luaUtils::GetTableOnStackFromTable(L, "textures")) {
         cout << "no textures found\n";
         return;
     }
-    lua_pushnil(L);
-    while (lua_next(L, -2)) {
-        string name = lua_tostring(L, -2);
-        string simplePath = lua_tostring(L, -1);
-        loadTexture(name, simplePath);
-        lua_pop(L,1);
-    }
-    lua_pop(L,1);
+    loadTexturesFromTable(L);
     if (!luaUtils::GetTableOnStackFromTable(L, "sounds")) {
         cout << "no sounds found\n";
         return;

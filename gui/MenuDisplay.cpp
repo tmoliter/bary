@@ -7,13 +7,13 @@ MenuDisplay::MenuDisplay(vector<Option> o, Point p, Point size, int mC, bool a) 
     currentSelection(0), 
     active(a)
 {
-    if (!font) {
-        resourceDepository::loadTexture("font","base/assets/fonts/paryfont4rows.png");
-        font = resourceDepository::getTexture("font")->texture;
-    }
     box = nullptr;
     header = nullptr;
     flavorBox = nullptr;
+
+    // This is a default font, but we could allow this to be customized
+    font = resourceDepository::getTexture("defaultFont");
+
     // These need to happen first
     setHeight(size.y);
     setWidth(size.x);
@@ -173,7 +173,7 @@ void MenuDisplay::renderArrow() {
     int xOffset = ((currentColumn * (charsPerColumn + 2)) + 1) * settings.LETTER_WIDTH;
     int yOffset = ((currentSelection / maxColumns) % maxRows) * settings.LETTER_HEIGHT;
     SDL_Rect arrowRenderRect = { position.x + xPadding + xOffset, position.y + yPadding + yOffset, settings.LETTER_WIDTH, settings.LETTER_HEIGHT };
-    SDL_RenderCopy(renderer, font, &rightArrow, &arrowRenderRect);
+    SDL_RenderCopy(renderer, font->texture, &rightArrow, &arrowRenderRect);
 }
 
 void MenuDisplay::renderPageIndicators() {
@@ -182,11 +182,11 @@ void MenuDisplay::renderPageIndicators() {
     int halfwayX = position.x + (width/ 2) - (settings.LETTER_WIDTH / 2);
     if (getCurrentPage() < paginatedOptions.size() - 1) {
         SDL_Rect arrowRenderRect = { halfwayX, position.y + height - settings.LETTER_HEIGHT - (yPadding / 4), settings.LETTER_WIDTH, settings.LETTER_HEIGHT };
-        SDL_RenderCopy(renderer, font, &downArrow, &arrowRenderRect);
+        SDL_RenderCopy(renderer, font->texture, &downArrow, &arrowRenderRect);
     }
     if (getCurrentPage() > 0) {
         SDL_Rect arrowRenderRect = { halfwayX, position.y + (yPadding / 4), settings.LETTER_WIDTH, settings.LETTER_HEIGHT };
-        SDL_RenderCopy(renderer, font, &upArrow, &arrowRenderRect);
+        SDL_RenderCopy(renderer, font->texture, &upArrow, &arrowRenderRect);
     }
 }
 
