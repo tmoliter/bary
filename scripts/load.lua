@@ -39,7 +39,7 @@ function loadScene(host, sceneName, isEditing, newSceneManager)
     local playerSpawn
 
     if isEditing == true then
-        resources.baseTextures = getMerge({resources.baseTextures, baseResources.editorTextures})
+        resources.baseTextures = getMerge({resources.baseTextures or {}, baseResources.editorTextures})
         mapTable = require(GAME_PATH .. '.scenes.' .. sceneName .. '.map')
     else
         mapTable = gameState["scenes"][sceneName]
