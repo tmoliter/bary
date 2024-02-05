@@ -9,6 +9,10 @@ struct KeyPresses {
     bool down = false;
     bool left = false;
     bool right = false;
+    bool nav_up = false;
+    bool nav_down = false;
+    bool nav_left = false;
+    bool nav_right = false;
     bool ok = false;
     bool cancel = false;
     bool menu1 = false;

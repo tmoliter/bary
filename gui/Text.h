@@ -2,6 +2,7 @@
 #define TEXT_H
 #include <string>
 #include "Ray.h"
+#include "resourceDepository.h"
 
 using namespace std;
 
@@ -11,7 +12,11 @@ class Text {
         string text;
         int lineLength;
 
-        Text() : text(""), lineLength(-1) {};
+        Texture* font;
+
+        Text() : text(""), lineLength(-1) {
+            font = resourceDepository::getTexture("defaultFont");
+        };
         Text(Point p, string t, int lL = -1);
 
         void render();

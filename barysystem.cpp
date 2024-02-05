@@ -1,27 +1,17 @@
 #include "barysystem.h"
 
 void barysystem::startup(vector<string>& saveNames) {
-    char* basePath = SDL_GetBasePath();
-    if (basePath) {
-        if (0 == cd(basePath)) {
-            std::cout << "CWD changed successfully" << std::endl;
-        }
-    } else {
-        std::cout << "Couldn't find application directory" << std::endl;
-    }
+    settings.init();
 
-    const regex base_regex(R"(^.*\/([^\/]+)\.lua)");
-    string basePathString(basePath);
-    string savePath = basePathString + "/saves";
-
+    string savePath = settings.BASE_PATH + "/games/" + settings.GAME_NAME + "/saves";
     smatch base_match;
+    const regex base_regex(R"(^.*\/([^\/]+)\.lua)");
     for (const auto & entry : fs::directory_iterator(savePath)) {
         string path(entry.path());
         if (regex_match(path, base_match, base_regex) && base_match.size() == 2)
                 saveNames.push_back(base_match[1].str());
     }
 
-    settings.init();
 
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     IMG_Init(IMG_INIT_PNG);

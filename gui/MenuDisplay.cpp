@@ -1,23 +1,22 @@
 #include "MenuDisplay.h"
 
-MenuDisplay::MenuDisplay(vector<Option> o, Point p, int w, int h, int mC, bool a) : 
+MenuDisplay::MenuDisplay(vector<Option> o, Point p, Point size, int mC, bool a) : 
     allOptions(o), 
     position(p), 
     maxColumns(mC), 
     currentSelection(0), 
     active(a)
 {
-    if (!font) {
-        SDL_Surface* temp = IMG_Load("assets/fonts/paryfont4rows.png");
-        font = SDL_CreateTextureFromSurface(renderer, temp);
-        SDL_FreeSurface(temp);
-    }
     box = nullptr;
     header = nullptr;
     flavorBox = nullptr;
+
+    // This is a default font, but we could allow this to be customized
+    font = resourceDepository::getTexture("defaultFont");
+
     // These need to happen first
-    setHeight(h);
-    setWidth(w);
+    setHeight(size.y);
+    setWidth(size.x);
 
     // This might get called again in a "updateOptions" function later
     buildPages();
@@ -74,21 +73,25 @@ void MenuDisplay::clearLists() {
 }
 
 bool MenuDisplay::processInput(KeyPresses keysDown, string& selection) {
+    if (keysDown.cancel) {
+        selection = "";
+        return true;
+    }
     if (keysDown.ok)
         return true;
     Direction d = Direction::none;
-    if(keysDown.debug_up)
+    if(keysDown.nav_up)
         d = Direction::up;
-    if(keysDown.debug_down)
+    if(keysDown.nav_down)
         d = Direction::down;
-    if(keysDown.debug_left)
+    if(keysDown.nav_left)
         d = Direction::left;
-    if(keysDown.debug_right)
+    if(keysDown.nav_right)
         d = Direction::right;
     moveSelection(d);
     if (d != Direction::none)
-        selection = getCurrentSelection().selectionText;
-    return 0;
+        selection = getCurrentSelection().value;
+    return false;
 }
 
 void MenuDisplay::moveSelection(Direction direction) {
@@ -160,7 +163,7 @@ void MenuDisplay::renderBox() {
 void MenuDisplay::renderFlavorBox() {
     if (flavorBox == nullptr || box == nullptr || flavorText.text == "")
         return;
-    SDL_Rect renderRect = { position.x, position.y + height, flavorBox->sourceRect.w, flavorBox->sourceRect.h };
+    SDL_Rect renderRect = { position.x, position.y + height, width, height };
     SDL_RenderCopy(renderer, flavorBox->texture->texture, &flavorBox->sourceRect, &renderRect);
     flavorText.render();
 }
@@ -170,7 +173,7 @@ void MenuDisplay::renderArrow() {
     int xOffset = ((currentColumn * (charsPerColumn + 2)) + 1) * settings.LETTER_WIDTH;
     int yOffset = ((currentSelection / maxColumns) % maxRows) * settings.LETTER_HEIGHT;
     SDL_Rect arrowRenderRect = { position.x + xPadding + xOffset, position.y + yPadding + yOffset, settings.LETTER_WIDTH, settings.LETTER_HEIGHT };
-    SDL_RenderCopy(renderer, font, &rightArrow, &arrowRenderRect);
+    SDL_RenderCopy(renderer, font->texture, &rightArrow, &arrowRenderRect);
 }
 
 void MenuDisplay::renderPageIndicators() {
@@ -179,11 +182,11 @@ void MenuDisplay::renderPageIndicators() {
     int halfwayX = position.x + (width/ 2) - (settings.LETTER_WIDTH / 2);
     if (getCurrentPage() < paginatedOptions.size() - 1) {
         SDL_Rect arrowRenderRect = { halfwayX, position.y + height - settings.LETTER_HEIGHT - (yPadding / 4), settings.LETTER_WIDTH, settings.LETTER_HEIGHT };
-        SDL_RenderCopy(renderer, font, &downArrow, &arrowRenderRect);
+        SDL_RenderCopy(renderer, font->texture, &downArrow, &arrowRenderRect);
     }
     if (getCurrentPage() > 0) {
         SDL_Rect arrowRenderRect = { halfwayX, position.y + (yPadding / 4), settings.LETTER_WIDTH, settings.LETTER_HEIGHT };
-        SDL_RenderCopy(renderer, font, &upArrow, &arrowRenderRect);
+        SDL_RenderCopy(renderer, font->texture, &upArrow, &arrowRenderRect);
     }
 }
 
@@ -208,14 +211,26 @@ void MenuDisplay::setWidth(int newWidth) {
 }
 
 void MenuDisplay::addBox(string textureName, SDL_Rect sourcRect) {
+    if (box) {
+        cout << "Menu already has a box! \n";
+        throw exception();
+    }
     box = new Image(textureName, sourcRect);
 }
 
 void MenuDisplay::addHeader(string textureName, SDL_Rect sourcRect) {
+    if (header) {
+        cout << "Menu already has a header! \n";
+        throw exception();
+    }
     header = new Image(textureName, sourcRect);
 }
 
 void MenuDisplay::addFlavorBox(string textureName, SDL_Rect sourcRect) {
+    if (flavorBox) {
+        cout << "Menu already has a flavorBox! \n";
+        throw exception();
+    }
     flavorBox = new Image(textureName, sourcRect);
 }
 

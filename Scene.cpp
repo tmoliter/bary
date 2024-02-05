@@ -10,19 +10,25 @@ Scene::Scene(string sceneName, lua_State *L) : sceneName(sceneName) {
 
 Scene::~Scene() {
     destroyAllThings();
+    resourceDepository::releaseTexture(bgTextureName);
+    resourceDepository::removeUnreferencedTextures(); // should revisit what this does
 }
 
 void Scene::Load(bool isEditing) {
-    cout << "Loading scene..." << endl;
+    RealThingData sceneManagerTD = RealThingData();
+    sceneManagerTD.name = "sceneManager";
+    sceneManager = addThing(sceneManagerTD);
     loadLuaFunc("loadScene");
     lua_pushstring(L, sceneName.c_str());
     lua_pushboolean(L, isEditing);
-    callLuaFunc(2, 0, 0);
+    lua_pushlightuserdata(L, sceneManager);
+    cout << "Loading scene..." << endl;
+    callLuaFunc(3, 0, 0);
 }
 
 void Scene::EnterLoaded(RealThing* focus) {
     new Camera();
-    Camera::c->path = backgroundPath;
+    Camera::c->bgTextureName = bgTextureName;
 
     Camera::c->init();
     new FocusTracker(focus);
@@ -129,7 +135,7 @@ void Scene::meat(KeyPresses keysDown) {
 
 bool Scene::meatEvent(KeyPresses keysDown) {
     vector<Task*> tasksToDelete;
-    map<pair<Host*, string>, bool> eventsToResume;
+    map<pair<Host*, string>, int> eventsToResume;
     bool blocking = false;
     for (int i = activeTasks.size() - 1; i >= 0; i--) {
         Task* t = activeTasks[i];
@@ -139,13 +145,13 @@ bool Scene::meatEvent(KeyPresses keysDown) {
         if (t->meat(keysDown) < 1) {
             // task has exhausted subtasks
             if (!eventsToResume.count(hostEventName))
-                eventsToResume[hostEventName] = true;
+                eventsToResume[hostEventName] = eventArgKeys.at(hostEventName);
             tasksToDelete.push_back(t);
         } else {
             if (!eventsToResume.count(hostEventName))
-                eventsToResume[hostEventName] = false;
+                eventsToResume[hostEventName] = LUA_NOREF;
             else
-                eventsToResume.at(hostEventName) = false;
+                eventsToResume.at(hostEventName) = LUA_NOREF;
         }
         if (blocking)
             break;
@@ -155,12 +161,15 @@ bool Scene::meatEvent(KeyPresses keysDown) {
         activeTasks.erase(remove(activeTasks.begin(), activeTasks.end(), t), activeTasks.end());
     }
     for (auto e : eventsToResume) {
-        if (!e.second)
+        if (e.second == LUA_NOREF)
             continue;
+        eventArgKeys.erase(e.first);
         // All tasks for this event have exhausted subtasks, so we look for more tasks
         loadLuaFunc("resumeEvent", e.first.first);
-        lua_pushstring(L, e.first.second.c_str());
+        lua_geti(L, LUA_REGISTRYINDEX, e.second);
+        luaUtils::PushStringToTable(L, "eventName", e.first.second);
         callLuaFunc(1, 1, 0);
+        luaL_unref(L, LUA_REGISTRYINDEX, e.second);
     }
     return blocking;
 }
@@ -308,17 +317,19 @@ vector<RealThingData> Scene::getAllThingData() {
 
 // Lua registered functions
 int Scene::_loadScene(lua_State* L) {
-    if(!CheckParams(L, {ParamType::pointer, ParamType::table, ParamType::str})) {
+    if(!CheckParams(L, {ParamType::pointer, ParamType::table, ParamType::table, ParamType::str})) {
         cout << "_loadScene failed!" << endl;
         throw exception();
     }
     Scene* scene = static_cast<Scene*>(lua_touserdata(L, -1));
     lua_pop(L, 1);
+    resourceDepository::loadScene(L);
+    lua_pop(L, 1);
     lua_pushnil(L);
     while (lua_next(L, -2))
         scene->buildThingFromTable();
     lua_pop(L,1);
-    scene->backgroundPath = lua_tostring(L, -1);
+    scene->bgTextureName = lua_tostring(L, -1);
     lua_settop(L, 0);
     cout << "Scene Loaded!" << endl;
     return 0;
@@ -345,15 +356,22 @@ int Scene::_newTask(lua_State *L) {
     Host* host = static_cast<Host*>(lua_touserdata(L, -1));
     lua_pop(L, 1);
 
-    string eventName = lua_tostring(L, -1);
-    Task* newTask = new Task(eventName, host);
-    lua_pop(L, 1);
-
-    newTask->addSubtasks(L);
-
-    // (assume-host) For now, we assume the host is a RealThing. We may later have Scenes host Events without things.
     RealThing* hostThing = static_cast<RealThing*>(host);
     Scene* scene = static_cast<Scene*>(hostThing->parentScene);
+
+    string eventName = lua_tostring(L, -1);
+    pair<Host*, string> hostEventName = make_pair(hostThing, eventName);
+    if (!scene->eventArgKeys.count(hostEventName)) {
+        lua_newtable(host->L);
+        scene->eventArgKeys[hostEventName] = luaL_ref(host->L, LUA_REGISTRYINDEX);
+    }
+    Task* newTask = new Task(eventName, host, scene->eventArgKeys[hostEventName]);
+    lua_pop(L, 1);
+
+    lua_xmove(L, host->L, 1);
+
+    newTask->addSubtasks(host->L);
+
     scene->activeTasks.push_back(newTask);
     lua_settop(L, 0);
     return 0;

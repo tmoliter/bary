@@ -1,13 +1,12 @@
 return {
     spawn = {
-        name = "playerZinnia",
+        name = "zinnia",
         scene = "burg",
         x = 200,
         y = 200
     },
     scenes = {
-        burg = { 
-            backgroundPath = "./assets/backgrounds/Burg.png", 
+        burg = {
             things = { 
                 {
                     name = "otherZinnia",
@@ -31,5 +30,13 @@ return {
                 }
             } 
         }
+    },
+    inventories = {
+        zinnia = {oolong = 59, mungBeanJuice = 200},
+        jordan = {}
+    },
+    party = {
+        "jordan",
+        "zinnia"
     }
 }

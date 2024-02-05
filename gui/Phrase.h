@@ -5,6 +5,7 @@
 #include <cmath>
 #include "Ray.h"
 #include "Timer.h"
+#include "resourceDepository.h"
 
 using namespace std;
 
@@ -36,6 +37,9 @@ class Phrase {
         SDL_Rect box;
         string text;
         queue<string> lines, hiddenLines;
+
+        Texture* font;
+        Texture* speechBubble;
 
         Phrase(Point p, Point pixelSize, ScrollType type, string t, Point gL = Point(1000,1000), int pS = 1, int d = 1);
         Phrase(const Phrase& ph);

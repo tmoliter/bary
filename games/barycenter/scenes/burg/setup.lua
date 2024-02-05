@@ -1,42 +1,13 @@
--- BEHAVIORS
-
-local function zinniaAutoMove(hostThing, args, eventName)
-    originX, originY = table.unpack { args["originX"], args["originY"] }
-    while true do
-        _newTask(
-            {
-                {
-                    type = "move",
-                    destinationX = originX - 150,
-                    destinationY = originY - 150
-                },
-            }, eventName, hostThing
-        )
-        coroutine.yield()
-        _newTask(
-            {
-                {
-                    type = "move",
-                    destinationX = originX + 35,
-                    destinationY = originY - 150
-                },
-            }, eventName, hostThing
-        )
-        coroutine.yield()
-        _newTask(
-            {
-                {
-                    type = "move",
-                    destinationX = originX,
-                    destinationY = originY
-                },
-            }, eventName, hostThing
-        )
-        coroutine.yield()
-    end
-end
-
--- EVENTS
+local Resources = require('scripts.resourceobject')
+local resources = Resources.new({
+    background = "burg",
+    ownTextures = {
+        burg = "backgrounds/Burg",
+        genrl = "sheets/Burg/genrl",
+        sailorshack = "sheets/Burg/SailorShack",
+        zinnia = "sheets/SDL_TestSS"
+    },
+})
 
 local zinniaTalkB = {
     type = "sequentialTasks",
@@ -78,12 +49,17 @@ local zinniaTalkB = {
     }
 }
 
---     IDEAS FOR FUTURE OF EDITOR AND DATA STORAGE:
---     in thing editor you can build a thing, then export it as a lua table
+local globalEvents = require(GAME_PATH .. ".definitions.globalEvents")
+local sceneEvents = {
+    inventoryMenu = {
+        type = "custom",
+        customCoroutine = globalEvents.inventoryMenu
+    }
+}
 
 local thingDefs = {
-    playerZinnia = {
-        name = "playerZinnia",
+    zinnia = {
+        name = "zinnia",
         spriteDataVector = {
             {
                 xOffset = 0,
@@ -125,7 +101,7 @@ local thingDefs = {
                 interactable = true,
                 eventNames = {
                     "talk_1",
-                    "talk_2"
+                    "talk_2",
                 }
             },
             {
@@ -364,7 +340,7 @@ local thingDefs = {
         obstructionData = {
             {rays = {{aX = -11, aY = -2, bY = -2, bX = -119}, {aX = 119, aY = -2, bY = -2, bX = 11}}, layer = 0}
         }
-    },   
+    },
 }
 
-return { thingDefs }
+return { resources, thingDefs, sceneEvents }

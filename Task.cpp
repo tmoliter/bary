@@ -19,8 +19,8 @@ Subtask::~Subtask() {
     if (timer)
         delete timer;
 }
+
 PhraseST::~PhraseST() {
-    phrase = nullptr;
     UIRenderer::removePhrase(phrase);
 }
 
@@ -59,6 +59,93 @@ bool PhraseST::meat(KeyPresses keysDown) {
         phrase->advance();
     return false;
 }
+
+void MenuST::init() {
+    void* menRef = static_cast<void*>(menu);
+    if (luaUtils::GetLuaPointerFromTable(L, "menu", menRef)) {
+        menu = static_cast<MenuDisplay*>(menRef);
+        if(luaUtils::CheckLuaTableForBool(L, "close")) {
+            UIRenderer::removeMenuDisplay(menu);
+            menu = nullptr;
+            return;
+        }
+    }
+    vector<Option> options;
+    Point point;
+    Point size;
+    int maxColumns;
+    if (menu != nullptr) {
+        // Man this is so ugly
+        options = menu->allOptions;
+        point = menu->position;
+        size.x = menu->width;
+        size.y = menu->height;
+        maxColumns = menu->maxColumns;
+    }
+    if (luaUtils::GetTableOnStackFromTable(L, "options")) {
+        options.clear();
+        lua_pushnil(L);
+        while (lua_next(L, -2)) {
+            Option newOption = Option();
+            luaUtils::GetLuaStringFromTable(L, "selectionText", newOption.selectionText);
+            luaUtils::GetLuaStringFromTable(L, "flavorText", newOption.flavorText);
+            luaUtils::GetLuaStringFromTable(L, "value", newOption.value);
+            options.push_back(newOption);
+            lua_pop(L,1);
+        }
+        lua_pop(L,1);
+    }
+    luaUtils::GetLuaIntFromTable(L, "x", point.x);
+    luaUtils::GetLuaIntFromTable(L, "y", point.y);
+    luaUtils::GetLuaIntFromTable(L, "width", size.x);
+    luaUtils::GetLuaIntFromTable(L, "height", size.y);
+    luaUtils::GetLuaIntFromTable(L, "maxColumns", maxColumns);
+
+    if (menu != nullptr) {
+        // Focusing and/or modifying an existing menu
+
+        // Man this is so ugly
+        menu->allOptions = options;
+        menu->position = point;
+        menu->width = size.x;
+        menu->height = size.y;
+        menu->maxColumns = maxColumns;
+
+        menu->paginatedOptions.clear();
+        menu->buildPages();
+        menu->createLists();
+        selection = menu->getCurrentSelection().value;
+        return;
+    }
+
+    // Making a new menu
+    string boxTexture = "defaultSpeechBubble";
+
+    luaUtils::GetLuaStringFromTable(L, "boxTexture", boxTexture);
+    menu = new MenuDisplay(options, point, size, maxColumns);
+    menu->addBox(boxTexture, {0, 0, 640, 480});
+    if (luaUtils::CheckLuaTableForBool(L, "flavorText")) {
+        menu->addFlavorBox(boxTexture, {0, 0, 640, 480});
+    }
+
+    selection = menu->getCurrentSelection().value; // This way of doing things could probably be improved
+    UIRenderer::addMenuDisplay(menu);
+}
+
+bool MenuST::meat(KeyPresses keysDown) {
+    if (menu == nullptr)
+        return true;
+    if (menu->processInput(keysDown, selection)) {
+        return true;
+    }
+    return false;
+}
+
+bool MenuST::pushArgs() { 
+    luaUtils::PushStringToTable(L, "selection", selection);
+    luaUtils::PushPointerToTable(L, "menu", static_cast<void*>(menu));
+    return true; // these return values don't do anything rn
+};
 
 MoveST::~MoveST() {
     if (movingThing == nullptr)
@@ -101,8 +188,14 @@ bool MoveST::meat(KeyPresses keysDown) {
 
 void PortalST::init() {
     Host* incomingThing;
-    Host::GetLuaHostFromTable(L, "thing", incomingThing);
-    thing = static_cast<RealThing*>(incomingThing);
+    string thingName = "";
+    RealThing* hostThing = static_cast<RealThing*>(host); // (assume-host)
+    if (Host::GetLuaHostFromTable(L, "thing", incomingThing))
+        thing = static_cast<RealThing*>(incomingThing);
+    else if (luaUtils::GetLuaStringFromTable(L, "thingName", thingName))
+        thing = hostThing->things.at(thingName);
+    else
+        thing = hostThing;
 
     luaUtils::GetLuaIntFromTable(L, "newLayer", newLayer);
     Point relativeMove;
@@ -151,11 +244,13 @@ bool PortalST::meat(KeyPresses keysDown) {
     return 0;
 }
 
-
 int Task::meat(KeyPresses keysDown) {
     vector<Subtask*> subtasksToDelete;
     for (auto s : subtasks) {
         if (s->meat(keysDown)) {
+            lua_geti(host->L, LUA_REGISTRYINDEX, argKey);
+            s->pushArgs();
+            lua_pop(host->L, 1);
             subtasksToDelete.push_back(s);
         }
     }
@@ -190,10 +285,21 @@ void Task::addSubtasks(lua_State* L) {
             subtasks.push_back(new Subtask(L, host));
         if (currentType == "phrase")
             subtasks.push_back(new PhraseST(L, host));
+        if (currentType == "menu")
+            subtasks.push_back(new MenuST(L, host));
         if (currentType == "move")
             subtasks.push_back(new MoveST(L, host));
         if (currentType == "portal")
             subtasks.push_back(new PortalST(L, host));
+        if (currentType == "fireEvent") {
+            luaUtils::GetTableOnStackFromTable(L, "args");
+            int ref = luaL_ref(L, LUA_REGISTRYINDEX);
+            host->loadLuaFunc("beginEvent");
+            lua_geti(L, LUA_REGISTRYINDEX, ref);
+            host->callLuaFunc(1, 0, 0);
+            luaL_unref(L, LUA_REGISTRYINDEX, ref);
+            instant = true;
+        }
         if (currentType == "pauseMoves") {
             pauseMoves(L);
             instant = true;

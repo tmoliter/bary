@@ -17,15 +17,18 @@ struct Scene : public Host {
     } sceneState;
 
     vector<Task*> activeTasks;
+    map<pair<Host*, string> ,int> eventArgKeys;
 
     string sceneName;
-    string backgroundPath;
+    string bgTextureName;
 
     map<string, RealThing*> things;
     vector<string> thingsToDestroy;
 
     Scene(string sceneName, lua_State *L);
     ~Scene();
+
+    RealThing* sceneManager;
 
     void Load(bool isEditing);
     void EnterLoaded(RealThing* focus);

@@ -21,8 +21,18 @@ FieldPlayer::~FieldPlayer() {
 void FieldPlayer::meat(KeyPresses keysDown) {
     if (!move->velocity.isNaught())
         castRayForTriggers();
-    if(keysDown.ok && gameState == GameState::FieldFree)
+    if(keysDown.ok && !move->disables)
         castRayForInteractables();
+
+    if (keysDown.menu1) {
+        loadLuaFunc("beginEvent");
+        lua_newtable(L);
+        luaUtils::PushStringToTable(L, "eventName", "inventoryMenu");
+        luaUtils::PushStringToTable(L, "thingName", "sceneManager");
+        luaUtils::PushStringToTable(L, "catalyst", "input");
+        luaUtils::PushStringToTable(L, "inventoryName", name);
+        callLuaFunc(1,0,0);
+    }
 
     /* DEBUG MODE CONTROLS */
     if (keysDown.debug_left)
@@ -63,4 +73,3 @@ int FieldPlayer::castRayForTriggers () {
     }
     return 0;
 }
-

@@ -26,9 +26,7 @@ Point Camera::getSourceRectCoords() {
 }
 
 void Camera::init() {
-    SDL_Surface* temp = IMG_Load(path.c_str());
-    bgTexture = SDL_CreateTextureFromSurface(renderer, temp);
-    SDL_FreeSurface(temp);
+    bgTexture = resourceDepository::getTexture(bgTextureName)->texture;
     SDL_QueryTexture(bgTexture, NULL, NULL, &bgWidth, &bgHeight);
     sourceRect = { 0 , 0, scaledScreenWidth, scaledScreenHeight };
     renderRect = { 0 , 0, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT };

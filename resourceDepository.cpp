@@ -17,69 +17,111 @@ Sfx::Sfx(string n, string path) : name(n) {
     }
     sound = Mix_LoadWAV(path.c_str());
 }
-
-Texture* resourceDepository::initializeTexture(string name) {
-    if (name == "sailorshack")
-        return new Texture( "sailorshack", "assets/sheets/Burg/SailorShack.png");
-    if (name == "genrl")
-        return new Texture("genrl", "assets/x.png");
-    if (name == "zinnia")
-        return new Texture("zinnia", "assets/sheets/SDL_TestSS.png");
-    if (name == "editorCross")
-        return new Texture("editorCross", "assets/debug/9x9cross.png");
-    if (name == "singlepixel")
-        return new Texture("singlepixel", "assets/debug/onePixel.png");
-    if (name == "pinkbox")
-        return new Texture("pinkbox", "assets/menus/blankPink.png");
-    if (name == "pinkinventoryheader")
-        return new Texture("pinkboxheader", "assets/menus/pinkInventoryHeader.png");
-    if (name == "pinkinventoryfooter")
-        return new Texture("pinkboxfooter", "assets/menus/pinkInventoryFooter.png");
-    cout << "NO SPRITE WITH NAME '" << name << "' found!";
-    throw exception();
-}
-
-Sfx* resourceDepository::initializeSfx(string name) {
-    if (name == "fart")
-        return new Sfx("fart", "assets/sfx/fart.mp3");
-    return nullptr;
+void resourceDepository::loadTexture(string name, string simplePath) {
+    cout << simplePath << endl;
+    if(!textures.count(name))
+        textures[name] = make_pair(0,new Texture(name, simplePath));
+    else
+        cout << "texture " << name << " is already loaded, skipping\n";
 }
 
 Texture* resourceDepository::getTexture(string name) {
     if(!textures.count(name)) {
-        textures[name].second = initializeTexture(name);
-        textures[name].first = 1;
-    } else {
-        textures[name].first++;
+        cout << "Cannot get texture " << name << " that is not loaded!\n";
+        throw exception();
     }
+    textures[name].first++;
     return textures[name].second;
 }
 
 void resourceDepository::releaseTexture(string name) {
-    if (textures.count(name) < 1)
-        return;
-    if (--textures[name].first < 1) {
-        SDL_DestroyTexture(textures[name].second->texture);
-        delete textures[name].second;
-        textures.erase(name);
+    if(!textures.count(name)) {
+        cout << "Cannot release texture " << name << " that is not loaded!\n";
+        throw exception();
     }
+    textures[name].first--;
 }
 
 Sfx* resourceDepository::getChunk(string name) {
     if(!chunks.count(name)) {
-        chunks[name].second = initializeSfx(name);
-        chunks[name].first = 1;
-    } else {
-        chunks[name].first++;
+        cout << "Cannot get chunk " << name << " that is not loaded!\n";
+        throw exception();
     }
+    chunks[name].first++;
     return chunks[name].second;
 }
 
 // Maybe this should take a Sfx pointer
 void resourceDepository::releaseChunk(string name) {
-    if (chunks.count(name) < 1)
+    if(!chunks.count(name)) {
+        cout << "Cannot release sound chunk " << name << " that is not loaded!\n";
+        throw exception();
+    }
+    chunks[name].first--;
+}
+
+void resourceDepository::loadTexturesFromTable(lua_State *L) {
+    lua_pushnil(L);
+    while (lua_next(L, -2)) {
+        string name = lua_tostring(L, -2);
+        string path = lua_tostring(L, -1);
+        loadTexture(name, path);
+        lua_pop(L,1);
+    }
+    lua_pop(L,1);
+}
+
+void resourceDepository::loadScene(lua_State *L) {
+    cout << "LOADING RESOURCES\n";
+    if (!luaUtils::GetTableOnStackFromTable(L, "textures")) {
+        cout << "no textures found\n";
         return;
-    if (--chunks[name].first < 1) {
+    }
+    loadTexturesFromTable(L);
+    if (!luaUtils::GetTableOnStackFromTable(L, "sounds")) {
+        cout << "no sounds found\n";
+        return;
+    }
+    lua_pushnil(L);
+    while (lua_next(L, -2)) {
+        string name = lua_tostring(L, -2);
+        string simplePath = lua_tostring(L, -1);
+        string path = "assets/" + simplePath + ".mp3";
+        if(!chunks.count(name))
+            chunks[name] = make_pair(0,new Sfx(name, path));
+        else
+            cout << "sound chunk " << name << " is already loaded, skipping\n";
+        lua_pop(L,1);
+    }
+    lua_pop(L,1);
+}
+
+void resourceDepository::removeUnreferencedTextures() { // this shits broken
+    map<string, pair<int, Texture*>>::iterator tItr = textures.begin();
+    while (tItr != textures.end()) {
+        string name = tItr->first;
+        int references = tItr->second.first;
+        Texture* texture = tItr->second.second;
+        tItr++;
+        if (references > 0) {
+            cout << "will not destroy texture " << name << " that has " << references << " references!\n";
+            continue;
+        }
+        SDL_DestroyTexture(texture->texture);
+        delete texture;
+        textures.erase(name);
+    }
+
+    map<string, pair<int, Sfx*>>::iterator sItr = chunks.begin();
+    while (sItr != chunks.end()) {
+        string name = sItr->first;
+        int references = sItr->second.first;
+        Sfx* texture = sItr->second.second;
+        sItr++;
+        if (references > 0) {
+            cout << "will not destroy sound chunk " << name << " that has " << references << " references!\n";
+            continue;
+        }
         Mix_FreeChunk(chunks[name].second->sound);
         delete chunks[name].second;
         chunks.erase(name);
