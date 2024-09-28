@@ -10,8 +10,6 @@ int main(int argc, char* args[]) {
     if (!CheckLua(L, luaL_dofile(L, "scripts/load.lua")))
         throw exception();
 
-    // jukebox::playSong("Boss Battle", true);
-
     gameState = GameState::FieldFree;
 
     Input in;
@@ -25,6 +23,8 @@ int main(int argc, char* args[]) {
         throw exception();
     resourceDepository::loadTexturesFromTable(L);
     lua_settop(L, 0);
+
+    // jukebox::playSong("Boss Battle", true);
 
     MenuDisplay* loadMenu = nullptr;
     vector<Option> startOptions;
@@ -61,8 +61,7 @@ int main(int argc, char* args[]) {
                     lua_pushstring(L, selection.c_str());
                     if(!luaUtils::CheckLua(L, lua_pcall(L, 1, 1, 0)))
                         throw exception();
-                    string sceneName;
-                    string spawnName;
+                    string sceneName, spawnName;
                     luaUtils::GetLuaStringFromTable(L, "scene", sceneName);
                     luaUtils::GetLuaStringFromTable(L, "name", spawnName);
                     luaUtils::GetLuaIntFromTable(L, "scale", settings.SCALE);

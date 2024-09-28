@@ -5,7 +5,8 @@ Song::Song(string n, string path, double l) : name(n), loopBeginning(l) {
         music = nullptr;
         return;
     }
-    music = Mix_LoadMUS(path.c_str());
+    string fullpath = "games/" + settings.GAME_NAME + "/" + path;
+    music = Mix_LoadMUS(fullpath.c_str());
 }
 
 

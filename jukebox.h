@@ -2,7 +2,7 @@
 #define JUKEBOX_H
 #include <map>
 #include <iostream>
-#include <SDL2/SDL_mixer.h>
+#include "globals.h"
 
 using namespace std;
 
