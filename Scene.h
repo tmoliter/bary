@@ -2,7 +2,6 @@
 #define SCENE_H
 #include "FocusTracker.h"
 #include "things/FieldPlayer.h"
-#include "Task.h"
 
 using namespace luaUtils;
 
@@ -15,9 +14,6 @@ struct Scene : public Host {
         pauseThings,
         pauseAll,
     } sceneState;
-
-    vector<Task*> activeTasks;
-    map<pair<Host*, string> ,int> eventArgKeys;
 
     string sceneName;
     string bgTextureName;
@@ -33,9 +29,7 @@ struct Scene : public Host {
     void Load(bool isEditing);
     void EnterLoaded(RealThing* focus);
 
-    void meat(KeyPresses keysDown);
-    bool meatEvent(KeyPresses keysDown);
-    void meatThings(KeyPresses keysDown, bool blockingEvent);
+    void meat(KeyPresses keysDown, bool blockingEvent);
 
     RealThing* addThing(RealThingData tD, ThingType type = ThingType::thing);
     RealThing* addExistingThingToScene(RealThing* existingThing);
@@ -63,7 +57,6 @@ struct Scene : public Host {
 
     static int _loadScene(lua_State* L);
     static int _createThing(lua_State* L);
-    static int _newTask(lua_State *L);
 
     private:
         string getNewThingName(string name);

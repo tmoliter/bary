@@ -1,6 +1,6 @@
 #ifndef TASK_H
 #define TASK_H
-#include "things/RealThing.h"
+#include "Scene.h"
 #include <set>
 
 enum class SubTaskType {
@@ -62,6 +62,7 @@ struct PortalST : public Subtask {
     RealThing* thing = nullptr;
     Point destination;
     int newLayer;
+    Scene* newScene;
 };
 
 struct Task {
