@@ -7,6 +7,20 @@ return {
         scale = 2
     },
     scenes = {
+        testSceneTwo = {
+            things = { 
+                {
+                    name = "otherZinnia",
+                    x = 1300,
+                    y = 500
+                },
+                {
+                    name = "sailorShack",
+                    x = 621,
+                    y = 510,
+                }
+            } 
+        },
         burg = {
             things = { 
                 {

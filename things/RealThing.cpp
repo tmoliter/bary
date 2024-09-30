@@ -23,6 +23,12 @@ RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(
     for (auto const& [oldTrName, oldTr] : oldThing.triggers)
         triggers[oldTrName] = new Trigger(*oldTr, position, name);
     origin = position;
+    if (oldThing.animator) {
+        animator = new Animator(*oldThing.animator);
+    }
+    if (oldThing.move) {
+        move = new Move(*oldThing.move);
+    }
     parentScene = oldThing.parentScene;
 }
 

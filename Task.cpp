@@ -197,6 +197,11 @@ void PortalST::init() {
     else
         thing = hostThing;
 
+    string newSceneName = "";
+    if(luaUtils::GetLuaStringFromTable(L,"newScene",newSceneName)) {
+        newScene = new Scene(newSceneName, thing->L);
+    }
+
     luaUtils::GetLuaIntFromTable(L, "newLayer", newLayer);
     Point relativeMove;
     if (!luaUtils::GetLuaIntFromTable(L, "relativeX", relativeMove.x) ||
@@ -234,6 +239,14 @@ PortalST::~PortalST() {
 
 bool PortalST::meat(KeyPresses keysDown) {
     if (Camera::c->fadeStatus == FxStatus::applied) {
+        if (newScene) {
+            newScene->Load(false);
+            string thingBaseName = thing->getBaseName();
+            thing = new RealThing(*thing);
+            thing->name = thingBaseName;
+            newScene->addExistingThingToScene(thing);
+            newScene->EnterLoaded(thing);
+        }
         thing->position = destination;
         thing->shiftLayer(newLayer);
         Camera::c->fadeIn(3);

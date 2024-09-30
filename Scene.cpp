@@ -10,7 +10,9 @@ Scene::Scene(string sceneName, lua_State *L) : sceneName(sceneName) {
 Scene::~Scene() {
     destroyAllThings();
     resourceDepository::releaseTexture(bgTextureName);
-    resourceDepository::removeUnreferencedTextures(); // should revisit what this does
+    // resourceDepository::removeUnreferencedTextures(); // should revisit what this does
+    delete Camera::c;
+    delete FocusTracker::ftracker;
 }
 
 void Scene::Load(bool isEditing) {
@@ -26,10 +28,13 @@ void Scene::Load(bool isEditing) {
 }
 
 void Scene::EnterLoaded(RealThing* focus) {
+    if (Scene::currentScene)
+        delete Scene::currentScene;
+
     new Camera();
     Camera::c->bgTextureName = bgTextureName;
-
     Camera::c->init();
+
     new FocusTracker(focus);
     Scene::currentScene = this;
 }
@@ -79,6 +84,7 @@ RealThing* Scene::addThing(RealThingData tD, ThingType type) {
 RealThing* Scene::addExistingThingToScene(RealThing* existingThing) {
     existingThing->name = getNewThingName(existingThing->name);
     existingThing->AddToMap(things);
+    existingThing->parentScene = this;
     return existingThing;
 }
 

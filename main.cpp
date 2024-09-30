@@ -121,8 +121,6 @@ int main(int argc, char* args[]) {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 
-    delete Camera::c;
-
     Mix_CloseAudio();
     lua_close(L);
     IMG_Quit();

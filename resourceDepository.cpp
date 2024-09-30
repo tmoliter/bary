@@ -17,14 +17,6 @@ Sfx::Sfx(string n, string path) : name(n) {
     }
     sound = Mix_LoadWAV(path.c_str());
 }
-void resourceDepository::loadTexture(string name, string simplePath) {
-    cout << simplePath << endl;
-    if(!textures.count(name))
-        textures[name] = make_pair(0,new Texture(name, simplePath));
-    else
-        cout << "texture " << name << " is already loaded, skipping\n";
-}
-
 Texture* resourceDepository::getTexture(string name) {
     if(!textures.count(name)) {
         cout << "Cannot get texture " << name << " that is not loaded!\n";
@@ -69,6 +61,14 @@ void resourceDepository::loadTexturesFromTable(lua_State *L) {
         lua_pop(L,1);
     }
     lua_pop(L,1);
+}
+
+void resourceDepository::loadTexture(string name, string simplePath) {
+    cout << name << " : " << simplePath << endl;
+    if(!textures.count(name))
+        textures[name] = make_pair(0,new Texture(name, simplePath));
+    else
+        cout << "texture " << name << " is already loaded, skipping\n";
 }
 
 void resourceDepository::loadScene(lua_State *L) {

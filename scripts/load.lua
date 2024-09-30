@@ -43,8 +43,10 @@ function loadScene(host, sceneName, isEditing, newSceneManager)
         mapTable = require(GAME_PATH .. '.scenes.' .. sceneName .. '.map')
     else
         mapTable = gameState["scenes"][sceneName]
-        playerSpawn = thingDefs[gameState["spawn"]["name"]]
-        for k,v in pairs(gameState["spawn"]) do playerSpawn[k] = v end
+        if gameState["spawn"] then
+            playerSpawn = thingDefs[gameState["spawn"]["name"]]
+            for k,v in pairs(gameState["spawn"]) do playerSpawn[k] = v end
+        end
     end
 
     eventModule.populate(thingDefs, sceneEvents)
@@ -60,7 +62,12 @@ function loadScene(host, sceneName, isEditing, newSceneManager)
     if playerSpawn ~= nil then
         table.insert(spawnThings, playerSpawn)
     end
+    gameState["spawn"] = nil
 
+    print("ay " .. resources.background)
+    print(resources:getTextures().tg)
+    print(resources:getTextures().burg)
+    print("k")
     _loadScene(resources.background, spawnThings, { textures = resources:getTextures() }, host)
 end
 

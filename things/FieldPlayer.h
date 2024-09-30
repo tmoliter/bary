@@ -6,6 +6,7 @@
 
 struct FieldPlayer : public RealThing {
     FieldPlayer(RealThingData tD, map<string, RealThing*>& things);
+    FieldPlayer(FieldPlayer&);
     ~FieldPlayer();
 
     void meat(KeyPresses keysDown);

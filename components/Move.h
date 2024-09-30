@@ -20,6 +20,8 @@ struct Move {
         destination(Point(-1000,-1000))
     {};
 
+    Move(Move&);
+
     MoveType type;
     Direction currentDirection;
     Point* leader;
