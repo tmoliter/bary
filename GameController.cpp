@@ -13,8 +13,6 @@ bool GameController::meatEvent(KeyPresses keysDown) {
     for (int i = activeTasks.size() - 1; i >= 0; i--) {
         Task* t = activeTasks[i];
         pair<Host*, string> hostEventName = make_pair(t->host, t->eventName);
-        if (!blocking && t->blocking)
-            blocking = true;
         if (t->meat(keysDown) < 1) {
             // task has exhausted subtasks
             if (!eventsToResume.count(hostEventName))
@@ -26,8 +24,10 @@ bool GameController::meatEvent(KeyPresses keysDown) {
             else
                 eventsToResume.at(hostEventName) = LUA_NOREF;
         }
-        if (blocking)
+        if (t->blocking) {
+            blocking = true;
             break;
+        }
     }
     for (auto t : tasksToDelete) {
         delete t;

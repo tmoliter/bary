@@ -6,7 +6,6 @@ function deepcopy(obj)
 end
 
 function deepmerge(target, source)
-    print(tostring(source))
     for k,v in pairs(source) do
         if type(target[k]) == 'table' and type(source[k]) == 'table' then
             deepmerge(target[k], source[k])

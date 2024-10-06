@@ -11,16 +11,17 @@ local function beginEvent(hostThing, args)
         eventDefinition = eventDefinitions[args["thingName"]][args.eventName]
     end
 
-    -- Event has never been invoked
+    -- No events have been invoked for this thing?
     if activeEvents[hostThing] == nil then
         activeEvents[hostThing] = {}
     end
+    -- Event has never been invoked
     if activeEvents[hostThing][args.eventName] == nil then
         activeEvents[hostThing][args.eventName] = { timesInvoked = 0 }
     end
 
     local activeEvent = activeEvents[hostThing][args.eventName]
-    
+
     -- Event is already in progress
     if activeEvent["coroutine"] ~= nil then
         return

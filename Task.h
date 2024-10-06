@@ -65,12 +65,19 @@ struct PortalST : public Subtask {
     Scene* newScene;
 };
 
+// A task is a group of "subtasks", which can be fired from an event in lua.
+// An event is a lua function that gets called as a coroutine and can fire off
+// Tasks in between yield statements
 struct Task {
     Task(string eventName, Host* host, int argKey) : eventName(eventName), host(host), argKey(argKey) {};
     string eventName;
     std::vector<Subtask*> subtasks;
     Host* host;
+
+    // I didn't document this at all when I wrote it. Looking back, I'm
+    // retty sure this stores a table of args for continuity throughout events
     int argKey = LUA_NOREF;
+
     bool blocking = false; // blocking stops any older events from being executed. If we just want to pause movement, that can be done with the `pauseMoves` subtask
     int meat(KeyPresses keysDown);
 

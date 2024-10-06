@@ -159,7 +159,7 @@ void MoveST::init() {
     string thingName;
     Point destination;
     Point offset;
-    RealThing* hostThing = static_cast<RealThing*>(host); // (assume-host)
+    RealThing* hostThing = static_cast<RealThing*>(host);
     if (luaUtils::GetLuaStringFromTable(L, "thingName", thingName)) {
         movingThing = hostThing->things.at(thingName);
     } else {
@@ -189,7 +189,7 @@ bool MoveST::meat(KeyPresses keysDown) {
 void PortalST::init() {
     Host* incomingThing;
     string thingName = "";
-    RealThing* hostThing = static_cast<RealThing*>(host); // (assume-host)
+    RealThing* hostThing = static_cast<RealThing*>(host);
     if (Host::GetLuaHostFromTable(L, "thing", incomingThing))
         thing = static_cast<RealThing*>(incomingThing);
     else if (luaUtils::GetLuaStringFromTable(L, "thingName", thingName))
