@@ -274,6 +274,16 @@ int Task::meat(KeyPresses keysDown) {
     return subtasks.size();
 }
 
+void Task::killEvent() {
+    for (auto s : subtasks) {
+        delete s;
+        subtasks.erase(remove(subtasks.begin(), subtasks.end(), s), subtasks.end());
+    }
+    host->loadLuaFunc("killEvent");
+    lua_pushstring(host->L, eventName.c_str());
+    host->callLuaFunc(1, 0, 0);
+}
+
 void Task::addSubtasks(lua_State* L) {
     if (!lua_istable(L, -1))
         luaUtils::ThrowLua(L, "top of stack is not list of subTasks!");
@@ -399,3 +409,16 @@ void Task::pauseMoves(lua_State* L) {
         thing->move->disables += disable;
     }
 }
+
+// NOTES
+/*
+- things should call lua to kill tasks when they die. Lua should both remove the 
+  entry from activeEvents and calll a new GameController::_killTasks registered function
+
+- Portal should call lua to change scenes in a new function of some sort. This function
+  can call back to C++ into a GameController registered function that handles scene changing
+  without relying on a hostThing.
+
+- Need to serialize (some) thing data to lua when scene ends so we can save in gameState
+  for next time we enter the scene and ultimately for saving game data to disk
+*/

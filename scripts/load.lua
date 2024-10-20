@@ -64,10 +64,6 @@ function loadScene(host, sceneName, isEditing, newSceneManager)
     end
     gameState["spawn"] = nil
 
-    print("ay " .. resources.background)
-    print(resources:getTextures().tg)
-    print(resources:getTextures().burg)
-    print("k")
     _loadScene(resources.background, spawnThings, { textures = resources:getTextures() }, host)
 end
 

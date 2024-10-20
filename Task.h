@@ -81,6 +81,8 @@ struct Task {
     bool blocking = false; // blocking stops any older events from being executed. If we just want to pause movement, that can be done with the `pauseMoves` subtask
     int meat(KeyPresses keysDown);
 
+    void killEvent(); // removes all subtasks in C++ and removes task from Lua activeEvents table
+
     void addSubtasks(lua_State* L);
 
     // Instant subtasks

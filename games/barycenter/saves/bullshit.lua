@@ -33,7 +33,7 @@ return {
                     x = 621,
                     y = 510,
                 }
-            } 
+            }
         }
     },
     inventories = {
