@@ -34,7 +34,6 @@ struct RealThing : public Host {
     bool isSub = false;
 
     map<string, RealThing*>& things;
-    Host* parentScene;
 
     Point position;
     Point origin;

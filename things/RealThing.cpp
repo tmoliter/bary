@@ -29,7 +29,6 @@ RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(
     if (oldThing.move) {
         move = new Move(*oldThing.move);
     }
-    parentScene = oldThing.parentScene;
 }
 
 RealThing::~RealThing() {

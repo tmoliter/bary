@@ -2,6 +2,7 @@
 
 Scene::Scene(string sceneName, lua_State *L) : sceneName(sceneName) {
     this->L = L;
+    // We shouldn't be registering in the constructor here, this seems bad
     lua_register(L, "_loadScene", _loadScene);
     lua_register(L, "_createThing", _createThing);
     lua_register(L, "_getThingData", RealThing::_getThingData);
@@ -76,7 +77,6 @@ RealThing* Scene::addThing(RealThingData tD, ThingType type) {
             break;
     }
     newThing->AddToMap(things);
-    newThing->parentScene = this;
     newThing->L = L;
     return newThing;
 }
@@ -84,7 +84,6 @@ RealThing* Scene::addThing(RealThingData tD, ThingType type) {
 RealThing* Scene::addExistingThingToScene(RealThing* existingThing) {
     existingThing->name = getNewThingName(existingThing->name);
     existingThing->AddToMap(things);
-    existingThing->parentScene = this;
     return existingThing;
 }
 
@@ -96,6 +95,7 @@ RealThing* Scene::copyThing(RealThing& oldThing) {
 }
 
 void Scene::destroyThing(RealThing* thing) {
+    // Should this be in thing destructor or is it ok since Scene handles movement/animation?
     for (auto subThing : thing->subThings)
         destroyThing(subThing);
     if (thing->animator != nullptr) {

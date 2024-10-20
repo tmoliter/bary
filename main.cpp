@@ -15,6 +15,9 @@ int main(int argc, char* args[]) {
     if (!CheckLua(L, luaL_dofile(L, "scripts/load.lua")))
         throw exception();
 
+    // Register all our lua functions here
+    // Including a new Task::_killTasks static method
+
     gameState = GameState::FieldFree;
 
     Input in;
