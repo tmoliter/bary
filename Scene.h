@@ -24,8 +24,6 @@ struct Scene : public Host {
     Scene(string sceneName, lua_State *L);
     ~Scene();
 
-    RealThing* sceneManager; // Invisible thing used to register events that aren't attached to an actual thing
-
     void Load(bool isEditing);
     void EnterLoaded(RealThing* focus);
 

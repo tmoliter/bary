@@ -1,3 +1,4 @@
+require("scripts.copy")
 local function sequentialTasks(hostThing, args)
     local tasks = args["tasks"]
     if args["pauseAllMoves"] then
@@ -167,6 +168,11 @@ local function menu(hostThing, args)
     }, args.eventName, hostThing)
     return
 end
+
+local function changeScene (hostThing, args)
+    
+end
+
 
 return {
     sequentialTasks = sequentialTasks,

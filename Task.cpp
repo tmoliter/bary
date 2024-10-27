@@ -161,7 +161,7 @@ void MoveST::init() {
     Point offset;
     RealThing* hostThing = static_cast<RealThing*>(host);
     if (luaUtils::GetLuaStringFromTable(L, "thingName", thingName)) {
-        movingThing = hostThing->things.at(thingName);
+        movingThing = hostThing->sceneThings.at(thingName);
     } else {
         movingThing = hostThing;
     }
@@ -193,7 +193,7 @@ void PortalST::init() {
     if (Host::GetLuaHostFromTable(L, "thing", incomingThing))
         thing = static_cast<RealThing*>(incomingThing);
     else if (luaUtils::GetLuaStringFromTable(L, "thingName", thingName))
-        thing = hostThing->things.at(thingName);
+        thing = hostThing->sceneThings.at(thingName);
     else
         thing = hostThing;
 
@@ -222,7 +222,7 @@ void PortalST::init() {
     }
 
     Camera::fadeOut(3);
-    for (auto const& [id, t] : thing->things) {
+    for (auto const& [id, t] : thing->sceneThings) {
         if (!t->move)
             continue;
         t->move->disables += 1;
@@ -230,7 +230,7 @@ void PortalST::init() {
 }
 
 PortalST::~PortalST() {
-    for (auto const& [id, t] : thing->things) {
+    for (auto const& [id, t] : thing->sceneThings) {
         if (!t->move)
             continue;
         t->move->disables -= 1;
@@ -377,7 +377,7 @@ void Task::pauseMoves(lua_State* L) {
     RealThing* hostThing = static_cast<RealThing*>(host);
     int disable = luaUtils::CheckLuaTableForBool(L, "unpause") ? -1 : 1;
     if (luaUtils::CheckLuaTableForBool(L, "all")) {
-        for (auto const& [id, thing] : hostThing->things) {
+        for (auto const& [id, thing] : hostThing->sceneThings) {
             if (!thing->move)
                 continue;
             thing->move->disables += disable;
@@ -401,24 +401,11 @@ void Task::pauseMoves(lua_State* L) {
         lua_pop(L,1);
     }
     for (auto thingName : thingNames) {
-        if (!hostThing->things.count(thingName))
+        if (!hostThing->sceneThings.count(thingName))
             continue;
-        RealThing* thing = hostThing->things.at(thingName);
+        RealThing* thing = hostThing->sceneThings.at(thingName);
         if (!thing->move)
             continue;
         thing->move->disables += disable;
     }
 }
-
-// NOTES
-/*
-- things should call lua to kill tasks when they die. Lua should both remove the 
-  entry from activeEvents and calll a new GameController::_killTasks registered function
-
-- Portal should call lua to change scenes in a new function of some sort. This function
-  can call back to C++ into a GameController registered function that handles scene changing
-  without relying on a hostThing.
-
-- Need to serialize (some) thing data to lua when scene ends so we can save in gameState
-  for next time we enter the scene and ultimately for saving game data to disk
-*/

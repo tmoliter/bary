@@ -4,7 +4,7 @@ using namespace std;
 
 FieldPlayer *FieldPlayer::player = nullptr;
 
-FieldPlayer::FieldPlayer(RealThingData tD, map<string, RealThing*>& things) : RealThing(tD, things) {
+FieldPlayer::FieldPlayer(RealThingData tD, map<string, RealThing*>& sceneThings) : RealThing(tD, sceneThings) {
     type = ThingType::fieldPlayer;
     AddAnimator();
     AddMove(MoveType::controlled);
@@ -28,7 +28,7 @@ void FieldPlayer::meat(KeyPresses keysDown) {
         loadLuaFunc("beginEvent");
         lua_newtable(L);
         luaUtils::PushStringToTable(L, "eventName", "inventoryMenu");
-        luaUtils::PushStringToTable(L, "thingName", "sceneManager");
+        luaUtils::PushStringToTable(L, "thingName", "gameManager");
         luaUtils::PushStringToTable(L, "catalyst", "input");
         luaUtils::PushStringToTable(L, "inventoryName", name);
         callLuaFunc(1,0,0);
@@ -51,7 +51,7 @@ void FieldPlayer::meat(KeyPresses keysDown) {
 int FieldPlayer::castRayForInteractables () {
     if (move == nullptr)
         return 0;
-    for (auto const& [name, t] : things) {
+    for (auto const& [name, t] : sceneThings) {
         if (t == this)
             continue;
         for (auto r : getRaysFromOriginAndDirection(position, move->currentDirection))
@@ -64,7 +64,7 @@ int FieldPlayer::castRayForInteractables () {
 int FieldPlayer::castRayForTriggers () {
     if (move == nullptr)
         return 0;
-    for (auto const& [name, t] : things) {
+    for (auto const& [name, t] : sceneThings) {
         if (t == this)
             continue;
         for (auto r : getRaysFromOriginAndDirection(position, move->currentDirection))

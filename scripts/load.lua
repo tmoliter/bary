@@ -3,7 +3,6 @@ require("config.settings")
 gameState = require('state.gameState')
 standardEvents = require('scripts.standardEvents')
 itemDefinitions = require(GAME_PATH .. ".definitions.itemDefinitions")
-sceneManager = nil
 local eventModule = require("scripts.event")
 beginEvent = eventModule.beginEvent
 resumeEvent = eventModule.resumeEvent
@@ -13,6 +12,10 @@ function loadBaseResources()
     local Resources = require('scripts.resourceobject')
     local baseResources = Resources.new({ baseTextures = baseResources.UI })
     return baseResources:getTextures()
+end
+
+function initializeGameManager(gameManager)
+    eventModule.gameManager = gameManager
 end
 
 function loadGame(saveFile)
@@ -30,8 +33,7 @@ function loadGame(saveFile)
     return saveData.spawn
 end
 
-function loadScene(host, sceneName, isEditing, newSceneManager)
-    sceneManager = newSceneManager
+function loadScene(host, sceneName, isEditing)
     local setup = require(GAME_PATH .. '.scenes.' .. sceneName .. '.setup')
     local resources, thingDefs, sceneEvents = table.unpack(setup)
 

@@ -17,15 +17,11 @@ Scene::~Scene() {
 }
 
 void Scene::Load(bool isEditing) {
-    RealThingData sceneManagerTD = RealThingData();
-    sceneManagerTD.name = "sceneManager";
-    sceneManager = addThing(sceneManagerTD);
     loadLuaFunc("loadScene");
     lua_pushstring(L, sceneName.c_str());
     lua_pushboolean(L, isEditing);
-    lua_pushlightuserdata(L, sceneManager);
     cout << "Loading scene..." << endl;
-    callLuaFunc(3, 0, 0);
+    callLuaFunc(2, 0, 0);
 }
 
 void Scene::EnterLoaded(RealThing* focus) {

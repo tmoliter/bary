@@ -1,5 +1,6 @@
 local activeEvents = {}
 local eventDefinitions = {}
+gameManager = nil
 
 -- maybe make a bulk beginEvents function here
 
@@ -28,7 +29,7 @@ local function beginEvent(hostThing, args)
     end
 
 
-    activeEvent["args"] = { gameState = gameState }
+    activeEvent["args"] = { gameState = gameState, activeEvents = activeEvents }
     for k,v in pairs(eventDefinition) do activeEvent["args"][k] = v end
     for k,v in pairs(args) do activeEvent["args"][k] = v end
 
@@ -83,13 +84,14 @@ local function populate(thingDefs, sceneEvents)
     for _,thing in pairs(thingDefs) do
         populateEvents(thing)
     end
-    eventDefinitions.sceneManager = sceneEvents
+    eventDefinitions.gameManager = sceneEvents
 end
 
 return {
     beginEvent = beginEvent,
     resumeEvent = resumeEvent,
-    populate = populate
+    populate = populate,
+    gameManager = gameManager
 }
 
 --[[
