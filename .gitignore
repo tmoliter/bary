@@ -41,3 +41,6 @@ bary
 *.DS_Store*
 
 working_files
+
+# CMake build directory
+build/
