@@ -5,6 +5,10 @@
 using namespace std;
 
 int main(int argc, char* args[]) {
+    // Change to the resource directory immediately so relative asset paths
+    // work whether the binary is run directly or launched as a .app bundle.
+    cd(BASE_PATH);
+
     lua_State* L = luaL_newstate();
     luaL_openlibs(L);
     if (!CheckLua(L, luaL_dofile(L, "scripts/load.lua")))

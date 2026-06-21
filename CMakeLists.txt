@@ -9,6 +9,10 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
 endif()
 
+# Place the binary in the project root so SDL_GetBasePath() / chdir() finds
+# the game assets (games/, scripts/, config/, etc.) next to the executable.
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
+
 # ---------------------------------------------------------------------------
 # Dependency discovery
 #
@@ -109,8 +113,43 @@ if(WIN32)
 endif()
 
 # ---------------------------------------------------------------------------
-# Note: the game loads assets via relative paths (scripts/load.lua, etc.)
-# so run the binary from the project root:
+# macOS: build as a proper .app bundle.
 #
-#   cmake -B build && cmake --build build && ./build/bary
+# SDL_GetBasePath() returns Contents/Resources/ when running from a bundle,
+# which is where Settings::init() chdir()s — so assets go there.
+#
+# Run with:  open bary.app
+# ---------------------------------------------------------------------------
+if(APPLE)
+    set(MACOSX_ICON base/assets/cmake/bary.icns)
+    set_source_files_properties(${MACOSX_ICON} PROPERTIES
+        MACOSX_PACKAGE_LOCATION "Resources"
+    )
+
+    set_target_properties(bary PROPERTIES
+        MACOSX_BUNDLE                      TRUE
+        MACOSX_BUNDLE_BUNDLE_NAME          "Bary"
+        MACOSX_BUNDLE_GUI_IDENTIFIER       "com.bary.game"
+        MACOSX_BUNDLE_BUNDLE_VERSION       "0.1"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
+        MACOSX_BUNDLE_ICON_FILE            "bary.icns"
+    )
+
+    target_sources(bary PRIVATE ${MACOSX_ICON})
+
+    # Copy asset directories into Contents/Resources/ after each build.
+    # If you ever add a new top-level asset directory, add it to this list.
+    foreach(asset_dir base games scripts state config)
+        add_custom_command(TARGET bary POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/${asset_dir}
+                $<TARGET_BUNDLE_CONTENT_DIR:bary>/Resources/${asset_dir}
+        )
+    endforeach()
+endif()
+
+# ---------------------------------------------------------------------------
+# Build:  cmake -B build && cmake --build build
+# Run:    open bary.app          (macOS)
+#         ./bary                 (Windows)
 # ---------------------------------------------------------------------------
