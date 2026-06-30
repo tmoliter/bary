@@ -79,26 +79,26 @@ void GameController::killAllTasks() {
 void GameController::performPendingSceneChange() {
     if (!pendingSceneChange.active)
         return;
-    cout << "[GameController] performing deferred scene change, killing "
-         << activeTasks.size() << " active task(s) from old scene" << endl;
 
-    // 1. The old scene's things are about to be deleted, so kill every task/event
-    //    first or they'll dereference freed things next frame (the MoveST crash).
+    // 1. Kill all active tasks and clear Lua coroutines
     killAllTasks();
 
-    // 2. Carry the moving thing into the new scene.
+    Scene* oldScene = Scene::currentScene;
     Scene* newScene = pendingSceneChange.newScene;
-    newScene->Load(false);
-    RealThing* thing = pendingSceneChange.thing;
-    string baseName = thing->getBaseName();
-    RealThing* carried = new RealThing(*thing);
-    carried->name = baseName;
-    newScene->addExistingThingToScene(carried);
+    RealThing* player = pendingSceneChange.thing;
 
-    // 3. Delete the old scene and enter the new one.
-    newScene->EnterLoaded(carried);
-    carried->position = pendingSceneChange.destination;
-    carried->shiftLayer(pendingSceneChange.newLayer);
+    // 2. Build the new scene's things.
+    newScene->Load(false);
+
+    // 3. Move the real player object to the new scene
+    oldScene->things.erase(player->name);
+    newScene->addExistingThingToScene(player);
+    player->sceneThings = &newScene->things;
+
+    // 4. Delete the old scene and enter the new one (player already moved out).
+    newScene->EnterLoaded(player);
+    player->position = pendingSceneChange.destination;
+    player->shiftLayer(pendingSceneChange.newLayer);
     Camera::c->fadeIn(3);
 
     pendingSceneChange = PendingSceneChange();

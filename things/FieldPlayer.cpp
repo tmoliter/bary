@@ -51,7 +51,7 @@ void FieldPlayer::meat(KeyPresses keysDown) {
 int FieldPlayer::castRayForInteractables () {
     if (move == nullptr)
         return 0;
-    for (auto const& [name, t] : sceneThings) {
+    for (auto const& [name, t] : *sceneThings) {
         if (t == this)
             continue;
         for (auto r : getRaysFromOriginAndDirection(position, move->currentDirection))
@@ -64,7 +64,7 @@ int FieldPlayer::castRayForInteractables () {
 int FieldPlayer::castRayForTriggers () {
     if (move == nullptr)
         return 0;
-    for (auto const& [name, t] : sceneThings) {
+    for (auto const& [name, t] : *sceneThings) {
         if (t == this)
             continue;
         for (auto r : getRaysFromOriginAndDirection(position, move->currentDirection))

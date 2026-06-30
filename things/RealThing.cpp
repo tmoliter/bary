@@ -5,7 +5,7 @@ RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
     position(tD.x, tD.y),
     animator(nullptr),
     move(nullptr),
-    sceneThings(tL) {
+    sceneThings(&tL) {
     origin = position;
     for (auto sd : tD.spriteDataVector)
         AddSprite(sd);
@@ -217,7 +217,7 @@ void RealThing::addComponentsFromTable() {
             AddMove(MoveType::follow);
             luaUtils::GetLuaIntFromTable(L, "tolerance", move->tolerance);
             luaUtils::GetLuaStringFromTable(L, "targetName", targetName);
-            move->leader = &sceneThings.at(targetName)->position;
+            move->leader = &sceneThings->at(targetName)->position;
         }
         if (currentComponent == "moveAnimate") {
             AddAnimator();
@@ -670,7 +670,7 @@ int RealThing::_getThingData(lua_State* L) {
     RealThing* thing = static_cast<RealThing*>(lua_touserdata(L, -1));
     lua_pop(L, 1);
     if (lua_isstring(L, -1)) {
-        thing = thing->sceneThings.at(lua_tostring(L, -1));
+        thing = thing->sceneThings->at(lua_tostring(L, -1));
         lua_pop(L,1);
     }
 

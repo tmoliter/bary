@@ -162,7 +162,7 @@ void MoveST::init() {
     Point offset;
     RealThing* hostThing = static_cast<RealThing*>(host);
     if (luaUtils::GetLuaStringFromTable(L, "thingName", thingName)) {
-        movingThing = hostThing->sceneThings.at(thingName);
+        movingThing = hostThing->sceneThings->at(thingName);
     } else {
         movingThing = hostThing;
     }
@@ -194,7 +194,7 @@ void PortalST::init() {
     if (Host::GetLuaHostFromTable(L, "thing", incomingThing))
         thing = static_cast<RealThing*>(incomingThing);
     else if (luaUtils::GetLuaStringFromTable(L, "thingName", thingName))
-        thing = hostThing->sceneThings.at(thingName);
+        thing = hostThing->sceneThings->at(thingName);
     else
         thing = hostThing;
 
@@ -202,7 +202,6 @@ void PortalST::init() {
     if(luaUtils::GetLuaStringFromTable(L,"newScene",newSceneName)) {
         newScene = new Scene(newSceneName, thing->L);
     }
-    cout << "[PortalST::init] read newScene='" << newSceneName << "' -> newScene ptr=" << newScene << endl;
 
     luaUtils::GetLuaIntFromTable(L, "newLayer", newLayer);
     Point relativeMove;
@@ -224,7 +223,7 @@ void PortalST::init() {
     }
 
     Camera::fadeOut(3);
-    for (auto const& [id, t] : thing->sceneThings) {
+    for (auto const& [id, t] : *thing->sceneThings) {
         if (!t->move)
             continue;
         t->move->disables += 1;
@@ -232,7 +231,7 @@ void PortalST::init() {
 }
 
 PortalST::~PortalST() {
-    for (auto const& [id, t] : thing->sceneThings) {
+    for (auto const& [id, t] : *thing->sceneThings) {
         if (!t->move)
             continue;
         t->move->disables -= 1;
@@ -241,8 +240,6 @@ PortalST::~PortalST() {
 
 bool PortalST::meat(KeyPresses keysDown) {
     if (Camera::c->fadeStatus == FxStatus::applied) {
-        cout << "[PortalST::meat] fade applied, newScene=" << newScene
-             << (newScene ? " -> requesting deferred scene change" : " -> in-scene teleport only") << endl;
         if (newScene) {
             // Don't swap inline: we're mid-iteration over activeTasks and the old
             // scene's things are still live. Hand off to GameController, which runs
@@ -381,7 +378,7 @@ void Task::pauseMoves(lua_State* L) {
     RealThing* hostThing = static_cast<RealThing*>(host);
     int disable = luaUtils::CheckLuaTableForBool(L, "unpause") ? -1 : 1;
     if (luaUtils::CheckLuaTableForBool(L, "all")) {
-        for (auto const& [id, thing] : hostThing->sceneThings) {
+        for (auto const& [id, thing] : *hostThing->sceneThings) {
             if (!thing->move)
                 continue;
             thing->move->disables += disable;
@@ -405,9 +402,9 @@ void Task::pauseMoves(lua_State* L) {
         lua_pop(L,1);
     }
     for (auto thingName : thingNames) {
-        if (!hostThing->sceneThings.count(thingName))
+        if (!hostThing->sceneThings->count(thingName))
             continue;
-        RealThing* thing = hostThing->sceneThings.at(thingName);
+        RealThing* thing = hostThing->sceneThings->at(thingName);
         if (!thing->move)
             continue;
         thing->move->disables += disable;
