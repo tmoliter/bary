@@ -9,9 +9,6 @@ struct GameController : public Host {
     vector<Task*> activeTasks;
     map<pair<Host*, string> ,int> eventArgKeys;
 
-    map<string, RealThing*> mockSceneThings;
-    RealThing* gameManager;  // Invisible thing used to register events that aren't attached to an actual thing
-
     struct PendingSceneChange {
         bool active = false;
         Scene* newScene = nullptr;

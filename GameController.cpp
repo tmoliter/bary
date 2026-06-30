@@ -3,8 +3,6 @@
 GameController::GameController(lua_State *L) {
     this->L = L;
     lua_register(L, "_newTask", _newTask);
-    gameManager = new RealThing(RealThingData(Point(0,0), "gameController", ""), mockSceneThings);
-    gameManager->L = L;
     controller = this;
 }
 
