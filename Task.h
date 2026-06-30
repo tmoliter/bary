@@ -61,8 +61,8 @@ struct PortalST : public Subtask {
     virtual bool meat(KeyPresses keysDown);
     RealThing* thing = nullptr;
     Point destination;
-    int newLayer;
-    Scene* newScene;
+    int newLayer = 0;
+    Scene* newScene = nullptr;
 };
 
 // A task is a group of "subtasks", which can be fired from an event in lua.

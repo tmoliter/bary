@@ -55,6 +55,53 @@ void GameController::meat(KeyPresses keysDown) {
         return;
     }
     Scene::currentScene->meat(keysDown, controller->activeTasks.size() > 0 && meatEvent(keysDown));
+    performPendingSceneChange();
+}
+
+void GameController::requestSceneChange(Scene* newScene, RealThing* thing, Point destination, int newLayer) {
+    pendingSceneChange.active = true;
+    pendingSceneChange.newScene = newScene;
+    pendingSceneChange.thing = thing;
+    pendingSceneChange.destination = destination;
+    pendingSceneChange.newLayer = newLayer;
+}
+
+void GameController::killAllTasks() {
+    for (auto t : activeTasks)
+        delete t;
+    activeTasks.clear();
+    eventArgKeys.clear();
+    // Drop the Lua-side coroutines too, so nothing resumes against a deleted thing.
+    loadLuaFunc("clearAllEvents");
+    callLuaFunc(0, 0, 0);
+}
+
+void GameController::performPendingSceneChange() {
+    if (!pendingSceneChange.active)
+        return;
+    cout << "[GameController] performing deferred scene change, killing "
+         << activeTasks.size() << " active task(s) from old scene" << endl;
+
+    // 1. The old scene's things are about to be deleted, so kill every task/event
+    //    first or they'll dereference freed things next frame (the MoveST crash).
+    killAllTasks();
+
+    // 2. Carry the moving thing into the new scene.
+    Scene* newScene = pendingSceneChange.newScene;
+    newScene->Load(false);
+    RealThing* thing = pendingSceneChange.thing;
+    string baseName = thing->getBaseName();
+    RealThing* carried = new RealThing(*thing);
+    carried->name = baseName;
+    newScene->addExistingThingToScene(carried);
+
+    // 3. Delete the old scene and enter the new one.
+    newScene->EnterLoaded(carried);
+    carried->position = pendingSceneChange.destination;
+    carried->shiftLayer(pendingSceneChange.newLayer);
+    Camera::c->fadeIn(3);
+
+    pendingSceneChange = PendingSceneChange();
 }
 
 

@@ -1,4 +1,5 @@
 #include "Task.h"
+#include "GameController.h"
 
 Subtask::Subtask(lua_State* L,  Host* host) : L(L), timer(nullptr), host(host) {
     if (!lua_istable(L, -1)) {
@@ -201,6 +202,7 @@ void PortalST::init() {
     if(luaUtils::GetLuaStringFromTable(L,"newScene",newSceneName)) {
         newScene = new Scene(newSceneName, thing->L);
     }
+    cout << "[PortalST::init] read newScene='" << newSceneName << "' -> newScene ptr=" << newScene << endl;
 
     luaUtils::GetLuaIntFromTable(L, "newLayer", newLayer);
     Point relativeMove;
@@ -239,13 +241,15 @@ PortalST::~PortalST() {
 
 bool PortalST::meat(KeyPresses keysDown) {
     if (Camera::c->fadeStatus == FxStatus::applied) {
+        cout << "[PortalST::meat] fade applied, newScene=" << newScene
+             << (newScene ? " -> requesting deferred scene change" : " -> in-scene teleport only") << endl;
         if (newScene) {
-            newScene->Load(false);
-            string thingBaseName = thing->getBaseName();
-            thing = new RealThing(*thing);
-            thing->name = thingBaseName;
-            newScene->addExistingThingToScene(thing);
-            newScene->EnterLoaded(thing);
+            // Don't swap inline: we're mid-iteration over activeTasks and the old
+            // scene's things are still live. Hand off to GameController, which runs
+            // the swap at a safe boundary after the task loop, killing old-scene
+            // tasks first. This subtask is done once the request is queued.
+            GameController::controller->requestSceneChange(newScene, thing, destination, newLayer);
+            return 1;
         }
         thing->position = destination;
         thing->shiftLayer(newLayer);

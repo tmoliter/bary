@@ -40,6 +40,7 @@ find_package(Lua        REQUIRED)
 set(SOURCES
     barysystem.cpp
     Camera.cpp
+    GameController.cpp
     input.cpp
     inventory.cpp
     jukebox.cpp

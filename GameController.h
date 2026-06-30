@@ -12,6 +12,18 @@ struct GameController : public Host {
     map<string, RealThing*> mockSceneThings;
     RealThing* gameManager;  // Invisible thing used to register events that aren't attached to an actual thing
 
+    struct PendingSceneChange {
+        bool active = false;
+        Scene* newScene = nullptr;
+        RealThing* thing = nullptr;  // thing to carry into the new scene (e.g. the player)
+        Point destination;
+        int newLayer = 0;
+    } pendingSceneChange;
+
+    void requestSceneChange(Scene* newScene, RealThing* thing, Point destination, int newLayer);
+    void performPendingSceneChange();
+    void killAllTasks();
+
     void meat(KeyPresses keysDown);
     bool meatEvent(KeyPresses keysDown);
 

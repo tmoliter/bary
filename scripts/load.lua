@@ -6,6 +6,7 @@ itemDefinitions = require(GAME_PATH .. ".definitions.itemDefinitions")
 local eventModule = require("scripts.event")
 beginEvent = eventModule.beginEvent
 resumeEvent = eventModule.resumeEvent
+clearAllEvents = eventModule.clearAllEvents
 local baseResources = require('base.resources')
 
 function loadBaseResources()

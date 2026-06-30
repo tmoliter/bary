@@ -69,6 +69,10 @@ local function resumeEvent(hostThing, args)
     return 1
 end
 
+local function clearAllEvents(hostThing)
+    activeEvents = {}
+end
+
 local function populateEvents(thing)
     -- we might do additional stuff with components here
     if eventDefinitions[thing["name"]] == nil then eventDefinitions[thing["name"]] = thing["events"] end
@@ -91,6 +95,7 @@ return {
     beginEvent = beginEvent,
     resumeEvent = resumeEvent,
     populate = populate,
+    clearAllEvents = clearAllEvents,
     gameManager = gameManager
 }
 
