@@ -169,11 +169,6 @@ local function menu(hostThing, args)
     return
 end
 
-local function changeScene (hostThing, args)
-    
-end
-
-
 return {
     sequentialTasks = sequentialTasks,
     randomAutoMove = randomAutoMove,
