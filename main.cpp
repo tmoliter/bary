@@ -35,12 +35,6 @@ int main(int argc, char* args[]) {
 
     new GameController(L);
 
-    lua_getglobal(L, "loadBaseResources");
-    lua_pushlightuserdata(L, GameController::controller->gameManager);
-    if(!luaUtils::CheckLua(L, lua_pcall(L, 1, 0, 0)))
-        throw exception();
-    lua_settop(L, 0);
-
     // jukebox::playSong("Boss Battle", true);
 
     MenuDisplay* loadMenu = nullptr;

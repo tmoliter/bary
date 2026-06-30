@@ -241,10 +241,6 @@ PortalST::~PortalST() {
 bool PortalST::meat(KeyPresses keysDown) {
     if (Camera::c->fadeStatus == FxStatus::applied) {
         if (newScene) {
-            // Don't swap inline: we're mid-iteration over activeTasks and the old
-            // scene's things are still live. Hand off to GameController, which runs
-            // the swap at a safe boundary after the task loop, killing old-scene
-            // tasks first. This subtask is done once the request is queued.
             GameController::controller->requestSceneChange(newScene, thing, destination, newLayer);
             return 1;
         }
@@ -273,16 +269,6 @@ int Task::meat(KeyPresses keysDown) {
         subtasks.erase(remove(subtasks.begin(), subtasks.end(), s), subtasks.end());
     }
     return subtasks.size();
-}
-
-void Task::killEvent() {
-    for (auto s : subtasks) {
-        delete s;
-        subtasks.erase(remove(subtasks.begin(), subtasks.end(), s), subtasks.end());
-    }
-    host->loadLuaFunc("killEvent");
-    lua_pushstring(host->L, eventName.c_str());
-    host->callLuaFunc(1, 0, 0);
 }
 
 void Task::addSubtasks(lua_State* L) {

@@ -15,10 +15,6 @@ function loadBaseResources()
     return baseResources:getTextures()
 end
 
-function initializeGameManager(gameManager)
-    eventModule.gameManager = gameManager
-end
-
 function loadGame(saveFile)
     local saveData = require(GAME_PATH .. ".saves." .. saveFile)
 
