@@ -82,7 +82,6 @@ set(SOURCES
     gui/UIRenderer.cpp
 
     editor/CommandLine.cpp
-    editor/EventEditor.cpp
     editor/MapBuilder.cpp
     editor/RayEditor.cpp
     editor/SpriteEditor.cpp
