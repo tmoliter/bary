@@ -56,7 +56,6 @@ set(SOURCES
     Camera.cpp
     GameController.cpp
     input.cpp
-    inventory.cpp
     jukebox.cpp
     luaUtils.cpp
     main.cpp

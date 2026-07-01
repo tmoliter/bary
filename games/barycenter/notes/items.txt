@@ -1,0 +1,52 @@
+copied from a dead header file, ultimately copied from old Unity project I think
+
+enum class Attribute {
+    Might,
+    Wonder,
+    Logic,
+    Chill,
+    Guile
+};
+
+enum class Quality {
+    fire,
+    water,
+    physical,
+    psychological,
+    funny,
+    boring,
+    annoying
+};
+
+enum class Status {
+    poisoned,
+    drunk,
+    enlightened,
+    guilty,
+    apathetic,
+    irreverent,
+    comatose
+};
+
+
+enum class PlayerCharacter {
+    Zinnia,
+    Paul,
+    Jordan,
+    Jeff
+};
+
+enum class InventoryItem {
+    // Default
+    null,
+    // Money
+    Dollar,
+    // Consumable Foods
+    Oolong,
+    Sundae,
+    Toast,
+    BeanJuice,
+    // Unique Quest Items
+    WeirdBook,
+    Trash,
+};
