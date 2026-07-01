@@ -17,7 +17,6 @@ ThingEditor::~ThingEditor() {
         Scene::currentScene->destroyThing(thing);
     delete spriteEditor;
     delete rayEditor;
-    delete eventEditor;
     UIRenderer::removeText(helpText);
     Scene::currentScene->showAllLines();
 } 
@@ -26,7 +25,6 @@ void ThingEditor::init() {
     FocusTracker::ftracker->setFocus(thing);
     spriteEditor = nullptr;
     rayEditor = nullptr;
-    eventEditor = nullptr;
     helpText = new Text(Point(192, 16), "");
     UIRenderer::addText(helpText);
     changeState(ThingEditState::commandInput);
@@ -43,7 +41,6 @@ void ThingEditor::changeState(ThingEditState newState) {
                 "new sprite",
                 "edit sprite", 
                 "ray",
-                "event",
                 "rename",
                 "copy",
                 "delete",
@@ -71,10 +68,6 @@ void ThingEditor::changeState(ThingEditState newState) {
         case ThingEditState::rayEdit:
             helpText->setText(thing->name + ": Ray Edit Mode");
             rayEditor = new RayEditor(thing);
-            break;
-        case ThingEditState::eventEdit:
-            helpText->setText(thing->name + ": Event Edit Mode");
-            // eventEditor = new EventEditor(thing);
             break;
         case ThingEditState::rename:
             CommandLine::refresh({
@@ -120,10 +113,6 @@ int ThingEditor::meat(KeyPresses keysDown) {
         }
         if (input == "ray") {
             changeState(ThingEditState::rayEdit);
-            return 0;
-        }
-        if (input == "event") {
-            changeState(ThingEditState::eventEdit);
             return 0;
         }
         if (input == "rename") {
@@ -212,15 +201,6 @@ int ThingEditor::meat(KeyPresses keysDown) {
             thing->showLines();
             return 0;
         }
-    }
-
-    if(state == ThingEditState::eventEdit) {
-        // if(eventEditor->routeInput(keysDown)) { // tmp comment out while events are in turmoil
-            // delete eventEditor;
-            // eventEditor = nullptr;
-            changeState(ThingEditState::commandInput);
-            return 0;
-        // }
     }
 
     if (state == ThingEditState::rename) {

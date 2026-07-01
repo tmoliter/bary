@@ -4,7 +4,6 @@
 #include <string>
 #include "editor/SpriteEditor.h"
 #include "editor/RayEditor.h"
-#include "editor/EventEditor.h"
 #include "editor/CommandLine.h"
 
 enum class ThingEditState {
@@ -15,7 +14,6 @@ enum class ThingEditState {
     spriteSelect,
     spriteEdit,
     rayEdit,
-    eventEdit,
 };
 
 
@@ -35,7 +33,6 @@ class ThingEditor {
 
         SpriteEditor *spriteEditor;
         RayEditor *rayEditor;
-        EventEditor *eventEditor;
 
         void changeState(ThingEditState newState);
 
