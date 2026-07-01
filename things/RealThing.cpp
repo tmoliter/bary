@@ -5,7 +5,7 @@ RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
     position(tD.x, tD.y),
     animator(nullptr),
     move(nullptr),
-    things(tL) {
+    sceneThings(&tL) {
     origin = position;
     for (auto sd : tD.spriteDataVector)
         AddSprite(sd);
@@ -13,7 +13,7 @@ RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
         addObstruction(cd.rays, cd.layer);
 }
 
-RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(oldThing.bounds), things(oldThing.things) {
+RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(oldThing.bounds), sceneThings(oldThing.sceneThings) {
     for (auto oldS : oldThing.sprites)
         sprites.push_back(new Sprite(*oldS, position, name));
     for (auto const& [layer, oldO] : oldThing.obstructions)
@@ -23,7 +23,12 @@ RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(
     for (auto const& [oldTrName, oldTr] : oldThing.triggers)
         triggers[oldTrName] = new Trigger(*oldTr, position, name);
     origin = position;
-    parentScene = oldThing.parentScene;
+    if (oldThing.animator) {
+        animator = new Animator(*oldThing.animator);
+    }
+    if (oldThing.move) {
+        move = new Move(*oldThing.move);
+    }
 }
 
 RealThing::~RealThing() {
@@ -212,7 +217,7 @@ void RealThing::addComponentsFromTable() {
             AddMove(MoveType::follow);
             luaUtils::GetLuaIntFromTable(L, "tolerance", move->tolerance);
             luaUtils::GetLuaStringFromTable(L, "targetName", targetName);
-            move->leader = &things.at(targetName)->position;
+            move->leader = &sceneThings->at(targetName)->position;
         }
         if (currentComponent == "moveAnimate") {
             AddAnimator();
@@ -665,7 +670,7 @@ int RealThing::_getThingData(lua_State* L) {
     RealThing* thing = static_cast<RealThing*>(lua_touserdata(L, -1));
     lua_pop(L, 1);
     if (lua_isstring(L, -1)) {
-        thing = thing->things.at(lua_tostring(L, -1));
+        thing = thing->sceneThings->at(lua_tostring(L, -1));
         lua_pop(L,1);
     }
 

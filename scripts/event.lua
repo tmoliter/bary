@@ -11,16 +11,17 @@ local function beginEvent(hostThing, args)
         eventDefinition = eventDefinitions[args["thingName"]][args.eventName]
     end
 
-    -- Event has never been invoked
+    -- No events have been invoked for this thing?
     if activeEvents[hostThing] == nil then
         activeEvents[hostThing] = {}
     end
+    -- Event has never been invoked
     if activeEvents[hostThing][args.eventName] == nil then
         activeEvents[hostThing][args.eventName] = { timesInvoked = 0 }
     end
 
     local activeEvent = activeEvents[hostThing][args.eventName]
-    
+
     -- Event is already in progress
     if activeEvent["coroutine"] ~= nil then
         return
@@ -67,6 +68,10 @@ local function resumeEvent(hostThing, args)
     return 1
 end
 
+local function clearAllEvents(hostThing)
+    activeEvents = {}
+end
+
 local function populateEvents(thing)
     -- we might do additional stuff with components here
     if eventDefinitions[thing["name"]] == nil then eventDefinitions[thing["name"]] = thing["events"] end
@@ -82,13 +87,14 @@ local function populate(thingDefs, sceneEvents)
     for _,thing in pairs(thingDefs) do
         populateEvents(thing)
     end
-    eventDefinitions.sceneManager = sceneEvents
+    eventDefinitions.gameManager = sceneEvents
 end
 
 return {
     beginEvent = beginEvent,
     resumeEvent = resumeEvent,
-    populate = populate
+    populate = populate,
+    clearAllEvents = clearAllEvents
 }
 
 --[[

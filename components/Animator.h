@@ -8,6 +8,7 @@ enum class AnimationType {
 
 struct Animator {
     Animator(Sprite* sprite);
+    Animator(Animator&);
 
     Sprite* sprite;
     AnimationType type;

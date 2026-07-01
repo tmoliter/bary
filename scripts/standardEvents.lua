@@ -1,3 +1,4 @@
+require("scripts.copy")
 local function sequentialTasks(hostThing, args)
     local tasks = args["tasks"]
     if args["pauseAllMoves"] then

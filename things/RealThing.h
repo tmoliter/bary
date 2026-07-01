@@ -33,8 +33,7 @@ struct RealThing : public Host {
     ThingType type;
     bool isSub = false;
 
-    map<string, RealThing*>& things;
-    Host* parentScene;
+    map<string, RealThing*>* sceneThings; 
 
     Point position;
     Point origin;

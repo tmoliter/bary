@@ -1,6 +1,7 @@
 #include "barysystem.h"
 #include "FpsTimer.h"
 #include "editor/MapBuilder.h"
+#include "GameController.h"
 
 using namespace std;
 
@@ -14,6 +15,9 @@ int main(int argc, char* args[]) {
     if (!CheckLua(L, luaL_dofile(L, "scripts/load.lua")))
         throw exception();
 
+    // Register all our lua functions here
+    // Including a new Task::_killTasks static method
+
     gameState = GameState::FieldFree;
 
     Input in;
@@ -22,11 +26,14 @@ int main(int argc, char* args[]) {
 
     vector<string> saveNames;
     barysystem::startup(saveNames);
+
     lua_getglobal(L, "loadBaseResources");
     if(!luaUtils::CheckLua(L, lua_pcall(L, 0, 1, 0)))
         throw exception();
     resourceDepository::loadTexturesFromTable(L);
     lua_settop(L, 0);
+
+    new GameController(L);
 
     // jukebox::playSong("Boss Battle", true);
 
@@ -85,7 +92,7 @@ int main(int argc, char* args[]) {
             switch(gameState) {
                 case (GameState::FieldFree):
                 default:
-                    Scene::currentScene->meat(keysDown);
+                    GameController::controller->meat(keysDown);
                     t.timeElapsed(&p.d);
 
                     FocusTracker::ftracker->setCameraFocalPoint();
@@ -116,8 +123,6 @@ int main(int argc, char* args[]) {
         delete Scene::currentScene;
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
-
-    delete Camera::c;
 
     Mix_CloseAudio();
     lua_close(L);

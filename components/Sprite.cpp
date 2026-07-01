@@ -26,6 +26,7 @@ Sprite::Sprite(Sprite &sprite) :
     sheetHeight(sprite.sheetHeight) {
     id = currentID++;
     sprites[id] = this;
+    // should we increment texture reference here??? And manage our shit better in general?
 }
 
 Sprite::Sprite(Sprite &sprite, Point &pos, string &tN) :

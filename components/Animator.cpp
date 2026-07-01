@@ -5,6 +5,10 @@ Animator::Animator(Sprite* sprite) :
     type(AnimationType::movement) {
 };
 
+Animator::Animator(Animator& oldAnimator) : type(oldAnimator.type) {
+    sprite = new Sprite(*oldAnimator.sprite);
+}
+
 void Animator::splitSheet(int columns, int rows) {
     sprite->divideSheet(columns, rows);
     sprite->frontAndCenter();

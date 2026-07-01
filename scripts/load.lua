@@ -3,10 +3,10 @@ require("config.settings")
 gameState = require('state.gameState')
 standardEvents = require('scripts.standardEvents')
 itemDefinitions = require(GAME_PATH .. ".definitions.itemDefinitions")
-sceneManager = nil
 local eventModule = require("scripts.event")
 beginEvent = eventModule.beginEvent
 resumeEvent = eventModule.resumeEvent
+clearAllEvents = eventModule.clearAllEvents
 local baseResources = require('base.resources')
 
 function loadBaseResources()
@@ -30,8 +30,7 @@ function loadGame(saveFile)
     return saveData.spawn
 end
 
-function loadScene(host, sceneName, isEditing, newSceneManager)
-    sceneManager = newSceneManager
+function loadScene(host, sceneName, isEditing)
     local setup = require(GAME_PATH .. '.scenes.' .. sceneName .. '.setup')
     local resources, thingDefs, sceneEvents = table.unpack(setup)
 
@@ -43,8 +42,10 @@ function loadScene(host, sceneName, isEditing, newSceneManager)
         mapTable = require(GAME_PATH .. '.scenes.' .. sceneName .. '.map')
     else
         mapTable = gameState["scenes"][sceneName]
-        playerSpawn = thingDefs[gameState["spawn"]["name"]]
-        for k,v in pairs(gameState["spawn"]) do playerSpawn[k] = v end
+        if gameState["spawn"] then
+            playerSpawn = thingDefs[gameState["spawn"]["name"]]
+            for k,v in pairs(gameState["spawn"]) do playerSpawn[k] = v end
+        end
     end
 
     eventModule.populate(thingDefs, sceneEvents)
@@ -60,6 +61,7 @@ function loadScene(host, sceneName, isEditing, newSceneManager)
     if playerSpawn ~= nil then
         table.insert(spawnThings, playerSpawn)
     end
+    gameState["spawn"] = nil
 
     _loadScene(resources.background, spawnThings, { textures = resources:getTextures() }, host)
 end

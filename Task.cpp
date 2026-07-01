@@ -1,4 +1,5 @@
 #include "Task.h"
+#include "GameController.h"
 
 Subtask::Subtask(lua_State* L,  Host* host) : L(L), timer(nullptr), host(host) {
     if (!lua_istable(L, -1)) {
@@ -159,9 +160,9 @@ void MoveST::init() {
     string thingName;
     Point destination;
     Point offset;
-    RealThing* hostThing = static_cast<RealThing*>(host); // (assume-host)
+    RealThing* hostThing = static_cast<RealThing*>(host);
     if (luaUtils::GetLuaStringFromTable(L, "thingName", thingName)) {
-        movingThing = hostThing->things.at(thingName);
+        movingThing = hostThing->sceneThings->at(thingName);
     } else {
         movingThing = hostThing;
     }
@@ -189,13 +190,18 @@ bool MoveST::meat(KeyPresses keysDown) {
 void PortalST::init() {
     Host* incomingThing;
     string thingName = "";
-    RealThing* hostThing = static_cast<RealThing*>(host); // (assume-host)
+    RealThing* hostThing = static_cast<RealThing*>(host);
     if (Host::GetLuaHostFromTable(L, "thing", incomingThing))
         thing = static_cast<RealThing*>(incomingThing);
     else if (luaUtils::GetLuaStringFromTable(L, "thingName", thingName))
-        thing = hostThing->things.at(thingName);
+        thing = hostThing->sceneThings->at(thingName);
     else
         thing = hostThing;
+
+    string newSceneName = "";
+    if(luaUtils::GetLuaStringFromTable(L,"newScene",newSceneName)) {
+        newScene = new Scene(newSceneName, thing->L);
+    }
 
     luaUtils::GetLuaIntFromTable(L, "newLayer", newLayer);
     Point relativeMove;
@@ -217,7 +223,7 @@ void PortalST::init() {
     }
 
     Camera::fadeOut(3);
-    for (auto const& [id, t] : thing->things) {
+    for (auto const& [id, t] : *thing->sceneThings) {
         if (!t->move)
             continue;
         t->move->disables += 1;
@@ -225,7 +231,7 @@ void PortalST::init() {
 }
 
 PortalST::~PortalST() {
-    for (auto const& [id, t] : thing->things) {
+    for (auto const& [id, t] : *thing->sceneThings) {
         if (!t->move)
             continue;
         t->move->disables -= 1;
@@ -234,6 +240,10 @@ PortalST::~PortalST() {
 
 bool PortalST::meat(KeyPresses keysDown) {
     if (Camera::c->fadeStatus == FxStatus::applied) {
+        if (newScene) {
+            GameController::controller->requestSceneChange(newScene, thing, destination, newLayer);
+            return 1;
+        }
         thing->position = destination;
         thing->shiftLayer(newLayer);
         Camera::c->fadeIn(3);
@@ -354,7 +364,7 @@ void Task::pauseMoves(lua_State* L) {
     RealThing* hostThing = static_cast<RealThing*>(host);
     int disable = luaUtils::CheckLuaTableForBool(L, "unpause") ? -1 : 1;
     if (luaUtils::CheckLuaTableForBool(L, "all")) {
-        for (auto const& [id, thing] : hostThing->things) {
+        for (auto const& [id, thing] : *hostThing->sceneThings) {
             if (!thing->move)
                 continue;
             thing->move->disables += disable;
@@ -378,9 +388,9 @@ void Task::pauseMoves(lua_State* L) {
         lua_pop(L,1);
     }
     for (auto thingName : thingNames) {
-        if (!hostThing->things.count(thingName))
+        if (!hostThing->sceneThings->count(thingName))
             continue;
-        RealThing* thing = hostThing->things.at(thingName);
+        RealThing* thing = hostThing->sceneThings->at(thingName);
         if (!thing->move)
             continue;
         thing->move->disables += disable;

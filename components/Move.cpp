@@ -2,6 +2,20 @@
 
 using namespace std;
 
+Move::Move(Move& oldMove) :
+    type(oldMove.type), 
+    currentDirection(oldMove.currentDirection), 
+    leader(oldMove.leader),
+    speed(oldMove.speed), 
+    layer(oldMove.layer),
+    tolerance(oldMove.tolerance),
+    destination(oldMove.destination) {
+    if (oldMove.leader) {
+        leader = new Point(*oldMove.leader);
+    }
+}
+
+
 void Move::moveFromInput(KeyPresses keysDown) {
     if (disables)
         return;

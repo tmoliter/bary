@@ -1,8 +1,8 @@
 local Resources = require('scripts.resourceobject')
 local resources = Resources.new({
-    background = "burg",
+    background = "tg",
     ownTextures = {
-        burg = "backgrounds/Burg",
+        tg = "backgrounds/tg",
         genrl = "sheets/Burg/genrl",
         sailorshack = "sheets/Burg/SailorShack",
         zinnia = "sheets/SDL_TestSS"
@@ -314,7 +314,6 @@ local thingDefs = {
                             relativeX = -25,
                             relativeY = -131,
                             newLayer = 2,
-                            newScene = "testSceneTwo"
                         },
                         closeAfter = true,
                         -- locked = true
