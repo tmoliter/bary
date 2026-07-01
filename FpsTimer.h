@@ -37,7 +37,8 @@ void FpsTimer::endFrameAndWait(int &frameCount) {
     frameCount++;
     Uint64 end = SDL_GetPerformanceCounter();
     float elapsedMS = (end - start) / (float)SDL_GetPerformanceFrequency() * 1000.0f;
-    SDL_Delay(floor(16.666f - elapsedMS));
+    if (elapsedMS < 16.666f)
+        SDL_Delay((Uint32)(16.666f - elapsedMS));
 }
 
 
@@ -53,7 +54,8 @@ void FpsTimer::endFrameAndWait(int &frameCount, ProfileData &profileData) {
         std::cout << "e: " << profileData.e << std::endl;
         std::cout << "total: " << elapsedMS << std::endl <<std::endl;
     }
-    SDL_Delay(floor(16.666f - elapsedMS));
+    if (elapsedMS < 16.666f)
+        SDL_Delay((Uint32)(16.666f - elapsedMS));
 }
 
 #endif
