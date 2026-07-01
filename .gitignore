@@ -44,3 +44,4 @@ working_files
 
 # CMake build directory
 build/
+build-release/
