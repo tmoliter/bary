@@ -300,7 +300,7 @@ local thingDefs = {
                     {
                         type = "standardCollider",
                         trigger = true,
-                        interactable = true,
+                        interactable = false,
                         eventNames = {
                             "open",
                         }

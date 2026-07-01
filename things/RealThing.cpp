@@ -224,22 +224,11 @@ void RealThing::addComponentsFromTable() {
         }
         if (currentComponent == "standardCollider") {
             vector<CollidableType> collidableTypes = {};
-            vector<string> eventNames = {};
             if (luaUtils::CheckLuaTableForBool(L, "trigger"))
                 collidableTypes.push_back(CollidableType::trigger);
             if (luaUtils::CheckLuaTableForBool(L, "interactable"))
                 collidableTypes.push_back(CollidableType::interactable);
-            if (luaUtils::GetTableOnStackFromTable(L, "eventNames")) {
-                lua_pushnil(L);
-                while (lua_next(L, -2)) {
-                    if (!lua_isstring(L, -1))
-                        continue;
-                    eventNames.push_back(lua_tostring(L, -1));
-                    lua_pop(L,1);
-                }
-                lua_pop(L,1);
-            }
-            AddStandardCollision(collidableTypes, eventNames);
+            AddStandardCollision(collidableTypes);
         }
         lua_pop(L, 1);
     }
@@ -272,7 +261,7 @@ Move* RealThing::AddMove(MoveType type) {
     return move;
 }
 
-void RealThing::AddStandardCollision(vector<CollidableType> eventCollidables, vector<string> eventNames) {
+void RealThing::AddStandardCollision(vector<CollidableType> eventCollidables) {
     vector<Ray> obstructionRays = {
         Ray(Point(bounds.right - 10, bounds.bottom), Point(bounds.left + 8, bounds.bottom)),
         Ray(Point(bounds.left + 8, bounds.bottom), Point(bounds.left + 8, bounds.bottom - 6)),
@@ -281,9 +270,9 @@ void RealThing::AddStandardCollision(vector<CollidableType> eventCollidables, ve
     };
     for (auto c : eventCollidables) {
         if (c == CollidableType::interactable)
-            addInteractable("interact", obstructionRays, 0)->eventNames = eventNames;
+            addInteractable("standardInteract", obstructionRays, 0);
         if (c == CollidableType::trigger)
-            addTrigger("trigger", obstructionRays, 0)->eventNames = eventNames;
+            addTrigger("standardTrigger", obstructionRays, 0);
     }
     addObstruction(obstructionRays, 0);
 }
@@ -322,7 +311,7 @@ void RealThing::shiftLayer(int newLayer) {
 Interactable* RealThing::addInteractable(string iName, vector<Ray> rays, int layer) {
     if (interactables.count(iName))
         return interactables[iName];
-    Interactable* in = new Interactable(position, name, iName, {}, CollidableData(rays, layer));
+    Interactable* in = new Interactable(position, name, iName, CollidableData(rays, layer));
     interactables[iName] = in;
     return in;
 }
@@ -330,7 +319,7 @@ Interactable* RealThing::addInteractable(string iName, vector<Ray> rays, int lay
 Trigger* RealThing::addTrigger(string iName, vector<Ray> rays, int layer) {
     if (triggers.count(iName))
         return triggers[iName];
-    Trigger* tr = new Trigger(position, name, iName, {}, CollidableData(rays, layer));
+    Trigger* tr = new Trigger(position, name, iName, CollidableData(rays, layer));
     triggers[iName] = tr;
     return tr;
 }
@@ -419,15 +408,13 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, RealThing* i
         case (CollidableType::interactable):
             for (auto const& [cName, in] : interactables){
                 if(in->isColliding(incoming, incomingLayer)) {
-                    for (auto eventName : in->eventNames) { // could make this a bulk function in lua instead of looping
-                        loadLuaFunc("beginEvent");
-                        lua_newtable(L);
-                        luaUtils::PushStringToTable(L, "eventName", eventName);
-                        luaUtils::PushStringToTable(L, "thingName", getBaseName());
-                        luaUtils::PushStringToTable(L, "catalyst", "interactable");
-                        Host::PushHostToTable(L, "incomingThing", incomingThing);
-                        callLuaFunc(1, 0, 0);
-                    }
+                    loadLuaFunc("fireCollidable");
+                    lua_newtable(L);
+                    luaUtils::PushStringToTable(L, "thingName", getBaseName());
+                    luaUtils::PushStringToTable(L, "collidableName", cName);
+                    luaUtils::PushStringToTable(L, "catalyst", "interactable");
+                    Host::PushHostToTable(L, "incomingThing", incomingThing);
+                    callLuaFunc(1, 0, 0);
                     return 1;
                 }
             }
@@ -435,15 +422,13 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, RealThing* i
         case (CollidableType::trigger):
             for (auto const& [cName, tr] : triggers){
                 if(tr->isColliding(incoming, incomingLayer)) {
-                    for (auto eventName : tr->eventNames) { // could make this a bulk function in lua instead of looping
-                        loadLuaFunc("beginEvent");
-                        lua_newtable(L);
-                        luaUtils::PushStringToTable(L, "eventName", eventName);
-                        luaUtils::PushStringToTable(L, "thingName", getBaseName());
-                        luaUtils::PushStringToTable(L, "catalyst", "trigger");
-                        Host::PushHostToTable(L, "incomingThing", incomingThing);
-                        callLuaFunc(1, 0, 0);
-                    }
+                    loadLuaFunc("fireCollidable");
+                    lua_newtable(L);
+                    luaUtils::PushStringToTable(L, "thingName", getBaseName());
+                    luaUtils::PushStringToTable(L, "collidableName", cName);
+                    luaUtils::PushStringToTable(L, "catalyst", "trigger");
+                    Host::PushHostToTable(L, "incomingThing", incomingThing);
+                    callLuaFunc(1, 0, 0);
                     return 1;
                 }
             }

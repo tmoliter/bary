@@ -1,5 +1,6 @@
 local activeEvents = {}
 local eventDefinitions = {}
+local collidableEvents = {}
 
 -- maybe make a bulk beginEvents function here
 
@@ -68,13 +69,39 @@ local function resumeEvent(hostThing, args)
     return 1
 end
 
+local function fireCollidable(hostThing, args)
+    local bindings = collidableEvents[args["thingName"]]
+    if bindings == nil then return end
+    local eventNames = bindings[args["collidableName"]]
+    if eventNames == nil then return end
+    for _,eventName in ipairs(eventNames) do
+        args.eventName = eventName
+        beginEvent(hostThing, args)
+    end
+end
+
 local function clearAllEvents(hostThing)
     activeEvents = {}
 end
 
+local standardColliderNames = { interactable = "standardInteract", trigger = "standardTrigger" }
+local function bindCollidableEvents(thing)
+    if thing["components"] == nil then return end
+    for _,component in pairs(thing["components"]) do
+        if component["type"] == "standardCollider" and component["eventNames"] ~= nil then
+            for catalyst,collidableName in pairs(standardColliderNames) do
+                if component[catalyst] then
+                    if collidableEvents[thing["name"]] == nil then collidableEvents[thing["name"]] = {} end
+                    collidableEvents[thing["name"]][collidableName] = component["eventNames"]
+                end
+            end
+        end
+    end
+end
+
 local function populateEvents(thing)
-    -- we might do additional stuff with components here
     if eventDefinitions[thing["name"]] == nil then eventDefinitions[thing["name"]] = thing["events"] end
+    bindCollidableEvents(thing)
     if thing["subThings"] ~= nil then
         for _,subThing in pairs(thing["subThings"]) do
             populateEvents(subThing)
@@ -82,8 +109,9 @@ local function populateEvents(thing)
     end
 end
 
-local function populate(thingDefs, sceneEvents) 
+local function populate(thingDefs, sceneEvents)
     eventDefinitions = {}
+    collidableEvents = {}
     for _,thing in pairs(thingDefs) do
         populateEvents(thing)
     end
@@ -93,6 +121,7 @@ end
 return {
     beginEvent = beginEvent,
     resumeEvent = resumeEvent,
+    fireCollidable = fireCollidable,
     populate = populate,
     clearAllEvents = clearAllEvents
 }
