@@ -116,7 +116,17 @@ struct RealThing : public Host {
 
     virtual RealThing* copyInPlace();
 
-    static int _getThingData(lua_State* L); // currently unused
+    // Meant to be called in event functions so that we can dynamic location into tasks, e.g.:
+    // local thingData = _getThingData(hostThing) // returns location of hostThing
+    // local otherThingData = _getThingData(hostThing, "thingName") // returns location of thing named "thingName"
+    //  _newTask({
+    //         {
+    //             type = "move",
+    //             destinationX = thingData["x"],
+    //             destinationY = otherThingData["y"]
+    //         },
+    //. })
+    static int _getThingData(lua_State* L);
 };
 
 #endif
