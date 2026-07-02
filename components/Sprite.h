@@ -34,7 +34,7 @@ struct Sprite {
     int alpha, sheetHeight, sheetWidth;
     Point &position;
     SpriteData d;
-    SDL_Texture* texture;
+    shared_ptr<Texture> texture;
 
     void divideSheet(int columns, int rows);
     void centerOffset();
@@ -46,7 +46,6 @@ struct Sprite {
 
     static int currentID;
     inline static map<int, Sprite*> sprites;
-    inline static map<string, pair<int, SDL_Texture*>> textures;
     static void renderSprites(SDL_Renderer *renderer, Point camPosition);
 
     static void highlightSprite(Sprite* sprite);

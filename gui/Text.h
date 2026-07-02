@@ -12,7 +12,7 @@ class Text {
         string text;
         int lineLength;
 
-        Texture* font;
+        shared_ptr<Texture> font;
 
         Text() : text(""), lineLength(-1) {
             font = resourceDepository::getTexture("defaultFont");

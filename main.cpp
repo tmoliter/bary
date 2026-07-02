@@ -41,7 +41,7 @@ int main(int argc, char* args[]) {
     lua_getglobal(L, "loadBaseResources");
     if(!luaUtils::CheckLua(L, lua_pcall(L, 0, 1, 0)))
         throw exception();
-    resourceDepository::loadTexturesFromTable(L);
+    resourceDepository::loadTexturesFromTable(L, resourceDepository::pinnedTextures);
     lua_settop(L, 0);
 
     new GameController(L);

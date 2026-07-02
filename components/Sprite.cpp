@@ -9,8 +9,8 @@ Sprite::Sprite (Point &pos, SpriteData sd) :
     active(false) {
     id = currentID++;
     sprites[id] = this;
-    texture = resourceDepository::getTexture(sd.textureName)->texture;
-    SDL_QueryTexture(texture, NULL, NULL, &sheetWidth, &sheetHeight);
+    texture = resourceDepository::getTexture(sd.textureName);
+    SDL_QueryTexture(texture->texture, NULL, NULL, &sheetWidth, &sheetHeight);
     d.width = sd.width > 0 ? sd.width : sheetWidth;
     d.height = sd.height > 0 ? sd.height : sheetHeight;
     active = true;
@@ -21,11 +21,11 @@ Sprite::Sprite(Sprite &sprite) :
     d(sprite.d),
     alpha(sprite.alpha),
     active(sprite.active),
+    texture(sprite.texture),
     sheetWidth(sprite.sheetWidth),
     sheetHeight(sprite.sheetHeight) {
     id = currentID++;
     sprites[id] = this;
-    texture = resourceDepository::getTexture(d.textureName)->texture;
 }
 
 Sprite::Sprite(Sprite &sprite, Point &pos, string &tN) :
@@ -33,15 +33,14 @@ Sprite::Sprite(Sprite &sprite, Point &pos, string &tN) :
     d(sprite.d),
     alpha(sprite.alpha),
     active(sprite.active),
+    texture(sprite.texture),
     sheetWidth(sprite.sheetWidth),
     sheetHeight(sprite.sheetHeight) {
     id = currentID++;
     sprites[id] = this;
-    texture = resourceDepository::getTexture(d.textureName)->texture;
 }
 
 Sprite::~Sprite() {
-    resourceDepository::releaseTexture(d.textureName);
     sprites.erase(id);
 }
 
@@ -73,13 +72,13 @@ Point Sprite::getScreenPos(Point camPosition) {
 }
 
 void Sprite::render(SDL_Renderer *renderer, Point camPosition) {
-    if (!active || texture == NULL)
+    if (!active || !texture || texture->texture == NULL)
         return;
     Point renderPos = getScreenPos(camPosition);
     SDL_Rect renderRect = { renderPos.x, renderPos.y, d.width * settings.SCALE, d.height * settings.SCALE };
     SDL_Rect sourceRect = { d.sourceX, d.sourceY, d.width, d.height };
-    SDL_SetTextureAlphaMod(texture, alpha);
-    SDL_RenderCopy(renderer, texture, &sourceRect, &renderRect);
+    SDL_SetTextureAlphaMod(texture->texture, alpha);
+    SDL_RenderCopy(renderer, texture->texture, &sourceRect, &renderRect);
 };
 
 void Sprite::getInts(vector<int*> &ints, vector<string> &names) {

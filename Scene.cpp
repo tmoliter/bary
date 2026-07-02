@@ -10,8 +10,6 @@ Scene::Scene(string sceneName, lua_State *L) : sceneName(sceneName) {
 
 Scene::~Scene() {
     destroyAllThings();
-    resourceDepository::releaseTexture(bgTextureName);
-    // resourceDepository::removeUnreferencedTextures(); // should revisit what this does
     delete Camera::c;
     delete FocusTracker::ftracker;
 }
@@ -274,7 +272,7 @@ int Scene::_loadScene(lua_State* L) {
     }
     Scene* scene = static_cast<Scene*>(lua_touserdata(L, -1));
     lua_pop(L, 1);
-    resourceDepository::loadScene(L);
+    scene->resources = resourceDepository::loadScene(L);
     lua_pop(L, 1);
     lua_pushnil(L);
     while (lua_next(L, -2))

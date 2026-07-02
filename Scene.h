@@ -2,6 +2,7 @@
 #define SCENE_H
 #include "FocusTracker.h"
 #include "things/FieldPlayer.h"
+#include "resourceDepository.h"
 
 using namespace luaUtils;
 
@@ -17,6 +18,8 @@ struct Scene : public Host {
 
     string sceneName;
     string bgTextureName;
+
+    resourceDepository::SceneResources resources;
 
     map<string, RealThing*> things;
     vector<string> thingsToDestroy;

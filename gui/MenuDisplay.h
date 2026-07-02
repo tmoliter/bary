@@ -32,7 +32,7 @@ struct MenuDisplay {
     Image* box;
     Image* flavorBox;
 
-    Texture *font = nullptr;
+    shared_ptr<Texture> font;
 
     Point position;
     Text flavorText;
