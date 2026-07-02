@@ -21,12 +21,11 @@ Sprite::Sprite(Sprite &sprite) :
     d(sprite.d),
     alpha(sprite.alpha),
     active(sprite.active),
-    texture(sprite.texture),
     sheetWidth(sprite.sheetWidth),
     sheetHeight(sprite.sheetHeight) {
     id = currentID++;
     sprites[id] = this;
-    // should we increment texture reference here??? And manage our shit better in general?
+    texture = resourceDepository::getTexture(d.textureName)->texture;
 }
 
 Sprite::Sprite(Sprite &sprite, Point &pos, string &tN) :
@@ -34,11 +33,11 @@ Sprite::Sprite(Sprite &sprite, Point &pos, string &tN) :
     d(sprite.d),
     alpha(sprite.alpha),
     active(sprite.active),
-    texture(sprite.texture),
     sheetWidth(sprite.sheetWidth),
     sheetHeight(sprite.sheetHeight) {
     id = currentID++;
     sprites[id] = this;
+    texture = resourceDepository::getTexture(d.textureName)->texture;
 }
 
 Sprite::~Sprite() {

@@ -52,25 +52,13 @@ void UIRenderer::renderMenuDisplays() {
 }
 
 bool _compareType (Line* a, Line* b) {
-    // TODO Order the enum and use static int cast and compare
-    if (a->type == LineType::highlight)
-        return false;
-    if (b->type == LineType::highlight)
-        return true;
-    if (a->type == LineType::editing)
-        return true;
-    if (b->type == LineType::editing)
-        return false;
-    if (a->type == LineType::obstruction)
-        return true;
-    return false;
+    return static_cast<int>(a->type) < static_cast<int>(b->type);
 }
 void UIRenderer::renderLines() {
-    // 12-31-23 commenting this out because of a bug in the editor, should investigate later
-    // sort(u->lines.begin(), u->lines.end(), _compareType);
-    // for (auto l : u->lines) {
-    //     l->render();
-    // }
+    stable_sort(u->lines.begin(), u->lines.end(), _compareType);
+    for (auto l : u->lines) {
+        l->render();
+    }
 }
 
 void UIRenderer::render() {

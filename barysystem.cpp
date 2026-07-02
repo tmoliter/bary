@@ -17,28 +17,26 @@ void barysystem::startup(vector<string>& saveNames) {
     IMG_Init(IMG_INIT_PNG);
     SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 
-    // audio stuff is commented out because it fucks with the laptop sound after debugging
+    if( Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 512) < 0 )
+    {
+        fprintf(stderr, "Unable to open audio: %s\n", SDL_GetError());
+        exit(-1);
+    }
 
-    // if( Mix_OpenAudio(44100, AUDIO_S16SYS, 2, 512) < 0 )
-    // {
-    //     fprintf(stderr, "Unable to open audio: %s\n", SDL_GetError());
-    //     exit(-1);
-    // }
+    if( Mix_AllocateChannels(4) < 0 )
+    {
+        fprintf(stderr, "Unable to open audio: %s\n", SDL_GetError());
+        exit(-1);
+    }
 
-    // if( Mix_AllocateChannels(4) < 0 )
-    // {
-    //     fprintf(stderr, "Unable to open audio: %s\n", SDL_GetError());
-    //     exit(-1);
-    // }
-
-    SDL_Window* window = SDL_CreateWindow(
+    window = SDL_CreateWindow(
         "Bary",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         settings.FULLSCREEN_MODE ? 0 : settings.SCREEN_WIDTH, settings.FULLSCREEN_MODE ? 0 :settings.SCREEN_HEIGHT,
         settings.FULLSCREEN_MODE ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_SHOWN
     );
 
-    // Play with third arguemnt?
+    // Play with third argument?
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (settings.FULLSCREEN_MODE) {
         SDL_RenderSetLogicalSize(renderer, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT);

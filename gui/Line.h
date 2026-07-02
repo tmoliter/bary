@@ -5,13 +5,14 @@
 
 using namespace std;
 
+// In order of painting
 enum class LineType {
+    obstruction,
     interactable,
     trigger,
-    obstruction,
-    editing,
+    line,
     highlight,
-    line
+    editing
 };
 
 struct Line {
