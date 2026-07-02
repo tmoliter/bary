@@ -36,7 +36,7 @@ void barysystem::startup(vector<string>& saveNames) {
         settings.FULLSCREEN_MODE ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_SHOWN
     );
 
-    // Play with third arguemnt?
+    // Play with third argument?
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (settings.FULLSCREEN_MODE) {
         SDL_RenderSetLogicalSize(renderer, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT);
