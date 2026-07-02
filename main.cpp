@@ -2,10 +2,21 @@
 #include "FpsTimer.h"
 #include "editor/MapBuilder.h"
 #include "GameController.h"
+#include <csignal>
 
 using namespace std;
 
+void releaseAudioOnFatalSignal(int sig) {
+    Mix_CloseAudio();
+    SDL_Quit();
+    signal(sig, SIG_DFL);
+    raise(sig);
+}
+
 int main(int argc, char* args[]) {
+    signal(SIGABRT, releaseAudioOnFatalSignal);
+    signal(SIGSEGV, releaseAudioOnFatalSignal);
+
     // Change to the resource directory immediately so relative asset paths
     // work whether the binary is run directly or launched as a .app bundle.
     cd(BASE_PATH);
@@ -35,7 +46,7 @@ int main(int argc, char* args[]) {
 
     new GameController(L);
 
-    // jukebox::playSong("Boss Battle", true);
+    jukebox::playSong("Boss Battle", true);
 
     MenuDisplay* loadMenu = nullptr;
     vector<Option> startOptions;

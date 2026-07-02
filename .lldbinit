@@ -1,0 +1,5 @@
+# Keep stopping on crashes so you get a full, un-unwound stack trace, but
+# pass the signal through to our handler in main.cpp on `continue` so the
+# audio device gets released instead of staying claimed until a restart.
+process handle SIGABRT --stop true --pass true --notify true
+process handle SIGSEGV --stop true --pass true --notify true
