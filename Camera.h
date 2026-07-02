@@ -17,7 +17,7 @@ enum class FxStatus {
 class Camera {
     private:
         SDL_Rect renderRect, sourceRect;
-        SDL_Texture* bgTexture;
+        shared_ptr<Texture> bgTexture;
         int fadeStart, warpStart;
     public:
         Point focalPoint;

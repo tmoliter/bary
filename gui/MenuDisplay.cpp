@@ -34,6 +34,7 @@ MenuDisplay::~MenuDisplay() {
     clearLists();
     delete box;
     delete header;
+    delete flavorBox;
 }
 
 void MenuDisplay::buildPages() {

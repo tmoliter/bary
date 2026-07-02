@@ -35,8 +35,8 @@ Phrase::Phrase(const Phrase& ph) :
     gridLimits(ph.gridLimits),
     state(PhrasePhase::standby) {
 
-    font = resourceDepository::getTexture(ph.font->name);
-    speechBubble = resourceDepository::getTexture(ph.speechBubble->name);
+    font = ph.font;
+    speechBubble = ph.speechBubble;
 
     id = "phrase " + to_string(currentID++);
 }

@@ -219,7 +219,7 @@ int ThingEditor::meat(KeyPresses keysDown) {
 int ThingEditor::addSprite() {
     string input = CommandLine::popInput();
     Sprite* sprite = thing->AddRawSprite(input);
-    if (sprite->texture == NULL) {
+    if (sprite->texture->texture == NULL) {
         delete sprite;
         return 0;
     }

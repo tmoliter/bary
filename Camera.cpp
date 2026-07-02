@@ -26,8 +26,8 @@ Point Camera::getSourceRectCoords() {
 }
 
 void Camera::init() {
-    bgTexture = resourceDepository::getTexture(bgTextureName)->texture;
-    SDL_QueryTexture(bgTexture, NULL, NULL, &bgWidth, &bgHeight);
+    bgTexture = resourceDepository::getTexture(bgTextureName);
+    SDL_QueryTexture(bgTexture->texture, NULL, NULL, &bgWidth, &bgHeight);
     sourceRect = { 0 , 0, scaledScreenWidth, scaledScreenHeight };
     renderRect = { 0 , 0, settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT };
     fadeStart = warpStart = frameCount;
@@ -40,7 +40,7 @@ void Camera::renderBackground() {
     if (!initialized)
         return;
     setPosition();
-    SDL_RenderCopy(renderer, bgTexture, &sourceRect, &renderRect);
+    SDL_RenderCopy(renderer, bgTexture->texture, &sourceRect, &renderRect);
 }
 
 void Camera::renderAfterEffects() {
