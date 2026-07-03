@@ -2,8 +2,6 @@ local activeEvents = {}
 local eventDefinitions = {}
 local collidableEvents = {}
 
--- maybe make a bulk beginEvents function here
-
 local function beginEvent(hostThing, args)
     local eventDefinition
     if args["eventDefinition"] ~= nil then

@@ -19,7 +19,6 @@ MapBuilder::MapBuilder(string sceneName, lua_State* L) : selectedSprite(-1) {
 
     dotThing->AddRawSprite("singlepixel");
 
-    // Maybe we can pass this down into Editors to share? Maybe that's dumb.
     helpText = new Text(Point(16, 16), "");
     UIRenderer::addText(helpText);
     Scene::currentScene->showAllLines();
