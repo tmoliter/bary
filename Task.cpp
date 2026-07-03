@@ -61,6 +61,22 @@ bool PhraseST::meat(KeyPresses keysDown) {
     return false;
 }
 
+static void parseMenuOptions(lua_State* L, vector<Option>& options) {
+    if (!luaUtils::GetTableOnStackFromTable(L, "options"))
+        return;
+    options.clear();
+    lua_pushnil(L);
+    while (lua_next(L, -2)) {
+        Option newOption = Option();
+        luaUtils::GetLuaStringFromTable(L, "selectionText", newOption.selectionText);
+        luaUtils::GetLuaStringFromTable(L, "flavorText", newOption.flavorText);
+        luaUtils::GetLuaStringFromTable(L, "value", newOption.value);
+        options.push_back(newOption);
+        lua_pop(L,1);
+    }
+    lua_pop(L,1);
+}
+
 void MenuST::init() {
     void* menRef = static_cast<void*>(menu);
     if (luaUtils::GetLuaPointerFromTable(L, "menu", menRef)) {
@@ -71,46 +87,14 @@ void MenuST::init() {
             return;
         }
     }
-    vector<Option> options;
-    Point point;
-    Point size;
-    int maxColumns;
-    if (menu != nullptr) {
-        // Man this is so ugly
-        options = menu->allOptions;
-        point = menu->position;
-        size.x = menu->width;
-        size.y = menu->height;
-        maxColumns = menu->maxColumns;
-    }
-    if (luaUtils::GetTableOnStackFromTable(L, "options")) {
-        options.clear();
-        lua_pushnil(L);
-        while (lua_next(L, -2)) {
-            Option newOption = Option();
-            luaUtils::GetLuaStringFromTable(L, "selectionText", newOption.selectionText);
-            luaUtils::GetLuaStringFromTable(L, "flavorText", newOption.flavorText);
-            luaUtils::GetLuaStringFromTable(L, "value", newOption.value);
-            options.push_back(newOption);
-            lua_pop(L,1);
-        }
-        lua_pop(L,1);
-    }
-    luaUtils::GetLuaIntFromTable(L, "x", point.x);
-    luaUtils::GetLuaIntFromTable(L, "y", point.y);
-    luaUtils::GetLuaIntFromTable(L, "width", size.x);
-    luaUtils::GetLuaIntFromTable(L, "height", size.y);
-    luaUtils::GetLuaIntFromTable(L, "maxColumns", maxColumns);
 
     if (menu != nullptr) {
-        // Focusing and/or modifying an existing menu
-
-        // Man this is so ugly
-        menu->allOptions = options;
-        menu->position = point;
-        menu->width = size.x;
-        menu->height = size.y;
-        menu->maxColumns = maxColumns;
+        parseMenuOptions(L, menu->allOptions);
+        luaUtils::GetLuaIntFromTable(L, "x", menu->position.x);
+        luaUtils::GetLuaIntFromTable(L, "y", menu->position.y);
+        luaUtils::GetLuaIntFromTable(L, "width", menu->width);
+        luaUtils::GetLuaIntFromTable(L, "height", menu->height);
+        luaUtils::GetLuaIntFromTable(L, "maxColumns", menu->maxColumns);
 
         menu->paginatedOptions.clear();
         menu->buildPages();
@@ -120,8 +104,18 @@ void MenuST::init() {
     }
 
     // Making a new menu
-    string boxTexture = "defaultSpeechBubble";
+    vector<Option> options;
+    Point point;
+    Point size;
+    int maxColumns = 1;
+    parseMenuOptions(L, options);
+    luaUtils::GetLuaIntFromTable(L, "x", point.x);
+    luaUtils::GetLuaIntFromTable(L, "y", point.y);
+    luaUtils::GetLuaIntFromTable(L, "width", size.x);
+    luaUtils::GetLuaIntFromTable(L, "height", size.y);
+    luaUtils::GetLuaIntFromTable(L, "maxColumns", maxColumns);
 
+    string boxTexture = "defaultSpeechBubble";
     luaUtils::GetLuaStringFromTable(L, "boxTexture", boxTexture);
     menu = new MenuDisplay(options, point, size, maxColumns);
     menu->addBox(boxTexture, {0, 0, 640, 480});
