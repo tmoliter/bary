@@ -69,7 +69,6 @@ inline enum class InputType {
 
 enum class GameState {
     FieldFree,
-    FieldUI,
     TextInput,
 };
 inline GameState gameState;

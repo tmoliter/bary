@@ -100,19 +100,16 @@ void MapBuilder::meat(KeyPresses keysDown) {
     if (state == EditorState::freeMove) {
         helpText->setText("Free Move " + to_string(currentThing->position.x) + " : " + to_string(currentThing->position.y));
         if (keysDown.ok) {
-            vector<RealThing*> collisions = Scene::currentScene->findThingsByPoint(dotThing->position);
-            for (auto t : collisions) {
-                if (t != dotThing) {
-                    RealThing* match = dynamic_cast<RealThing*>(t);
-                    // TODO should actually make a vector out of ALL matches and pass them in so we can choose which one we want to deal with
-                    if (match) {
-                        thingRouter = new ThingRouter(match);
-                        changeState(EditorState::thingEdit);
-                        return;
-                    }
-                }
+            vector<RealThing*> matches;
+            for (auto t : Scene::currentScene->findThingsByPoint(dotThing->position))
+                if (t != dotThing)
+                    matches.push_back(t);
+            if (!matches.empty()) {
+                thingRouter = matches.size() == 1 ? new ThingRouter(matches.front()) : new ThingRouter(matches);
+                changeState(EditorState::thingEdit);
+                return;
             }
-        }
+        } 
     }
 
 

@@ -7,12 +7,14 @@ using namespace std;
 enum class ThingRouterState {
     editOrCreateSub,
     chooseThingType,
+    chooseOverlap,
     edit
 };
 
 struct ThingRouter {
     ThingRouter(Point p);
     ThingRouter(RealThing *rt);
+    ThingRouter(vector<RealThing*> candidates);
     ~ThingRouter();
 
 
@@ -24,6 +26,7 @@ struct ThingRouter {
     string input;
     Text *text;
     RealThing *realThing;
+    vector<RealThing*> candidates;
     Sprite *cross;
 
     ThingEditor *thingEditor;
@@ -37,6 +40,7 @@ struct ThingRouter {
 
     int routeInput(KeyPresses keysDown);
     int chooseNewThingType(KeyPresses keysDown);
+    int chooseOverlapThing(KeyPresses keysDown);
     int chooseEditAction(KeyPresses keysDown);
     int editThing(KeyPresses keysDown);
 };

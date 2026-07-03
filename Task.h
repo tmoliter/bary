@@ -46,12 +46,6 @@ struct MoveST : public Subtask {
     RealThing* movingThing = nullptr;
     Move* move = nullptr;
     Move* prevMove = nullptr;
-
-    // TESTING
-    virtual bool pushArgs() { 
-        luaUtils::PushIntToTable(L, "someBullshit", 69);
-        return true; 
-    };
 };
 
 struct PortalST : public Subtask {

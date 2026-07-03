@@ -18,10 +18,9 @@ struct Option {
 };
 
 struct MenuDisplay {
-    MenuDisplay(vector<Option> o, Point p, Point size, int mC, bool a = true);
+    MenuDisplay(vector<Option> o, Point p, Point size, int mC);
     ~MenuDisplay();
 
-    bool active;
     int currentSelection, charsPerColumn, height, width, maxRows, maxColumns, xPadding, yPadding;
 
     vector<Option> allOptions;
@@ -65,8 +64,6 @@ struct MenuDisplay {
     void addHeader(string textureName, SDL_Rect sourcRect);
     void addFlavorBox(string textureName, SDL_Rect sourcRect);
     void addBox(string textureName, SDL_Rect sourcRect);
-
-    void setActive(bool a);
 };
 
 #endif
