@@ -15,6 +15,13 @@ ThingRouter::ThingRouter(RealThing *rt) : realThing(rt), state(ThingRouterState:
     FocusTracker::ftracker->setFocus(rt);
 }
 
+ThingRouter::ThingRouter(vector<RealThing*> candidates) : candidates(candidates), state(ThingRouterState::chooseOverlap), newThingPosition(candidates.front()->position) {
+    thingEditor = nullptr;
+    realThing = nullptr;
+    cross = nullptr;
+    changeState(ThingRouterState::chooseOverlap);
+}
+
 ThingRouter::~ThingRouter(){
     destroyCross();
     delete thingEditor;
@@ -52,6 +59,15 @@ void ThingRouter::changeState(ThingRouterState newState) {
             destroyCross();
             CommandLine::refresh({"edit", "subthings", "free", "print"}, CLIMode::typeCommand);
             break;
+        case ThingRouterState::chooseOverlap: {
+            destroyCross();
+            vector<string> names;
+            for (auto rt : candidates)
+                names.push_back(rt->name);
+            names.push_back("free");
+            CommandLine::refresh(names, CLIMode::typeCommand);
+            break;
+        }
         case ThingRouterState::edit:
             createCross();
             break;
@@ -62,6 +78,8 @@ void ThingRouter::changeState(ThingRouterState newState) {
 int ThingRouter::routeInput(KeyPresses keysDown) {
     if (state == ThingRouterState::chooseThingType)
         return chooseNewThingType(keysDown);
+    if (state == ThingRouterState::chooseOverlap)
+        return chooseOverlapThing(keysDown);
     if (state == ThingRouterState::editOrCreateSub)
         return chooseEditAction(keysDown);
     if (state == ThingRouterState::edit)
@@ -84,6 +102,26 @@ int ThingRouter::chooseNewThingType(KeyPresses keysDown) {
     if (input == "free") {
         CommandLine::breakdown();
         return 1;
+    }
+    return 0;
+}
+
+int ThingRouter::chooseOverlapThing(KeyPresses keysDown) {
+    if (!CommandLine::handleInput(keysDown))
+        return 0;
+    string input = CommandLine::popInput();
+    if (input == "free") {
+        CommandLine::breakdown();
+        return 1;
+    }
+    for (auto rt : candidates) {
+        if (rt->name == input) {
+            realThing = rt;
+            realThing->highlightThing();
+            FocusTracker::ftracker->setFocus(realThing);
+            changeState(ThingRouterState::editOrCreateSub);
+            return 0;
+        }
     }
     return 0;
 }
