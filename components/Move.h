@@ -35,6 +35,7 @@ struct Move {
     
     void moveFromInput(KeyPresses keysDown);
     bool autoMove(Point position);
+    bool reachedDestination(Point position);
 
     void changeSpeed(bool decrease);
 };

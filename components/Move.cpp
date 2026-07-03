@@ -32,13 +32,17 @@ void Move::moveFromInput(KeyPresses keysDown) {
     currentDirection = directionFromKeyPresses(keysDown);
 }
 
+bool Move::reachedDestination(Point position) {
+    return position.isWithin(destination, tolerance);
+}
+
 bool Move::autoMove(Point position) {
     if (disables)
         return false;
     if (type == MoveType::follow && leader != nullptr)
         destination = *leader;
-    
-    if (position.isWithin(destination, tolerance))
+
+    if (reachedDestination(position))
         return true;
     int xDiff = destination.x - position.x;
     int yDiff = destination.y - position.y;

@@ -123,7 +123,7 @@ void MenuST::init() {
         menu->addFlavorBox(boxTexture, {0, 0, 640, 480});
     }
 
-    selection = menu->getCurrentSelection().value; // This way of doing things could probably be improved
+    selection = menu->getCurrentSelection().value;
     UIRenderer::addMenuDisplay(menu);
 }
 
@@ -136,10 +136,9 @@ bool MenuST::meat(KeyPresses keysDown) {
     return false;
 }
 
-bool MenuST::pushArgs() { 
+void MenuST::pushArgs() {
     luaUtils::PushStringToTable(L, "selection", selection);
     luaUtils::PushPointerToTable(L, "menu", static_cast<void*>(menu));
-    return true; // these return values don't do anything rn
 };
 
 MoveST::~MoveST() {
@@ -178,7 +177,7 @@ void MoveST::init() {
 bool MoveST::meat(KeyPresses keysDown) {
     if (movingThing == nullptr)
         return true;
-    return movingThing->position.isWithin(movingThing->move->destination, movingThing->move->tolerance); // break out into move function I think
+    return movingThing->move->reachedDestination(movingThing->position);
 }
 
 void PortalST::init() {
