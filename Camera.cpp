@@ -86,27 +86,39 @@ void Camera::setWarpLevel() {
         warpStatus = FxStatus::applied;
 }
 
+int Camera::currentAlpha() {
+    if(fadeStatus == FxStatus::unapplied)
+        return 0;
+    if(fadeStatus == FxStatus::applied)
+        return 255;
+    int t = (frameCount - fadeStart) * fadeMultiplier;
+    utils::limit(t, 0, 255);
+    return fadeStatus == FxStatus::unapplying ? 255 - t : t;
+}
+
 // STATIC
 
 int Camera::fadeIn(int m) {
     if(c->fadeStatus == FxStatus::unapplied)
         return 1;
-    if(c->fadeStatus == FxStatus::applied) {
-        c->fadeMultiplier = m;
-        c->fadeStatus = FxStatus::unapplying;
-        c->fadeStart = frameCount;
-    }
+    if(c->fadeStatus == FxStatus::unapplying)
+        return 0;
+    int a = c->currentAlpha();
+    c->fadeMultiplier = m;
+    c->fadeStatus = FxStatus::unapplying;
+    c->fadeStart = frameCount - (255 - a) / m;
     return 0;
 }
 
 int Camera::fadeOut(int m) {
     if(c->fadeStatus == FxStatus::applied)
         return 1;
-    if(c->fadeStatus == FxStatus::unapplied) {
-        c->fadeMultiplier = m;
-        c->fadeStatus = FxStatus::applying;
-        c->fadeStart = frameCount;
-    }
+    if(c->fadeStatus == FxStatus::applying)
+        return 0;
+    int a = c->currentAlpha();
+    c->fadeMultiplier = m;
+    c->fadeStatus = FxStatus::applying;
+    c->fadeStart = frameCount - a / m;
     return 0;
 }
 
