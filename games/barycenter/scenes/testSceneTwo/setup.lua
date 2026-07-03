@@ -314,7 +314,7 @@ local thingDefs = {
                 },
                 events = {
                     open = {
-                        type = "openDoor",
+                        type = "open",
                         triggerDelay = 30,
                         portal = {
                             relativeX = -25,

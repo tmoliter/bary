@@ -55,7 +55,34 @@ local function randomAutoMove(hostThing, args)
     end
 end
 
-local function openDoor(hostThing, args)
+local function __receiveItem(hostThing, args)
+    local partyLeaderName = args["gameState"]["party"][1]
+    local itemName = args["receiveItem"]["name"]
+    local amount = args["receiveItem"]["amount"]
+    local message = args["receiveItem"]["message"]
+    
+    args["gameState"]["inventories"][partyLeaderName]:add(itemName, amount)
+
+    local suffix = amount == 1 and "" or "s"
+    local defaultMessage = "You received " .. tostring(amount) .. " " .. itemName .. suffix .. "!"
+    local phrase = args["receiveItem"]["phrase"] or {
+        type = "phrase",
+        text = defaultMessage,
+        x = 300,
+        y = 150,
+        width = 300,
+        height = 60,
+        scrollType = "allButLast",
+        gridLimitsX = 1000,
+        gridLimitsY = 1000,
+        blocking = true
+    }
+    _newTask(
+        { phrase }, args.eventName, hostThing
+    )
+end
+
+local function open(hostThing, args)
     -- in args we can define what is needed, if anything, to unlock the door, and
     -- in this function we will check inventory or quest status etc
     if (args["locked"]) then
@@ -95,6 +122,10 @@ local function openDoor(hostThing, args)
             obstructions = true
         }
     }, args.eventName, hostThing)
+    if args["receiveItem"] then
+        coroutine.yield()
+        __receiveItem(hostThing, args)
+    end
     if args["portal"] ~= nil then
         coroutine.yield()
         local portal = args["portal"]
@@ -103,6 +134,11 @@ local function openDoor(hostThing, args)
         _newTask({portal}, args.eventName, hostThing)
     end
     if args["closeAfter"] ~= nil then
+        coroutine.yield()
+        _newTask({{
+            type = "wait",
+            frames = 40,
+        }}, args.eventName, hostThing)
         coroutine.yield()
         _newTask({
             {
@@ -172,6 +208,6 @@ end
 return {
     sequentialTasks = sequentialTasks,
     randomAutoMove = randomAutoMove,
-    openDoor = openDoor,
+    open = open,
     menu = menu,
 }

@@ -41,7 +41,7 @@ return {
         jordan = {}
     },
     party = {
-        "jordan",
-        "zinnia"
+        "zinnia",
+        "jordan"
     }
 }

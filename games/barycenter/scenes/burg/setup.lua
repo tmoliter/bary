@@ -314,13 +314,17 @@ local thingDefs = {
                 },
                 events = {
                     open = {
-                        type = "openDoor",
+                        type = "open",
                         triggerDelay = 30,
-                        portal = {
-                            relativeX = -25,
-                            relativeY = -131,
-                            newLayer = 2,
-                            newScene = "testSceneTwo"
+                        -- portal = {
+                        --     relativeX = -25,
+                        --     relativeY = -131,
+                        --     newLayer = 2,
+                        --     newScene = "testSceneTwo"
+                        -- },
+                        receiveItem = {
+                            name = "oolong",
+                            amount = 6
                         },
                         closeAfter = true,
                         -- locked = true
