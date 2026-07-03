@@ -26,8 +26,10 @@ int main(int argc, char* args[]) {
     if (!CheckLua(L, luaL_dofile(L, "scripts/load.lua")))
         throw exception();
 
-    // Register all our lua functions here
-    // Including a new Task::_killTasks static method
+    lua_register(L, "_loadScene", Scene::_loadScene);
+    lua_register(L, "_createThing", Scene::_createThing);
+    lua_register(L, "_getThingData", RealThing::_getThingData);
+    lua_register(L, "_newTask", GameController::_newTask);
 
     gameState = GameState::FieldFree;
 
@@ -62,8 +64,6 @@ int main(int argc, char* args[]) {
     while (true){
         t.startFrame();
         t.timeElapsed(&p.a);
-        // TODO Should make Timer a singleton somehow so that we can time deeper down
-        // and figure out why we're always stalling in `getInput()`
         KeyPresses keysDown = in.getInput();
         t.timeElapsed(&p.b);
         if (keysDown.quit)

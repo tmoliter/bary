@@ -2,10 +2,6 @@
 
 Scene::Scene(string sceneName, lua_State *L) : sceneName(sceneName) {
     this->L = L;
-    // We shouldn't be registering in the constructor here, this seems bad
-    lua_register(L, "_loadScene", _loadScene);
-    lua_register(L, "_createThing", _createThing);
-    lua_register(L, "_getThingData", RealThing::_getThingData);
 }
 
 Scene::~Scene() {

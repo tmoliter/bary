@@ -2,7 +2,6 @@
 
 GameController::GameController(lua_State *L) {
     this->L = L;
-    lua_register(L, "_newTask", _newTask);
     controller = this;
 }
 
