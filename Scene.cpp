@@ -195,6 +195,8 @@ RealThing* Scene::buildThingFromTable() {
         GetLuaIntFromTable(L, "yOffset", newSpriteData.yOffset);
         GetLuaIntFromTable(L, "sourceX", newSpriteData.sourceX);
         GetLuaIntFromTable(L, "sourceY", newSpriteData.sourceY);
+        GetLuaIntFromTable(L, "sheetColumns", newSpriteData.sheetColumns);
+        GetLuaIntFromTable(L, "sheetRows", newSpriteData.sheetRows);
         GetLuaStringFromTable(L, "textureName", newSpriteData.textureName);
         lua_pop(L, 1);
     }

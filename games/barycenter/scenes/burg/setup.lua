@@ -70,7 +70,9 @@ local thingDefs = {
                 width = 0,
                 yOffset = 0,
                 sourceX = 0,
-                sourceY = 0
+                sourceY = 0,
+                sheetColumns = 9,
+                sheetRows = 4
             }
         },
         obstructionData = {},
@@ -88,7 +90,9 @@ local thingDefs = {
                 width = 0,
                 yOffset = 0,
                 sourceX = 0,
-                sourceY = 0
+                sourceY = 0,
+                sheetColumns = 9,
+                sheetRows = 4
             }
         },
         obstructionData = {},
@@ -151,7 +155,9 @@ local thingDefs = {
                 width = 0,
                 yOffset = 0,
                 sourceX = 0,
-                sourceY = 0
+                sourceY = 0,
+                sheetColumns = 9,
+                sheetRows = 4
             }
         },
         obstructionData = {},
