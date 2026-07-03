@@ -1,11 +1,10 @@
 #include "MenuDisplay.h"
 
-MenuDisplay::MenuDisplay(vector<Option> o, Point p, Point size, int mC, bool a) : 
-    allOptions(o), 
-    position(p), 
-    maxColumns(mC), 
-    currentSelection(0), 
-    active(a)
+MenuDisplay::MenuDisplay(vector<Option> o, Point p, Point size, int mC) :
+    allOptions(o),
+    position(p),
+    maxColumns(mC),
+    currentSelection(0)
 {
     box = nullptr;
     header = nullptr;
@@ -27,7 +26,6 @@ MenuDisplay::MenuDisplay(vector<Option> o, Point p, Point size, int mC, bool a) 
     flavorText.setPos(Point(position.x + xPadding, position.y + height + yPadding));
     flavorText.setText(allOptions[0].flavorText);
     flavorText.setLineLengthFromPixelWidth(width - (xPadding * 2));
-    setActive(a);
 }
 
 MenuDisplay::~MenuDisplay() {
@@ -233,13 +231,4 @@ void MenuDisplay::addFlavorBox(string textureName, SDL_Rect sourcRect) {
         throw exception();
     }
     flavorBox = new Image(textureName, sourcRect);
-}
-
-// GameState should be managed higher up somewhere
-void MenuDisplay::setActive(bool a) {
-    if (a)
-        gameState = GameState::FieldUI;
-    else
-        gameState = GameState::FieldFree;
-    active = a;
 }
