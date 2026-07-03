@@ -63,8 +63,6 @@ void UIRenderer::renderLines() {
 
 void UIRenderer::render() {
     renderLines();
-    // Maybe all these should inherit from a common parent that stores a layer int,
-    // so we can sort and then render them without always rendering ALL phrases over ALL menus, etc.
     renderMenuDisplays();
     renderPhrases();
     renderTexts();
