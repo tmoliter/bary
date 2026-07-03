@@ -20,6 +20,8 @@ struct SpriteData {
     int sourceY = 0;
     int width = 0;
     int height = 0;
+    int sheetColumns = 1;
+    int sheetRows = 1;
     bool active = true;
     string textureName = "";
 };

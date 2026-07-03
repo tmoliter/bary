@@ -244,7 +244,7 @@ Animator* RealThing::AddAnimator() {
         return nullptr;
     }
     animator = new Animator(sprites[0]);
-    animator->splitSheet(9, 4); // Obviously this shouldn't be hard-coded, but for now it is
+    animator->splitSheet(sprites[0]->d.sheetColumns, sprites[0]->d.sheetRows);
     bounds.top = 0 - sprites[0]->d.width;
     bounds.bottom = 0;
     bounds.left = 0 - ( sprites[0]->d.width / 2);
@@ -612,6 +612,8 @@ void RealThing::PushThingDataOnStack() {
         luaUtils::PushIntToTable(L, "sourceY", td.spriteDataVector[j].sourceY);
         luaUtils::PushIntToTable(L, "width", td.spriteDataVector[j].width);
         luaUtils::PushIntToTable(L, "height", td.spriteDataVector[j].height);
+        luaUtils::PushIntToTable(L, "sheetColumns", td.spriteDataVector[j].sheetColumns);
+        luaUtils::PushIntToTable(L, "sheetRows", td.spriteDataVector[j].sheetRows);
         luaUtils::PushStringToTable(L, "textureName", td.spriteDataVector[j].textureName);
         lua_pop(L, 1);
     }

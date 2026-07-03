@@ -19,7 +19,6 @@ MapBuilder::MapBuilder(string sceneName, lua_State* L) : selectedSprite(-1) {
 
     dotThing->AddRawSprite("singlepixel");
 
-    // Maybe we can pass this down into Editors to share? Maybe that's dumb.
     helpText = new Text(Point(16, 16), "");
     UIRenderer::addText(helpText);
     Scene::currentScene->showAllLines();
@@ -36,15 +35,19 @@ void MapBuilder::changeState(EditorState newState) {
             Sprite::removeHighlight();
             state = EditorState::freeMove;
             break;
-        case EditorState::play:
+        case EditorState::play: {
             helpText->setText("Play");
-            currentThing = scene->addThing(RealThingData(dotThing->position, "testPlayer", "zinnia"), ThingType::fieldPlayer);
+            RealThingData testPlayerData(dotThing->position, "testPlayer", "zinnia");
+            testPlayerData.spriteDataVector[0].sheetColumns = 9;
+            testPlayerData.spriteDataVector[0].sheetRows = 4;
+            currentThing = scene->addThing(testPlayerData, ThingType::fieldPlayer);
             // FOLLOW TESTING
             followThing = scene->spawn("followZinnia", Point(currentThing->position.x + 20, currentThing->position.y + 20));
             // END FOLLOW TESTING
             FocusTracker::ftracker->setFocus(currentThing);
             state = EditorState::play;
             break;
+        }
         case EditorState::commandInput:
             helpText->setText("");
             CommandLine::refresh({"play", "new thing", "free", "save", "print things"}, CLIMode::typeCommand);

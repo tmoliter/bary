@@ -69,7 +69,7 @@ struct Task {
     Host* host;
 
     // I didn't document this at all when I wrote it. Looking back, I'm
-    // retty sure this stores a table of args for continuity throughout events
+    // pretty sure this stores a table of args for continuity throughout events
     int argKey = LUA_NOREF;
 
     bool blocking = false; // blocking stops any older events from being executed. If we just want to pause movement, that can be done with the `pauseMoves` subtask
