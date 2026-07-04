@@ -5,7 +5,8 @@ local resources = Resources.new({
         burg = "backgrounds/Burg",
         genrl = "sheets/Burg/genrl",
         sailorshack = "sheets/Burg/SailorShack",
-        zinnia = "sheets/SDL_TestSS"
+        zinnia = "sheets/SDL_TestSS",
+        chest = "sheets/Burg/chest"
     },
 })
 
@@ -286,7 +287,8 @@ local thingDefs = {
                         textureName = "sailorshack",
                         renderOffset = -1,
                         sourceX = 357,
-                        layer = 0
+                        layer = 0,
+                        active = false
                     },
                     {
                         width = 56,
@@ -297,8 +299,7 @@ local thingDefs = {
                         textureName = "sailorshack",
                         renderOffset = -1,
                         sourceX = 357,
-                        layer = 0,
-                        active = false
+                        layer = 0
                     }
                 },
                 obstructionData = {},
@@ -316,15 +317,11 @@ local thingDefs = {
                     open = {
                         type = "open",
                         triggerDelay = 30,
-                        -- portal = {
-                        --     relativeX = -25,
-                        --     relativeY = -131,
-                        --     newLayer = 2,
-                        --     newScene = "testSceneTwo"
-                        -- },
-                        receiveItem = {
-                            name = "oolong",
-                            amount = 6
+                        portal = {
+                            relativeX = -25,
+                            relativeY = -131,
+                            newLayer = 2,
+                            newScene = "testSceneTwo"
                         },
                         closeAfter = true,
                         -- locked = true
@@ -352,6 +349,57 @@ local thingDefs = {
             {rays = {{aX = -11, aY = -2, bY = -2, bX = -119}, {aX = 119, aY = -2, bY = -2, bX = 11}}, layer = 0}
         }
     },
+    chest = {
+        name = "chest",
+        spriteDataVector = {
+            {
+                width = 41,
+                height = 36,
+                sourceX = 40,
+                sourceY = 0,
+                xOffset = 0,
+                yOffset = 0,
+                textureName = "chest",
+                renderOffset = 0,
+                layer = 0,
+                active = false
+            },
+            {
+                width = 40,
+                height = 36,
+                sourceX = 0,
+                sourceY = 0,
+                xOffset = 0,
+                yOffset = 0,
+                textureName = "chest",
+                renderOffset = 0,
+                layer = 0
+            }
+        },
+        obstructionData = {},
+        components = {
+            {
+                type = "standardCollider",
+                trigger = false,
+                interactable = true,
+                eventNames = {
+                    "open",
+                }
+            },
+        },
+        events = {
+                open = {
+                    type = "open",
+                    triggerDelay = 30,
+                    receiveItem = {
+                        name = "oolong",
+                        amount = 6
+                    },
+                    closeAfter = false,
+                    -- locked = true
+                }
+            }
+    }
 }
 
 return { resources, thingDefs, sceneEvents }

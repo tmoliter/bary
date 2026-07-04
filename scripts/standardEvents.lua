@@ -133,7 +133,7 @@ local function open(hostThing, args)
         portal["type"] = "portal"
         _newTask({portal}, args.eventName, hostThing)
     end
-    if args["closeAfter"] ~= nil then
+    if args["closeAfter"] == true then
         coroutine.yield()
         _newTask({{
             type = "wait",
