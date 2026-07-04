@@ -19,11 +19,16 @@ function gameState:fresh()
     end
 end
 
-function gameState:updateQuest(dotPath, value)
+local function splitPath(dotPath)
     local keys = {}
     for key in dotPath:gmatch("[^.]+") do
         keys[#keys + 1] = key
     end
+    return keys
+end
+
+function gameState:updateQuest(dotPath, value)
+    local keys = splitPath(dotPath)
 
     local node = self.quests
     for i = 1, #keys - 1 do
@@ -38,10 +43,7 @@ function gameState:updateQuest(dotPath, value)
 end
 
 function gameState:checkQuest(dotPath, value)
-    local keys = {}
-    for key in dotPath:gmatch("[^.]+") do
-        keys[#keys + 1] = key
-    end
+    local keys = splitPath(dotPath)
 
     local node = self.quests
     for i = 1, #keys - 1 do

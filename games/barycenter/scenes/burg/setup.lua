@@ -354,6 +354,7 @@ local thingDefs = {
                                     quantity = 38
                                 },
                                 -- func = doorCondition
+                                permanent = true,
                             }
                         }
                     }

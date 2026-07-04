@@ -67,7 +67,7 @@ local function __receiveItem(hostThing, args)
     local defaultMessage = "You received " .. tostring(amount) .. " " .. itemName .. suffix .. "!"
     local phrase = args["receiveItem"]["phrase"] or {
         type = "phrase",
-        text =  args["receiveItem"]["message"] or defaultMessage,
+        text = args["receiveItem"]["message"] or defaultMessage,
         x = 300,
         y = 150,
         width = 300,
@@ -87,7 +87,7 @@ local function __checkItems(itemCondition, inventories)
     local quantity = itemCondition["quantity"]
     if itemName == nil or quantity == nil then return false end
     for _,inv in pairs(inventories) do
-        if inv:count(itemName) > quantity - 1 then
+        if inv:count(itemName) >= quantity then
             return true
         end
     end
@@ -96,11 +96,11 @@ end
 
 local function __checkQuest(questConditions, gameState)
     for questName, questStatus in pairs(questConditions) do
-        if gameState:checkQuest(questName,questStatus) then
-            return true
+        if not gameState:checkQuest(questName,questStatus) then
+            return false
         end
     end
-    return false
+    return true
 end
 
 local function __checkLock(hostThing, args)
@@ -118,12 +118,15 @@ local function __checkLock(hostThing, args)
     if condition["func"] ~= nil then
         shouldUnlock = condition["func"](hostThing, args)
     end
+    if condition["permanent"] == true then
+        print("TODO: This is where we write active = false to gameState `scenes` that will be saved")
+    end
     return shouldUnlock
 end
 
 
 local function open(hostThing, args)
-    if (args["locked"]) then
+    if args["locked"] and args["locked"]["active"] then
         local shouldUnlock = __checkLock(hostThing, args)
         if shouldUnlock ~= true then
             local phrase = args["locked"]["lockedPhrase"] or {
@@ -166,9 +169,6 @@ local function open(hostThing, args)
     if args["receiveItem"] then
         coroutine.yield()
         __receiveItem(hostThing, args)
-    end
-    if args["quest"] then
-        args["gameState"]:updateQuest(args["quest"]["dotPath"], args["quest"]["value"])
     end
     if args["portal"] ~= nil then
         coroutine.yield()
