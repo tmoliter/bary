@@ -94,11 +94,9 @@ local function __checkItems(itemCondition, inventories)
     return false
 end
 
-local function __checkQuest(questConditions, quests)
-    local questConditions = args["locked"]["condition"]["quest"]
-    if questConditions == nil then return false end
+local function __checkQuest(questConditions, gameState)
     for questName, questStatus in pairs(questConditions) do
-        if args["gameState"]:checkQuest(questName,questStatus) then
+        if gameState:checkQuest(questName,questStatus) then
             return true
         end
     end
@@ -114,7 +112,7 @@ local function __checkLock(hostThing, args)
         if shouldUnlock == false then return false end
     end
     if condition["quest"] ~= nil then
-        shouldUnlock = __checkQuest(condition["quest"], args["gameState"]["quests"])
+        shouldUnlock = __checkQuest(condition["quest"], args["gameState"])
         if shouldUnlock == false then return false end
     end
     if condition["func"] ~= nil then
