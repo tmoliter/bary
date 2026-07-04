@@ -1,4 +1,5 @@
 #include "FieldPlayer.h"
+#include "jukebox.h"
 
 using namespace std;
 
@@ -43,6 +44,8 @@ void FieldPlayer::meat(KeyPresses keysDown) {
         move->changeSpeed(false);
     if (keysDown.debug_down)
         move->changeSpeed(true);
+    if (keysDown.debug_mute)
+        jukebox::toggleMute();
     /* END DEBUG MODE CONTROLS */
     RealThing::meat(keysDown);
 };

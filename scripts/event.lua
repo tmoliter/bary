@@ -58,7 +58,11 @@ local function resumeEvent(hostThing, args)
 
     local activeEvent = activeEvents[hostThing][args.eventName]
 
-    coroutine.resume(activeEvent["coroutine"], hostThing, args)
+    local ok, err = coroutine.resume(activeEvent["coroutine"], hostThing, args)
+    if not ok then
+        print("event coroutine error: " .. tostring(err))
+        print(debug.traceback(activeEvent["coroutine"]))
+    end
     if coroutine.status(activeEvent["coroutine"]) == 'dead' then
         activeEvent["coroutine"] = nil
         activeEvent["args"] = nil

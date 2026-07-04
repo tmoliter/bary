@@ -286,7 +286,8 @@ local thingDefs = {
                         textureName = "sailorshack",
                         renderOffset = -1,
                         sourceX = 357,
-                        layer = 0
+                        layer = 0,
+                        active = false
                     },
                     {
                         width = 56,
@@ -297,8 +298,7 @@ local thingDefs = {
                         textureName = "sailorshack",
                         renderOffset = -1,
                         sourceX = 357,
-                        layer = 0,
-                        active = false
+                        layer = 0
                     }
                 },
                 obstructionData = {},
@@ -314,12 +314,13 @@ local thingDefs = {
                 },
                 events = {
                     open = {
-                        type = "openDoor",
+                        type = "open",
                         triggerDelay = 30,
-                        portal = {
-                            relativeX = -25,
-                            relativeY = -131,
-                            newLayer = 2,
+                        portal = { -- This portal is broken - after teleporting, obstrution collisions don't detect and portalling backwords crashes.
+                            relativeX = 0,
+                            relativeY = -5,
+                            newLayer = 0,
+                            newScene = "burg"
                         },
                         closeAfter = true,
                         -- locked = true

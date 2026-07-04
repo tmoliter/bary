@@ -50,6 +50,7 @@ class Camera {
 
         void handleFade();
         void setOverlay();
+        int currentAlpha();
 
         void setWarpLevel();
 

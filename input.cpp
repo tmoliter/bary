@@ -23,6 +23,7 @@ KeyPresses& Input::getInput () {
     keysDown.debug_down = false;
     keysDown.debug_left = false;
     keysDown.debug_right = false;
+    keysDown.debug_mute = false;
     keysDown.debug_1 = false;
     keysDown.debug_2 = false;
     keysDown.debug_3 = false;
@@ -130,6 +131,10 @@ KeyPresses& Input::getInput () {
                 case SDLK_RIGHT:
                     if (input.key.repeat == 0)
                         keysDown.debug_right = true;
+                    break;
+                case SDLK_m:
+                    if (input.key.repeat == 0)
+                        keysDown.debug_mute = true;
                     break;
                 case SDLK_1:
                     if (input.key.repeat == 0)

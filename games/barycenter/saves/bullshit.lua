@@ -32,6 +32,11 @@ return {
                     name = "sailorShack",
                     x = 621,
                     y = 510,
+                },
+                {
+                    name = "chest",
+                    x = 600,
+                    y = 600,
                 }
             }
         }
@@ -41,7 +46,7 @@ return {
         jordan = {}
     },
     party = {
-        "jordan",
-        "zinnia"
+        "zinnia",
+        "jordan"
     }
 }

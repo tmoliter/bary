@@ -29,6 +29,11 @@ return {
             name = "genrlStore",
             x = 621,
             y = 510,
+        },
+        {
+            name = "chest",
+            x = 680,
+            y = 1100,
         }
     } 
 }

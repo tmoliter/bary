@@ -279,7 +279,6 @@ void RealThing::AddStandardCollision(vector<CollidableType> eventCollidables) {
 
 Sprite* RealThing::AddSprite(SpriteData SD) {
     sprites.push_back(new Sprite(position, SD));
-    sprites.back()->active = true; // This was added to test lua loading, might have side effects
     calculateHeight();
     return sprites.back();
 }

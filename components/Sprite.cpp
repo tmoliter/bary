@@ -13,7 +13,7 @@ Sprite::Sprite (Point &pos, SpriteData sd) :
     SDL_QueryTexture(texture->texture, NULL, NULL, &sheetWidth, &sheetHeight);
     d.width = sd.width > 0 ? sd.width : sheetWidth;
     d.height = sd.height > 0 ? sd.height : sheetHeight;
-    active = true;
+    active = d.active;
 }
 
 Sprite::Sprite(Sprite &sprite) :

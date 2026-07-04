@@ -28,6 +28,7 @@ struct KeyPresses {
     bool debug_down = false;
     bool debug_left = false;
     bool debug_right = false;
+    bool debug_mute = false;
     bool debug_1 = false;
     bool debug_2 = false;
     bool debug_3 = false;

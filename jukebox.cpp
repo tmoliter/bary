@@ -35,6 +35,11 @@ void jukebox::playSong(string name, bool loop) {
         });
 }
 
+void jukebox::toggleMute() {
+    muted = !muted;
+    Mix_VolumeMusic(muted ? 0 : MIX_MAX_VOLUME);
+}
+
 void jukebox::stop() {
     if (currentSong == nullptr)
         return;

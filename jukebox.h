@@ -18,12 +18,15 @@ namespace jukebox {
 
     inline map<string, Song*> songs;
 
+    inline bool muted = false;
+
     Song* initializeSong(string name);
     void loadSong(string name);
     void releaseSong(string name);
 
     void playSong(string name, bool loop);
     void stop();
+    void toggleMute();
 
     void releaseAll();
 }
