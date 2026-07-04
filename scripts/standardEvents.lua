@@ -118,9 +118,6 @@ local function __checkLock(hostThing, args)
     if condition["func"] ~= nil then
         shouldUnlock = condition["func"](hostThing, args)
     end
-    if condition["permanent"] == true then
-        print("TODO: This is where we write active = false to gameState `scenes` that will be saved")
-    end
     return shouldUnlock
 end
 
@@ -146,7 +143,10 @@ local function open(hostThing, args)
             )
             return
         end
-        -- maybe unlock the door permanently, or make that an option
+        -- door is unlocking; if it's a permanent unlock, persist that so it stays open
+        if args["locked"]["condition"]["permanent"] == true then
+            print("TODO: This is where we write active = false to gameState `scenes` that will be saved")
+        end
     end
     if args["catalyst"] == "trigger" and args["triggerDelay"] then
         _newTask({{
