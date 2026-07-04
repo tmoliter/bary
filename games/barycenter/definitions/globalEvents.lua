@@ -111,7 +111,7 @@ function inventoryMenu(hostThing, args)
                     target = target,
                     source = args.inventoryName
                 },
-                eventName = "item_" .. gameState.itemEventId,
+                eventName = "item_" .. gameState:nextItemEventId(),
                 catalyst = "item"
             }
             _newTask({
