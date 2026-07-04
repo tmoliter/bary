@@ -32,8 +32,9 @@ return {
         },
         {
             name = "chest",
+            id = "burgChest",
             x = 680,
             y = 1100,
         }
-    } 
+    }
 }

@@ -22,6 +22,7 @@ function loadGame(saveFile)
     gameState:fresh()
     gameState.spawn = deepcopy(saveData.spawn)
     gameState.scenes = deepcopy(saveData.scenes)
+    gameState.quests = deepcopy(saveData.quests or {})
     for inventoryName,items in pairs(saveData.inventories) do
         gameState:addInventory(inventoryName, items)
     end
@@ -31,18 +32,35 @@ function loadGame(saveFile)
     return saveData.spawn
 end
 
+local function applyActiveSprites(spawn)
+    if spawn.activeSprites == nil or spawn.spriteDataVector == nil then
+        return
+    end
+    local activeSet = {}
+    for _,zeroIndex in ipairs(spawn.activeSprites) do
+        activeSet[zeroIndex] = true
+    end
+    local sprites = deepcopy(spawn.spriteDataVector)
+    for i,sprite in ipairs(sprites) do
+        sprite.active = activeSet[i - 1] == true
+    end
+    spawn.spriteDataVector = sprites
+    spawn.activeSprites = nil
+end
+
 function loadScene(host, sceneName, isEditing)
     local setup = require(GAME_PATH .. '.scenes.' .. sceneName .. '.setup')
     local resources, thingDefs, sceneEvents = table.unpack(setup)
 
-    local mapTable
+    local baseMap = require(GAME_PATH .. '.scenes.' .. sceneName .. '.map')
+    local things = baseMap["things"]
     local playerSpawn
 
     if isEditing == true then
         resources.baseTextures = getMerge({resources.baseTextures or {}, baseResources.editorTextures})
-        mapTable = require(GAME_PATH .. '.scenes.' .. sceneName .. '.map')
     else
-        mapTable = gameState["scenes"][sceneName]
+        things = gameState:resolveSceneThings(sceneName, baseMap["things"])
+        gameState.currentScene = sceneName
         if gameState["spawn"] then
             playerSpawn = thingDefs[gameState["spawn"]["name"]]
             for k,v in pairs(gameState["spawn"]) do playerSpawn[k] = v end
@@ -52,11 +70,12 @@ function loadScene(host, sceneName, isEditing)
     eventModule.populate(thingDefs, sceneEvents)
 
     local spawnThings = {}
-    for _,savedThing in ipairs(mapTable["things"]) do
+    for _,savedThing in ipairs(things) do
         local spawn = {}
         local thingDef = thingDefs[savedThing["name"]]
-        for k,v in pairs(thingDef) do spawn[k] = v end -- deepMerge
-        for k,v in pairs(savedThing) do spawn[k] = v end -- deepMerge
+        for k,v in pairs(thingDef) do spawn[k] = v end
+        for k,v in pairs(savedThing) do spawn[k] = v end
+        applyActiveSprites(spawn)
         table.insert(spawnThings, spawn)
     end
     if playerSpawn ~= nil then

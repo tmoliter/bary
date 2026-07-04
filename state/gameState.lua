@@ -57,6 +57,59 @@ function gameState:checkQuest(dotPath, value)
     return node[keys[#keys]] == value
 end
 
+function gameState:setSceneThing(sceneName, id, patch)
+    local scene = self.scenes[sceneName]
+    if scene == nil then
+        scene = {}
+        self.scenes[sceneName] = scene
+    end
+    if scene.things == nil then
+        scene.things = {}
+    end
+    local existing = scene.things[id] or {}
+    for k, v in pairs(patch) do
+        existing[k] = v
+    end
+    scene.things[id] = existing
+    return existing
+end
+
+function gameState:getSceneThing(sceneName, id)
+    local scene = self.scenes[sceneName]
+    if scene == nil or scene.things == nil then
+        return nil
+    end
+    return scene.things[id]
+end
+
+function gameState:resolveSceneThings(sceneName, baseThings)
+    local scene = self.scenes[sceneName] or {}
+    local patches = scene.things or {}
+    local removed = scene.removed or {}
+
+    local resolved = {}
+    for _, baseThing in ipairs(baseThings) do
+        local id = baseThing.id
+        if id == nil or not removed[id] then
+            local thing = {}
+            for k, v in pairs(baseThing) do thing[k] = v end
+            if id ~= nil and patches[id] ~= nil then
+                for k, v in pairs(patches[id]) do thing[k] = v end
+            end
+            resolved[#resolved + 1] = thing
+        end
+    end
+
+    if scene.added ~= nil then
+        for _, addedThing in pairs(scene.added) do
+            local thing = {}
+            for k, v in pairs(addedThing) do thing[k] = v end
+            resolved[#resolved + 1] = thing
+        end
+    end
+
+    return resolved
+end
 
 function gameState:addInventory(name, startingItems)
     self.inventories[name] = Inventory.new(
