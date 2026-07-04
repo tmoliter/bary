@@ -32,20 +32,35 @@ function loadGame(saveFile)
     return saveData.spawn
 end
 
-local function applyActiveSprites(spawn)
-    if spawn.activeSprites == nil or spawn.spriteDataVector == nil then
+local function applyOpenable(spawn)
+    local openable = spawn.openable
+    if openable == nil then
         return
     end
-    local activeSet = {}
-    for _,zeroIndex in ipairs(spawn.activeSprites) do
-        activeSet[zeroIndex] = true
+    local state = spawn.openState or openable.initial or "closed"
+    spawn.openState = state
+
+    if openable.sprites ~= nil and spawn.spriteDataVector ~= nil then
+        local activeSet = {}
+        for _,zeroIndex in ipairs(openable.sprites[state] or {}) do
+            activeSet[zeroIndex] = true
+        end
+        local sprites = deepcopy(spawn.spriteDataVector)
+        for i,sprite in ipairs(sprites) do
+            sprite.active = activeSet[i - 1] == true
+        end
+        spawn.spriteDataVector = sprites
     end
-    local sprites = deepcopy(spawn.spriteDataVector)
-    for i,sprite in ipairs(sprites) do
-        sprite.active = activeSet[i - 1] == true
+
+    if state == "open" and openable.collidersWhenOpen ~= true and spawn.components ~= nil then
+        local components = {}
+        for _,component in ipairs(spawn.components) do
+            if component.type ~= "standardCollider" then
+                components[#components + 1] = component
+            end
+        end
+        spawn.components = components
     end
-    spawn.spriteDataVector = sprites
-    spawn.activeSprites = nil
 end
 
 function loadScene(host, sceneName, isEditing)
@@ -75,7 +90,7 @@ function loadScene(host, sceneName, isEditing)
         local thingDef = thingDefs[savedThing["name"]]
         for k,v in pairs(thingDef) do spawn[k] = v end
         for k,v in pairs(savedThing) do spawn[k] = v end
-        applyActiveSprites(spawn)
+        applyOpenable(spawn)
         table.insert(spawnThings, spawn)
     end
     if playerSpawn ~= nil then

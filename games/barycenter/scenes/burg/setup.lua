@@ -409,6 +409,12 @@ local thingDefs = {
             }
         },
         obstructionData = {},
+        openable = {
+            initial = "closed",
+            persist = true,
+            sprites = { open = { 0 }, closed = { 1 } },
+            collidersWhenOpen = false,
+        },
         components = {
             {
                 type = "standardCollider",

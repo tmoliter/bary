@@ -12,7 +12,7 @@ return {
     scenes = {
         burg = {
             things = {
-                burgChest = { opened = true, activeSprites = { 0 } }
+                burgChest = { openState = "open" }
             }
         }
     },
