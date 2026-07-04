@@ -316,9 +316,10 @@ local thingDefs = {
                     open = {
                         type = "open",
                         triggerDelay = 30,
-                        portal = { -- This portal is broken - after teleporting, obstrution collisions don't detect and portalling backwords crashes.
-                            relativeX = 0,
-                            relativeY = -5,
+                        disableCollidersOnOpen = true,
+                        portal = {
+                            relativeX = 30,
+                            relativeY = 90,
                             newLayer = 0,
                             newScene = "burg"
                         },

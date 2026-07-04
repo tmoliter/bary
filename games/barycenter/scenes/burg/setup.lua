@@ -317,6 +317,7 @@ local thingDefs = {
                     open = {
                         type = "open",
                         triggerDelay = 30,
+                        disableCollidersOnOpen = true,
                         portal = {
                             relativeX = -25,
                             relativeY = -131,

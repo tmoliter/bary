@@ -301,10 +301,15 @@ void RealThing::shiftLayer(int newLayer) {
     for (auto s : sprites)
         s->d.layer = newLayer;
 
-    Obstruction* ob = obstructions[oldLayer];
+    if (newLayer == oldLayer)
+        return;
+    auto it = obstructions.find(oldLayer);
+    if (it == obstructions.end())
+        return;
+    Obstruction* ob = it->second;
     ob->layer = newLayer;
-    obstructions[ob->layer] = ob;
-    obstructions.erase(oldLayer);
+    obstructions.erase(it);
+    obstructions[newLayer] = ob;
 }
 
 Interactable* RealThing::addInteractable(string iName, vector<Ray> rays, int layer) {
