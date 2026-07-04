@@ -112,16 +112,17 @@ local function open(hostThing, args)
         }}, args.eventName, hostThing)
         coroutine.yield()
     end
-    _newTask({
-        {
-            type = "setActiveSprites",
-            sprites =  { 0 }
-        },
-        {
+    local openSubtasks = {{
+        type = "setActiveSprites",
+        sprites =  { 0 }
+    }}
+    if disableCollidersOnOpen == true then
+        openSubtasks[1] = {
             type = "disableColliders",
             obstructions = true
         }
-    }, args.eventName, hostThing)
+    end
+    _newTask(openSubtasks, args.eventName, hostThing)
     if args["receiveItem"] then
         coroutine.yield()
         __receiveItem(hostThing, args)
