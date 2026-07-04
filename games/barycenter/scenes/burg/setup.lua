@@ -50,6 +50,21 @@ local zinniaTalkB = {
     }
 }
 
+local function unlockQuest(hostThing, args)
+    args["gameState"]:updateQuest("some.damn.quest", "completed")
+end
+
+
+local function doorCondition(hostThing, args)
+    for _,inv in pairs(args["gameState"]["inventories"]) do
+        if inv:count("oolong") > 36 then
+            return true
+        end
+    end
+    return false
+end
+
+
 local globalEvents = require(GAME_PATH .. ".definitions.globalEvents")
 local sceneEvents = {
     inventoryMenu = {
@@ -107,6 +122,7 @@ local thingDefs = {
                 eventNames = {
                     "talk_1",
                     "talk_2",
+                    "unlock",
                 }
             },
             {
@@ -142,6 +158,7 @@ local thingDefs = {
                 }
             },
             talk_2 = zinniaTalkB,
+            unlock = { type = "custom", customCoroutine = unlockQuest }
         }
     },
     followZinnia = {
@@ -325,7 +342,21 @@ local thingDefs = {
                             newScene = "testSceneTwo"
                         },
                         closeAfter = true,
-                        -- locked = true
+                        locked = {
+                            message = "Locked, fuckface.",
+                            active = true,
+                            condition = {
+                                quest = {
+                                    ["some.damn.quest"] = "completed"
+                                },
+                                item = {
+                                    name = "oolong",
+                                    quantity = 38
+                                },
+                                -- func = doorCondition
+                                permanent = true,
+                            }
+                        }
                     }
                 }
             }
@@ -397,7 +428,6 @@ local thingDefs = {
                         amount = 6
                     },
                     closeAfter = false,
-                    -- locked = true
                 }
             }
     }
