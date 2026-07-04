@@ -324,7 +324,6 @@ local thingDefs = {
                             newScene = "burg"
                         },
                         closeAfter = true,
-                        -- locked = true
                     }
                 }
             }
