@@ -158,7 +158,7 @@ local function open(hostThing, args)
     end
     local openSubtasks
     if args["openable"] then
-        openSubtasks = bundles.openableOpenTasks(args["openable"])
+        openSubtasks = bundles.handleOpen(args["openable"])
     else
         openSubtasks = {{
             type = "setActiveSprites",

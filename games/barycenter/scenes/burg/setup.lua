@@ -325,6 +325,7 @@ local thingDefs = {
                     persist = false,
                     catalyst = "trigger",
                     sprites = { open = { 0 }, closed = { 1 } },
+                    obstructionsWhenOpen = false,
                     triggerDelay = 30,
                     closeAfter = true,
                     onOpen = {
@@ -405,7 +406,6 @@ local thingDefs = {
             persist = true,
             catalyst = "interactable",
             sprites = { open = { 0 }, closed = { 1 } },
-            collidersWhenOpen = false,
             triggerDelay = 30,
             closeAfter = false,
             onOpen = {
