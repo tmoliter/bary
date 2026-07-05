@@ -4,6 +4,7 @@ gameState = require('state.gameState')
 standardEvents = require('scripts.standardEvents')
 itemDefinitions = require(GAME_PATH .. ".definitions.itemDefinitions")
 local eventModule = require("scripts.event")
+local bundles = require("scripts.bundles")
 beginEvent = eventModule.beginEvent
 resumeEvent = eventModule.resumeEvent
 fireCollidable = eventModule.fireCollidable
@@ -32,37 +33,6 @@ function loadGame(saveFile)
     return saveData.spawn
 end
 
-local function applyOpenable(spawn)
-    local openable = spawn.openable
-    if openable == nil then
-        return
-    end
-    local state = spawn.openState or openable.initial or "closed"
-    spawn.openState = state
-
-    if openable.sprites ~= nil and spawn.spriteDataVector ~= nil then
-        local activeSet = {}
-        for _,zeroIndex in ipairs(openable.sprites[state] or {}) do
-            activeSet[zeroIndex] = true
-        end
-        local sprites = deepcopy(spawn.spriteDataVector)
-        for i,sprite in ipairs(sprites) do
-            sprite.active = activeSet[i - 1] == true
-        end
-        spawn.spriteDataVector = sprites
-    end
-
-    if state == "open" and openable.collidersWhenOpen ~= true and spawn.components ~= nil then
-        local components = {}
-        for _,component in ipairs(spawn.components) do
-            if component.type ~= "standardCollider" then
-                components[#components + 1] = component
-            end
-        end
-        spawn.components = components
-    end
-end
-
 function loadScene(host, sceneName, isEditing)
     local setup = require(GAME_PATH .. '.scenes.' .. sceneName .. '.setup')
     local resources, thingDefs, sceneEvents = table.unpack(setup)
@@ -82,6 +52,8 @@ function loadScene(host, sceneName, isEditing)
         end
     end
 
+    bundles.expandOpenableDefs(thingDefs)
+
     eventModule.populate(thingDefs, sceneEvents)
 
     local spawnThings = {}
@@ -90,7 +62,7 @@ function loadScene(host, sceneName, isEditing)
         local thingDef = thingDefs[savedThing["name"]]
         for k,v in pairs(thingDef) do spawn[k] = v end
         for k,v in pairs(savedThing) do spawn[k] = v end
-        applyOpenable(spawn)
+        bundles.applyOpenable(spawn)
         table.insert(spawnThings, spawn)
     end
     if playerSpawn ~= nil then
@@ -108,5 +80,6 @@ function spawn(host, sceneName, args)
     local spawn = {}
     for k,v in pairs(thingDefs[args["baseName"]]) do if k ~= "events" then spawn[k] = v end end
     for k,v in pairs(args) do spawn[k] = v end
+    bundles.applyOpenable(spawn)
     return _createThing(spawn, host)
 end

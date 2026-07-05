@@ -1,4 +1,5 @@
 require("scripts.copy")
+local bundles = require("scripts.bundles")
 local function sequentialTasks(hostThing, args)
     local tasks = args["tasks"]
     if args["pauseAllMoves"] then
@@ -155,15 +156,20 @@ local function open(hostThing, args)
         }}, args.eventName, hostThing)
         coroutine.yield()
     end
-    local openSubtasks = {{
-        type = "setActiveSprites",
-        sprites =  { 0 }
-    }}
-    if disableCollidersOnOpen == true then
-        openSubtasks[1] = {
-            type = "disableColliders",
-            obstructions = true
-        }
+    local openSubtasks
+    if args["openable"] then
+        openSubtasks = bundles.openableOpenTasks(args["openable"])
+    else
+        openSubtasks = {{
+            type = "setActiveSprites",
+            sprites =  { 0 }
+        }}
+        if disableCollidersOnOpen == true then
+            openSubtasks[1] = {
+                type = "disableColliders",
+                obstructions = true
+            }
+        end
     end
     _newTask(openSubtasks, args.eventName, hostThing)
     if args["receiveItem"] then
@@ -187,7 +193,7 @@ local function open(hostThing, args)
         _newTask({
             {
                 type = "setActiveSprites",
-                sprites = { 1 }
+                sprites = (args["openable"] and args["openable"].sprites and args["openable"].sprites.closed) or { 1 }
             },
             {
                 type = "disableColliders",

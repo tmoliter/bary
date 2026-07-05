@@ -320,44 +320,36 @@ local thingDefs = {
                     }
                 },
                 obstructionData = {},
-                components = {
-                    {
-                        type = "standardCollider",
-                        trigger = true,
-                        interactable = false,
-                        eventNames = {
-                            "open",
-                        }
-                    },
-                },
-                events = {
-                    open = {
-                        type = "open",
-                        triggerDelay = 30,
-                        disableCollidersOnOpen = true,
+                openable = {
+                    initial = "closed",
+                    persist = false,
+                    catalyst = "trigger",
+                    sprites = { open = { 0 }, closed = { 1 } },
+                    triggerDelay = 30,
+                    closeAfter = true,
+                    onOpen = {
                         portal = {
                             relativeX = -25,
                             relativeY = -131,
                             newLayer = 2,
                             newScene = "testSceneTwo"
                         },
-                        closeAfter = true,
-                        locked = {
-                            message = "Locked, fuckface.",
-                            active = true,
-                            condition = {
-                                quest = {
-                                    ["some.damn.quest"] = "completed"
-                                },
-                                item = {
-                                    name = "oolong",
-                                    quantity = 38
-                                },
-                                -- func = doorCondition
-                                permanent = true,
-                            }
+                    },
+                    locked = {
+                        message = "Locked, fuckface.",
+                        active = true,
+                        condition = {
+                            quest = {
+                                ["some.damn.quest"] = "completed"
+                            },
+                            item = {
+                                name = "oolong",
+                                quantity = 38
+                            },
+                            -- func = doorCondition
+                            permanent = true,
                         }
-                    }
+                    },
                 }
             }
         }
@@ -393,8 +385,7 @@ local thingDefs = {
                 yOffset = 0,
                 textureName = "chest",
                 renderOffset = 0,
-                layer = 0,
-                active = false
+                layer = 0
             },
             {
                 width = 40,
@@ -412,30 +403,15 @@ local thingDefs = {
         openable = {
             initial = "closed",
             persist = true,
+            catalyst = "interactable",
             sprites = { open = { 0 }, closed = { 1 } },
             collidersWhenOpen = false,
-        },
-        components = {
-            {
-                type = "standardCollider",
-                trigger = false,
-                interactable = true,
-                eventNames = {
-                    "open",
-                }
+            triggerDelay = 30,
+            closeAfter = false,
+            onOpen = {
+                receiveItem = { name = "oolong", amount = 6 },
             },
         },
-        events = {
-                open = {
-                    type = "open",
-                    triggerDelay = 30,
-                    receiveItem = {
-                        name = "oolong",
-                        amount = 6
-                    },
-                    closeAfter = false,
-                }
-            }
     }
 }
 
