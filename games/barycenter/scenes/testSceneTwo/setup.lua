@@ -302,29 +302,22 @@ local thingDefs = {
                     }
                 },
                 obstructionData = {},
-                components = {
-                    {
-                        type = "standardCollider",
-                        trigger = true,
-                        interactable = true,
-                        eventNames = {
-                            "open",
-                        }
-                    },
-                },
-                events = {
-                    open = {
-                        type = "open",
-                        triggerDelay = 30,
-                        disableCollidersOnOpen = true,
+                openable = {
+                    initial = "closed",
+                    persist = false,
+                    catalyst = { "trigger", "interactable" },
+                    sprites = { open = { 0 }, closed = { 1 } },
+                    obstructionsWhenOpen = false,
+                    triggerDelay = 30,
+                    closeAfter = true,
+                    onOpen = {
                         portal = {
                             relativeX = 30,
                             relativeY = 90,
                             newLayer = 0,
                             newScene = "burg"
                         },
-                        closeAfter = true,
-                    }
+                    },
                 }
             }
         }

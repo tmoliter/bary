@@ -156,22 +156,7 @@ local function open(hostThing, args)
         }}, args.eventName, hostThing)
         coroutine.yield()
     end
-    local openSubtasks
-    if args["openable"] then
-        openSubtasks = bundles.handleOpen(args["openable"])
-    else
-        openSubtasks = {{
-            type = "setActiveSprites",
-            sprites =  { 0 }
-        }}
-        if disableCollidersOnOpen == true then
-            openSubtasks[1] = {
-                type = "disableColliders",
-                obstructions = true
-            }
-        end
-    end
-    _newTask(openSubtasks, args.eventName, hostThing)
+    _newTask(bundles.buildOpenTask(args), args.eventName, hostThing)
     if args["receiveItem"] then
         coroutine.yield()
         __receiveItem(hostThing, args)
@@ -190,17 +175,7 @@ local function open(hostThing, args)
             frames = 40,
         }}, args.eventName, hostThing)
         coroutine.yield()
-        _newTask({
-            {
-                type = "setActiveSprites",
-                sprites = (args["openable"] and args["openable"].sprites and args["openable"].sprites.closed) or { 1 }
-            },
-            {
-                type = "disableColliders",
-                enable = true,
-                obstructions = true
-            }
-    }, args.eventName, hostThing)
+        _newTask(bundles.buildCloseTask(args), args.eventName, hostThing)
     end
 end
 
