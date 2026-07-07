@@ -292,6 +292,7 @@ local thingDefs = {
         subThings = {
             {
                 name = "SailorShackDoor",
+                id = "sailorShackDoor",
                 y = -61,
                 x = -27,
                 spriteDataVector = {
@@ -339,6 +340,7 @@ local thingDefs = {
                     locked = {
                         message = "Locked, fuckface.",
                         active = true,
+                        persist = false,
                         condition = {
                             quest = {
                                 ["some.damn.quest"] = "completed"
@@ -348,7 +350,6 @@ local thingDefs = {
                                 quantity = 38
                             },
                             -- func = doorCondition
-                            permanent = true,
                         }
                     },
                 }
