@@ -30,20 +30,22 @@ local function expandOpenable(thingDef)
     thingDef.events = thingDef.events or {}
     thingDef.events.open = openEvent
 
-    local catalyst = openable.catalyst or "interactable"
-    local catalysts = type(catalyst) == "table" and catalyst or { catalyst }
-    local interactable, trigger = false, false
-    for _,c in ipairs(catalysts) do
-        if c == "interactable" then interactable = true end
-        if c == "trigger" then trigger = true end
+    if thingDef.interactableData == nil and thingDef.triggerData == nil then
+        local catalyst = openable.catalyst or "interactable"
+        local catalysts = type(catalyst) == "table" and catalyst or { catalyst }
+        local interactable, trigger = false, false
+        for _,c in ipairs(catalysts) do
+            if c == "interactable" then interactable = true end
+            if c == "trigger" then trigger = true end
+        end
+        thingDef.components = thingDef.components or {}
+        thingDef.components[#thingDef.components + 1] = {
+            type = "standardCollider",
+            interactable = interactable,
+            trigger = trigger,
+            eventNames = { "open" },
+        }
     end
-    thingDef.components = thingDef.components or {}
-    thingDef.components[#thingDef.components + 1] = {
-        type = "standardCollider",
-        interactable = interactable,
-        trigger = trigger,
-        eventNames = { "open" },
-    }
 end
 
 function bundles.expandOpenableDefs(thingDefs)
@@ -89,6 +91,11 @@ function bundles.applyOpenable(spawn)
                 end
             end
             spawn.components = components
+        end
+
+        if not keepCollidable then
+            spawn.interactableData = nil
+            spawn.triggerData = nil
         end
 
         if not keepObstruction then
