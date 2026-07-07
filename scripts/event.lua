@@ -88,13 +88,28 @@ end
 
 local standardColliderNames = { interactable = "standardInteract", trigger = "standardTrigger" }
 local function bindCollidableEvents(thing)
-    if thing["components"] == nil then return end
-    for _,component in pairs(thing["components"]) do
-        if component["type"] == "standardCollider" and component["eventNames"] ~= nil then
-            for catalyst,collidableName in pairs(standardColliderNames) do
-                if component[catalyst] then
-                    if collidableEvents[thing["name"]] == nil then collidableEvents[thing["name"]] = {} end
-                    collidableEvents[thing["name"]][collidableName] = component["eventNames"]
+    local function bind(collidableName, eventNames)
+        if collidableEvents[thing["name"]] == nil then collidableEvents[thing["name"]] = {} end
+        collidableEvents[thing["name"]][collidableName] = eventNames
+    end
+
+    if thing["components"] ~= nil then
+        for _,component in pairs(thing["components"]) do
+            if component["type"] == "standardCollider" and component["eventNames"] ~= nil then
+                for catalyst,collidableName in pairs(standardColliderNames) do
+                    if component[catalyst] then
+                        bind(collidableName, component["eventNames"])
+                    end
+                end
+            end
+        end
+    end
+
+    for _,dataKey in ipairs({ "interactableData", "triggerData" }) do
+        if thing[dataKey] ~= nil then
+            for _,collidable in ipairs(thing[dataKey]) do
+                if collidable["eventNames"] ~= nil then
+                    bind(collidable["name"], collidable["eventNames"])
                 end
             end
         end

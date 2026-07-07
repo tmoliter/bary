@@ -26,6 +26,8 @@ struct RealThingData {
 
     vector<SpriteData> spriteDataVector;
     vector<CollidableData> obstructionData;
+    vector<CollidableData> interactableData;
+    vector<CollidableData> triggerData;
 };
 
 struct RealThing : public Host {

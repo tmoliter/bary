@@ -19,6 +19,7 @@ struct CollidableData {
     CollidableData(vector<Ray> rays, int layer) : rays(rays), layer(layer) {};
     vector<Ray> rays;
     int layer = 0;
+    string name;   // used by interactables/triggers (name-keyed); unused by obstructions
 };
 
 struct Collidable {
