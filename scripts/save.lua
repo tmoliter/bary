@@ -50,7 +50,9 @@ function printMap(things, sceneName)
    local output = "things = " .. dumpString
    print("Map Data Computed")
    print(output)
-   io.output("working_files/thingData/" .. sceneName .. "/THINGDUMP-" .. dateString .. ".lua")
+   local dir = "working_files/thingData/" .. sceneName
+   os.execute("mkdir -p '" .. dir .. "'")   -- io.output won't create parent dirs
+   io.output(dir .. "/THINGDUMP-" .. dateString .. ".lua")
    io.write(output)
    io.flush()
 end
@@ -62,7 +64,9 @@ function printThing(thing, sceneName)
    local dateString = os.date("%d-%m-%y__%H_%M_%S")
    local output = thing["name"] .. " = " .. dumpString
    print(output)
-   io.output("working_files/thingData/" .. sceneName .. "/" .. thing["name"] .. "-" .. dateString .. ".lua")
+   local dir = "working_files/thingData/" .. sceneName
+   os.execute("mkdir -p '" .. dir .. "'")   -- io.output won't create parent dirs
+   io.output(dir .. "/" .. thing["name"] .. "-" .. dateString .. ".lua")
    io.write(output)
    io.flush()
 end
