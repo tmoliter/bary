@@ -383,7 +383,7 @@ local thingDefs = {
                 sourceX = 40,
                 sourceY = 0,
                 xOffset = 0,
-                yOffset = 0,
+                yOffset = -36,
                 textureName = "chest",
                 renderOffset = 0,
                 layer = 0
@@ -394,17 +394,79 @@ local thingDefs = {
                 sourceX = 0,
                 sourceY = 0,
                 xOffset = 0,
-                yOffset = 0,
+                yOffset = -36,
                 textureName = "chest",
                 renderOffset = 0,
                 layer = 0
             }
         },
-        obstructionData = {},
+        obstructionData = {
+            {
+                rays = {
+                        {
+                            aY = -7,
+                            bY = -7,
+                            aX = 7,
+                            bX = 39
+                        },
+                        {
+                            aY = -7,
+                            bY = -1,
+                            aX = 7,
+                            bX = 1
+                        },
+                        {
+                            aY = -7,
+                            bY = -1,
+                            aX = 39,
+                            bX = 33
+                        },
+                        {
+                            aY = -1,
+                            bY = -1,
+                            aX = 0,
+                            bX = 32
+                        }
+                    },
+                    layer = 0,
+            }
+        },
+		interactableData = {
+			{
+				rays = {
+					{
+						aY = -7,
+						bY = -7,
+						aX = 7,
+						bX = 39
+					},
+					{
+						aY = -7,
+						bY = -1,
+						aX = 7,
+						bX = 1
+					},
+					{
+						aY = -7,
+						bY = -1,
+						aX = 39,
+						bX = 33
+					},
+					{
+						aY = -1,
+						bY = -1,
+						aX = 0,
+						bX = 32
+					}
+				},
+				name = "opensesame",
+				layer = 0,
+                eventNames = { "open" },
+			}
+		},
         openable = {
             initial = "closed",
             persist = true,
-            catalyst = "interactable",
             sprites = { open = { 0 }, closed = { 1 } },
             triggerDelay = 30,
             closeAfter = false,
