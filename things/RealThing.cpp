@@ -2,6 +2,7 @@
 
 RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
     name(tD.name),
+    id(tD.id),
     position(tD.x, tD.y),
     animator(nullptr),
     move(nullptr),
@@ -17,7 +18,7 @@ RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
         addTrigger(cd.name, cd.rays, cd.layer);
 }
 
-RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(oldThing.bounds), sceneThings(oldThing.sceneThings) {
+RealThing::RealThing(RealThing &oldThing) : id(oldThing.id), position(oldThing.position), bounds(oldThing.bounds), sceneThings(oldThing.sceneThings) {
     for (auto oldS : oldThing.sprites)
         sprites.push_back(new Sprite(*oldS, position, name));
     for (auto const& [layer, oldO] : oldThing.obstructions)
@@ -419,6 +420,7 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, RealThing* i
                     loadLuaFunc("fireCollidable");
                     lua_newtable(L);
                     luaUtils::PushStringToTable(L, "thingName", getBaseName());
+                    luaUtils::PushStringToTable(L, "id", id);
                     luaUtils::PushStringToTable(L, "collidableName", cName);
                     luaUtils::PushStringToTable(L, "catalyst", "interactable");
                     Host::PushHostToTable(L, "incomingThing", incomingThing);
@@ -433,6 +435,7 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, RealThing* i
                     loadLuaFunc("fireCollidable");
                     lua_newtable(L);
                     luaUtils::PushStringToTable(L, "thingName", getBaseName());
+                    luaUtils::PushStringToTable(L, "id", id);
                     luaUtils::PushStringToTable(L, "collidableName", cName);
                     luaUtils::PushStringToTable(L, "catalyst", "trigger");
                     Host::PushHostToTable(L, "incomingThing", incomingThing);

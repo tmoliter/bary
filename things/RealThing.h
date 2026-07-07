@@ -21,6 +21,7 @@ struct RealThingData {
             spriteDataVector.push_back(SpriteData(textureName));
     };
     string name = "AnonymousThing";
+    string id;
     int x = 0;
     int y = 0;
 
@@ -32,6 +33,7 @@ struct RealThingData {
 
 struct RealThing : public Host {
     string name;
+    string id;   // stable per-instance identity (from map); used to key scene-state deltas
     ThingType type;
     bool isSub = false;
 

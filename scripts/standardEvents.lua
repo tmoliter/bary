@@ -157,6 +157,10 @@ local function open(hostThing, args)
         coroutine.yield()
     end
     _newTask(bundles.buildOpenTask(args), args.eventName, hostThing)
+    if args["persist"] and not args["closeAfter"] and args["id"] and args["id"] ~= "" then
+        local gs = args["gameState"]
+        gs:setSceneThing(gs.currentScene, args["id"], { openState = "open" })
+    end
     if args["receiveItem"] then
         coroutine.yield()
         __receiveItem(hostThing, args)

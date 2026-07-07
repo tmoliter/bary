@@ -16,6 +16,7 @@ local function expandOpenable(thingDef)
 
     local openEvent = {
         type = "open",
+        persist = openable.persist,
         triggerDelay = openable.triggerDelay,
         closeAfter = openable.closeAfter,
         locked = openable.locked,
