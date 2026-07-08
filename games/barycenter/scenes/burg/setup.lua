@@ -292,7 +292,8 @@ local thingDefs = {
         subThings = {
             {
                 name = "SailorShackDoor",
-                id = "sailorShackDoor",
+                -- [[ TODO: This ID would apply to all sailorShackDoors.. we should really concat the subThing's name with the parent's ID so we don't have IDs in setup files ]]
+                id = "sailorShackDoor", -- 
                 y = -61,
                 x = -27,
                 spriteDataVector = {

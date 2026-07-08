@@ -33,6 +33,21 @@ function loadGame(saveFile)
     return saveData.spawn
 end
 
+function newGame(sceneName)
+    local map = require(GAME_PATH .. '.scenes.' .. sceneName .. '.map')
+    if map.spawn == nil then
+        error("newGame: scene '" .. sceneName .. "' has no `spawn` in its map.lua")
+    end
+
+    gameState:fresh()
+    local spawn = deepcopy(map.spawn)
+    spawn.scene = sceneName
+    gameState.spawn = spawn
+    gameState.party = { spawn.name }
+    gameState:addInventory(spawn.name, {})
+    return spawn
+end
+
 function loadScene(host, sceneName, isEditing)
     local setup = require(GAME_PATH .. '.scenes.' .. sceneName .. '.setup')
     local resources, thingDefs, sceneEvents = table.unpack(setup)

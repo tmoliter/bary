@@ -9,6 +9,7 @@
 namespace fs = std::filesystem;
 namespace barysystem {
     void startup(vector<string>& saveNames);
+    string nextSaveName();
 }
 
 #endif

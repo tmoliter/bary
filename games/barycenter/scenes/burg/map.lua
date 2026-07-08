@@ -1,5 +1,11 @@
 return {
-    things = { 
+    spawn = {
+        name = "zinnia",
+        x = 700,
+        y = 530,
+        scale = 2
+    },
+    things = {
         {
             name = "otherZinnia",
             x = 1000,
