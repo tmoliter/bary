@@ -92,12 +92,16 @@ int main(int argc, char* args[]) {
                     if(!luaUtils::CheckLua(L, lua_pcall(L, 1, 1, 0)))
                         throw exception();
                     string sceneName, spawnName;
+                    int spawnLayer = 0;
                     luaUtils::GetLuaStringFromTable(L, "scene", sceneName);
                     luaUtils::GetLuaStringFromTable(L, "name", spawnName);
                     luaUtils::GetLuaIntFromTable(L, "scale", settings.SCALE);
+                    luaUtils::GetLuaIntFromTable(L, "layer", spawnLayer);
                     Scene* scene = new Scene(sceneName, L);
                     scene->Load(false);
-                    scene->EnterLoaded(scene->things[spawnName]);
+                    RealThing* player = scene->things[spawnName];
+                    scene->EnterLoaded(player);
+                    player->shiftLayer(spawnLayer);
                     lua_settop(L, 0);
                     gameState = GameState::FieldFree;
                 }
@@ -121,6 +125,7 @@ int main(int argc, char* args[]) {
                             luaUtils::PushStringToTable(L, "scene", Scene::currentScene->sceneName);
                             luaUtils::PushIntToTable(L, "x", player->position.x);
                             luaUtils::PushIntToTable(L, "y", player->position.y);
+                            luaUtils::PushIntToTable(L, "layer", player->move ? player->move->layer : 0);
                             luaUtils::PushIntToTable(L, "scale", settings.SCALE);
                             luaUtils::CheckLua(L, lua_pcall(L, 2, 0, 0));
                         }
