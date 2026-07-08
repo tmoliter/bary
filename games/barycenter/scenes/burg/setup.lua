@@ -5,7 +5,7 @@ local resources = Resources.new({
         burg = "backgrounds/Burg",
         genrl = "sheets/Burg/genrl",
         sailorshack = "sheets/Burg/SailorShack",
-        zinnia = "sheets/SDL_TestSS",
+        zinnia = "sheets/Zinnia",
         chest = "sheets/Burg/chest"
     },
 })
@@ -343,12 +343,12 @@ local thingDefs = {
                         active = true,
                         persist = false,
                         condition = {
-                            quest = {
-                                ["some.damn.quest"] = "completed"
-                            },
+                            -- quest = {
+                            --     ["some.damn.quest"] = "completed"
+                            -- },
                             item = {
                                 name = "oolong",
-                                quantity = 38
+                                quantity = 4
                             },
                             -- func = doorCondition
                         }

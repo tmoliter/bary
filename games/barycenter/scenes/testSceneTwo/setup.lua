@@ -5,7 +5,7 @@ local resources = Resources.new({
         tg = "backgrounds/tg",
         genrl = "sheets/Burg/genrl",
         sailorshack = "sheets/Burg/SailorShack",
-        zinnia = "sheets/SDL_TestSS"
+        zinnia = "sheets/Zinnia"
     },
 })
 
