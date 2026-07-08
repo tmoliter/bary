@@ -45,3 +45,16 @@ void barysystem::startup(vector<string>& saveNames) {
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 }
 
+string barysystem::nextSaveName() {
+    string savePath = settings.BASE_PATH + "games/" + settings.GAME_NAME + "/saves";
+    const regex saveRegex(R"(^Save (\d+)$)");
+    smatch match;
+    int maxN = 0;
+    for (const auto & entry : fs::directory_iterator(savePath)) {
+        string stem = entry.path().stem().string();   // "Save 3" from "Save 3.lua"
+        if (regex_match(stem, match, saveRegex))
+            maxN = max(maxN, stoi(match[1].str()));
+    }
+    return "Save " + to_string(maxN + 1);
+}
+

@@ -328,7 +328,8 @@ void Task::addSubtasks(lua_State* L) {
         }
         if (currentType == "disableColliders") {
             bool enable = luaUtils::CheckLuaTableForBool(L, "enable");
-            bool obs, inters, trigs = luaUtils::CheckLuaTableForBool(L, "all");
+            bool all = luaUtils::CheckLuaTableForBool(L, "all");
+            bool obs = all, inters = all, trigs = all;
             luaUtils::GetLuaBoolFromTable(L, "obstructions", obs);
             luaUtils::GetLuaBoolFromTable(L, "interactables", inters);
             luaUtils::GetLuaBoolFromTable(L, "triggers", trigs);

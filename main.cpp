@@ -25,6 +25,8 @@ int main(int argc, char* args[]) {
     luaL_openlibs(L);
     if (!CheckLua(L, luaL_dofile(L, "scripts/load.lua")))
         throw exception();
+    if (!CheckLua(L, luaL_dofile(L, "scripts/save.lua")))
+        throw exception();
 
     lua_register(L, "_loadScene", Scene::_loadScene);
     lua_register(L, "_createThing", Scene::_createThing);
@@ -54,6 +56,7 @@ int main(int argc, char* args[]) {
     vector<Option> startOptions;
     if (settings.BUILD_MODE)
         startOptions.push_back(Option("Editor", "Open Map Editor", "editor"));
+    startOptions.push_back(Option("New Game", "Start a new game", "New Game"));
     for (auto saveName : saveNames)
         startOptions.push_back(Option(saveName, "Load Save File", saveName));
     loadMenu = new MenuDisplay(startOptions, Point(64, 100), Point(340, 60), 2);
@@ -79,17 +82,26 @@ int main(int argc, char* args[]) {
                 } else {
                     UIRenderer::removeMenuDisplay(loadMenu);
                     loadMenu = nullptr;
-                    lua_getglobal(L, "loadGame");
-                    lua_pushstring(L, selection.c_str());
+                    if (selection == "New Game") {
+                        lua_getglobal(L, "newGame");
+                        lua_pushstring(L, "burg");   // default starting scene
+                    } else {
+                        lua_getglobal(L, "loadGame");
+                        lua_pushstring(L, selection.c_str());
+                    }
                     if(!luaUtils::CheckLua(L, lua_pcall(L, 1, 1, 0)))
                         throw exception();
                     string sceneName, spawnName;
+                    int spawnLayer = 0;
                     luaUtils::GetLuaStringFromTable(L, "scene", sceneName);
                     luaUtils::GetLuaStringFromTable(L, "name", spawnName);
                     luaUtils::GetLuaIntFromTable(L, "scale", settings.SCALE);
+                    luaUtils::GetLuaIntFromTable(L, "layer", spawnLayer);
                     Scene* scene = new Scene(sceneName, L);
                     scene->Load(false);
-                    scene->EnterLoaded(scene->things[spawnName]);
+                    RealThing* player = scene->things[spawnName];
+                    scene->EnterLoaded(player);
+                    player->shiftLayer(spawnLayer);
                     lua_settop(L, 0);
                     gameState = GameState::FieldFree;
                 }
@@ -103,6 +115,21 @@ int main(int argc, char* args[]) {
             switch(gameState) {
                 case (GameState::FieldFree):
                 default:
+                    if (keysDown.debug_0) {
+                        FieldPlayer* player = FieldPlayer::player;
+                        if (player) {
+                            lua_getglobal(L, "saveGame");
+                            lua_pushstring(L, barysystem::nextSaveName().c_str());
+                            lua_newtable(L);
+                            luaUtils::PushStringToTable(L, "name", player->getBaseName());
+                            luaUtils::PushStringToTable(L, "scene", Scene::currentScene->sceneName);
+                            luaUtils::PushIntToTable(L, "x", player->position.x);
+                            luaUtils::PushIntToTable(L, "y", player->position.y);
+                            luaUtils::PushIntToTable(L, "layer", player->move ? player->move->layer : 0);
+                            luaUtils::PushIntToTable(L, "scale", settings.SCALE);
+                            luaUtils::CheckLua(L, lua_pcall(L, 2, 0, 0));
+                        }
+                    }
                     GameController::controller->meat(keysDown);
                     t.timeElapsed(&p.d);
 

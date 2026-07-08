@@ -292,6 +292,8 @@ local thingDefs = {
         subThings = {
             {
                 name = "SailorShackDoor",
+                -- [[ TODO: This ID would apply to all sailorShackDoors.. we should really concat the subThing's name with the parent's ID so we don't have IDs in setup files ]]
+                id = "sailorShackDoor", -- 
                 y = -61,
                 x = -27,
                 spriteDataVector = {
@@ -320,44 +322,37 @@ local thingDefs = {
                     }
                 },
                 obstructionData = {},
-                components = {
-                    {
-                        type = "standardCollider",
-                        trigger = true,
-                        interactable = false,
-                        eventNames = {
-                            "open",
-                        }
-                    },
-                },
-                events = {
-                    open = {
-                        type = "open",
-                        triggerDelay = 30,
-                        disableCollidersOnOpen = true,
+                openable = {
+                    initial = "closed",
+                    persist = false,
+                    catalyst = "trigger",
+                    sprites = { open = { 0 }, closed = { 1 } },
+                    obstructionsWhenOpen = false,
+                    triggerDelay = 30,
+                    closeAfter = true,
+                    onOpen = {
                         portal = {
                             relativeX = -25,
                             relativeY = -131,
                             newLayer = 2,
                             newScene = "testSceneTwo"
                         },
-                        closeAfter = true,
-                        locked = {
-                            message = "Locked, fuckface.",
-                            active = true,
-                            condition = {
-                                quest = {
-                                    ["some.damn.quest"] = "completed"
-                                },
-                                item = {
-                                    name = "oolong",
-                                    quantity = 38
-                                },
-                                -- func = doorCondition
-                                permanent = true,
-                            }
+                    },
+                    locked = {
+                        message = "Locked, fuckface.",
+                        active = true,
+                        persist = false,
+                        condition = {
+                            quest = {
+                                ["some.damn.quest"] = "completed"
+                            },
+                            item = {
+                                name = "oolong",
+                                quantity = 38
+                            },
+                            -- func = doorCondition
                         }
-                    }
+                    },
                 }
             }
         }
@@ -390,11 +385,10 @@ local thingDefs = {
                 sourceX = 40,
                 sourceY = 0,
                 xOffset = 0,
-                yOffset = 0,
+                yOffset = -36,
                 textureName = "chest",
                 renderOffset = 0,
-                layer = 0,
-                active = false
+                layer = 0
             },
             {
                 width = 40,
@@ -402,34 +396,86 @@ local thingDefs = {
                 sourceX = 0,
                 sourceY = 0,
                 xOffset = 0,
-                yOffset = 0,
+                yOffset = -36,
                 textureName = "chest",
                 renderOffset = 0,
                 layer = 0
             }
         },
-        obstructionData = {},
-        components = {
+        obstructionData = {
             {
-                type = "standardCollider",
-                trigger = false,
-                interactable = true,
-                eventNames = {
-                    "open",
-                }
+                rays = {
+                        {
+                            aY = -7,
+                            bY = -7,
+                            aX = 7,
+                            bX = 39
+                        },
+                        {
+                            aY = -7,
+                            bY = -1,
+                            aX = 7,
+                            bX = 1
+                        },
+                        {
+                            aY = -7,
+                            bY = -1,
+                            aX = 39,
+                            bX = 33
+                        },
+                        {
+                            aY = -1,
+                            bY = -1,
+                            aX = 0,
+                            bX = 32
+                        }
+                    },
+                    layer = 0,
+            }
+        },
+		interactableData = {
+			{
+				rays = {
+					{
+						aY = -7,
+						bY = -7,
+						aX = 7,
+						bX = 39
+					},
+					{
+						aY = -7,
+						bY = -1,
+						aX = 7,
+						bX = 1
+					},
+					{
+						aY = -7,
+						bY = -1,
+						aX = 39,
+						bX = 33
+					},
+					{
+						aY = -1,
+						bY = -1,
+						aX = 0,
+						bX = 32
+					}
+				},
+				name = "opensesame",
+				layer = 0,
+                eventNames = { "open" },
+			}
+		},
+        openable = {
+            initial = "closed",
+            persist = true,
+            sprites = { open = { 0 }, closed = { 1 } },
+            triggerDelay = 30,
+            closeAfter = false,
+            onOpen = {
+                receiveItem = { name = "oolong", amount = 6 },
             },
         },
-        events = {
-                open = {
-                    type = "open",
-                    triggerDelay = 30,
-                    receiveItem = {
-                        name = "oolong",
-                        amount = 6
-                    },
-                    closeAfter = false,
-                }
-            }
     }
 }
 

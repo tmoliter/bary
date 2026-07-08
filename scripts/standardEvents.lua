@@ -1,4 +1,5 @@
 require("scripts.copy")
+local bundles = require("scripts.bundles")
 local function sequentialTasks(hostThing, args)
     local tasks = args["tasks"]
     if args["pauseAllMoves"] then
@@ -123,7 +124,12 @@ end
 
 
 local function open(hostThing, args)
-    if args["locked"] and args["locked"]["active"] then
+    local gs = args["gameState"]
+    local id = args["id"]
+    local hasId = id ~= nil and id ~= ""
+    local sceneThing = hasId and gs:getSceneThing(gs.currentScene, id)
+
+    if args["locked"] and args["locked"]["active"] and not (sceneThing and sceneThing.unlocked) then
         local shouldUnlock = __checkLock(hostThing, args)
         if shouldUnlock ~= true then
             local phrase = args["locked"]["lockedPhrase"] or {
@@ -143,9 +149,8 @@ local function open(hostThing, args)
             )
             return
         end
-        -- door is unlocking; if it's a permanent unlock, persist that so it stays open
-        if args["locked"]["condition"]["permanent"] == true then
-            print("TODO: This is where we write active = false to gameState `scenes` that will be saved")
+        if args["locked"]["persist"] and hasId then
+            gs:setSceneThing(gs.currentScene, id, { unlocked = true })
         end
     end
     if args["catalyst"] == "trigger" and args["triggerDelay"] then
@@ -155,17 +160,10 @@ local function open(hostThing, args)
         }}, args.eventName, hostThing)
         coroutine.yield()
     end
-    local openSubtasks = {{
-        type = "setActiveSprites",
-        sprites =  { 0 }
-    }}
-    if disableCollidersOnOpen == true then
-        openSubtasks[1] = {
-            type = "disableColliders",
-            obstructions = true
-        }
+    _newTask(bundles.buildOpenTask(args), args.eventName, hostThing)
+    if args["persist"] and not args["closeAfter"] and hasId then
+        gs:setSceneThing(gs.currentScene, id, { openState = "open" })
     end
-    _newTask(openSubtasks, args.eventName, hostThing)
     if args["receiveItem"] then
         coroutine.yield()
         __receiveItem(hostThing, args)
@@ -184,17 +182,7 @@ local function open(hostThing, args)
             frames = 40,
         }}, args.eventName, hostThing)
         coroutine.yield()
-        _newTask({
-            {
-                type = "setActiveSprites",
-                sprites = { 1 }
-            },
-            {
-                type = "disableColliders",
-                enable = true,
-                obstructions = true
-            }
-    }, args.eventName, hostThing)
+        _newTask(bundles.buildCloseTask(args), args.eventName, hostThing)
     end
 end
 

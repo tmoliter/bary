@@ -2,6 +2,7 @@
 
 RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
     name(tD.name),
+    id(tD.id),
     position(tD.x, tD.y),
     animator(nullptr),
     move(nullptr),
@@ -11,9 +12,13 @@ RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
         AddSprite(sd);
     for (auto cd : tD.obstructionData)
         addObstruction(cd.rays, cd.layer);
+    for (auto cd : tD.interactableData)
+        addInteractable(cd.name, cd.rays, cd.layer);
+    for (auto cd : tD.triggerData)
+        addTrigger(cd.name, cd.rays, cd.layer);
 }
 
-RealThing::RealThing(RealThing &oldThing) : position(oldThing.position), bounds(oldThing.bounds), sceneThings(oldThing.sceneThings) {
+RealThing::RealThing(RealThing &oldThing) : id(oldThing.id), position(oldThing.position), bounds(oldThing.bounds), sceneThings(oldThing.sceneThings) {
     for (auto oldS : oldThing.sprites)
         sprites.push_back(new Sprite(*oldS, position, name));
     for (auto const& [layer, oldO] : oldThing.obstructions)
@@ -415,6 +420,7 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, RealThing* i
                     loadLuaFunc("fireCollidable");
                     lua_newtable(L);
                     luaUtils::PushStringToTable(L, "thingName", getBaseName());
+                    luaUtils::PushStringToTable(L, "id", id);
                     luaUtils::PushStringToTable(L, "collidableName", cName);
                     luaUtils::PushStringToTable(L, "catalyst", "interactable");
                     Host::PushHostToTable(L, "incomingThing", incomingThing);
@@ -429,6 +435,7 @@ int RealThing::checkForCollidables(Ray incoming, int incomingLayer, RealThing* i
                     loadLuaFunc("fireCollidable");
                     lua_newtable(L);
                     luaUtils::PushStringToTable(L, "thingName", getBaseName());
+                    luaUtils::PushStringToTable(L, "id", id);
                     luaUtils::PushStringToTable(L, "collidableName", cName);
                     luaUtils::PushStringToTable(L, "catalyst", "trigger");
                     Host::PushHostToTable(L, "incomingThing", incomingThing);
@@ -593,6 +600,22 @@ RealThingData RealThing::getData() {
             cd.rays.push_back(Ray(*r));
         }
     }
+    for (auto const& [name, in] : interactables) {
+        td.interactableData.push_back(CollidableData());
+        CollidableData& cd = td.interactableData.back();
+        cd.name = name;
+        cd.layer = in->layer;
+        for (auto r : in->rays)
+            cd.rays.push_back(Ray(*r));
+    }
+    for (auto const& [name, tr] : triggers) {
+        td.triggerData.push_back(CollidableData());
+        CollidableData& cd = td.triggerData.back();
+        cd.name = name;
+        cd.layer = tr->layer;
+        for (auto r : tr->rays)
+            cd.rays.push_back(Ray(*r));
+    }
     return td;
 }
 
@@ -639,6 +662,52 @@ void RealThing::PushThingDataOnStack() {
             luaUtils::PushIntToTable(L, "aY", td.obstructionData[j].rays[h].a.y);
             luaUtils::PushIntToTable(L, "bX", td.obstructionData[j].rays[h].b.x);
             luaUtils::PushIntToTable(L, "bY", td.obstructionData[j].rays[h].b.y);
+            lua_pop(L, 1);
+        }
+        lua_pop(L, 2);
+    }
+    lua_pop(L, 1);
+    luaUtils::PushTableToTable(L, "interactableData");
+    for (int j = 0; j < td.interactableData.size(); j++) {
+        if (!luaUtils::PushTableToTable(L, j)) {
+            cout << "Failed!" << endl;
+            continue;
+        };
+        luaUtils::PushStringToTable(L, "name", td.interactableData[j].name);
+        luaUtils::PushIntToTable(L, "layer", td.interactableData[j].layer);
+        luaUtils::PushTableToTable(L, "rays");
+        for (int h = 0; h < td.interactableData[j].rays.size(); h++) {
+            if (!luaUtils::PushTableToTable(L, h)) {
+                cout << "Failed!" << endl;
+                continue;
+            };
+            luaUtils::PushIntToTable(L, "aX", td.interactableData[j].rays[h].a.x);
+            luaUtils::PushIntToTable(L, "aY", td.interactableData[j].rays[h].a.y);
+            luaUtils::PushIntToTable(L, "bX", td.interactableData[j].rays[h].b.x);
+            luaUtils::PushIntToTable(L, "bY", td.interactableData[j].rays[h].b.y);
+            lua_pop(L, 1);
+        }
+        lua_pop(L, 2);
+    }
+    lua_pop(L, 1);
+    luaUtils::PushTableToTable(L, "triggerData");
+    for (int j = 0; j < td.triggerData.size(); j++) {
+        if (!luaUtils::PushTableToTable(L, j)) {
+            cout << "Failed!" << endl;
+            continue;
+        };
+        luaUtils::PushStringToTable(L, "name", td.triggerData[j].name);
+        luaUtils::PushIntToTable(L, "layer", td.triggerData[j].layer);
+        luaUtils::PushTableToTable(L, "rays");
+        for (int h = 0; h < td.triggerData[j].rays.size(); h++) {
+            if (!luaUtils::PushTableToTable(L, h)) {
+                cout << "Failed!" << endl;
+                continue;
+            };
+            luaUtils::PushIntToTable(L, "aX", td.triggerData[j].rays[h].a.x);
+            luaUtils::PushIntToTable(L, "aY", td.triggerData[j].rays[h].a.y);
+            luaUtils::PushIntToTable(L, "bX", td.triggerData[j].rays[h].b.x);
+            luaUtils::PushIntToTable(L, "bY", td.triggerData[j].rays[h].b.y);
             lua_pop(L, 1);
         }
         lua_pop(L, 2);

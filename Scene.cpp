@@ -179,6 +179,7 @@ RealThing* Scene::buildThingFromTable() {
     GetLuaIntFromTable(L, "x", td.x);
     GetLuaIntFromTable(L, "y", td.y);
     GetLuaStringFromTable(L, "name", td.name);
+    GetLuaStringFromTable(L, "id", td.id);
 
     GetTableOnStackFromTable(L, "spriteDataVector");
     lua_pushnil(L);
@@ -202,26 +203,73 @@ RealThing* Scene::buildThingFromTable() {
     }
     lua_pop(L, 1);
 
-    GetTableOnStackFromTable(L, "obstructionData");
-    lua_pushnil(L);
-    while (lua_next(L, -2)) {
-        td.obstructionData.push_back(CollidableData());
-        CollidableData &newObstructionData = td.obstructionData.back();
-        GetLuaIntFromTable(L, "layer", newObstructionData.layer);
-        GetTableOnStackFromTable(L, "rays");
+    if (GetTableOnStackFromTable(L, "obstructionData")) {
         lua_pushnil(L);
         while (lua_next(L, -2)) {
-            newObstructionData.rays.push_back(Ray());
-            Ray& newRay = newObstructionData.rays.back();
-            GetLuaIntFromTable(L, "aX", newRay.a.x);
-            GetLuaIntFromTable(L, "aY", newRay.a.y);
-            GetLuaIntFromTable(L, "bX", newRay.b.x);
-            GetLuaIntFromTable(L, "bY", newRay.b.y);
-            lua_pop(L, 1);
+            td.obstructionData.push_back(CollidableData());
+            CollidableData &newObstructionData = td.obstructionData.back();
+            GetLuaIntFromTable(L, "layer", newObstructionData.layer);
+            GetTableOnStackFromTable(L, "rays");
+            lua_pushnil(L);
+            while (lua_next(L, -2)) {
+                newObstructionData.rays.push_back(Ray());
+                Ray& newRay = newObstructionData.rays.back();
+                GetLuaIntFromTable(L, "aX", newRay.a.x);
+                GetLuaIntFromTable(L, "aY", newRay.a.y);
+                GetLuaIntFromTable(L, "bX", newRay.b.x);
+                GetLuaIntFromTable(L, "bY", newRay.b.y);
+                lua_pop(L, 1);
+            }
+            lua_pop(L, 2);
         }
-        lua_pop(L, 2);
+        lua_pop(L, 1);
     }
-    lua_pop(L, 1);
+
+    if (GetTableOnStackFromTable(L, "interactableData")) {
+        lua_pushnil(L);
+        while (lua_next(L, -2)) {
+            td.interactableData.push_back(CollidableData());
+            CollidableData &cd = td.interactableData.back();
+            GetLuaStringFromTable(L, "name", cd.name);
+            GetLuaIntFromTable(L, "layer", cd.layer);
+            GetTableOnStackFromTable(L, "rays");
+            lua_pushnil(L);
+            while (lua_next(L, -2)) {
+                cd.rays.push_back(Ray());
+                Ray& newRay = cd.rays.back();
+                GetLuaIntFromTable(L, "aX", newRay.a.x);
+                GetLuaIntFromTable(L, "aY", newRay.a.y);
+                GetLuaIntFromTable(L, "bX", newRay.b.x);
+                GetLuaIntFromTable(L, "bY", newRay.b.y);
+                lua_pop(L, 1);
+            }
+            lua_pop(L, 2);
+        }
+        lua_pop(L, 1);
+    }
+
+    if (GetTableOnStackFromTable(L, "triggerData")) {
+        lua_pushnil(L);
+        while (lua_next(L, -2)) {
+            td.triggerData.push_back(CollidableData());
+            CollidableData &cd = td.triggerData.back();
+            GetLuaStringFromTable(L, "name", cd.name);
+            GetLuaIntFromTable(L, "layer", cd.layer);
+            GetTableOnStackFromTable(L, "rays");
+            lua_pushnil(L);
+            while (lua_next(L, -2)) {
+                cd.rays.push_back(Ray());
+                Ray& newRay = cd.rays.back();
+                GetLuaIntFromTable(L, "aX", newRay.a.x);
+                GetLuaIntFromTable(L, "aY", newRay.a.y);
+                GetLuaIntFromTable(L, "bX", newRay.b.x);
+                GetLuaIntFromTable(L, "bY", newRay.b.y);
+                lua_pop(L, 1);
+            }
+            lua_pop(L, 2);
+        }
+        lua_pop(L, 1);
+    }
 
     RealThing* newThing;
     bool isFieldPlayer = CheckLuaTableForBool(L, "fieldPlayer");

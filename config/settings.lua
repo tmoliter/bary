@@ -1,5 +1,5 @@
 settings = {
-    SCALE = 1,
+    SCALE = 2,
     SCREEN_WIDTH = 1200,
     SCREEN_HEIGHT = 800,
     FULLSCREEN_MODE = false,
