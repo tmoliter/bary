@@ -3,16 +3,13 @@
 using namespace std;
 
 Move::Move(Move& oldMove) :
-    type(oldMove.type), 
-    currentDirection(oldMove.currentDirection), 
-    leader(oldMove.leader),
-    speed(oldMove.speed), 
+    type(oldMove.type),
+    currentDirection(oldMove.currentDirection),
+    leaderName(oldMove.leaderName),
+    speed(oldMove.speed),
     layer(oldMove.layer),
     tolerance(oldMove.tolerance),
     destination(oldMove.destination) {
-    if (oldMove.leader) {
-        leader = new Point(*oldMove.leader);
-    }
 }
 
 
@@ -36,7 +33,7 @@ bool Move::reachedDestination(Point position) {
     return position.isWithin(destination, tolerance);
 }
 
-bool Move::autoMove(Point position) {
+bool Move::autoMove(Point position, Point* leader) {
     if (disables)
         return false;
     if (type == MoveType::follow && leader != nullptr)

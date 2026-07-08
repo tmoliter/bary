@@ -12,9 +12,8 @@ enum class MoveType {
 struct Move {
     Move(MoveType moveType) :
         type(moveType), 
-        currentDirection(Direction::down), 
-        leader(nullptr),
-        speed(1), 
+        currentDirection(Direction::down),
+        speed(1),
         layer(0),
         tolerance(0),
         destination(Point(-1000,-1000))
@@ -24,7 +23,7 @@ struct Move {
 
     MoveType type;
     Direction currentDirection;
-    Point* leader;
+    std::string leaderName;
 
     int speed;
     int layer;
@@ -34,7 +33,7 @@ struct Move {
     Point destination;
     
     void moveFromInput(KeyPresses keysDown);
-    bool autoMove(Point position);
+    bool autoMove(Point position, Point* leader);
     bool reachedDestination(Point position);
 
     void changeSpeed(bool decrease);
