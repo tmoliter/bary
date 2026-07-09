@@ -7,19 +7,14 @@ return {
     },
     things = {
         {
-            name = "otherZinnia",
-            x = 1000,
-            y = 500
+            name = "followChef",
+            x = 750,
+            y = 600
         },
         {
-            name = "otherZinnia",
-            x = 694,
-            y = 500
-        },
-        {
-            name = "otherZinnia",
-            x = 800,
-            y = 500
+            name = "combover",
+            x = 1300,
+            y = 500,
         },
         {
             name = "sailorShack",

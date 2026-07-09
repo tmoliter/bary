@@ -9,6 +9,7 @@ beginEvent = eventModule.beginEvent
 resumeEvent = eventModule.resumeEvent
 fireCollidable = eventModule.fireCollidable
 clearAllEvents = eventModule.clearAllEvents
+clearEvent = eventModule.clearEvent
 local baseResources = require('base.resources')
 
 function loadBaseResources()

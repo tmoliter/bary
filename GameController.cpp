@@ -67,10 +67,33 @@ void GameController::killAllTasks() {
     for (auto t : activeTasks)
         delete t;
     activeTasks.clear();
+    for (auto const& [key, argKey] : eventArgKeys)
+        luaL_unref(L, LUA_REGISTRYINDEX, argKey);
     eventArgKeys.clear();
     // Drop the Lua-side coroutines too, so nothing resumes against a deleted thing.
     loadLuaFunc("clearAllEvents");
     callLuaFunc(0, 0, 0);
+}
+
+void GameController::killEvent(Host* host, string eventName) {
+    vector<Task*> survivors;
+    for (auto t : activeTasks) {
+        if (t->host == host && t->eventName == eventName)
+            delete t;
+        else
+            survivors.push_back(t);
+    }
+    activeTasks = survivors;
+
+    pair<Host*, string> key = {host, eventName};
+    auto it = eventArgKeys.find(key);
+    if (it != eventArgKeys.end()) {
+        luaL_unref(L, LUA_REGISTRYINDEX, it->second);
+        eventArgKeys.erase(it);
+    }
+    loadLuaFunc("clearEvent", host);
+    lua_pushstring(L, eventName.c_str());
+    callLuaFunc(1, 0, 0);
 }
 
 void GameController::performPendingSceneChange() {

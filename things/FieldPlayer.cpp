@@ -22,7 +22,7 @@ FieldPlayer::~FieldPlayer() {
 void FieldPlayer::meat(KeyPresses keysDown) {
     if (!move->velocity.isNaught())
         castRayForTriggers();
-    if(keysDown.ok && !move->disables)
+    if(keysDown.ok && !move->disables && !movesPaused)
         castRayForInteractables();
 
     if (keysDown.menu1) {

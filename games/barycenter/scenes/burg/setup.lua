@@ -5,50 +5,13 @@ local resources = Resources.new({
         burg = "backgrounds/Burg",
         genrl = "sheets/Burg/genrl",
         sailorshack = "sheets/Burg/SailorShack",
+        chest = "sheets/Burg/chest",
         zinnia = "sheets/Zinnia",
-        chest = "sheets/Burg/chest"
+        skater = "sheets/SkaterKid",
+        chef = "sheets/Chef",
+        combover = "sheets/Combover",
     },
 })
-
-local zinniaTalkB = {
-    type = "sequentialTasks",
-    pauseAllMoves = true,
-    tasks = {
-        {
-            {
-                type = "move",
-                offsetX = -100,
-                offsetY = 50
-            },
-            {
-                type = "phrase",
-                text = "doodoo",
-                x = 30,
-                y = 40, 
-                width = 80,
-                height = 50,
-                scrollType = "continuous",
-                gridLimitsX = 100,
-                gridLimitsY = 100,
-                frames = 125,
-            }
-        },
-        {
-            {
-                type = "phrase",
-                text = "poopoo",
-                x = 300,
-                y = 100, 
-                width = 100,
-                height = 50,
-                scrollType = "continuous",
-                gridLimitsX = 1000,
-                gridLimitsY = 1000,
-                frames = 125,
-            }
-        }
-    }
-}
 
 local function unlockQuest(hostThing, args)
     args["gameState"]:updateQuest("some.damn.quest", "completed")
@@ -94,14 +57,14 @@ local thingDefs = {
         obstructionData = {},
         fieldPlayer = true
     },
-    otherZinnia = {
-        name = "otherZinnia",
+    combover = {
+        name = "combover",
         spriteDataVector = {
             {
                 xOffset = 0,
                 height = 0,
                 layer = 0,
-                textureName = "zinnia",
+                textureName = "combover",
                 renderOffset = 0,
                 width = 0,
                 yOffset = 0,
@@ -121,7 +84,6 @@ local thingDefs = {
                 interactable = true,
                 eventNames = {
                     "talk_1",
-                    "talk_2",
                     "unlock",
                 }
             },
@@ -149,26 +111,34 @@ local thingDefs = {
                     }},
                     {{
                         type = "phrase",
-                        text = "Didn't I tell you not to come around here",
+                        text = "I'm coming with you",
                         x = 150,
                         y = 150,
                         width = 400,
                         height = 100,
                     }},
+                    {{
+                        type = "killEvent",
+                        eventName = "autoMove",
+                    }},
+                    {{
+                        type = "follow",
+                        leader = "followChef",
+                        tolerance = 40
+                    }}
                 }
             },
-            talk_2 = zinniaTalkB,
             unlock = { type = "custom", customCoroutine = unlockQuest }
         }
     },
-    followZinnia = {
-        name = "followZinnia",
+    followChef = {
+        name = "followChef",
         spriteDataVector = {
             {
                 xOffset = 0,
                 height = 0,
                 layer = 0,
-                textureName = "zinnia",
+                textureName = "chef",
                 renderOffset = 0,
                 width = 0,
                 yOffset = 0,
@@ -186,17 +156,13 @@ local thingDefs = {
             {
                 type = "standardCollider",
                 interactable = true,
-                eventNames = { "fz_1" }
             },
             {
                 type = "follow",
-                targetName = "testPlayer",
+                targetName = "zinnia",
                 tolerance = 40
             }
         },
-        events = {
-            fz_1 = zinniaTalkB
-        }
     },
     sailorShack = {
         name = "Sailor Shack",

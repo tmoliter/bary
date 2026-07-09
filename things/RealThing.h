@@ -64,6 +64,8 @@ struct RealThing : public Host {
     Animator* animator;
     Move* move;
 
+    int movesPaused = 0;
+
     map<int, Obstruction*> obstructions;
     map<string, Interactable*> interactables;
     map<string, Trigger*> triggers;

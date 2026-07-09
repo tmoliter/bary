@@ -62,7 +62,7 @@ vector<RealThing*> RealThing::getSelfAndSubs() {
 };
 
 void RealThing::processMove(KeyPresses keysDown) {
-    if (move == nullptr || move->disables)
+    if (move == nullptr || move->disables || movesPaused)
         return;
     if (move->type == MoveType::controlled)
         move->moveFromInput(keysDown);
@@ -148,7 +148,7 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
 }
 
 void RealThing::animate(KeyPresses keysDown) {
-    if (move == nullptr || move->disables)
+    if (move == nullptr || move->disables || movesPaused)
         return; // currently all animations require a move component
     if (move->type == MoveType::controlled)
         animator->animate(move->velocity, keysDown);
