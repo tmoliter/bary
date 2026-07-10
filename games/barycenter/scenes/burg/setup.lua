@@ -39,7 +39,7 @@ local function comboverTalk(hostThing, args)
     end
     _newTask({{
         type = "phrase",
-        text = "Hey what's happening bro",
+        text = "A chest huh?",
         x = 300,
         y = 150,
         width = 400,
@@ -48,7 +48,16 @@ local function comboverTalk(hostThing, args)
     coroutine.yield()
     _newTask({{
         type = "phrase",
-        text = "I'm coming with you",
+        text = "What does it smell like?",
+        x = 150,
+        y = 150,
+        width = 400,
+        height = 100,
+    }}, args.eventName, hostThing)
+    coroutine.yield()
+    _newTask({{
+        type = "phrase",
+        text = "Okay, I'll come with you",
         x = 150,
         y = 150,
         width = 400,
@@ -178,6 +187,7 @@ local thingDefs = {
             {
                 type = "standardCollider",
                 interactable = true,
+                eventNames = { "talk" }
             },
             {
                 type = "follow",
@@ -185,6 +195,24 @@ local thingDefs = {
                 tolerance = 40
             }
         },
+        events = {
+            talk = {
+                type = "sequentialTasks",
+                tasks = {
+                        {{
+                            type = "phrase",
+                            text = "We need to get into Sailor Shack",
+                            x = 300,
+                            y = 150,
+                            width = 300,
+                            height = 60,
+                            scrollType = "allButLast",
+                            gridLimitsX = 1000,
+                            gridLimitsY = 1000,
+                    }},
+                }
+            }
+        }
     },
     sailorShack = {
         name = "Sailor Shack",
@@ -327,7 +355,17 @@ local thingDefs = {
                         },
                     },
                     locked = {
-                        message = "Locked, fuckface.",
+                        phrase = {
+                            type = "phrase",
+                            text = "It's a door that needs oolong tea to open. Totally normal.",
+                            x = 300,
+                            y = 150,
+                            width = 300,
+                            height = 60,
+                            scrollType = "allButLast",
+                            gridLimitsX = 1000,
+                            gridLimitsY = 1000,
+                        },
                         active = true,
                         persist = false,
                         condition = {
@@ -470,11 +508,11 @@ local thingDefs = {
                 -- message = "Locked, fuckface.",
                 phrase = {
                     type = "phrase",
-                    text = "This chest has weird vibes, like maybe you're not icky enough to open it.",
+                    text = "This chest has weird vibes, like maybe you're not icky enough to open it. Label says: 'OOLONG'.",
                     x = 300,
                     y = 150,
-                    width = 500,
-                    height = 30,
+                    width = 300,
+                    height = 60,
                     scrollType = "allButLast",
                     gridLimitsX = 1000,
                     gridLimitsY = 1000,
