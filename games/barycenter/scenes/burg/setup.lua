@@ -13,8 +13,62 @@ local resources = Resources.new({
     },
 })
 
-local function unlockQuest(hostThing, args)
-    args["gameState"]:updateQuest("some.damn.quest", "completed")
+local function comboverTalk(hostThing, args)
+    _newTask({{
+        type = "pauseMoves",
+        all = true,
+    }}, args.eventName, hostThing)
+    coroutine.yield()
+
+    if not args["gameState"]:checkQuest("firstquest.combover.seek", true) then
+        _newTask({{
+            type = "phrase",
+            text = "Hey kid, wanna see a movie?",
+            x = 300,
+            y = 150,
+            width = 400,
+            height = 100,
+        }}, args.eventName, hostThing)
+        coroutine.yield()
+        _newTask({{
+            type = "pauseMoves",
+            all = true,
+            unpause = true
+        }}, args.eventName, hostThing)
+        return
+    end
+    _newTask({{
+        type = "phrase",
+        text = "Hey what's happening bro",
+        x = 300,
+        y = 150,
+        width = 400,
+        height = 100,
+    }}, args.eventName, hostThing)
+    coroutine.yield()
+    _newTask({{
+        type = "phrase",
+        text = "I'm coming with you",
+        x = 150,
+        y = 150,
+        width = 400,
+        height = 100,
+    }}, args.eventName, hostThing)
+    coroutine.yield()
+    _newTask({{
+        type = "killEvent",
+        eventName = "autoMove",
+    },
+        {
+        type = "follow",
+        leader = "chef",
+        tolerance = 40
+    },{
+        type = "pauseMoves",
+        all = true,
+        unpause = true
+    }}, args.eventName, hostThing)
+    args["gameState"]:updateQuest("firstquest.combover.follow", true)
 end
 
 
@@ -83,8 +137,7 @@ local thingDefs = {
                 type = "standardCollider",
                 interactable = true,
                 eventNames = {
-                    "talk_1",
-                    "unlock",
+                    "talk",
                 }
             },
             {
@@ -97,42 +150,11 @@ local thingDefs = {
                 type = "randomAutoMove",
                 variance = 100
             },
-            talk_1 =  {
-                type = "sequentialTasks",
-                pauseAllMoves = true,
-                tasks = {
-                    {{
-                        type = "phrase",
-                        text = "Hey what's happening bro",
-                        x = 300,
-                        y = 150,
-                        width = 400,
-                        height = 100,
-                    }},
-                    {{
-                        type = "phrase",
-                        text = "I'm coming with you",
-                        x = 150,
-                        y = 150,
-                        width = 400,
-                        height = 100,
-                    }},
-                    {{
-                        type = "killEvent",
-                        eventName = "autoMove",
-                    }},
-                    {{
-                        type = "follow",
-                        leader = "followChef",
-                        tolerance = 40
-                    }}
-                }
-            },
-            unlock = { type = "custom", customCoroutine = unlockQuest }
+            talk = { type = "custom", customCoroutine = comboverTalk }
         }
     },
-    followChef = {
-        name = "followChef",
+    chef = {
+        name = "chef",
         spriteDataVector = {
             {
                 xOffset = 0,
@@ -440,6 +462,30 @@ local thingDefs = {
             closeAfter = false,
             onOpen = {
                 receiveItem = { name = "oolong", amount = 6 },
+            },
+            locked = {
+                setQuest = {
+                    ["firstquest.combover.seek"] = true
+                },
+                -- message = "Locked, fuckface.",
+                phrase = {
+                    type = "phrase",
+                    text = "This chest has weird vibes, like maybe you're not icky enough to open it.",
+                    x = 300,
+                    y = 150,
+                    width = 500,
+                    height = 30,
+                    scrollType = "allButLast",
+                    gridLimitsX = 1000,
+                    gridLimitsY = 1000,
+                },
+                active = true,
+                persist = false,
+                condition = {
+                    quest = {
+                        ["firstquest.combover.follow"] = true
+                    },
+                }
             },
         },
     }

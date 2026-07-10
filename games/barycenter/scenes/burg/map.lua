@@ -7,7 +7,7 @@ return {
     },
     things = {
         {
-            name = "followChef",
+            name = "chef",
             x = 750,
             y = 600
         },

@@ -42,6 +42,12 @@ function gameState:updateQuest(dotPath, value)
     node[keys[#keys]] = value
 end
 
+function gameState:updateQuests(quests)
+    for quest,value in pairs(quests) do
+        self:updateQuest(quest,value)
+    end
+end
+
 function gameState:checkQuest(dotPath, value)
     local keys = splitPath(dotPath)
 
