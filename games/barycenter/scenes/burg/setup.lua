@@ -13,6 +13,37 @@ local resources = Resources.new({
     },
 })
 
+local function tutorial(hostThing, args)
+    if args["gameState"]:checkQuest("tutorial.seen", true) then return end
+    args["gameState"]:updateQuest("tutorial.seen", true)
+    _newTask({{
+        type = "phrase",
+        text = "K = select/talk`J = cancel",
+        x = 400,
+        y = 400,
+        width = 225,
+        height = 60,
+    }}, args.eventName, hostThing)
+    coroutine.yield()
+    _newTask({{
+        type = "phrase",
+        text = "WASD = move",
+        x = 300,
+        y = 500,
+        width = 150,
+        height = 30,
+    }}, args.eventName, hostThing)
+    coroutine.yield()
+    _newTask({{
+        type = "phrase",
+        text = "I = open inventory",
+        x = 600,
+        y = 250,
+        width = 250,
+        height = 30,
+    }}, args.eventName, hostThing)
+end
+
 local function comboverTalk(hostThing, args)
     _newTask({{
         type = "pauseMoves",
@@ -96,6 +127,10 @@ local sceneEvents = {
     inventoryMenu = {
         type = "custom",
         customCoroutine = globalEvents.inventoryMenu
+    },
+    tutorial = {
+        type = "custom",
+        customCoroutine = tutorial
     }
 }
 

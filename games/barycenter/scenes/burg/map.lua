@@ -5,6 +5,7 @@ return {
         y = 530,
         scale = 2
     },
+    onLoad = { "tutorial" },
     things = {
         {
             name = "chef",

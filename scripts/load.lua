@@ -12,6 +12,10 @@ clearAllEvents = eventModule.clearAllEvents
 clearEvent = eventModule.clearEvent
 local baseResources = require('base.resources')
 
+-- gameManager event names to auto-fire once the current scene finishes loading.
+-- Set per-load in loadScene, fired by fireSceneLoadEvents (from Scene::EnterLoaded).
+local sceneLoadEvents = {}
+
 function loadBaseResources()
     local Resources = require('scripts.resourceobject')
     local baseResources = Resources.new({ baseTextures = baseResources.UI })
@@ -57,11 +61,13 @@ function loadScene(host, sceneName, isEditing)
     local things = baseMap["things"]
     local playerSpawn
 
+    sceneLoadEvents = {} -- reset each load; only play mode arms them
     if isEditing == true then
         resources.baseTextures = getMerge({resources.baseTextures or {}, baseResources.editorTextures})
     else
         things = gameState:resolveSceneThings(sceneName, baseMap["things"])
         gameState.currentScene = sceneName
+        sceneLoadEvents = baseMap["onLoad"] or {}
         if gameState["spawn"] then
             playerSpawn = thingDefs[gameState["spawn"]["name"]]
             for k,v in pairs(gameState["spawn"]) do playerSpawn[k] = v end
@@ -87,6 +93,16 @@ function loadScene(host, sceneName, isEditing)
     gameState["spawn"] = nil
 
     _loadScene(resources.background, spawnThings, { textures = resources:getTextures() }, host)
+end
+
+-- Called from Scene::EnterLoaded once the scene is built and the player exists.
+-- Fires the scene's declared onLoad events as gameManager events, hosted by the
+-- player (a convenient Host; the events aren't tied to any thing's colliders).
+-- Once-only events (e.g. a tutorial) self-guard via gameState quests.
+function fireSceneLoadEvents(hostThing)
+    for _, eventName in ipairs(sceneLoadEvents) do
+        beginEvent(hostThing, { thingName = "gameManager", eventName = eventName })
+    end
 end
 
 
