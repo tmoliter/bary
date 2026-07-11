@@ -6,6 +6,8 @@ settings = {
     LETTER_WIDTH = 8,
     LETTER_HEIGHT = 12,
     LETTERS_PER_FONT_ROW = 24,
+    FONT_SCALE = 1,
+
     BUILD_MODE = true,
     GAME_NAME = 'barycenter'
 }

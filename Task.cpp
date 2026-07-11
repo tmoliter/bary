@@ -42,7 +42,9 @@ void PhraseST::init() {
         gridLimits.x = 1000;
     if (!luaUtils::GetLuaIntFromTable(L, "gridLimitsY", gridLimits.y))
         gridLimits.y = 1000;
-    phrase = new Phrase(point, size, ScrollType::allButLast, text, gridLimits);
+    int scale = settings.FONT_SCALE;
+    luaUtils::GetLuaIntFromTable(L, "scale", scale);
+    phrase = new Phrase(point, size, ScrollType::allButLast, text, gridLimits, scale);
     UIRenderer::addPhrase(phrase);
 }
 

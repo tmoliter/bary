@@ -29,6 +29,7 @@ inline struct Settings {
             luaUtils::GetLuaIntFromTable(L, "LETTER_WIDTH", LETTER_WIDTH);
             luaUtils::GetLuaIntFromTable(L, "LETTER_HEIGHT", LETTER_HEIGHT);
             luaUtils::GetLuaIntFromTable(L, "LETTERS_PER_FONT_ROW", LETTERS_PER_FONT_ROW);
+            luaUtils::GetLuaIntFromTable(L, "FONT_SCALE", FONT_SCALE);
             SDL_Rect* RESOLUTION = new SDL_Rect {0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
             luaUtils::GetLuaBoolFromTable(L, "BUILD_MODE", BUILD_MODE);
             luaUtils::GetLuaStringFromTable(L, "GAME_NAME", GAME_NAME);
@@ -52,6 +53,7 @@ inline struct Settings {
     int LETTER_WIDTH;
     int LETTER_HEIGHT;
     int LETTERS_PER_FONT_ROW;
+    int FONT_SCALE = 1; // default so a settings.lua without the key still behaves
     bool FULLSCREEN_MODE;
     bool BUILD_MODE;
     SDL_Rect* RESOLUTION;

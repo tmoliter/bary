@@ -3,7 +3,7 @@
 using namespace std;
 
 Text::Text(Point p, string t, int lL) :
-    position(p), text(t), lineLength(lL) {
+    position(p), text(t), lineLength(lL), scale(settings.FONT_SCALE) {
 
     // This is a default font, but we could allow this to be customized
     font = resourceDepository::getTexture("defaultFont");
@@ -33,9 +33,9 @@ void Text::render() {
         int fontY = (adjustedFontValue / settings.LETTERS_PER_FONT_ROW) * settings.LETTER_HEIGHT;
         SDL_Rect sourceRect = { fontX, fontY, settings.LETTER_WIDTH, settings.LETTER_HEIGHT};
 
-        int xPosition = position.x + ((i - totalLettersAfterPrevLine) * settings.LETTER_WIDTH);
-        int yPosition = position.y + (line * settings.LETTER_HEIGHT);
-        SDL_Rect renderRect = { xPosition, yPosition, settings.LETTER_WIDTH, settings.LETTER_HEIGHT };
+        int xPosition = position.x + ((i - totalLettersAfterPrevLine) * settings.LETTER_WIDTH * scale);
+        int yPosition = position.y + (line * settings.LETTER_HEIGHT * scale);
+        SDL_Rect renderRect = { xPosition, yPosition, settings.LETTER_WIDTH * scale, settings.LETTER_HEIGHT * scale };
 
         SDL_RenderCopy(renderer, font->texture, &sourceRect, &renderRect);
         currentLinesLettercount++;
@@ -47,7 +47,7 @@ void Text::setText(string t) {
 }
 
 void Text::setLineLengthFromPixelWidth(int pixelWidth) {
-    lineLength = pixelWidth / settings.LETTER_WIDTH;
+    lineLength = pixelWidth / (settings.LETTER_WIDTH * scale);
 }
 
 void Text::clearText() {
@@ -60,5 +60,6 @@ void Text::setPos(Point p) {
 }
 
 void Text::resetLineLength() {
-    lineLength = (settings.SCREEN_WIDTH / settings.LETTER_WIDTH) - (position.x / settings.LETTER_WIDTH);
+    int glyphWidth = settings.LETTER_WIDTH * scale;
+    lineLength = (settings.SCREEN_WIDTH / glyphWidth) - (position.x / glyphWidth);
 }

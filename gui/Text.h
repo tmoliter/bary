@@ -11,10 +11,11 @@ class Text {
         Point position;
         string text;
         int lineLength;
+        int scale;
 
         shared_ptr<Texture> font;
 
-        Text() : text(""), lineLength(-1) {
+        Text() : text(""), lineLength(-1), scale(settings.FONT_SCALE) {
             font = resourceDepository::getTexture("defaultFont");
         };
         Text(Point p, string t, int lL = -1);
