@@ -24,6 +24,7 @@ struct GameController : public Host {
 
     void meat(KeyPresses keysDown);
     bool meatEvent(KeyPresses keysDown);
+    bool actionCaptured();
 
     static int _newTask(lua_State *L);
     static int _killAllTasksForThing(lua_State *L);

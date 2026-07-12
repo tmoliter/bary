@@ -46,12 +46,25 @@ bool GameController::meatEvent(KeyPresses keysDown) {
     return blocking;
 }
 
+bool GameController::actionCaptured() {
+    for (auto t : activeTasks)
+        for (auto s : t->subtasks)
+            if (s->capturesActionButton())
+                return true;
+    return false;
+}
+
 void GameController::meat(KeyPresses keysDown) {
     if (Scene::currentScene->sceneState == Scene::SceneState::pauseAll) {
         // Listen for unpause
         return;
     }
-    Scene::currentScene->meat(keysDown, controller->activeTasks.size() > 0 && meatEvent(keysDown));
+    bool hasTasks = activeTasks.size() > 0;
+    bool uiOwnsAction = hasTasks && actionCaptured();
+    bool blocking = hasTasks && meatEvent(keysDown);
+    if (uiOwnsAction)
+        keysDown.ok = false;
+    Scene::currentScene->meat(keysDown, blocking);
     performPendingSceneChange();
 }
 
