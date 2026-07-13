@@ -5,53 +5,110 @@ local resources = Resources.new({
         burg = "backgrounds/Burg",
         genrl = "sheets/Burg/genrl",
         sailorshack = "sheets/Burg/SailorShack",
-        zinnia = "sheets/SDL_TestSS",
-        chest = "sheets/Burg/chest"
+        chest = "sheets/Burg/chest",
+        zinnia = "sheets/Zinnia",
+        skater = "sheets/SkaterKid",
+        chef = "sheets/Chef",
+        combover = "sheets/Combover",
     },
 })
 
-local zinniaTalkB = {
-    type = "sequentialTasks",
-    pauseAllMoves = true,
-    tasks = {
-        {
-            {
-                type = "move",
-                offsetX = -100,
-                offsetY = 50
-            },
-            {
-                type = "phrase",
-                text = "doodoo",
-                x = 30,
-                y = 40, 
-                width = 80,
-                height = 50,
-                scrollType = "continuous",
-                gridLimitsX = 100,
-                gridLimitsY = 100,
-                frames = 125,
-            }
-        },
-        {
-            {
-                type = "phrase",
-                text = "poopoo",
-                x = 300,
-                y = 100, 
-                width = 100,
-                height = 50,
-                scrollType = "continuous",
-                gridLimitsX = 1000,
-                gridLimitsY = 1000,
-                frames = 125,
-            }
-        }
-    }
-}
+local function tutorial(hostThing, args)
+    if args["gameState"]:checkQuest("tutorial.seen", true) then return end
+    args["gameState"]:updateQuest("tutorial.seen", true)
+    _newTask({{
+        type = "phrase",
+        text = "K = select/talk`J = cancel",
+        x = 400,
+        y = 400,
+        width = 225,
+        height = 60,
+    }}, args.eventName, hostThing)
+    coroutine.yield()
+    _newTask({{
+        type = "phrase",
+        text = "WASD = move",
+        x = 300,
+        y = 500,
+        width = 150,
+        height = 30,
+    }}, args.eventName, hostThing)
+    coroutine.yield()
+    _newTask({{
+        type = "phrase",
+        text = "I = open inventory",
+        x = 600,
+        y = 250,
+        width = 250,
+        height = 30,
+    }}, args.eventName, hostThing)
+end
 
-local function unlockQuest(hostThing, args)
-    args["gameState"]:updateQuest("some.damn.quest", "completed")
+local function comboverTalk(hostThing, args)
+    _newTask({{
+        type = "pauseMoves",
+        all = true,
+    }}, args.eventName, hostThing)
+    coroutine.yield()
+
+    if not args["gameState"]:checkQuest("firstquest.combover.seek", true) then
+        _newTask({{
+            type = "phrase",
+            text = "Hey kid, wanna see a movie?",
+            x = 300,
+            y = 150,
+            width = 400,
+            height = 100,
+        }}, args.eventName, hostThing)
+        coroutine.yield()
+        _newTask({{
+            type = "pauseMoves",
+            all = true,
+            unpause = true
+        }}, args.eventName, hostThing)
+        return
+    end
+    _newTask({{
+        type = "phrase",
+        text = "A chest huh?",
+        x = 300,
+        y = 150,
+        width = 400,
+        height = 100,
+    }}, args.eventName, hostThing)
+    coroutine.yield()
+    _newTask({{
+        type = "phrase",
+        text = "What does it smell like?",
+        x = 150,
+        y = 150,
+        width = 400,
+        height = 100,
+    }}, args.eventName, hostThing)
+    coroutine.yield()
+    _newTask({{
+        type = "phrase",
+        text = "Okay, I'll come with you",
+        x = 150,
+        y = 150,
+        width = 400,
+        height = 100,
+    }}, args.eventName, hostThing)
+    coroutine.yield()
+    _newTask({{
+        type = "killEvent",
+        eventName = "autoMove",
+    },
+        {
+        type = "follow",
+        leader = "chef",
+        tolerance = 40
+    },{
+        type = "pauseMoves",
+        all = true,
+        unpause = true
+    }}, args.eventName, hostThing)
+    args["gameState"]:updateQuest("firstquest.combover.follow", true)
 end
 
 
@@ -70,6 +127,10 @@ local sceneEvents = {
     inventoryMenu = {
         type = "custom",
         customCoroutine = globalEvents.inventoryMenu
+    },
+    tutorial = {
+        type = "custom",
+        customCoroutine = tutorial
     }
 }
 
@@ -94,14 +155,14 @@ local thingDefs = {
         obstructionData = {},
         fieldPlayer = true
     },
-    otherZinnia = {
-        name = "otherZinnia",
+    combover = {
+        name = "combover",
         spriteDataVector = {
             {
                 xOffset = 0,
                 height = 0,
                 layer = 0,
-                textureName = "zinnia",
+                textureName = "combover",
                 renderOffset = 0,
                 width = 0,
                 yOffset = 0,
@@ -120,9 +181,7 @@ local thingDefs = {
                 type = "standardCollider",
                 interactable = true,
                 eventNames = {
-                    "talk_1",
-                    "talk_2",
-                    "unlock",
+                    "talk",
                 }
             },
             {
@@ -135,40 +194,17 @@ local thingDefs = {
                 type = "randomAutoMove",
                 variance = 100
             },
-            talk_1 =  {
-                type = "sequentialTasks",
-                pauseAllMoves = true,
-                tasks = {
-                    {{
-                        type = "phrase",
-                        text = "Hey what's happening bro",
-                        x = 300,
-                        y = 150,
-                        width = 400,
-                        height = 100,
-                    }},
-                    {{
-                        type = "phrase",
-                        text = "Didn't I tell you not to come around here",
-                        x = 150,
-                        y = 150,
-                        width = 400,
-                        height = 100,
-                    }},
-                }
-            },
-            talk_2 = zinniaTalkB,
-            unlock = { type = "custom", customCoroutine = unlockQuest }
+            talk = { type = "custom", customCoroutine = comboverTalk }
         }
     },
-    followZinnia = {
-        name = "followZinnia",
+    chef = {
+        name = "chef",
         spriteDataVector = {
             {
                 xOffset = 0,
                 height = 0,
                 layer = 0,
-                textureName = "zinnia",
+                textureName = "chef",
                 renderOffset = 0,
                 width = 0,
                 yOffset = 0,
@@ -186,16 +222,31 @@ local thingDefs = {
             {
                 type = "standardCollider",
                 interactable = true,
-                eventNames = { "fz_1" }
+                eventNames = { "talk" }
             },
             {
                 type = "follow",
-                targetName = "testPlayer",
+                targetName = "zinnia",
                 tolerance = 40
             }
         },
         events = {
-            fz_1 = zinniaTalkB
+            talk = {
+                type = "sequentialTasks",
+                tasks = {
+                        {{
+                            type = "phrase",
+                            text = "We need to get into Sailor Shack",
+                            x = 300,
+                            y = 150,
+                            width = 300,
+                            height = 60,
+                            scrollType = "allButLast",
+                            gridLimitsX = 1000,
+                            gridLimitsY = 1000,
+                    }},
+                }
+            }
         }
     },
     sailorShack = {
@@ -339,16 +390,26 @@ local thingDefs = {
                         },
                     },
                     locked = {
-                        message = "Locked, fuckface.",
+                        phrase = {
+                            type = "phrase",
+                            text = "It's a door that needs oolong tea to open. Totally normal.",
+                            x = 300,
+                            y = 150,
+                            width = 300,
+                            height = 60,
+                            scrollType = "allButLast",
+                            gridLimitsX = 1000,
+                            gridLimitsY = 1000,
+                        },
                         active = true,
                         persist = false,
                         condition = {
-                            quest = {
-                                ["some.damn.quest"] = "completed"
-                            },
+                            -- quest = {
+                            --     ["some.damn.quest"] = "completed"
+                            -- },
                             item = {
                                 name = "oolong",
-                                quantity = 38
+                                quantity = 4
                             },
                             -- func = doorCondition
                         }
@@ -474,6 +535,30 @@ local thingDefs = {
             closeAfter = false,
             onOpen = {
                 receiveItem = { name = "oolong", amount = 6 },
+            },
+            locked = {
+                setQuest = {
+                    ["firstquest.combover.seek"] = true
+                },
+                -- message = "Locked, fuckface.",
+                phrase = {
+                    type = "phrase",
+                    text = "This chest has weird vibes, like maybe you're not icky enough to open it. Label says: 'OOLONG'.",
+                    x = 300,
+                    y = 150,
+                    width = 300,
+                    height = 60,
+                    scrollType = "allButLast",
+                    gridLimitsX = 1000,
+                    gridLimitsY = 1000,
+                },
+                active = true,
+                persist = false,
+                condition = {
+                    quest = {
+                        ["firstquest.combover.follow"] = true
+                    },
+                }
             },
         },
     }

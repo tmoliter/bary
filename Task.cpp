@@ -42,7 +42,9 @@ void PhraseST::init() {
         gridLimits.x = 1000;
     if (!luaUtils::GetLuaIntFromTable(L, "gridLimitsY", gridLimits.y))
         gridLimits.y = 1000;
-    phrase = new Phrase(point, size, ScrollType::allButLast, text, gridLimits);
+    int scale = settings.FONT_SCALE;
+    luaUtils::GetLuaIntFromTable(L, "scale", scale);
+    phrase = new Phrase(point, size, ScrollType::allButLast, text, gridLimits, scale);
     UIRenderer::addPhrase(phrase);
 }
 
@@ -217,19 +219,13 @@ void PortalST::init() {
     }
 
     Camera::fadeOut(3);
-    for (auto const& [id, t] : *thing->sceneThings) {
-        if (!t->move)
-            continue;
-        t->move->disables += 1;
-    }
+    for (auto const& [id, t] : *thing->sceneThings)
+        t->movesPaused += 1;
 }
 
 PortalST::~PortalST() {
-    for (auto const& [id, t] : *thing->sceneThings) {
-        if (!t->move)
-            continue;
-        t->move->disables -= 1;
-    }
+    for (auto const& [id, t] : *thing->sceneThings)
+        t->movesPaused -= 1;
 }
 
 bool PortalST::meat(KeyPresses keysDown) {
@@ -308,6 +304,32 @@ void Task::addSubtasks(lua_State* L) {
             pauseMoves(L);
             instant = true;
         }
+        if (currentType == "killEvent") {
+            string eventName;
+            luaUtils::GetLuaStringFromTable(L, "eventName", eventName);
+            RealThing* hostThing = static_cast<RealThing*>(host);
+            Host* target = hostThing;
+            string thingName;
+            if (luaUtils::GetLuaStringFromTable(L, "thingName", thingName))
+                target = hostThing->sceneThings->at(thingName);
+            GameController::controller->killEvent(target, eventName);
+            instant = true;
+        }
+        if (currentType == "follow") {
+            string leaderName;
+            int tolerance = 40;
+            luaUtils::GetLuaStringFromTable(L, "leader", leaderName);
+            luaUtils::GetLuaIntFromTable(L, "tolerance", tolerance);
+            RealThing* hostThing = static_cast<RealThing*>(host);
+            Move* move = hostThing->move;
+            if (move == nullptr)
+                move = hostThing->AddMove(MoveType::follow);
+            else
+                move->type = MoveType::follow;
+            move->leaderName = leaderName;
+            move->tolerance = tolerance;
+            instant = true;
+        }
         if (currentType == "setActiveSprites") {
             RealThing* hostThing = static_cast<RealThing*>(host);
             for (auto s : hostThing->sprites)
@@ -359,11 +381,8 @@ void Task::pauseMoves(lua_State* L) {
     RealThing* hostThing = static_cast<RealThing*>(host);
     int disable = luaUtils::CheckLuaTableForBool(L, "unpause") ? -1 : 1;
     if (luaUtils::CheckLuaTableForBool(L, "all")) {
-        for (auto const& [id, thing] : *hostThing->sceneThings) {
-            if (!thing->move)
-                continue;
-            thing->move->disables += disable;
-        }
+        for (auto const& [id, thing] : *hostThing->sceneThings)
+            thing->movesPaused += disable;
         return;
     }
     set<string> thingNames;
@@ -385,9 +404,6 @@ void Task::pauseMoves(lua_State* L) {
     for (auto thingName : thingNames) {
         if (!hostThing->sceneThings->count(thingName))
             continue;
-        RealThing* thing = hostThing->sceneThings->at(thingName);
-        if (!thing->move)
-            continue;
-        thing->move->disables += disable;
+        hostThing->sceneThings->at(thingName)->movesPaused += disable;
     }
 }

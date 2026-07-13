@@ -20,9 +20,11 @@ struct GameController : public Host {
     void requestSceneChange(Scene* newScene, RealThing* thing, Point destination, int newLayer);
     void performPendingSceneChange();
     void killAllTasks();
+    void killEvent(Host* host, string eventName);
 
     void meat(KeyPresses keysDown);
     bool meatEvent(KeyPresses keysDown);
+    bool actionCaptured();
 
     static int _newTask(lua_State *L);
     static int _killAllTasksForThing(lua_State *L);

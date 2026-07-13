@@ -28,6 +28,11 @@ void Scene::EnterLoaded(RealThing* focus) {
 
     new FocusTracker(focus);
     Scene::currentScene = this;
+
+    if (focus) {
+        focus->loadLuaFunc("fireSceneLoadEvents");
+        focus->callLuaFunc(0, 0, 0);
+    }
 }
 
 string Scene::getNewThingName(string name) {

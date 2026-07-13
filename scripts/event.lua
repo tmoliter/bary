@@ -86,6 +86,12 @@ local function clearAllEvents(hostThing)
     activeEvents = {}
 end
 
+local function clearEvent(hostThing, eventName)
+    if activeEvents[hostThing] ~= nil then
+        activeEvents[hostThing][eventName] = nil
+    end
+end
+
 local standardColliderNames = { interactable = "standardInteract", trigger = "standardTrigger" }
 local function bindCollidableEvents(thing)
     local function bind(collidableName, eventNames)
@@ -140,7 +146,8 @@ return {
     resumeEvent = resumeEvent,
     fireCollidable = fireCollidable,
     populate = populate,
-    clearAllEvents = clearAllEvents
+    clearAllEvents = clearAllEvents,
+    clearEvent = clearEvent
 }
 
 --[[

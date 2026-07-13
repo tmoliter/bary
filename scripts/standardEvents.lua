@@ -130,9 +130,13 @@ local function open(hostThing, args)
     local sceneThing = hasId and gs:getSceneThing(gs.currentScene, id)
 
     if args["locked"] and args["locked"]["active"] and not (sceneThing and sceneThing.unlocked) then
+        local setQuest = args["locked"]["setQuest"]
+        if setQuest ~= nil then
+            gs:updateQuests(setQuest)
+        end
         local shouldUnlock = __checkLock(hostThing, args)
         if shouldUnlock ~= true then
-            local phrase = args["locked"]["lockedPhrase"] or {
+            local phrase = args["locked"]["phrase"] or {
                 type = "phrase",
                 text = args["locked"]["message"] or "Locked.",
                 x = 300,
@@ -145,7 +149,23 @@ local function open(hostThing, args)
                 blocking = true
             }
             _newTask(
-                { phrase }, args.eventName, hostThing
+                { 
+                    phrase,
+                    {
+                        type = "pauseMoves",
+                        all = true,
+                    }
+                }, args.eventName, hostThing
+            )
+            coroutine.yield()
+            _newTask(
+                { 
+                    {
+                        type = "pauseMoves",
+                        unpause = true,
+                        all = true,
+                    }
+                }, args.eventName, hostThing
             )
             return
         end

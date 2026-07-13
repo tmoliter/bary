@@ -17,6 +17,9 @@ struct Subtask {
     virtual bool pushArgs() { return false; };
     virtual void init() {};
     virtual bool meat(KeyPresses keysDown);
+    // While this subtask is live it owns the action button, so a press advances
+    // it instead of leaking into world interaction / starting a new event.
+    virtual bool capturesActionButton() { return false; }
     Timer *timer;
     int framesToWait;
 };
@@ -26,6 +29,7 @@ struct PhraseST : public Subtask {
     ~PhraseST();
     virtual void init();
     virtual bool meat(KeyPresses keysDown);
+    virtual bool capturesActionButton() { return true; }
     Phrase* phrase = nullptr;
 };
 
@@ -34,6 +38,7 @@ struct MenuST : public Subtask {
     virtual void init();
     virtual bool meat(KeyPresses keysDown);
     virtual bool pushArgs();
+    virtual bool capturesActionButton() { return true; }
     string selection;
     MenuDisplay* menu = nullptr;
 };

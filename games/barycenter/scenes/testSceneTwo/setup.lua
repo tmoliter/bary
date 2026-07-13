@@ -5,49 +5,9 @@ local resources = Resources.new({
         tg = "backgrounds/tg",
         genrl = "sheets/Burg/genrl",
         sailorshack = "sheets/Burg/SailorShack",
-        zinnia = "sheets/SDL_TestSS"
+        zinnia = "sheets/Zinnia"
     },
 })
-
-local zinniaTalkB = {
-    type = "sequentialTasks",
-    pauseAllMoves = true,
-    tasks = {
-        {
-            {
-                type = "move",
-                offsetX = -100,
-                offsetY = 50
-            },
-            {
-                type = "phrase",
-                text = "doodoo",
-                x = 30,
-                y = 40, 
-                width = 80,
-                height = 50,
-                scrollType = "continuous",
-                gridLimitsX = 100,
-                gridLimitsY = 100,
-                frames = 125,
-            }
-        },
-        {
-            {
-                type = "phrase",
-                text = "poopoo",
-                x = 300,
-                y = 100, 
-                width = 100,
-                height = 50,
-                scrollType = "continuous",
-                gridLimitsX = 1000,
-                gridLimitsY = 1000,
-                frames = 125,
-            }
-        }
-    }
-}
 
 local globalEvents = require(GAME_PATH .. ".definitions.globalEvents")
 local sceneEvents = {
@@ -77,108 +37,6 @@ local thingDefs = {
         },
         obstructionData = {},
         fieldPlayer = true
-    },
-    otherZinnia = {
-        name = "otherZinnia",
-        spriteDataVector = {
-            {
-                xOffset = 0,
-                height = 0,
-                layer = 0,
-                textureName = "zinnia",
-                renderOffset = 0,
-                width = 0,
-                yOffset = 0,
-                sourceX = 0,
-                sourceY = 0,
-                sheetColumns = 9,
-                sheetRows = 4
-            }
-        },
-        obstructionData = {},
-        components = {
-            {
-                type = "moveAnimate",
-            },
-            {
-                type = "standardCollider",
-                interactable = true,
-                eventNames = {
-                    "talk_1",
-                    "talk_2",
-                }
-            },
-            {
-                type = "autoMove",
-                eventName = "autoMove",
-            }
-        },
-        events = {
-            autoMove = {
-                type = "randomAutoMove",
-                variance = 100
-            },
-            talk_1 =  {
-                type = "sequentialTasks",
-                pauseAllMoves = true,
-                tasks = {
-                    {{
-                        type = "phrase",
-                        text = "Hey what's happening bro",
-                        x = 300,
-                        y = 150,
-                        width = 400,
-                        height = 100,
-                    }},
-                    {{
-                        type = "phrase",
-                        text = "Didn't I tell you not to come around here",
-                        x = 150,
-                        y = 150,
-                        width = 400,
-                        height = 100,
-                    }},
-                }
-            },
-            talk_2 = zinniaTalkB,
-        }
-    },
-    followZinnia = {
-        name = "followZinnia",
-        spriteDataVector = {
-            {
-                xOffset = 0,
-                height = 0,
-                layer = 0,
-                textureName = "zinnia",
-                renderOffset = 0,
-                width = 0,
-                yOffset = 0,
-                sourceX = 0,
-                sourceY = 0,
-                sheetColumns = 9,
-                sheetRows = 4
-            }
-        },
-        obstructionData = {},
-        components = {
-            {
-                type = "moveAnimate",
-            },
-            {
-                type = "standardCollider",
-                interactable = true,
-                eventNames = { "fz_1" }
-            },
-            {
-                type = "follow",
-                targetName = "testPlayer",
-                tolerance = 40
-            }
-        },
-        events = {
-            fz_1 = zinniaTalkB
-        }
     },
     sailorShack = {
         name = "Sailor Shack",

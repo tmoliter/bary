@@ -46,12 +46,28 @@ bool GameController::meatEvent(KeyPresses keysDown) {
     return blocking;
 }
 
+bool GameController::actionCaptured() {
+    for (auto t : activeTasks)
+        for (auto s : t->subtasks)
+            if (s->capturesActionButton())
+                return true;
+    return false;
+}
+
 void GameController::meat(KeyPresses keysDown) {
     if (Scene::currentScene->sceneState == Scene::SceneState::pauseAll) {
         // Listen for unpause
         return;
     }
-    Scene::currentScene->meat(keysDown, controller->activeTasks.size() > 0 && meatEvent(keysDown));
+    bool hasTasks = activeTasks.size() > 0;
+    bool uiOwnsAction = hasTasks && actionCaptured();
+    bool blocking = hasTasks && meatEvent(keysDown);
+    if (uiOwnsAction) {
+        keysDown.ok = false;
+        keysDown.menu1 = false;
+        keysDown.menu2 = false;
+    }
+    Scene::currentScene->meat(keysDown, blocking);
     performPendingSceneChange();
 }
 
@@ -67,10 +83,33 @@ void GameController::killAllTasks() {
     for (auto t : activeTasks)
         delete t;
     activeTasks.clear();
+    for (auto const& [key, argKey] : eventArgKeys)
+        luaL_unref(L, LUA_REGISTRYINDEX, argKey);
     eventArgKeys.clear();
     // Drop the Lua-side coroutines too, so nothing resumes against a deleted thing.
     loadLuaFunc("clearAllEvents");
     callLuaFunc(0, 0, 0);
+}
+
+void GameController::killEvent(Host* host, string eventName) {
+    vector<Task*> survivors;
+    for (auto t : activeTasks) {
+        if (t->host == host && t->eventName == eventName)
+            delete t;
+        else
+            survivors.push_back(t);
+    }
+    activeTasks = survivors;
+
+    pair<Host*, string> key = {host, eventName};
+    auto it = eventArgKeys.find(key);
+    if (it != eventArgKeys.end()) {
+        luaL_unref(L, LUA_REGISTRYINDEX, it->second);
+        eventArgKeys.erase(it);
+    }
+    loadLuaFunc("clearEvent", host);
+    lua_pushstring(L, eventName.c_str());
+    callLuaFunc(1, 0, 0);
 }
 
 void GameController::performPendingSceneChange() {

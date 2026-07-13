@@ -62,12 +62,20 @@ vector<RealThing*> RealThing::getSelfAndSubs() {
 };
 
 void RealThing::processMove(KeyPresses keysDown) {
-    if (move == nullptr || move->disables)
+    if (move == nullptr || move->disables || movesPaused)
         return;
     if (move->type == MoveType::controlled)
         move->moveFromInput(keysDown);
-    if (move->type == MoveType::follow || move->type == MoveType::automatic)
-        move->autoMove(position);
+    if (move->type == MoveType::follow || move->type == MoveType::automatic) {
+        Point* leader = nullptr;
+        if (move->type == MoveType::follow) {
+            // If this lookup ever becomes slow, we can cache the pointer once it resolves
+            auto it = sceneThings->find(move->leaderName);
+            if (it != sceneThings->end())
+                leader = &it->second->position;
+        }
+        move->autoMove(position, leader);
+    }
     position.x += move->velocity.x;
     position.y += move->velocity.y;
     for (auto s : subThings) {
@@ -140,7 +148,7 @@ void RealThing::processCollisions(map<string, RealThing*>& things) {
 }
 
 void RealThing::animate(KeyPresses keysDown) {
-    if (move == nullptr || move->disables)
+    if (move == nullptr || move->disables || movesPaused)
         return; // currently all animations require a move component
     if (move->type == MoveType::controlled)
         animator->animate(move->velocity, keysDown);
@@ -218,11 +226,9 @@ void RealThing::addComponentsFromTable() {
             callLuaFunc(1, 0, 0);
         }
         if (currentComponent == "follow") {
-            string targetName;
             AddMove(MoveType::follow);
             luaUtils::GetLuaIntFromTable(L, "tolerance", move->tolerance);
-            luaUtils::GetLuaStringFromTable(L, "targetName", targetName);
-            move->leader = &sceneThings->at(targetName)->position;
+            luaUtils::GetLuaStringFromTable(L, "targetName", move->leaderName);
         }
         if (currentComponent == "moveAnimate") {
             AddAnimator();
