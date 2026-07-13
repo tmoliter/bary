@@ -10,7 +10,7 @@ FieldPlayer::FieldPlayer(RealThingData tD, map<string, RealThing*>& sceneThings)
     AddAnimator();
     AddMove(MoveType::controlled);
     AddStandardCollision();
-    move->speed = 2;
+    move->speed = 1;
     FieldPlayer::player = this;
 }
 
