@@ -62,8 +62,11 @@ void GameController::meat(KeyPresses keysDown) {
     bool hasTasks = activeTasks.size() > 0;
     bool uiOwnsAction = hasTasks && actionCaptured();
     bool blocking = hasTasks && meatEvent(keysDown);
-    if (uiOwnsAction)
+    if (uiOwnsAction) {
         keysDown.ok = false;
+        keysDown.menu1 = false;
+        keysDown.menu2 = false;
+    }
     Scene::currentScene->meat(keysDown, blocking);
     performPendingSceneChange();
 }

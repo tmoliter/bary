@@ -30,6 +30,20 @@ function inventoryMenu(hostThing, args)
     }
 
 
+    local inventoryOptions = getInventoryOptions()
+    if #inventoryOptions == 0 then
+        _newTask({{
+            type = "phrase",
+            text = "You got nothin'",
+            x = 300,
+            y = 150,
+            width = 200,
+            height = 30,
+            blocking = true,
+        }}, args.eventName, hostThing)
+        return
+    end
+
     _newTask({
         {
             type = "pauseMoves",
@@ -37,7 +51,7 @@ function inventoryMenu(hostThing, args)
         },
         {
             type = "menu",
-            options = getInventoryOptions(),
+            options = inventoryOptions,
             x = 300,
             y = 150,
             width = 340,

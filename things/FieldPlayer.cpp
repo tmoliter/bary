@@ -25,7 +25,7 @@ void FieldPlayer::meat(KeyPresses keysDown) {
     if(keysDown.ok && !move->disables && !movesPaused)
         castRayForInteractables();
 
-    if (keysDown.menu1) {
+    if (keysDown.menu2) {
         loadLuaFunc("beginEvent");
         lua_newtable(L);
         luaUtils::PushStringToTable(L, "eventName", "inventoryMenu");

@@ -24,7 +24,7 @@ MenuDisplay::MenuDisplay(vector<Option> o, Point p, Point size, int mC) :
     createLists();
 
     flavorText.setPos(Point(position.x + xPadding, position.y + height + yPadding));
-    flavorText.setText(allOptions[0].flavorText);
+    flavorText.setText(getCurrentSelection().flavorText);
     flavorText.setLineLengthFromPixelWidth(width - (xPadding * 2));
 }
 
@@ -48,6 +48,8 @@ void MenuDisplay::buildPages() {
 
 void MenuDisplay::createLists() {
     clearLists();
+    if (paginatedOptions.empty())
+        return;
     int i,j;
     vector<Option> options = paginatedOptions[getCurrentPage()];
 
@@ -94,6 +96,8 @@ bool MenuDisplay::processInput(KeyPresses keysDown, string& selection) {
 }
 
 void MenuDisplay::moveSelection(Direction direction) {
+    if (allOptions.empty())
+        return;
     int originPage = getCurrentPage();
     switch(direction) {
         case Direction::down:
@@ -127,6 +131,8 @@ void MenuDisplay::moveSelection(Direction direction) {
 }
 
 Option MenuDisplay::getCurrentSelection() {
+    if (allOptions.empty())
+        return Option();
     return allOptions[currentSelection];
 }
 
@@ -168,6 +174,8 @@ void MenuDisplay::renderFlavorBox() {
 }
 
 void MenuDisplay::renderArrow() {
+    if (allOptions.empty())
+        return;
     int currentColumn = currentSelection % maxColumns;
     int xOffset = ((currentColumn * (charsPerColumn + 2)) + 1) * settings.LETTER_WIDTH * settings.FONT_SCALE;
     int yOffset = ((currentSelection / maxColumns) % maxRows) * settings.LETTER_HEIGHT * settings.FONT_SCALE;
