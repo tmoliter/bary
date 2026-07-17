@@ -4,6 +4,7 @@ void barysystem::startup(vector<string>& saveNames) {
     settings.init();
 
     string savePath = settings.BASE_PATH + "games/" + settings.GAME_NAME + "/saves";
+    fs::create_directories(savePath); // idempotent
     smatch base_match;
     const regex base_regex(R"(^.*\/([^\/]+)\.lua)");
     for (const auto & entry : fs::directory_iterator(savePath)) {
@@ -47,6 +48,7 @@ void barysystem::startup(vector<string>& saveNames) {
 
 string barysystem::nextSaveName() {
     string savePath = settings.BASE_PATH + "games/" + settings.GAME_NAME + "/saves";
+    fs::create_directories(savePath); // empty dir isn't committed, so it may not exist yet
     const regex saveRegex(R"(^Save (\d+)$)");
     smatch match;
     int maxN = 0;

@@ -27,7 +27,7 @@ RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
         addTrigger(cd.name, cd.rays, cd.layer);
 }
 
-RealThing::RealThing(RealThing &oldThing) : id(oldThing.id), position(oldThing.position), bounds(oldThing.bounds), sceneThings(oldThing.sceneThings) {
+RealThing::RealThing(RealThing &oldThing) : baseName(oldThing.baseName), id(oldThing.id), position(oldThing.position), bounds(oldThing.bounds), sceneThings(oldThing.sceneThings) {
     for (auto oldS : oldThing.sprites)
         sprites.push_back(new Sprite(*oldS, position, name));
     for (auto const& [layer, oldO] : oldThing.obstructions)

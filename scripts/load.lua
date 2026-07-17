@@ -84,10 +84,8 @@ function loadScene(host, sceneName, isEditing)
         local thingDef = thingDefs[savedThing["name"]]
         for k,v in pairs(thingDef) do spawn[k] = v end
         for k,v in pairs(savedThing) do spawn[k] = v end
-        -- `name` is the definition key; an optional `instanceName` overrides the
-        -- runtime name so duplicate things can be targeted individually by tasks.
         spawn.baseName = savedThing.name
-        if savedThing.instanceName then spawn.name = savedThing.instanceName end
+        if savedThing.id then spawn.name = savedThing.id end
         bundles.applyOpenable(spawn)
         table.insert(spawnThings, spawn)
     end
@@ -117,7 +115,7 @@ function spawn(host, sceneName, args)
     for k,v in pairs(thingDefs[args["baseName"]]) do if k ~= "events" then spawn[k] = v end end
     for k,v in pairs(args) do spawn[k] = v end
     spawn.baseName = args["baseName"]
-    if args.instanceName then spawn.name = args.instanceName end
+    if args.id then spawn.name = args.id end
     bundles.applyOpenable(spawn)
     return _createThing(spawn, host)
 end
