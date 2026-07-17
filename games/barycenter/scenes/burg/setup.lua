@@ -171,7 +171,8 @@ local thingDefs = {
         events = {
             autoMove = {
                 type = "randomAutoMove",
-                variance = 100
+                variance = 100,
+                wait = 50,
             },
             talk = { type = "custom", customCoroutine = comboverTalk }
         }
