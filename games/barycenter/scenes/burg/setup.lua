@@ -6,7 +6,6 @@ local resources = Resources.new({
         genrl = "sheets/Burg/genrl",
         sailorshack = "sheets/Burg/SailorShack",
         chest = "sheets/Burg/chest",
-        zinnia = "sheets/Zinnia",
         skater = "sheets/SkaterKid",
         chef = "sheets/Chef",
         combover = "sheets/Combover",
@@ -135,26 +134,6 @@ local sceneEvents = {
 }
 
 local thingDefs = {
-    zinnia = {
-        name = "zinnia",
-        spriteDataVector = {
-            {
-                xOffset = 0,
-                height = 0,
-                layer = 0,
-                textureName = "zinnia",
-                renderOffset = 0,
-                width = 0,
-                yOffset = 0,
-                sourceX = 0,
-                sourceY = 0,
-                sheetColumns = 9,
-                sheetRows = 4
-            }
-        },
-        obstructionData = {},
-        fieldPlayer = true
-    },
     combover = {
         name = "combover",
         spriteDataVector = {

@@ -57,6 +57,22 @@ function loadScene(host, sceneName, isEditing)
     local setup = require(GAME_PATH .. '.scenes.' .. sceneName .. '.setup')
     local resources, thingDefs, sceneEvents = table.unpack(setup)
 
+    -- Merge global playable-character defs so scenes don't each redefine players.
+    -- A scene-local def of the same name wins. deepcopy because playerSpawn mutates
+    -- its def in place below (and thingDefs/registry tables are require-cached).
+    resources.ownTextures = resources.ownTextures or {}
+    local fieldPlayers = require(GAME_PATH .. '.definitions.fieldPlayers')
+    for playerName, entry in pairs(fieldPlayers) do
+        if thingDefs[playerName] == nil then
+            thingDefs[playerName] = deepcopy(entry.def)
+        end
+        for texName, texPath in pairs(entry.textures or {}) do
+            if resources.ownTextures[texName] == nil then
+                resources.ownTextures[texName] = texPath
+            end
+        end
+    end
+
     local baseMap = require(GAME_PATH .. '.scenes.' .. sceneName .. '.map')
     local things = baseMap["things"]
     local playerSpawn
