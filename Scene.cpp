@@ -184,6 +184,7 @@ RealThing* Scene::buildThingFromTable() {
     GetLuaIntFromTable(L, "x", td.x);
     GetLuaIntFromTable(L, "y", td.y);
     GetLuaStringFromTable(L, "name", td.name);
+    GetLuaStringFromTable(L, "baseName", td.baseName);
     GetLuaStringFromTable(L, "id", td.id);
 
     GetTableOnStackFromTable(L, "spriteDataVector");

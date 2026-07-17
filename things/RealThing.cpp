@@ -1,5 +1,13 @@
 #include "RealThing.h"
 
+static string deriveBaseName(const string& name) {
+    int i;
+    for (i = 0; i < name.length(); i++)
+        if (isdigit(name[i]))
+            break;
+    return name.substr(0, i);
+}
+
 RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
     name(tD.name),
     id(tD.id),
@@ -7,6 +15,7 @@ RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
     animator(nullptr),
     move(nullptr),
     sceneThings(&tL) {
+    baseName = tD.baseName.empty() ? deriveBaseName(tD.name) : tD.baseName;
     origin = position;
     for (auto sd : tD.spriteDataVector)
         AddSprite(sd);
@@ -48,11 +57,7 @@ RealThing::~RealThing() {
 };
 
 string RealThing::getBaseName() {
-    int i;
-    for (i = 0; i < name.length(); i++)
-        if (isdigit(name[i]))
-            break;
-    return name.substr(0, i);
+    return baseName;
 }
 
 vector<RealThing*> RealThing::getSelfAndSubs() {
