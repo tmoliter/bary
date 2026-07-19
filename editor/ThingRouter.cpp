@@ -63,7 +63,7 @@ void ThingRouter::changeState(ThingRouterState newState) {
             destroyCross();
             vector<string> names;
             for (auto rt : candidates)
-                names.push_back(rt->name);
+                names.push_back(rt->id);
             names.push_back("free");
             CommandLine::refresh(names, CLIMode::typeCommand);
             break;
@@ -115,7 +115,7 @@ int ThingRouter::chooseOverlapThing(KeyPresses keysDown) {
         return 1;
     }
     for (auto rt : candidates) {
-        if (rt->name == input) {
+        if (rt->id == input) {
             realThing = rt;
             realThing->highlightThing();
             FocusTracker::ftracker->setFocus(realThing);

@@ -14,10 +14,10 @@ struct FocusTracker {
     };
     FocusMode focusMode;
     RealThing* focus;
-    string getFocusName() { 
+    string getFocusId() {
         if (focus == nullptr)
             return "";
-        return focus->name;
+        return focus->id;
     };
     void setFocus(RealThing* newFocus) {
         RealThing* x = newFocus;

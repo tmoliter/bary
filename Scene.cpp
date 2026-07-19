@@ -35,32 +35,32 @@ void Scene::EnterLoaded(RealThing* focus) {
     }
 }
 
-string Scene::getNewThingName(string name) {
-    name.erase(std::remove_if(name.begin(), name.end(), ::isspace), name.end()); // remove whitespace
+string Scene::getNewId(string id) {
+    id.erase(std::remove_if(id.begin(), id.end(), ::isspace), id.end()); // remove whitespace
     int i;
-    for (i = 0; i < name.length(); i++)
-        if (isdigit(name[i]))
+    for (i = 0; i < id.length(); i++)
+        if (isdigit(id[i]))
             break;
-    string baseName = name.substr(0, i);
+    string base = id.substr(0, i);
     i = 1;
-    name = baseName;
-    while(things.count(name)) {
-        name = baseName + to_string(i);
+    id = base;
+    while(things.count(id)) {
+        id = base + to_string(i);
         i++;
     }
-    return name;
+    return id;
 }
 
-string Scene::renameThing(RealThing* thing, string newName) {
+string Scene::renameThing(RealThing* thing, string newId) {
     // This should only happen in the editor so maybe we can hoist this
-    things.erase(thing->name);
-    thing->name = getNewThingName(newName);
+    things.erase(thing->id);
+    thing->id = getNewId(newId);
     thing->AddToMap(things);
-    return thing->name;
+    return thing->id;
 }
 
 RealThing* Scene::addThing(RealThingData tD, ThingType type) {
-    tD.name = getNewThingName(tD.name);
+    tD.id = getNewId(tD.id.empty() ? tD.name : tD.id);
     RealThing* newThing;
     switch(type) {
         case ThingType::fieldPlayer:
@@ -77,14 +77,14 @@ RealThing* Scene::addThing(RealThingData tD, ThingType type) {
 }
 
 RealThing* Scene::addExistingThingToScene(RealThing* existingThing) {
-    existingThing->name = getNewThingName(existingThing->name);
+    existingThing->id = getNewId(existingThing->id.empty() ? existingThing->name : existingThing->id);
     existingThing->AddToMap(things);
     return existingThing;
 }
 
 RealThing* Scene::copyThing(RealThing& oldThing) {
     RealThing* newThing = oldThing.copyInPlace();
-    newThing->name = getNewThingName(oldThing.name);
+    newThing->id = getNewId(oldThing.id.empty() ? oldThing.name : oldThing.id);
     newThing->AddToMap(things);
     return newThing;
 }
@@ -99,7 +99,7 @@ void Scene::destroyThing(RealThing* thing) {
     if (thing->move != nullptr) {
         delete thing->move;
     }
-    things.erase(thing->name);
+    things.erase(thing->id);
     delete thing;
 }
 
@@ -184,7 +184,6 @@ RealThing* Scene::buildThingFromTable() {
     GetLuaIntFromTable(L, "x", td.x);
     GetLuaIntFromTable(L, "y", td.y);
     GetLuaStringFromTable(L, "name", td.name);
-    GetLuaStringFromTable(L, "baseName", td.baseName);
     GetLuaStringFromTable(L, "id", td.id);
 
     GetTableOnStackFromTable(L, "spriteDataVector");

@@ -1,13 +1,5 @@
 #include "RealThing.h"
 
-static string deriveBaseName(const string& name) {
-    int i;
-    for (i = 0; i < name.length(); i++)
-        if (isdigit(name[i]))
-            break;
-    return name.substr(0, i);
-}
-
 RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
     name(tD.name),
     id(tD.id),
@@ -15,7 +7,6 @@ RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
     animator(nullptr),
     move(nullptr),
     sceneThings(&tL) {
-    baseName = tD.baseName.empty() ? deriveBaseName(tD.name) : tD.baseName;
     origin = position;
     for (auto sd : tD.spriteDataVector)
         AddSprite(sd);
@@ -27,7 +18,7 @@ RealThing::RealThing(RealThingData tD, map<string, RealThing*>& tL) :
         addTrigger(cd.name, cd.rays, cd.layer);
 }
 
-RealThing::RealThing(RealThing &oldThing) : baseName(oldThing.baseName), id(oldThing.id), position(oldThing.position), bounds(oldThing.bounds), sceneThings(oldThing.sceneThings) {
+RealThing::RealThing(RealThing &oldThing) : name(oldThing.name), id(oldThing.id), position(oldThing.position), bounds(oldThing.bounds), sceneThings(oldThing.sceneThings) {
     for (auto oldS : oldThing.sprites)
         sprites.push_back(new Sprite(*oldS, position, name));
     for (auto const& [layer, oldO] : oldThing.obstructions)
@@ -57,7 +48,7 @@ RealThing::~RealThing() {
 };
 
 string RealThing::getBaseName() {
-    return baseName;
+    return name;
 }
 
 vector<RealThing*> RealThing::getSelfAndSubs() {
@@ -200,11 +191,11 @@ void RealThing::calculateHeight() {
 }
 
 void RealThing::AddToMap(map<string, RealThing*>& thingMap) {
-    if (thingMap.count(name)) {
-        cout << "TRIED TO ADD DUPLICATE NAMED ENTRY TO THING MAP OF SOME KIND" << endl;
+    if (thingMap.count(id)) {
+        cout << "TRIED TO ADD DUPLICATE ID ENTRY TO THING MAP OF SOME KIND" << endl;
         throw exception();
     }
-    thingMap[name] = this;
+    thingMap[id] = this;
 }
 
 void RealThing::addComponentsFromTable() {

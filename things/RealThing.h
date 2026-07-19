@@ -21,7 +21,6 @@ struct RealThingData {
             spriteDataVector.push_back(SpriteData(textureName));
     };
     string name = "AnonymousThing";
-    string baseName;
     string id;
     int x = 0;
     int y = 0;
@@ -33,9 +32,8 @@ struct RealThingData {
 };
 
 struct RealThing : public Host {
-    string name;
-    string baseName; // thingDef name
-    string id;
+    string name;     // definition name (thingDef key); not unique across instances
+    string id;       // unique per-scene key; what sceneThings is keyed by and what tasks target
     ThingType type;
     bool isSub = false;
 

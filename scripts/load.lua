@@ -100,8 +100,6 @@ function loadScene(host, sceneName, isEditing)
         local thingDef = thingDefs[savedThing["name"]]
         for k,v in pairs(thingDef) do spawn[k] = v end
         for k,v in pairs(savedThing) do spawn[k] = v end
-        spawn.baseName = savedThing.name
-        if savedThing.id then spawn.name = savedThing.id end
         bundles.applyOpenable(spawn)
         table.insert(spawnThings, spawn)
     end
@@ -130,8 +128,7 @@ function spawn(host, sceneName, args)
     local spawn = {}
     for k,v in pairs(thingDefs[args["baseName"]]) do if k ~= "events" then spawn[k] = v end end
     for k,v in pairs(args) do spawn[k] = v end
-    spawn.baseName = args["baseName"]
-    if args.id then spawn.name = args.id end
+    -- name comes from the thingDef; id (optional, from args) is the unique key.
     bundles.applyOpenable(spawn)
     return _createThing(spawn, host)
 end

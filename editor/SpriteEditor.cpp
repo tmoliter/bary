@@ -8,7 +8,7 @@ SpriteEditor::SpriteEditor(Sprite *s) :
     foundSprite(false),
     snapCamera(true) {
     
-    oldFocus = Scene::currentScene->things[FocusTracker::ftracker->getFocusName()];
+    oldFocus = Scene::currentScene->things[FocusTracker::ftracker->getFocusId()];
     focus = Scene::currentScene->addThing(RealThingData(Point(sprite->position), "sprite focus"));
     FocusTracker::ftracker->setFocus(focus);
 

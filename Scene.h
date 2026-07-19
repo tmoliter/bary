@@ -60,7 +60,7 @@ struct Scene : public Host {
     static int _createThing(lua_State* L);
 
     private:
-        string getNewThingName(string name);
+        string getNewId(string id);
 };
 
 #endif

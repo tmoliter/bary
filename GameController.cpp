@@ -127,7 +127,7 @@ void GameController::performPendingSceneChange() {
     newScene->Load(false);
 
     // 3. Move the real player object to the new scene
-    oldScene->things.erase(player->name);
+    oldScene->things.erase(player->id);
     newScene->addExistingThingToScene(player);
     player->sceneThings = &newScene->things;
 

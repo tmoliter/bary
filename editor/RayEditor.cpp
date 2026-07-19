@@ -13,7 +13,7 @@ RayEditor::RayEditor(RealThing *p) :
     ray = new Ray(Point(0,0), Point(0,0));
     UIRenderer::addLine(parent->position.x, parent->position.y, ray, LineType::editing);
     
-    oldFocus = Scene::currentScene->things[FocusTracker::ftracker->getFocusName()];
+    oldFocus = Scene::currentScene->things[FocusTracker::ftracker->getFocusId()];
     focus = Scene::currentScene->addThing(RealThingData(Point(parent->position.x, parent->position.y), "ray focus"));
     FocusTracker::ftracker->setFocus(focus);
 
